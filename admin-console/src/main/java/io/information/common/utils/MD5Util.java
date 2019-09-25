@@ -82,33 +82,6 @@ public class MD5Util {
 		return resultString;
 	}
 	
-//	/**
-//	 * 用来计算shrio生成的MD5值
-//	 * @param password   要加密的内容
-//	 * @param salt       盐值
-//	 * @param iterations 计算次数
-//	 * @return
-//	 * @author: zhuzhao
-//	 * @Createtime: 2017年11月27日
-//	 */
-//	public static String shrioMD5(String password, String salt, int iterations) {
-//		String result = "";
-//		result = string2MD5(salt+password);
-//		for(int i = 0;i < iterations-1;i++) {
-//			result = string2MD5(result);
-//		}
-//		return result;
-//	}
-//	
-//	public static String apacheMD5(String password, String salt, int iterations) {
-//		String result = "";
-//		result = DigestUtils.md5Hex(salt+password);
-//		for(int i = 0;i < iterations-1;i++) {
-//			result = DigestUtils.md5Hex(result);
-//		}
-//		return result;
-//	}
-	
 	/**
 	 * 用来计算shrio生成的MD5值
 	 * @param source     要加密的内容

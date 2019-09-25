@@ -5,7 +5,6 @@ package io.information.modules.app.resolver;
 import io.information.modules.app.annotation.LoginUser;
 import io.information.modules.app.entity.UserEntity;
 import io.information.modules.app.interceptor.AuthorizationInterceptor;
-import io.information.modules.app.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.MethodParameter;
 import org.springframework.stereotype.Component;

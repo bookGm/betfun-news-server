@@ -1,8 +1,11 @@
 package io.information.modules.app.entity;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
+import org.springframework.data.annotation.Id;
 
 import java.io.Serializable;
 
@@ -24,6 +27,7 @@ import java.io.Serializable;
             /**
             * 用户id
             */
+    @TableId(value = "u_id", type = IdType.INPUT)
     private Long uId;
 
             /**
@@ -35,6 +39,10 @@ import java.io.Serializable;
             * 密码
             */
     private String uPwd;
+            /**
+             * 盐
+             */
+    private String uSalt;
 
             /**
             * 用户昵称

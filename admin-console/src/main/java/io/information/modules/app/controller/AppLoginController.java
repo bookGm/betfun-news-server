@@ -2,20 +2,29 @@
 
 package io.information.modules.app.controller;
 
-
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.guansuo.common.SmsUtil;
+import com.guansuo.common.StringUtil;
+import com.guansuo.template.SmsTemplate;
+import com.guansuo.validgroups.CodeLogin;
+import com.guansuo.validgroups.PwdLogin;
+import io.information.common.utils.IdGenerator;
 import io.information.common.utils.R;
-import io.information.common.validator.ValidatorUtils;
+import io.information.common.utils.RedisKeys;
+import io.information.common.utils.RedisUtils;
+import io.information.modules.app.entity.InUser;
 import io.information.modules.app.form.LoginForm;
-import io.information.modules.app.service.UserService;
+import io.information.modules.app.service.IInUserService;
 import io.information.modules.app.utils.JwtUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.apache.commons.lang.RandomStringUtils;
+import org.apache.http.HttpStatus;
+import org.apache.shiro.crypto.hash.Sha256Hash;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -29,29 +38,110 @@ import java.util.Map;
 @Api("APP登录接口")
 public class AppLoginController {
     @Autowired
-    private UserService userService;
+    private IInUserService userService;
     @Autowired
     private JwtUtils jwtUtils;
+    @Autowired
+    private RedisUtils redis;
 
-    /**
-     * 登录
-     */
-    @PostMapping("login")
-    @ApiOperation("登录")
-    public R login(@RequestBody LoginForm form){
-        //表单校验
-        ValidatorUtils.validateEntity(form);
 
+
+    @ApiOperation(value = "获取手机验证码")
+    @PostMapping("getVerificationCode")
+    public R getVerificationCode(String phone){
+        String rkey=RedisKeys.LOGIN_PHONECODE+phone;
+        if(redis.exists(rkey))return R.error("请稍后发送");
+        if (StringUtil.isBlank(phone)) return R.error(HttpStatus.SC_UNAUTHORIZED,"请输入手机号码！");
+        LambdaQueryWrapper<InUser> qw=new LambdaQueryWrapper<InUser>();
+        qw.eq(InUser::getUPhone,phone);
+        InUser user=userService.getOne(qw);
+        if(null==user){
+            return R.error("不存在该用户，请先注册!");
+        }
+        int rand =  100000 + (int)(Math.random() * 899999);
+        if (rand > 0){
+            Boolean status = SmsUtil.sendSMS(user.getUPhone(), MessageFormat.format(SmsTemplate.loginCodeTemplate,rand));
+            if(status){
+                redis.set(rkey,rand,60);
+                return R.ok();
+            }else{
+                return R.error("短信发送失败，请重试");
+            }
+        }
+        return R.error("短信发送失败，请重试");
+    }
+
+    @PostMapping("pwdLogin")
+    @ApiOperation("密码登录")
+    public R pwdLogin(@RequestBody @Validated(PwdLogin.class) LoginForm form){
         //用户登录
-        long userId = userService.login(form);
+        LambdaQueryWrapper<InUser> qw=new LambdaQueryWrapper<InUser>();
+        qw.eq(InUser::getUPhone,form.getUPhone());
+        InUser user=userService.getOne(qw);
+        if(null == user || !user.getUPwd().equals(new Sha256Hash(form.getUPwd(), user.getUSalt()).toHex())) {
+            return R.error("" +
+                    "手机号或密码不正确");
+        }
+        return resultToken(user.getUId());
+    }
+    @PostMapping("codeLogin")
+    @ApiOperation("验证码登录")
+    public R codeLogin(@RequestBody @Validated(CodeLogin.class)  LoginForm form){
+        String rkey=RedisKeys.LOGIN_PHONECODE+form.getUPhone();
+        if(!redis.exists(rkey)){
+            return R.error("验证码已超时");
+        }
+        LambdaQueryWrapper<InUser> qw=new LambdaQueryWrapper<InUser>();
+        qw.eq(InUser::getUPhone,form.getUPhone());
+        InUser user=userService.getOne(qw);
+        if(null == user) {
+            return R.error("手机号不存在");
+        }
+        if(redis.get(rkey).equals(form.getCode())){
+            redis.delete(rkey);
+            return resultToken(user.getUId());
+        }else{
+            return R.error("验证码输入错误");
+        }
 
+    }
+
+    @PostMapping("codeRegist")
+    @ApiOperation("验证码注册")
+    public R codeRegist(@RequestBody @Validated(CodeLogin.class)  LoginForm form){
+        String rkey=RedisKeys.LOGIN_PHONECODE+form.getUPhone();
+        if(!redis.exists(rkey)){
+            return R.error("验证码已超时");
+        }
+        LambdaQueryWrapper<InUser> qw=new LambdaQueryWrapper<InUser>();
+        qw.eq(InUser::getUPhone,form.getUPhone());
+        InUser user=userService.getOne(qw);
+        if(null != user) {
+            return R.error("手机号已存在");
+        }
+        if(redis.get(rkey).equals(form.getCode())){
+            Long uid= IdGenerator.getId();
+            R r=resultToken(uid);
+            String salt = RandomStringUtils.randomAlphanumeric(20);
+            user=new InUser();
+            user.setUId(uid);
+            user.setUSalt(salt);
+            user.setUPhone(form.getUPhone());
+            user.setUToken(r.get("token").toString());
+            userService.save(user);
+            return r;
+        }else{
+            return R.error("验证码输入错误");
+        }
+
+    }
+
+    public R resultToken(Long userid){
         //生成token
-        String token = jwtUtils.generateToken(userId);
-
+        String token = jwtUtils.generateToken(userid);
         Map<String, Object> map = new HashMap<>();
         map.put("token", token);
         map.put("expire", jwtUtils.getExpire());
-
         return R.ok(map);
     }
 

@@ -7,7 +7,6 @@ import io.information.common.utils.R;
 import io.information.common.validator.ValidatorUtils;
 import io.information.modules.app.entity.UserEntity;
 import io.information.modules.app.form.RegisterForm;
-import io.information.modules.app.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.codec.digest.DigestUtils;

@@ -74,8 +74,6 @@ renren-fast
 
  **前端部署**
  - 本项目是前后端分离的，还需要部署前端，才能运行起来
- - 前端下载地址：https://gitee.com/renrenio/renren-fast-vue
- - 前端部署文档：https://gitee.com/renrenio/renren-fast-vue/wikis/Home
  - 前端部署完毕，就可以访问项目了，账号：admin，密码：admin
  
  <br>
