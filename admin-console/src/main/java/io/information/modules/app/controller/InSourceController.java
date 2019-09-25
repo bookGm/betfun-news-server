@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @since 2019-09-24
  */
 @RestController
-@RequestMapping("/modules.app/in-source")
+@RequestMapping("/news/source")
 public class InSourceController {
 
 }
