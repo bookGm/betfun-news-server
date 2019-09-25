@@ -19,10 +19,11 @@ public interface IInDicService extends IService<InDic> {
 
     void updateDic(InDic dic);
 
-    List<InDic> queryPSDic(Long dicId);
+    List<InDic> queryDicById(Long dicId);
 
     List<InDic> queryNameDic(String dicName);
 
     List<InDic> queryAllDic();
 
+    List<InDic> queryDicByCode(String dicCode);
 }

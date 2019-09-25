@@ -25,6 +25,9 @@ public class InUserController {
     @Autowired
     private IInUserService userService;
 
+
+    //TODO 注册
+
     /**
      * 根据用户ID删除用户
      * @param userId
@@ -69,7 +72,7 @@ public class InUserController {
 
     /**
      * 根据条件模糊匹配用户信息<部分信息>
-     * @param params 条件<用户名，用户昵称，手机号...>
+     * @param params 条件<用户名，用户昵称，手机号>
      * @return
      */
     @GetMapping("/like")

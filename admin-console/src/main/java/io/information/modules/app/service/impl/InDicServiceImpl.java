@@ -53,7 +53,7 @@ public class InDicServiceImpl extends ServiceImpl<InDicDao, InDic> implements II
     }
 
     @Override
-    public List<InDic> queryPSDic(Long dicId) {
+    public List<InDic> queryDicById(Long dicId) {
         List<InDic> dicList = new ArrayList<>();
         InDic dic = this.getById(dicId);
         List<InDic> dics = this.findPSDic(dic);
@@ -78,6 +78,18 @@ public class InDicServiceImpl extends ServiceImpl<InDicDao, InDic> implements II
         queryWrapper.lambda().apply("select * from in_dic");
         List<InDic> dics = this.list(queryWrapper);
         return dics;
+    }
+
+    @Override
+    public List<InDic> queryDicByCode(String dicCode) {
+        QueryWrapper<InDic> queryWrapper = new QueryWrapper<>();
+        queryWrapper.lambda().eq(InDic::getDCode,dicCode);
+        List<InDic> dicList = this.list(queryWrapper);
+        dicList.forEach(dic -> {
+            dicList.addAll(this.findPSDic(dic));
+        });
+
+        return dicList;
     }
 
 

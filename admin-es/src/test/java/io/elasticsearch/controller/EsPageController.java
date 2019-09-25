@@ -26,10 +26,7 @@ public class EsPageController {
      * @return
      */
     @PostMapping("/add")
-    public ResponseEntity addEsData(@RequestParam(name = "")String id,
-                                    @RequestParam(name = "")String firstName,
-                                    @RequestParam(name = "")String lastName,
-                                    @RequestParam(name = "")Integer age, String about){
+    public ResponseEntity addEsData(String id, String firstName, String lastName, Integer age, String about){
         for(int i=0;i<100;i++){
             LocationEntity entity = new LocationEntity();
             entity.setId(id+i);
@@ -49,7 +46,7 @@ public class EsPageController {
      * @return
      */
     @GetMapping("/queryById")
-    public ResponseEntity queryById(@RequestParam(name = "") String id) {
+    public ResponseEntity queryById(String id) {
         LocationEntity entity = locationService.findById(id);
         return ResponseEntity.ok(entity);
     }
@@ -60,7 +57,7 @@ public class EsPageController {
      * @return
      */
     @PostMapping("/update")
-    public ResponseEntity delete(@RequestParam(name = "")LocationEntity entity){
+    public ResponseEntity delete(LocationEntity entity){
         locationService.delete(entity);
         return ResponseEntity.status(HttpStatus.OK).build();
     }

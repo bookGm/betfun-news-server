@@ -89,8 +89,8 @@ public class InCardBaseServiceImpl extends ServiceImpl<InCardBaseDao, InCardBase
     @Override
     @Transactional
     public void addCard(InCardBase base, InCardArgue argue, InCardVote vote) {
-//        argue.setCId(base.getCId());
-//        vote.setCId(base.getCId());
+        argue.setCId(base.getCId());
+        vote.setCId(base.getCId());
         this.save(base);
         cardArgueService.save(argue);
         cardVoteService.save(vote);
@@ -99,6 +99,8 @@ public class InCardBaseServiceImpl extends ServiceImpl<InCardBaseDao, InCardBase
     @Override
     @Transactional
     public void updateCard(InCardBase base, InCardArgue argue, InCardVote vote) {
+        argue.setCId(base.getCId());
+        vote.setCId(base.getCId());
         this.updateById(base);
         cardArgueService.updateById(argue);
         cardVoteService.updateById(vote);

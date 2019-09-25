@@ -79,10 +79,22 @@ public class InTagController {
      * @return
      */
     @GetMapping("/queryTag")
-    public ResponseEntity<InTag> queryTag(Long tageId){
-        InTag tag = tagService.getById(tageId);
+    public ResponseEntity<InTag> queryTag(Long tagId){
+        InTag tag = tagService.getById(tagId);
         return ResponseEntity.ok(tag);
     }
+
+
+    /**
+     * 获取所有标签
+     * @return
+     */
+    @GetMapping("/queryAllTag")
+    public ResponseEntity<List<InTag>> queryAllTag(){
+        List<InTag> tags = tagService.queryAllTag();
+        return ResponseEntity.ok(tags);
+    }
+
 
 
     //TODO 多标签查询

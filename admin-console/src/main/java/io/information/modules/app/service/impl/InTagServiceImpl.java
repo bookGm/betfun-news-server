@@ -1,10 +1,13 @@
 package io.information.modules.app.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import io.information.modules.app.dao.InTagDao;
 import io.information.modules.app.entity.InTag;
 import io.information.modules.app.service.IInTagService;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * <p>
@@ -17,4 +20,11 @@ import org.springframework.stereotype.Service;
 @Service
 public class InTagServiceImpl extends ServiceImpl<InTagDao, InTag> implements IInTagService {
 
+    @Override
+    public List<InTag> queryAllTag() {
+        LambdaQueryWrapper<InTag> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.apply("select * from in_tag");
+        List<InTag> tagList = this.list(queryWrapper);
+        return tagList;
+    }
 }

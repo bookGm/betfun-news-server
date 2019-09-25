@@ -63,25 +63,25 @@ public class InDicController {
 
 
     /**
-     * 查询字典
+     * 根据ID查询节点和子节点
      * @param dicId
      * @return
      */
-    @GetMapping("/queryDic")
-    public ResponseEntity<InDic> queryDic(Long dicId){
-        InDic dic = dicService.getById(dicId);
-        return ResponseEntity.ok(dic);
+    @GetMapping("/queryDicById")
+    public ResponseEntity<List<InDic>> queryDicById(Long dicId){
+        List<InDic> dics = dicService.queryDicById(dicId);
+        return ResponseEntity.ok(dics);
     }
 
 
     /**
-     * 查询节点和子节点
-     * @param dicId
+     * 跟据编码查询节点和子节点
+     * @param dicCode
      * @return
      */
-    @GetMapping("/queryPSDic")
-    public ResponseEntity<List<InDic>> queryPSDic(Long dicId){
-        List<InDic> dics = dicService.queryPSDic(dicId);
+    @GetMapping("/queryDicByCode")
+    public ResponseEntity<List<InDic>> queryDicByCode(String dicCode){
+        List<InDic> dics = dicService.queryDicByCode(dicCode);
         return ResponseEntity.ok(dics);
     }
 

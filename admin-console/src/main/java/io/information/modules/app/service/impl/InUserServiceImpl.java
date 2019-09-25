@@ -25,8 +25,6 @@ import java.util.stream.Collectors;
  */
 @Service
 public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements IInUserService {
-    @Autowired
-    private InUserDao userDao;
 
     @Override
     public List<InUser> queryLikeByUser(String params) {
@@ -40,7 +38,7 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
         user1.setUToken(null);
         user1.setUName(null);
         users.add(user1);
-        //根据地电话查询
+        //根据电话查询
         queryWrapper.lambda().eq(InUser::getUPhone,params);
         InUser user2 = this.getOne(queryWrapper);
         user1.setUPwd(null);

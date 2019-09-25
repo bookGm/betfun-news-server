@@ -4,6 +4,8 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import io.information.modules.app.entity.InTag;
 import org.apache.ibatis.annotations.Mapper;
 
+import java.util.List;
+
 /**
  * <p>
  *  服务类
@@ -14,4 +16,5 @@ import org.apache.ibatis.annotations.Mapper;
  */
 public interface IInTagService extends IService<InTag> {
 
+    List<InTag> queryAllTag();
 }

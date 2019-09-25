@@ -98,7 +98,4 @@ public class InArticleController {
         List<InArticle> articleList = articleService.queryAllArticle(userId);
         return ResponseEntity.ok(articleList);
     }
-
-
-    //TODO  查询文章类型<字典>
 }

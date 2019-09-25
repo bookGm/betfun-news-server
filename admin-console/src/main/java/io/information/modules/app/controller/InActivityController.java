@@ -105,7 +105,4 @@ public class InActivityController {
         return ResponseEntity.ok(activity);
     }
 
-
-    //TODO 获取活动分类<字典>
-
 }
