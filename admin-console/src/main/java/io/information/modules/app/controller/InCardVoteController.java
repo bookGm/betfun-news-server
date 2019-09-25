@@ -1,8 +1,14 @@
 package io.information.modules.app.controller;
 
 
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import io.information.modules.app.entity.InCardVote;
+import io.information.modules.app.service.IInCardVoteService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * <p>
@@ -13,7 +19,56 @@ import org.springframework.web.bind.annotation.RestController;
  * @since 2019-09-24
  */
 @RestController
-@RequestMapping("/modules.app/in-card-vote")
+@RequestMapping("/news/card/vote")
 public class InCardVoteController {
+    @Autowired
+    private IInCardVoteService cardVoteService;
+
+    /**
+     * 添加投票贴
+     * @param cardVote
+     * @return
+     */
+    @PostMapping("/addCardVote")
+    public ResponseEntity<Void> add(InCardVote cardVote){
+        cardVoteService.save(cardVote);
+        return ResponseEntity.status(HttpStatus.OK).build();
+    }
+
+
+    /**
+     * 删除投票贴子
+     * @param cardIds
+     * @return
+     */
+    @DeleteMapping("/deleteCardVote")
+    public ResponseEntity<Void> delete(List<Long> cardIds){
+        cardVoteService.removeByIds(cardIds);
+        return ResponseEntity.status(HttpStatus.OK).build();
+    }
+
+
+    /**
+     * 修改投票帖子
+     * @param cardVote
+     * @return
+     */
+    @PutMapping("/updateCardVote")
+    public ResponseEntity<Void> updateCardVote(InCardVote cardVote){
+        cardVoteService.updateById(cardVote);
+        return ResponseEntity.status(HttpStatus.OK).build();
+    }
+
+
+    /**
+     * 根据帖子ID查询
+     * @param cardIds
+     * @return
+     */
+    @GetMapping("/queryCardVote")
+    public ResponseEntity<InCardVote> queryCardVote(Long cardIds){
+        InCardVote cardArgue = cardVoteService.getById(cardIds);
+        return ResponseEntity.ok(cardArgue);
+    }
 
 }

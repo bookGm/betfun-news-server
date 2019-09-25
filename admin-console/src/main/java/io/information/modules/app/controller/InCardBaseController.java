@@ -2,8 +2,9 @@ package io.information.modules.app.controller;
 
 
 import io.information.modules.app.config.IdWorker;
-import io.information.modules.app.entity.InCardBase;
+import io.information.modules.app.entity.*;
 import io.information.modules.app.service.IInCardBaseService;
+import io.information.modules.app.service.IInUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,13 +25,15 @@ import java.util.List;
 public class InCardBaseController {
     @Autowired
     private IInCardBaseService cardBaseService;
+    @Autowired
+    private IInUserService userService;
 
     /**
      * 添加基础帖子
      * @param cardBase
      * @return
      */
-    @PostMapping("/add")
+    @PostMapping("/addCardBase")
     public ResponseEntity<Void> addCardBase(InCardBase cardBase){
         cardBase.setCId(new IdWorker().nextId());
         cardBaseService.save(cardBase);
@@ -39,25 +42,63 @@ public class InCardBaseController {
 
 
     /**
-     * 根据基础帖子ID删除
-     * @param cardBaseIds
+     * 添加帖子<包含关联表>
+     * @param base
+     * @param argue
+     * @param vote
      * @return
      */
-    @DeleteMapping("/cardBaseId")
-    public ResponseEntity<Void> deleteCardBase(List<Long> cardBaseIds){
-        cardBaseService.removeByIds(cardBaseIds);
+    @PostMapping("/addCard")
+    public ResponseEntity<Void> addCard(InCardBase base, InCardArgue argue, InCardVote vote){
+        cardBaseService.addCard(base,argue,vote);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
 
     /**
-     * 根据基础用户ID删除帖子
+     * 根据帖子ID删除帖子基础信息
+     * @param cardIds
+     * @return
+     */
+    @DeleteMapping("/deleteCardBase")
+    public ResponseEntity<Void> deleteCardBase(List<Long> cardIds){
+        cardBaseService.removeByIds(cardIds);
+        return ResponseEntity.status(HttpStatus.OK).build();
+    }
+
+
+    /**
+     * 根据帖子ID删除所有信息<包含关联表>
+     * @param cardIds
+     * @return
+     */
+    @DeleteMapping("/deleteCard")
+    public ResponseEntity<Void> deleteCard(List<Long> cardIds){
+        cardBaseService.deleteCard(cardIds);
+        return ResponseEntity.status(HttpStatus.OK).build();
+    }
+
+
+    /**
+     * 根据用户ID删除帖子基础信息
      * @param userId
      * @return
      */
-    @DeleteMapping("/userId")
+    @DeleteMapping("/deleteAllCardBase")
     public ResponseEntity<Void> deleteAllCardBase(Long userId){
         cardBaseService.deleteAllCardBase(userId);
+        return ResponseEntity.status(HttpStatus.OK).build();
+    }
+
+
+    /**
+     * 根据用户ID删除帖子所有信息<包含关联表>
+     * @param userId
+     * @return
+     */
+    @DeleteMapping("/deleteAllCard")
+    public ResponseEntity<Void> deleteAllCard(Long userId){
+        cardBaseService.deleteAllCard(userId);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
@@ -67,7 +108,7 @@ public class InCardBaseController {
      * @param cardBase
      * @return
      */
-    @PutMapping("/update")
+    @PutMapping("/updateCardBase")
     public ResponseEntity<Void> updateCardBase(InCardBase cardBase){
         cardBaseService.updateById(cardBase);
         return ResponseEntity.status(HttpStatus.OK).build();
@@ -75,28 +116,77 @@ public class InCardBaseController {
 
 
     /**
-     * 根据基础帖子ID查询
-     * @param cardBaseId
+     * 修改帖子<包含关联表>
+     * @param base
+     * @param argue
+     * @param vote
      * @return
      */
-    @GetMapping("/cardBaseId")
-    public ResponseEntity<InCardBase> queryCardBase(Long cardBaseId){
-        InCardBase cardBase = cardBaseService.getById(cardBaseId);
+    @PutMapping("/updateCard")
+    public ResponseEntity<Void> updateAllCard(InCardBase base, InCardArgue argue, InCardVote vote){
+        cardBaseService.updateCard(base,argue,vote);
+        return ResponseEntity.status(HttpStatus.OK).build();
+    }
+
+
+    /**
+     * 根据帖子ID查询基础帖子
+     * @param cardIds
+     * @return
+     */
+    @GetMapping("/queryCardBase")
+    public ResponseEntity<InCardBase> queryCardBase(Long cardIds){
+        InCardBase cardBase = cardBaseService.getById(cardIds);
         return ResponseEntity.ok(cardBase);
     }
 
 
     /**
-     * 根据基础用户ID查询
+     * 根据帖子ID查询帖子<包含关联表>
+     * @param cardId
+     * @return
+     */
+    @GetMapping("/queryCard")
+    public ResponseEntity<InCard> queryCard(Long cardId){
+        InCard card = cardBaseService.queryCard(cardId);
+        return ResponseEntity.ok(card);
+    }
+
+
+    /**
+     * 根据用户ID查询基础帖子
      * @param userId
      * @return
      */
-    @GetMapping("/userId")
+    @GetMapping("/queryAllCardBase")
     public ResponseEntity<List<InCardBase>> queryAllCardBase(Long userId){
         List<InCardBase> cardBaseList = cardBaseService.queryAllCardBase(userId);
         return ResponseEntity.ok(cardBaseList);
     }
 
+
+    /**
+     * 根据用户ID查询所有帖子<包含关联表>
+     * @param userId
+     * @return
+     */
+    @GetMapping("/queryAllCard")
+    public ResponseEntity<List<InCard>> queryAllCard(Long userId){
+        List<InCard> cards = cardBaseService.queryAllCard(userId);
+        return ResponseEntity.ok(cards);
+    }
+
+
+    /**
+     * 根据正反方ids字符串,查询用户信息
+     * @param userIds
+     * @return
+     */
+    @GetMapping("/queryUserList")
+    public ResponseEntity<List<InUser>> queryUsersByArgueIds(String userIds){
+        List<InUser> userList = userService.queryUsersByArgueIds(userIds);
+        return ResponseEntity.ok(userList);
+    }
 
     //TODO 帖子节点分类<字典>
 }

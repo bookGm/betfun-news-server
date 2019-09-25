@@ -26,7 +26,7 @@ import java.time.LocalDateTime;
             /**
             * 帖子id
             */
-    private Integer cId;
+    private Long cId;
 
             /**
             * 投票选项信息（逗号分隔）

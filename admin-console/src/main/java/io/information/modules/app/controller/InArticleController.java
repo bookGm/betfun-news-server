@@ -31,8 +31,8 @@ public class InArticleController {
      * @param article
      * @return
      */
-    @PostMapping("/add")
-    public ResponseEntity<Void> addInArticle(InArticle article){
+    @PostMapping("/addArticle")
+    public ResponseEntity<Void> addArticle(InArticle article){
         article.setAId(new IdWorker().nextId());
         article.setACreateTime(LocalDateTime.now());
         articleService.save(article);
@@ -45,7 +45,7 @@ public class InArticleController {
      * @param articleIds
      * @return
      */
-    @DeleteMapping("/articleId")
+    @DeleteMapping("/deleteArticle")
     public ResponseEntity<Void> deleteArticle(List<Long> articleIds){
         articleService.removeByIds(articleIds);
         return ResponseEntity.status(HttpStatus.OK).build();
@@ -57,7 +57,7 @@ public class InArticleController {
      * @param userId
      * @return
      */
-    @DeleteMapping("/userId")
+    @DeleteMapping("/deleteAllArticle")
     public ResponseEntity<Void> deleteAllArticle(Long userId){
         articleService.deleteAllArticle(userId);
         return ResponseEntity.status(HttpStatus.OK).build();
@@ -69,7 +69,7 @@ public class InArticleController {
      * @param article
      * @return
      */
-    @PutMapping("/update")
+    @PutMapping("/updateArticle")
     public ResponseEntity<Void> updateArticle(InArticle article){
         articleService.updateById(article);
         return ResponseEntity.status(HttpStatus.OK).build();
@@ -81,7 +81,7 @@ public class InArticleController {
      * @param articleId
      * @return
      */
-    @GetMapping("/article")
+    @GetMapping("/queryArticle")
     public ResponseEntity<InArticle> queryArticle(Long articleId){
         InArticle article = articleService.getById(articleId);
         return ResponseEntity.ok(article);
@@ -93,7 +93,7 @@ public class InArticleController {
      * @param userId
      * @return
      */
-    @GetMapping("/userId")
+    @GetMapping("/queryAllArticle")
     public ResponseEntity<List<InArticle>> queryAllArticle(Long userId){
         List<InArticle> articleList = articleService.queryAllArticle(userId);
         return ResponseEntity.ok(articleList);

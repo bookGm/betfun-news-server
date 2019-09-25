@@ -2,9 +2,7 @@ package io.information.modules.app.controller;
 
 
 import io.information.modules.app.entity.InCardArgue;
-import io.information.modules.app.entity.InUser;
 import io.information.modules.app.service.IInCardArgueService;
-import io.information.modules.app.service.IInUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,15 +23,13 @@ import java.util.List;
 public class InCardArgueController {
     @Autowired
     private IInCardArgueService cardArgueService;
-    @Autowired
-    private IInUserService userService;
 
     /**
      * 添加辩论帖子
      * @param cardArgue
      * @return
      */
-    @PostMapping("/add")
+    @PostMapping("/addCardArgue")
     public ResponseEntity<Void> addCardArgue(InCardArgue cardArgue){
         cardArgueService.save(cardArgue);
         return ResponseEntity.status(HttpStatus.OK).build();
@@ -41,13 +37,13 @@ public class InCardArgueController {
 
 
     /**
-     * 根据辩论帖子ID删除
-     * @param cardArgueIds
+     * 根据帖子ID删除
+     * @param cardIds
      * @return
      */
-    @DeleteMapping("/cardArgueId")
-    public ResponseEntity<Void> deleteCardArgue(List<Long> cardArgueIds){
-        cardArgueService.removeByIds(cardArgueIds);
+    @DeleteMapping("/deleteCardArgue")
+    public ResponseEntity<Void> deleteCardArgue(List<Long> cardIds){
+        cardArgueService.removeByIds(cardIds);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
@@ -57,7 +53,7 @@ public class InCardArgueController {
      * @param cardArgue
      * @return
      */
-    @PutMapping("/update")
+    @PutMapping("/updateCardArgue")
     public ResponseEntity<Void> updateCardArgue(InCardArgue cardArgue){
         cardArgueService.updateById(cardArgue);
         return ResponseEntity.status(HttpStatus.OK).build();
@@ -65,26 +61,14 @@ public class InCardArgueController {
 
 
     /**
-     * 根据辩论帖子ID查询
-     * @param cardArgueId
+     * 根据帖子ID查询
+     * @param cardIds
      * @return
      */
-    @GetMapping("/cardArgueId")
-    public ResponseEntity<InCardArgue> queryCardArgue(Long cardArgueId){
-        InCardArgue cardArgue = cardArgueService.getById(cardArgueId);
+    @GetMapping("/queryCardArgue")
+    public ResponseEntity<InCardArgue> queryCardArgue(Long cardIds){
+        InCardArgue cardArgue = cardArgueService.getById(cardIds);
         return ResponseEntity.ok(cardArgue);
-    }
-
-
-    /**
-     * 根据正反方ids字符串,查询用户信息
-     * @param userIds
-     * @return
-     */
-    @GetMapping("/userIds")
-    public ResponseEntity<List<InUser>> queryUsersByArgueIds(String userIds){
-        List<InUser> userList = userService.queryUsersByArgueIds(userIds);
-        return ResponseEntity.ok(userList);
     }
 
 }

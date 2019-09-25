@@ -6,6 +6,7 @@ import io.information.modules.app.dao.InArticleDao;
 import io.information.modules.app.entity.InArticle;
 import io.information.modules.app.service.IInArticleService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -21,6 +22,7 @@ import java.util.stream.Collectors;
 @Service
 public class InArticleServiceImpl extends ServiceImpl<InArticleDao, InArticle> implements IInArticleService {
     @Override
+    @Transactional
     public void deleteAllArticle(Long userId) {
         List<InArticle> articleList = this.queryAllArticle(userId);
         List<Long> articleIds = articleList.stream().map(InArticle::getAId).collect(Collectors.toList());

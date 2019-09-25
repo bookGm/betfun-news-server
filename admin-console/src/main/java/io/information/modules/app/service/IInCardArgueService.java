@@ -12,5 +12,4 @@ import io.information.modules.app.entity.InCardArgue;
  * @since 2019-09-24
  */
 public interface IInCardArgueService extends IService<InCardArgue> {
-
 }

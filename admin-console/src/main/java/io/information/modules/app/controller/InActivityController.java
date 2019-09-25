@@ -31,7 +31,7 @@ public class InActivityController {
      * @param activity
      * @return
      */
-    @PostMapping("/add")
+    @PostMapping("/addActivity")
     public ResponseEntity<Void> addActivity(InActivity activity){
         activity.setActId(new IdWorker().nextId());
         activity.setActCreateTime(LocalDateTime.now());
@@ -46,7 +46,7 @@ public class InActivityController {
      * @param activeIds
      * @return
      */
-    @DeleteMapping("/activeId")
+    @DeleteMapping("/deleteActive")
     public ResponseEntity<Void> deleteActive(List<Long> activeIds){
         activityService.removeByIds(activeIds);
         return ResponseEntity.status(HttpStatus.OK).build();
@@ -58,7 +58,7 @@ public class InActivityController {
      * @param userId
      * @return
      */
-    @DeleteMapping("/userId")
+    @DeleteMapping("/deleteAllActive")
     public ResponseEntity<Void> deleteAllActive(Long userId){
         activityService.deleteAllActive(userId);
         return ResponseEntity.status(HttpStatus.OK).build();
@@ -70,7 +70,7 @@ public class InActivityController {
      * @param activity
      * @return
      */
-    @PutMapping("/update")
+    @PutMapping("/updateActivity")
     public ResponseEntity<Void> updateActivity(InActivity activity){
         activityService.updateById(activity);
         return ResponseEntity.status(HttpStatus.OK).build();
@@ -82,8 +82,8 @@ public class InActivityController {
      * @param userId
      * @return
      */
-    @GetMapping("/userId")
-    public ResponseEntity<List<InActivity>> queryActivitiesByUserId(Long userId){
+    @GetMapping("/queryAllActivity")
+    public ResponseEntity<List<InActivity>> queryAllActivity(Long userId){
         List<InActivity> activities = activityService.queryActivitiesByUserId(userId);
         return ResponseEntity.ok(activities);
     }
@@ -94,8 +94,8 @@ public class InActivityController {
      * @param activeId
      * @return
      */
-    @GetMapping("/activeId")
-    public ResponseEntity<InActivity> queryActiveById(Long activeId){
+    @GetMapping("/queryActivity")
+    public ResponseEntity<InActivity> queryActivity(Long activeId){
         InActivity activity = activityService.getById(activeId);
         return ResponseEntity.ok(activity);
     }

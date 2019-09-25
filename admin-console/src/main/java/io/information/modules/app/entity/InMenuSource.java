@@ -12,10 +12,10 @@ import java.io.Serializable;
     * </p>
 *
 * @author ZXS
-* @since 2019-09-24
+* @since 2019-09-25
 */
     @Data
-        @EqualsAndHashCode(callSuper = false)
+    @EqualsAndHashCode(callSuper = false)
     @Accessors(chain = true)
     public class InMenuSource implements Serializable {
 

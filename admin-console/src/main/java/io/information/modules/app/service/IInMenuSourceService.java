@@ -2,6 +2,7 @@ package io.information.modules.app.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import io.information.modules.app.entity.InMenuSource;
+import org.apache.ibatis.annotations.Mapper;
 
 /**
  * <p>
@@ -9,8 +10,9 @@ import io.information.modules.app.entity.InMenuSource;
  * </p>
  *
  * @author ZXS
- * @since 2019-09-24
+ * @since 2019-09-25
  */
+@Mapper
 public interface IInMenuSourceService extends IService<InMenuSource> {
 
 }

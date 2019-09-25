@@ -2,6 +2,7 @@ package io.information.modules.app.dao;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import io.information.modules.app.entity.InCardArgue;
+import org.apache.ibatis.annotations.Mapper;
 
 /**
  * <p>
@@ -11,6 +12,7 @@ import io.information.modules.app.entity.InCardArgue;
  * @author ZXS
  * @since 2019-09-24
  */
+@Mapper
 public interface InCardArgueDao extends BaseMapper<InCardArgue> {
 
 }

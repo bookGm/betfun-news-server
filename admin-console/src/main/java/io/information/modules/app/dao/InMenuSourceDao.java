@@ -9,7 +9,7 @@ import io.information.modules.app.entity.InMenuSource;
  * </p>
  *
  * @author ZXS
- * @since 2019-09-24
+ * @since 2019-09-25
  */
 public interface InMenuSourceDao extends BaseMapper<InMenuSource> {
 
