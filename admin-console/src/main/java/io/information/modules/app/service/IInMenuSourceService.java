@@ -12,7 +12,6 @@ import org.apache.ibatis.annotations.Mapper;
  * @author ZXS
  * @since 2019-09-25
  */
-@Mapper
 public interface IInMenuSourceService extends IService<InMenuSource> {
 
 }

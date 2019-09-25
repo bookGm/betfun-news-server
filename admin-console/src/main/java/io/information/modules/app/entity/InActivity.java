@@ -41,7 +41,7 @@ import java.time.LocalDateTime;
             /**
             * 活动时间
             */
-    @DateTimeFormat(pattern = "yyyy-MM-dd hh:mm:ss")
+            @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime actTime;
 
             /**
@@ -82,19 +82,19 @@ import java.time.LocalDateTime;
             /**
             * 活动开始时间
             */
-    @DateTimeFormat(pattern = "yyyy-MM-dd hh:mm:ss")
+            @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime actStartTime;
 
             /**
             * 活动结束时间
             */
-    @DateTimeFormat(pattern = "yyyy-MM-dd hh:mm:ss")
+            @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime actCloseTime;
 
             /**
             * 活动创建时间
             */
-    @DateTimeFormat(pattern = "yyyy-MM-dd hh:mm:ss")
+            @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime actCreateTime;
 
 

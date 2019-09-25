@@ -21,8 +21,8 @@ import org.springframework.web.method.support.ModelAndViewContainer;
  */
 @Component
 public class LoginUserHandlerMethodArgumentResolver implements HandlerMethodArgumentResolver {
-    @Autowired
-    private UserService userService;
+    //@Autowired
+    //private UserService userService;
 
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
@@ -39,8 +39,8 @@ public class LoginUserHandlerMethodArgumentResolver implements HandlerMethodArgu
         }
 
         //获取用户信息
-        UserEntity user = userService.getById((Long)object);
+        //UserEntity user = userService.getById((Long)object);
 
-        return user;
+        return null/*user*/;
     }
 }

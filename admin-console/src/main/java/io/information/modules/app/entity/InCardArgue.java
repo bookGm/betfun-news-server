@@ -51,7 +51,7 @@ import java.time.LocalDateTime;
             /**
             * 辩论结束日期
             */
-    @DateTimeFormat(pattern = "yyyy-MM-dd hh:mm:ss")
+            @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime caCloseTime;
 
 

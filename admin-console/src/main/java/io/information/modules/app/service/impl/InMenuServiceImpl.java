@@ -70,7 +70,7 @@ public class InMenuServiceImpl extends ServiceImpl<InMenuDao, InMenu> implements
         queryWrapper.lambda().eq(InMenu::getMPcode,menuCode);
         List<InMenu> menus = this.list(queryWrapper);
         if(menus != null && !menus.isEmpty()){
-            throw new IMException(ExceptionEnum.MENU_PARENT_PATH);
+            throw new IMException(ExceptionEnum.NODE_PARENT_PATH);
         }else{
             //找到Menu对应的MenuSource
             InMenuSource menuSource = this.findMenuSource(menu);
@@ -89,6 +89,21 @@ public class InMenuServiceImpl extends ServiceImpl<InMenuDao, InMenu> implements
     @Transactional
     public void updateMenu(InMenu menu, InMenuSource menuSource, InSource source) {
         source.setSUpdateTime(LocalDateTime.now());
+        String mCode = menu.getMCode();
+
+        //更新子节点中的父节点信息
+        QueryWrapper<InMenu> queryWrapper = new QueryWrapper<>();
+        queryWrapper.lambda().eq(InMenu::getMPcode,mCode);
+        List<InMenu> menus = this.list(queryWrapper);
+        if(menus!=null && !menus.isEmpty()){
+            menus.forEach(menu1 -> {
+                InMenu menu2 = menu.setMPcode(mCode);
+                this.updateById(menu2);
+            });
+        }
+
+        InMenuSource menuSource1 = this.findMenuSource(menu);
+        menuSource1.setMCode(mCode);
 
         UpdateWrapper<InSource> updateWrapper = new UpdateWrapper<>();
         updateWrapper.lambda().eq(InSource::getSUrl,source.getSUrl());

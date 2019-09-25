@@ -1,8 +1,16 @@
 package io.information.modules.app.controller;
 
 
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import io.information.modules.app.config.IdWorker;
+import io.information.modules.app.entity.InTag;
+import io.information.modules.app.service.IInTagService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * <p>
@@ -13,7 +21,69 @@ import org.springframework.web.bind.annotation.RestController;
  * @since 2019-09-24
  */
 @RestController
-@RequestMapping("/modules.app/in-tag")
+@RequestMapping("/news/tag")
 public class InTagController {
+    @Autowired
+    private IInTagService tagService;
 
+
+    /**
+     * 添加标签
+     * @return
+     */
+    @PostMapping("/addTag")
+    public ResponseEntity<Void> addTag(InTag tag){
+        tag.setTId(new IdWorker().nextId());
+        tag.setTCreateTime(LocalDateTime.now());
+        tagService.save(tag);
+        return ResponseEntity.status(HttpStatus.OK).build();
+    }
+
+
+    /**
+     * 删除标签
+     * @return
+     */
+    @DeleteMapping("/deleteTage")
+    public ResponseEntity<Void> deleteTage(Long tagId){
+        tagService.removeById(tagId);
+        return ResponseEntity.status(HttpStatus.OK).build();
+    }
+
+
+    /**
+     * 批量删除标签
+     * @return
+     */
+    @DeleteMapping("/deleteTage")
+    public ResponseEntity<Void> deleteBatchTage(List<Long> tagIds){
+        tagService.removeByIds(tagIds);
+        return ResponseEntity.status(HttpStatus.OK).build();
+    }
+
+
+    /**
+     * 修改标签
+     * @param tag
+     * @return
+     */
+    @PutMapping("/updateTage")
+    public ResponseEntity<Void> updateTage(InTag tag){
+        tagService.updateById(tag);
+        return ResponseEntity.status(HttpStatus.OK).build();
+    }
+
+
+    /**
+     * 查询标签
+     * @return
+     */
+    @GetMapping("/queryTag")
+    public ResponseEntity<InTag> queryTag(Long tageId){
+        InTag tag = tagService.getById(tageId);
+        return ResponseEntity.ok(tag);
+    }
+
+
+    //TODO 多标签查询
 }

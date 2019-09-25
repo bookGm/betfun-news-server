@@ -2,6 +2,7 @@ package io.information.modules.app.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import io.information.modules.app.entity.InUser;
+import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
 

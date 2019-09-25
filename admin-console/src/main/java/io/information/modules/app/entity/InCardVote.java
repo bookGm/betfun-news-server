@@ -36,7 +36,7 @@ import java.time.LocalDateTime;
             /**
             * 结束日期
             */
-    @DateTimeFormat(pattern = "yyyy-MM-dd hh:mm:ss")
+            @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime cvCloseTime;
 
     private Integer cv0;
