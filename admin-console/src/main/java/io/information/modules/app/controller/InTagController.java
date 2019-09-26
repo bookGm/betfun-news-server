@@ -44,8 +44,8 @@ public class InTagController {
      * 删除标签
      * @return
      */
-    @DeleteMapping("/deleteTage")
-    public ResponseEntity<Void> deleteTage(Long tagId){
+    @DeleteMapping("/deleteTag")
+    public ResponseEntity<Void> deleteTag(Long tagId){
         tagService.removeById(tagId);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
@@ -55,8 +55,8 @@ public class InTagController {
      * 批量删除标签
      * @return
      */
-    @DeleteMapping("/deleteTage")
-    public ResponseEntity<Void> deleteBatchTage(List<Long> tagIds){
+    @DeleteMapping("/deleteBatchTag")
+    public ResponseEntity<Void> deleteBatchTag(List<Long> tagIds){
         tagService.removeByIds(tagIds);
         return ResponseEntity.status(HttpStatus.OK).build();
     }

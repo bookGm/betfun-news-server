@@ -75,7 +75,6 @@ public class InDicServiceImpl extends ServiceImpl<InDicDao, InDic> implements II
     @Override
     public List<InDic> queryAllDic() {
         QueryWrapper<InDic> queryWrapper = new QueryWrapper<>();
-        queryWrapper.lambda().apply("select * from in_dic");
         List<InDic> dics = this.list(queryWrapper);
         return dics;
     }

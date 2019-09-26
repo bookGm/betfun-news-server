@@ -23,7 +23,6 @@ public class InTagServiceImpl extends ServiceImpl<InTagDao, InTag> implements II
     @Override
     public List<InTag> queryAllTag() {
         LambdaQueryWrapper<InTag> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.apply("select * from in_tag");
         List<InTag> tagList = this.list(queryWrapper);
         return tagList;
     }

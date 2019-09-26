@@ -107,4 +107,5 @@ public class InDicController {
         List<InDic> dicList = dicService.queryAllDic();
         return ResponseEntity.ok(dicList);
     }
+
 }

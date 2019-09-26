@@ -146,7 +146,6 @@ public class InMenuServiceImpl extends ServiceImpl<InMenuDao, InMenu> implements
     public List<InMSource> queryAllMenu() {
         ArrayList<InMSource> mSources = new ArrayList<>();
         QueryWrapper<InMenu> queryWrapper = new QueryWrapper<>();
-        queryWrapper.apply("select * from in_menu");
         List<InMenu> menus = this.list(queryWrapper);
         menus.forEach(menu -> {
             InMSource mSource = this.queryMenuById(menu.getMId());
