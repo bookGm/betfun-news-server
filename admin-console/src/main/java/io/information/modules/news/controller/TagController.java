@@ -1,7 +1,9 @@
 package io.information.modules.news.controller;
 
+import io.information.common.annotation.SysLog;
 import io.information.common.utils.PageUtils;
 import io.information.common.utils.R;
+import io.information.common.validator.ValidatorUtils;
 import io.information.modules.news.entity.TagEntity;
 import io.information.modules.news.service.TagService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -29,7 +31,7 @@ public class TagController {
     /**
      * 列表
      */
-    @RequestMapping("/list")
+    @GetMapping("/list")
     @RequiresPermissions("news:tag:list")
     public R list(@RequestParam Map<String, Object> params){
         PageUtils page = tagService.queryPage(params);
@@ -41,7 +43,7 @@ public class TagController {
     /**
      * 信息
      */
-    @RequestMapping("/info/{tId}")
+    @GetMapping("/info/{tId}")
     @RequiresPermissions("news:tag:info")
     public R info(@PathVariable("tId") Long tId){
 		TagEntity tag = tagService.getById(tId);
@@ -52,10 +54,12 @@ public class TagController {
     /**
      * 保存
      */
-    @RequestMapping("/save")
+    @SysLog("保存标签")
+    @PostMapping("/save")
     @RequiresPermissions("news:tag:save")
     public R save(@RequestBody TagEntity tag){
-		tagService.save(tag);
+        ValidatorUtils.validateEntity(tag);
+		tagService.saveTag(tag);
 
         return R.ok();
     }
@@ -63,9 +67,10 @@ public class TagController {
     /**
      * 修改
      */
-    @RequestMapping("/update")
+    @PostMapping("/update")
     @RequiresPermissions("news:tag:update")
     public R update(@RequestBody TagEntity tag){
+        ValidatorUtils.validateEntity(tag);
 		tagService.updateById(tag);
 
         return R.ok();
@@ -74,9 +79,10 @@ public class TagController {
     /**
      * 删除
      */
-    @RequestMapping("/delete")
+    @PostMapping("/delete")
     @RequiresPermissions("news:tag:delete")
     public R delete(@RequestBody Long[] tIds){
+
 		tagService.removeByIds(Arrays.asList(tIds));
 
         return R.ok();

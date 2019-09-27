@@ -56,7 +56,7 @@ public class InCardBaseController {
 
 
     /**
-     * 根据帖子ID删除帖子基础信息
+     * 删除基础信息
      * @param cardIds
      * @return
      */
@@ -68,7 +68,7 @@ public class InCardBaseController {
 
 
     /**
-     * 根据帖子ID删除所有信息<包含关联表>
+     * 删除所有信息<包含关联表>
      * @param cardIds
      * @return
      */
@@ -80,7 +80,7 @@ public class InCardBaseController {
 
 
     /**
-     * 根据用户ID删除帖子基础信息
+     * 用户ID删除帖子基础信息
      * @param userId
      * @return
      */
@@ -167,7 +167,7 @@ public class InCardBaseController {
 
     /**
      * 根据用户ID查询所有帖子<包含关联表>
-     * @param userId
+     * @param userId // ERROR
      * @return
      */
     @GetMapping("/queryAllCard")

@@ -29,7 +29,7 @@ public class ActivityController {
     /**
      * 列表
      */
-    @RequestMapping("/list")
+    @GetMapping("/list")
     @RequiresPermissions("news:activity:list")
     public R list(@RequestParam Map<String, Object> params){
         PageUtils page = activityService.queryPage(params);
@@ -41,7 +41,7 @@ public class ActivityController {
     /**
      * 用户查询
      */
-    @RequestMapping("/infoAll/{uId}")
+    @GetMapping("/infoAll/{uId}")
     @RequiresPermissions("news:activity:infoAll")
     public R infoAll(@PathVariable("uId") Long uId){
         PageUtils userActivity = activityService.queryUserActivity(uId);
@@ -52,7 +52,7 @@ public class ActivityController {
     /**
      * 信息
      */
-    @RequestMapping("/info/{actId}")
+    @GetMapping("/info/{actId}")
     @RequiresPermissions("news:activity:info")
     public R info(@PathVariable("actId") Long actId){
 		ActivityEntity activity = activityService.getById(actId);
@@ -63,7 +63,7 @@ public class ActivityController {
     /**
      * 保存
      */
-    @RequestMapping("/save")
+    @PostMapping("/save")
     @RequiresPermissions("news:activity:save")
     public R save(@RequestBody ActivityEntity activity){
 		activityService.save(activity);
@@ -74,7 +74,7 @@ public class ActivityController {
     /**
      * 修改
      */
-    @RequestMapping("/update")
+    @PostMapping("/update")
     @RequiresPermissions("news:activity:update")
     public R update(@RequestBody ActivityEntity activity){
 		activityService.updateById(activity);
@@ -85,7 +85,7 @@ public class ActivityController {
     /**
      * 删除
      */
-    @RequestMapping("/delete")
+    @PostMapping("/delete")
     @RequiresPermissions("news:activity:delete")
     public R delete(@RequestBody Long[] actIds){
 		activityService.removeByIds(Arrays.asList(actIds));

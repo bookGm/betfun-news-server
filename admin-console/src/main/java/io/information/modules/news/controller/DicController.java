@@ -29,7 +29,7 @@ public class DicController {
     /**
      * 列表
      */
-    @RequestMapping("/list")
+    @GetMapping("/list")
     @RequiresPermissions("news:dic:list")
     public R list(@RequestParam Map<String, Object> params){
         PageUtils page = dicService.queryPage(params);
@@ -41,7 +41,7 @@ public class DicController {
     /**
      * 信息
      */
-    @RequestMapping("/info/{dId}")
+    @GetMapping("/info/{dId}")
     @RequiresPermissions("news:dic:info")
     public R info(@PathVariable("dId") Long dId){
 		DicEntity dic = dicService.getById(dId);
@@ -52,7 +52,7 @@ public class DicController {
     /**
      * 保存
      */
-    @RequestMapping("/save")
+    @PostMapping("/save")
     @RequiresPermissions("news:dic:save")
     public R save(@RequestBody DicEntity dic){
 		dicService.save(dic);
@@ -63,7 +63,7 @@ public class DicController {
     /**
      * 修改
      */
-    @RequestMapping("/update")
+    @PostMapping("/update")
     @RequiresPermissions("news:dic:update")
     public R update(@RequestBody DicEntity dic){
 		dicService.updateById(dic);
@@ -74,7 +74,7 @@ public class DicController {
     /**
      * 删除
      */
-    @RequestMapping("/delete")
+    @PostMapping("/delete")
     @RequiresPermissions("news:dic:delete")
     public R delete(@RequestBody Long[] dIds){
 		dicService.removeByIds(Arrays.asList(dIds));

@@ -29,7 +29,7 @@ public class CardVoteController {
     /**
      * 列表
      */
-    @RequestMapping("/list")
+    @GetMapping("/list")
     @RequiresPermissions("news:cardvote:list")
     public R list(@RequestParam Map<String, Object> params){
         PageUtils page = cardVoteService.queryPage(params);
@@ -41,7 +41,7 @@ public class CardVoteController {
     /**
      * 信息
      */
-    @RequestMapping("/info/{cId}")
+    @GetMapping("/info/{cId}")
     @RequiresPermissions("news:cardvote:info")
     public R info(@PathVariable("cId") Long cId){
 		CardVoteEntity cardVote = cardVoteService.getById(cId);
@@ -52,7 +52,7 @@ public class CardVoteController {
     /**
      * 保存
      */
-    @RequestMapping("/save")
+    @PostMapping("/save")
     @RequiresPermissions("news:cardvote:save")
     public R save(@RequestBody CardVoteEntity cardVote){
 		cardVoteService.save(cardVote);
@@ -63,7 +63,7 @@ public class CardVoteController {
     /**
      * 修改
      */
-    @RequestMapping("/update")
+    @PostMapping("/update")
     @RequiresPermissions("news:cardvote:update")
     public R update(@RequestBody CardVoteEntity cardVote){
 		cardVoteService.updateById(cardVote);
@@ -74,7 +74,7 @@ public class CardVoteController {
     /**
      * 删除
      */
-    @RequestMapping("/delete")
+    @PostMapping("/delete")
     @RequiresPermissions("news:cardvote:delete")
     public R delete(@RequestBody Long[] cIds){
 		cardVoteService.removeByIds(Arrays.asList(cIds));

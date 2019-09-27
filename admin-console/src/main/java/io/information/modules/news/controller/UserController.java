@@ -29,7 +29,7 @@ public class UserController {
     /**
      * 列表
      */
-    @RequestMapping("/list")
+    @GetMapping("/list")
     @RequiresPermissions("news:user:list")
     public R list(@RequestParam Map<String, Object> params){
         PageUtils page = userService.queryPage(params);
@@ -41,7 +41,7 @@ public class UserController {
     /**
      * 信息
      */
-    @RequestMapping("/info/{uId}")
+    @GetMapping("/info/{uId}")
     @RequiresPermissions("news:user:info")
     public R info(@PathVariable("uId") Long uId){
 		UserEntity user = userService.getById(uId);
@@ -64,7 +64,7 @@ public class UserController {
     /**
      * 保存
      */
-    @RequestMapping("/save")
+    @PostMapping("/save")
     @RequiresPermissions("news:user:save")
     public R save(@RequestBody UserEntity user){
 		userService.save(user);
@@ -75,7 +75,7 @@ public class UserController {
     /**
      * 修改
      */
-    @RequestMapping("/update")
+    @PostMapping("/update")
     @RequiresPermissions("news:user:update")
     public R update(@RequestBody UserEntity user){
 		userService.updateById(user);
@@ -86,7 +86,7 @@ public class UserController {
     /**
      * 删除
      */
-    @RequestMapping("/delete")
+    @PostMapping("/delete")
     @RequiresPermissions("news:user:delete")
     public R delete(@RequestBody Long[] uIds){
 		userService.removeByIds(Arrays.asList(uIds));

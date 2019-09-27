@@ -29,7 +29,7 @@ public class MenuController {
     /**
      * 列表
      */
-    @RequestMapping("/list")
+    @GetMapping("/list")
     @RequiresPermissions("news:menu:list")
     public R list(@RequestParam Map<String, Object> params){
         PageUtils page = menuService.queryPage(params);
@@ -41,7 +41,7 @@ public class MenuController {
     /**
      * 信息
      */
-    @RequestMapping("/info/{mId}")
+    @GetMapping("/info/{mId}")
     @RequiresPermissions("news:menu:info")
     public R info(@PathVariable("mId") Long mId){
 		MenuEntity menu = menuService.getById(mId);
@@ -52,7 +52,7 @@ public class MenuController {
     /**
      * 保存
      */
-    @RequestMapping("/save")
+    @PostMapping("/save")
     @RequiresPermissions("news:menu:save")
     public R save(@RequestBody MenuEntity menu){
 		menuService.save(menu);
@@ -63,7 +63,7 @@ public class MenuController {
     /**
      * 修改
      */
-    @RequestMapping("/update")
+    @PostMapping("/update")
     @RequiresPermissions("news:menu:update")
     public R update(@RequestBody MenuEntity menu){
 		menuService.updateById(menu);
@@ -74,7 +74,7 @@ public class MenuController {
     /**
      * 删除
      */
-    @RequestMapping("/delete")
+    @PostMapping("/delete")
     @RequiresPermissions("news:menu:delete")
     public R delete(@RequestBody Long[] mIds){
 		menuService.removeByIds(Arrays.asList(mIds));

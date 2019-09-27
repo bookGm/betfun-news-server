@@ -2,7 +2,10 @@ package io.information.modules.news.controller;
 
 import io.information.common.utils.PageUtils;
 import io.information.common.utils.R;
+import io.information.modules.news.entity.CardArgueEntity;
 import io.information.modules.news.entity.CardBaseEntity;
+import io.information.modules.news.entity.CardVo;
+import io.information.modules.news.entity.CardVoteEntity;
 import io.information.modules.news.service.CardBaseService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +32,7 @@ public class CardBaseController {
     /**
      * 列表
      */
-    @RequestMapping("/list")
+    @GetMapping("/list")
     @RequiresPermissions("news:cardbase:list")
     public R list(@RequestParam Map<String, Object> params){
         PageUtils page = cardBaseService.queryPage(params);
@@ -41,7 +44,7 @@ public class CardBaseController {
     /**
      * 信息
      */
-    @RequestMapping("/info/{cId}")
+    @GetMapping("/info/{cId}")
     @RequiresPermissions("news:cardbase:info")
     public R info(@PathVariable("cId") Long cId){
 		CardBaseEntity cardBase = cardBaseService.getById(cId);
@@ -52,7 +55,7 @@ public class CardBaseController {
     /**
      * 保存
      */
-    @RequestMapping("/save")
+    @PostMapping("/save")
     @RequiresPermissions("news:cardbase:save")
     public R save(@RequestBody CardBaseEntity cardBase){
 		cardBaseService.save(cardBase);
@@ -63,7 +66,7 @@ public class CardBaseController {
     /**
      * 修改
      */
-    @RequestMapping("/update")
+    @PostMapping("/update")
     @RequiresPermissions("news:cardbase:update")
     public R update(@RequestBody CardBaseEntity cardBase){
 		cardBaseService.updateById(cardBase);
@@ -74,12 +77,46 @@ public class CardBaseController {
     /**
      * 删除
      */
-    @RequestMapping("/delete")
+    @PostMapping("/delete")
     @RequiresPermissions("news:cardbase:delete")
     public R delete(@RequestBody Long[] cIds){
 		cardBaseService.removeByIds(Arrays.asList(cIds));
 
         return R.ok();
+    }
+
+    /////////////////////////////////////////////////
+
+    /**
+     * 添加帖子<包含关联表>
+     */
+    @PostMapping("/listAll")
+    @RequiresPermissions("news:cardbase:listAll")
+    public R addCard(@RequestBody CardVo cardVo){
+        cardBaseService.addCard(cardVo);
+        return R.ok();
+    }
+
+
+    /**
+     * 删除帖子<包含关联表>
+     */
+    @PostMapping("/deleteAll")
+    @RequiresPermissions("news:cardbase:deleteAll")
+    public R deleteCard(@RequestBody Long[] cardIds){
+        cardBaseService.deleteCard(cardIds);
+        return R.ok();
+    }
+
+
+    /**
+     * 用户帖子<包含关联表>
+     */
+    @GetMapping("/listUCard")
+    @RequiresPermissions("news:cardbase:listUCard")
+    public R queryAllCard(@RequestBody Long userId){
+        PageUtils pageAll = cardBaseService.queryAllCard(userId);
+        return R.ok().put("pageAll",pageAll);
     }
 
 }

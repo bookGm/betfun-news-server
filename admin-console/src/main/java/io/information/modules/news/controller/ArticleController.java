@@ -31,7 +31,7 @@ public class ArticleController {
     /**
      * 列表
      */
-    @RequestMapping("/list")
+    @GetMapping("/list")
     @RequiresPermissions("news:article:list")
     public R list(@RequestParam Map<String, Object> params) {
         PageUtils page = articleService.queryPage(params);
@@ -43,7 +43,7 @@ public class ArticleController {
     /**
      * 信息
      */
-    @RequestMapping("/info/{aId}")
+    @GetMapping("/info/{aId}")
     @RequiresPermissions("news:article:info")
     public R info(@PathVariable("aId") Long aId) {
         ArticleEntity article = articleService.getById(aId);
@@ -66,7 +66,7 @@ public class ArticleController {
     /**
      * 保存
      */
-    @RequestMapping("/save")
+    @PostMapping("/save")
     @RequiresPermissions("news:article:save")
     public R save(@RequestBody ArticleEntity article) {
         article.setAId(new IdWorker().nextId());
@@ -79,7 +79,7 @@ public class ArticleController {
     /**
      * 修改
      */
-    @RequestMapping("/update")
+    @PostMapping("/update")
     @RequiresPermissions("news:article:update")
     public R update(@RequestBody ArticleEntity article) {
         articleService.updateById(article);
@@ -102,7 +102,7 @@ public class ArticleController {
     /**
      * 用户ID删除
      */
-    @GetMapping("/deleteAll/{uId}")
+    @PostMapping("/deleteAll/{uId}")
     @RequiresPermissions("news:article:deleteAll")
     public R deleteAll(@PathVariable("uId") Long uId) {
         articleService.deleteAllActive(uId);

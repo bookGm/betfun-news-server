@@ -29,7 +29,7 @@ public class SourceController {
     /**
      * 列表
      */
-    @RequestMapping("/list")
+    @GetMapping("/list")
     @RequiresPermissions("news:source:list")
     public R list(@RequestParam Map<String, Object> params){
         PageUtils page = sourceService.queryPage(params);
@@ -41,7 +41,7 @@ public class SourceController {
     /**
      * 信息
      */
-    @RequestMapping("/info/{sUrl}")
+    @GetMapping("/info/{sUrl}")
     @RequiresPermissions("news:source:info")
     public R info(@PathVariable("sUrl") String sUrl){
 		SourceEntity source = sourceService.getById(sUrl);
@@ -52,7 +52,7 @@ public class SourceController {
     /**
      * 保存
      */
-    @RequestMapping("/save")
+    @PostMapping("/save")
     @RequiresPermissions("news:source:save")
     public R save(@RequestBody SourceEntity source){
 		sourceService.save(source);
@@ -74,7 +74,7 @@ public class SourceController {
     /**
      * 删除
      */
-    @RequestMapping("/delete")
+    @PostMapping("/delete")
     @RequiresPermissions("news:source:delete")
     public R delete(@RequestBody String[] sUrls){
 		sourceService.removeByIds(Arrays.asList(sUrls));

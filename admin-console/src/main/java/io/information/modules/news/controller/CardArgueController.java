@@ -29,7 +29,7 @@ public class CardArgueController {
     /**
      * 列表
      */
-    @RequestMapping("/list")
+    @GetMapping("/list")
     @RequiresPermissions("news:cardargue:list")
     public R list(@RequestParam Map<String, Object> params){
         PageUtils page = cardArgueService.queryPage(params);
@@ -41,7 +41,7 @@ public class CardArgueController {
     /**
      * 信息
      */
-    @RequestMapping("/info/{cId}")
+    @GetMapping("/info/{cId}")
     @RequiresPermissions("news:cardargue:info")
     public R info(@PathVariable("cId") Long cId){
 		CardArgueEntity cardArgue = cardArgueService.getById(cId);
@@ -52,7 +52,7 @@ public class CardArgueController {
     /**
      * 保存
      */
-    @RequestMapping("/save")
+    @PostMapping("/save")
     @RequiresPermissions("news:cardargue:save")
     public R save(@RequestBody CardArgueEntity cardArgue){
 		cardArgueService.save(cardArgue);
@@ -63,7 +63,7 @@ public class CardArgueController {
     /**
      * 修改
      */
-    @RequestMapping("/update")
+    @PostMapping("/update")
     @RequiresPermissions("news:cardargue:update")
     public R update(@RequestBody CardArgueEntity cardArgue){
 		cardArgueService.updateById(cardArgue);
@@ -71,10 +71,11 @@ public class CardArgueController {
         return R.ok();
     }
 
+
     /**
      * 删除
      */
-    @RequestMapping("/delete")
+    @PostMapping("/delete")
     @RequiresPermissions("news:cardargue:delete")
     public R delete(@RequestBody Long[] cIds){
 		cardArgueService.removeByIds(Arrays.asList(cIds));
