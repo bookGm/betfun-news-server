@@ -1,7 +1,7 @@
 package io.information.common.utils;
 
+import com.guansuo.common.StringUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang.StringUtils;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -126,20 +126,20 @@ public final class CookieUtils {
 
         public void build() {
             try {
-                if (StringUtils.isBlank(charset)) {
+                if (StringUtil.isBlank(charset)) {
                     charset = "utf-8";
                 }
-                if(StringUtils.isBlank(name)||StringUtils.isBlank(value)){
+                if(StringUtil.isBlank(name)||StringUtil.isBlank(value)){
                     throw new RuntimeException("cookie名称和值不能为空！");
                 }
-                if (StringUtils.isNotBlank(charset)) {
+                if (StringUtil.isNotBlank(charset)) {
                     value = URLEncoder.encode(value, charset);
                 }
                 Cookie cookie = new Cookie(name, value);
                 if (maxAge != null && maxAge >= 0)
                     cookie.setMaxAge(maxAge);
 
-                if(StringUtils.isNotBlank(domain)){
+                if(StringUtil.isNotBlank(domain)){
                     cookie.setDomain(domain);
                 }else if (null != request) {
                     // 设置域名的cookie
@@ -147,7 +147,7 @@ public final class CookieUtils {
                 }
                 // 设置path
                 cookie.setPath("/");
-                if(StringUtils.isNotBlank(path)){
+                if(StringUtil.isNotBlank(path)){
                     cookie.setPath(path);
                 }
                 cookie.setHttpOnly(httpOnly);

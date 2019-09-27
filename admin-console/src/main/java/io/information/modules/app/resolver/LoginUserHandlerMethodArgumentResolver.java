@@ -3,8 +3,10 @@
 package io.information.modules.app.resolver;
 
 import io.information.modules.app.annotation.LoginUser;
+import io.information.modules.app.entity.InUser;
 import io.information.modules.app.entity.UserEntity;
 import io.information.modules.app.interceptor.AuthorizationInterceptor;
+import io.information.modules.app.service.IInUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.MethodParameter;
 import org.springframework.stereotype.Component;
@@ -22,7 +24,7 @@ import org.springframework.web.method.support.ModelAndViewContainer;
 @Component
 public class LoginUserHandlerMethodArgumentResolver implements HandlerMethodArgumentResolver {
     @Autowired
-    private UserService userService;
+    private IInUserService userService;
 
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
@@ -39,8 +41,7 @@ public class LoginUserHandlerMethodArgumentResolver implements HandlerMethodArgu
         }
 
         //获取用户信息
-        UserEntity user = userService.getById((Long)object);
-
+        InUser user = userService.getById((Long)object);
         return user;
     }
 }
