@@ -75,7 +75,7 @@ public class InUserController {
      * @param params 条件<用户名，用户昵称，手机号>
      * @return
      */
-    @GetMapping("/like")
+    @GetMapping("/queryLike")
     public ResponseEntity<List<InUser>> queryLikeByUser(String params){
         List<InUser> users = userService.queryLikeByUser(params);
         return ResponseEntity.ok(users);
@@ -86,7 +86,7 @@ public class InUserController {
      * 根据用户昵称查询 <昵称不可重复>
      * @return
      */
-    @GetMapping("/exact")
+    @GetMapping("/queryName")
     public ResponseEntity<InUser> queryUserByNick(String nick){
         InUser user = userService.queryUserByNick(nick);
         return ResponseEntity.ok(user);

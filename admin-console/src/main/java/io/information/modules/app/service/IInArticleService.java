@@ -1,6 +1,7 @@
 package io.information.modules.app.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import io.information.common.utils.PageUtils;
 import io.information.modules.app.entity.InArticle;
 
 import java.util.List;
@@ -18,4 +19,6 @@ public interface IInArticleService extends IService<InArticle> {
     void deleteAllArticle(Long userId);
 
     List<InArticle> queryAllArticle(Long userId);
+
+    PageUtils queryPage(int page,int szie);
 }

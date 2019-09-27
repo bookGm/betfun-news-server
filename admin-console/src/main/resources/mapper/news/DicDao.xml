@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.information.modules.news.dao.DicDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.information.modules.news.entity.DicEntity" id="dicMap">
+        <result property="dId" column="d_id"/>
+        <result property="dName" column="d_name"/>
+        <result property="dValue" column="d_value"/>
+        <result property="dCode" column="d_code"/>
+        <result property="dPcode" column="d_pcode"/>
+        <result property="dDisable" column="d_disable"/>
+        <result property="dUrl" column="d_url"/>
+    </resultMap>
+
+
+</mapper>

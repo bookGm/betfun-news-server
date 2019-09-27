@@ -1,6 +1,7 @@
 package io.information.modules.app.controller;
 
 
+import io.information.common.utils.PageUtils;
 import io.information.modules.app.config.IdWorker;
 import io.information.modules.app.entity.InActivity;
 import io.information.modules.app.service.IInActivityService;
@@ -15,6 +16,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -32,7 +34,7 @@ public class InActivityController {
     private IInActivityService activityService;
 
     /**
-     * 添加新活动
+     * 添加
      * @param activity
      * @return
      */
@@ -47,19 +49,19 @@ public class InActivityController {
 
 
     /**
-     * 根据活动ID删除活动
+     * 删除
      * @param activeIds
      * @return
      */
     @DeleteMapping("/deleteActive")
-    public ResponseEntity<Void> deleteActive(List<Long> activeIds){
-        activityService.removeByIds(activeIds);
+    public ResponseEntity<Void> deleteActive(Long[] activeIds){
+        activityService.removeByIds(Arrays.asList(activeIds));
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
 
     /**
-     * 根据用户ID批量删除用户活动
+     * 用户删除
      * @param userId
      * @return
      */
@@ -71,7 +73,7 @@ public class InActivityController {
 
 
     /**
-     * 修改活动信息
+     * 修改
      * @param activity
      * @return
      */
@@ -83,19 +85,19 @@ public class InActivityController {
 
 
     /**
-     * 根据用户ID查询活动信息
+     * TODO 用户查询
      * @param userId
      * @return
      */
     @GetMapping("/queryAllActivity")
-    public ResponseEntity<List<InActivity>> queryAllActivity(Long userId){
-        List<InActivity> activities = activityService.queryActivitiesByUserId(userId);
-        return ResponseEntity.ok(activities);
+    public PageUtils queryAllActivity(Long userId){
+        PageUtils pageUtils = activityService.queryActivitiesByUserId(userId);
+        return pageUtils;
     }
 
 
     /**
-     * 根据活动ID查询活动信息
+     * 查询
      * @param activeId
      * @return
      */

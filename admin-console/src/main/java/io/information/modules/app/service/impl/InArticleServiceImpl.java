@@ -1,7 +1,10 @@
 package io.information.modules.app.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import io.information.common.utils.PageUtils;
 import io.information.modules.app.dao.InArticleDao;
 import io.information.modules.app.entity.InArticle;
 import io.information.modules.app.service.IInArticleService;
@@ -25,7 +28,9 @@ public class InArticleServiceImpl extends ServiceImpl<InArticleDao, InArticle> i
     @Transactional
     public void deleteAllArticle(Long userId) {
         List<InArticle> articleList = this.queryAllArticle(userId);
-        List<Long> articleIds = articleList.stream().map(InArticle::getAId).collect(Collectors.toList());
+        List<Long> articleIds = articleList.stream()
+                .map(InArticle::getAId)
+                .collect(Collectors.toList());
         this.removeByIds(articleIds);
     }
 
@@ -35,5 +40,13 @@ public class InArticleServiceImpl extends ServiceImpl<InArticleDao, InArticle> i
         queryWrapper.lambda().eq(InArticle::getUId,userId);
         List<InArticle> articleList = this.list(queryWrapper);
         return articleList;
+    }
+
+    @Override
+    public PageUtils queryPage(int page,int size) {
+        Page<InArticle> page1 = new Page<>(page, size);
+        IPage<InArticle> iPage = this.baseMapper.selectPage(
+                page1, new QueryWrapper<InArticle>());
+        return new PageUtils(iPage);
     }
 }

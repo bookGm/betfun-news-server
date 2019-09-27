@@ -1,6 +1,7 @@
 package io.information.modules.app.controller;
 
 
+import io.information.common.utils.PageUtils;
 import io.information.modules.app.config.IdWorker;
 import io.information.modules.app.entity.InArticle;
 import io.information.modules.app.service.IInArticleService;
@@ -10,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -27,7 +29,7 @@ public class InArticleController {
     private IInArticleService articleService;
 
     /**
-     * 添加文章
+     * 添加
      * @param article
      * @return
      */
@@ -41,19 +43,19 @@ public class InArticleController {
 
 
     /**
-     * 根据文章ID删除文章
+     * 删除
      * @param articleIds
      * @return
      */
     @DeleteMapping("/deleteArticle")
-    public ResponseEntity<Void> deleteArticle(List<Long> articleIds){
-        articleService.removeByIds(articleIds);
+    public ResponseEntity<Void> deleteArticle(Long[] articleIds){
+        articleService.removeByIds(Arrays.asList(articleIds));
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
 
     /**
-     * 根据用户ID删除文章
+     * 用户删除
      * @param userId
      * @return
      */
@@ -65,7 +67,7 @@ public class InArticleController {
 
 
     /**
-     * 修改文章信息
+     * 修改
      * @param article
      * @return
      */
@@ -77,7 +79,19 @@ public class InArticleController {
 
 
     /**
-     * 根据文章ID查询
+     * 列表
+     * @return
+     */
+    @GetMapping("/queryAllArticle")
+    public ResponseEntity<PageUtils> queryAllArticle(@RequestParam(defaultValue = "1")int curPage,
+                                                     @RequestParam(defaultValue = "10")int size){
+        PageUtils page = articleService.queryPage(curPage,size);
+        return ResponseEntity.ok(page);
+    }
+
+
+    /**
+     * 查询
      * @param articleId
      * @return
      */
@@ -89,13 +103,15 @@ public class InArticleController {
 
 
     /**
-     * 根据用户ID查询
+     * 用户查询
      * @param userId
      * @return
      */
-    @GetMapping("/queryAllArticle")
-    public ResponseEntity<List<InArticle>> queryAllArticle(Long userId){
-        List<InArticle> articleList = articleService.queryAllArticle(userId);
-        return ResponseEntity.ok(articleList);
+    @GetMapping("/queryUserArticle")
+    public ResponseEntity<PageUtils> queryUserArticle(Long userId,
+                                                           @RequestParam(defaultValue = "1")int curPage,
+                                                           @RequestParam(defaultValue = "10")int size){
+        List<InArticle> articles = articleService.queryAllArticle(userId);
+        return ResponseEntity.ok(new PageUtils(articles,articles.size(),size,curPage));
     }
 }

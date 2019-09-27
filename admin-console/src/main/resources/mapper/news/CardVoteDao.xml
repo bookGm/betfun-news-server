@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.information.modules.news.dao.CardVoteDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.information.modules.news.entity.CardVoteEntity" id="cardVoteMap">
+        <result property="cId" column="c_id"/>
+        <result property="cvInfo" column="cv_info"/>
+        <result property="cvCloseTime" column="cv_close_time"/>
+        <result property="cv0" column="cv_0"/>
+        <result property="cv1" column="cv_1"/>
+        <result property="cv2" column="cv_2"/>
+        <result property="cv3" column="cv_3"/>
+        <result property="cv4" column="cv_4"/>
+        <result property="cv5" column="cv_5"/>
+        <result property="cv6" column="cv_6"/>
+        <result property="cv7" column="cv_7"/>
+        <result property="cv8" column="cv_8"/>
+        <result property="cv9" column="cv_9"/>
+        <result property="cv10" column="cv_10"/>
+        <result property="cv11" column="cv_11"/>
+        <result property="cv12" column="cv_12"/>
+        <result property="cv13" column="cv_13"/>
+        <result property="cv14" column="cv_14"/>
+        <result property="cv15" column="cv_15"/>
+        <result property="cv16" column="cv_16"/>
+        <result property="cv17" column="cv_17"/>
+        <result property="cv18" column="cv_18"/>
+        <result property="cv19" column="cv_19"/>
+        <result property="cv20" column="cv_20"/>
+        <result property="cv21" column="cv_21"/>
+        <result property="cv22" column="cv_22"/>
+        <result property="cv23" column="cv_23"/>
+        <result property="cv24" column="cv_24"/>
+        <result property="cv25" column="cv_25"/>
+        <result property="cv26" column="cv_26"/>
+        <result property="cv27" column="cv_27"/>
+        <result property="cv28" column="cv_28"/>
+        <result property="cv29" column="cv_29"/>
+    </resultMap>
+
+
+</mapper>

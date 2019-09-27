@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.information.modules.news.dao.ArticleDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.information.modules.news.entity.ArticleEntity" id="articleMap">
+        <result property="aId" column="a_id"/>
+        <result property="uId" column="u_id"/>
+        <result property="aTitle" column="a_title"/>
+        <result property="aContent" column="a_content"/>
+        <result property="aBrief" column="a_brief"/>
+        <result property="aKeyword" column="a_keyword"/>
+        <result property="aCover" column="a_cover"/>
+        <result property="aType" column="a_type"/>
+        <result property="aSource" column="a_source"/>
+        <result property="aLink" column="a_link"/>
+        <result property="aLike" column="a_like"/>
+        <result property="aCollect" column="a_collect"/>
+        <result property="aCritic" column="a_critic"/>
+        <result property="aCreateTime" column="a_create_time"/>
+    </resultMap>
+
+
+</mapper>

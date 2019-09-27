@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.information.modules.news.dao.UserDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.information.modules.news.entity.UserEntity" id="userMap">
+        <result property="uId" column="u_id"/>
+        <result property="uName" column="u_name"/>
+        <result property="uPwd" column="u_pwd"/>
+        <result property="uSalt" column="u_salt"/>
+        <result property="uNick" column="u_nick"/>
+        <result property="uPhone" column="u_phone"/>
+        <result property="uIntro" column="u_intro"/>
+        <result property="uFans" column="u_fans"/>
+        <result property="uFocus" column="u_focus"/>
+        <result property="uAuthStatus" column="u_auth_status"/>
+        <result property="uToken" column="u_token"/>
+    </resultMap>
+
+
+</mapper>

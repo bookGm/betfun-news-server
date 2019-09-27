@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.information.modules.news.dao.MenuDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.information.modules.news.entity.MenuEntity" id="menuMap">
+        <result property="mId" column="m_id"/>
+        <result property="mName" column="m_name"/>
+        <result property="mCode" column="m_code"/>
+        <result property="mPcode" column="m_pcode"/>
+        <result property="mUrl" column="m_url"/>
+        <result property="mDisable" column="m_disable"/>
+    </resultMap>
+
+
+</mapper>

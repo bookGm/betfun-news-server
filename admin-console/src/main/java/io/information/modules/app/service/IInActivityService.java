@@ -1,9 +1,8 @@
 package io.information.modules.app.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import io.information.common.utils.PageUtils;
 import io.information.modules.app.entity.InActivity;
-
-import java.util.List;
 
 /**
  * <p>
@@ -15,7 +14,7 @@ import java.util.List;
  */
 public interface IInActivityService extends IService<InActivity> {
 
-    List<InActivity> queryActivitiesByUserId(Long userId);
+    PageUtils queryActivitiesByUserId(Long userId);
 
     void deleteAllActive(Long userId);
 

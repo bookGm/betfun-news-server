@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.information.modules.news.dao.CardBaseDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.information.modules.news.entity.CardBaseEntity" id="cardBaseMap">
+        <result property="cId" column="c_id"/>
+        <result property="uId" column="u_id"/>
+        <result property="cCategory" column="c_category"/>
+        <result property="cNodeCategory" column="c_node_category"/>
+        <result property="cContent" column="c_content"/>
+        <result property="cHide" column="c_hide"/>
+    </resultMap>
+
+
+</mapper>

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.information.modules.news.dao.ActivityDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.information.modules.news.entity.ActivityEntity" id="activityMap">
+        <result property="actId" column="act_id"/>
+        <result property="uId" column="u_id"/>
+        <result property="actTitle" column="act_title"/>
+        <result property="actTime" column="act_time"/>
+        <result property="actCategory" column="act_category"/>
+        <result property="actAddr" column="act_addr"/>
+        <result property="actAddrDetail" column="act_addr_detail"/>
+        <result property="actNum" column="act_num"/>
+        <result property="actInNum" column="act_in_num"/>
+        <result property="actCover" column="act_cover"/>
+        <result property="actDetail" column="act_detail"/>
+        <result property="actStartTime" column="act_start_time"/>
+        <result property="actCloseTime" column="act_close_time"/>
+        <result property="actCreateTime" column="act_create_time"/>
+    </resultMap>
+
+
+</mapper>
