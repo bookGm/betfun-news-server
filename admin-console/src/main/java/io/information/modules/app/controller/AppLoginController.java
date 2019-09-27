@@ -38,7 +38,7 @@ import java.util.Map;
 @Api("APP登录接口")
 public class AppLoginController {
     @Autowired
-    private IInUserService userService;
+    private IInUserService iInUserService;
     @Autowired
     private JwtUtils jwtUtils;
     @Autowired
@@ -54,7 +54,7 @@ public class AppLoginController {
         if (StringUtil.isBlank(phone)) return R.error(HttpStatus.SC_UNAUTHORIZED,"请输入手机号码！");
         LambdaQueryWrapper<InUser> qw=new LambdaQueryWrapper<InUser>();
         qw.eq(InUser::getUPhone,phone);
-        InUser user=userService.getOne(qw);
+        InUser user=iInUserService.getOne(qw);
         if(null==user){
             return R.error("不存在该用户，请先注册!");
         }
@@ -77,7 +77,7 @@ public class AppLoginController {
         //用户登录
         LambdaQueryWrapper<InUser> qw=new LambdaQueryWrapper<InUser>();
         qw.eq(InUser::getUPhone,form.getUPhone());
-        InUser user=userService.getOne(qw);
+        InUser user=iInUserService.getOne(qw);
         if(null == user || !user.getUPwd().equals(new Sha256Hash(form.getUPwd(), user.getUSalt()).toHex())) {
             return R.error("" +
                     "手机号或密码不正确");
@@ -93,7 +93,7 @@ public class AppLoginController {
         }
         LambdaQueryWrapper<InUser> qw=new LambdaQueryWrapper<InUser>();
         qw.eq(InUser::getUPhone,form.getUPhone());
-        InUser user=userService.getOne(qw);
+        InUser user=iInUserService.getOne(qw);
         if(null == user) {
             return R.error("手机号不存在");
         }
@@ -115,7 +115,7 @@ public class AppLoginController {
         }
         LambdaQueryWrapper<InUser> qw=new LambdaQueryWrapper<InUser>();
         qw.eq(InUser::getUPhone,form.getUPhone());
-        InUser user=userService.getOne(qw);
+        InUser user=iInUserService.getOne(qw);
         if(null != user) {
             return R.error("手机号已存在");
         }
@@ -128,7 +128,7 @@ public class AppLoginController {
             user.setUSalt(salt);
             user.setUPhone(form.getUPhone());
             user.setUToken(r.get("token").toString());
-            userService.save(user);
+            iInUserService.save(user);
             return r;
         }else{
             return R.error("验证码输入错误");

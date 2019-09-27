@@ -26,7 +26,7 @@ public class InCardBaseController {
     @Autowired
     private IInCardBaseService cardBaseService;
     @Autowired
-    private IInUserService userService;
+    private IInUserService iInUserService;
 
     /**
      * 添加基础帖子
@@ -184,7 +184,7 @@ public class InCardBaseController {
      */
     @GetMapping("/queryUserList")
     public ResponseEntity<List<InUser>> queryUsersByArgueIds(String userIds){
-        List<InUser> userList = userService.queryUsersByArgueIds(userIds);
+        List<InUser> userList = iInUserService.queryUsersByArgueIds(userIds);
         return ResponseEntity.ok(userList);
     }
 

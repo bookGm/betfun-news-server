@@ -7,7 +7,6 @@ import io.information.common.exception.IMException;
 import io.information.modules.app.dao.InUserDao;
 import io.information.modules.app.entity.InUser;
 import io.information.modules.app.service.IInUserService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;

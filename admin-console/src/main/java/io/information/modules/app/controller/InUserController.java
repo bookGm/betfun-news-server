@@ -23,7 +23,7 @@ import java.util.List;
 @RequestMapping("/news/user")
 public class InUserController {
     @Autowired
-    private IInUserService userService;
+    private IInUserService iInUserService;
 
 
     //TODO 注册
@@ -35,7 +35,7 @@ public class InUserController {
      */
     @DeleteMapping("/delete")
     public ResponseEntity<Boolean> delete(Long userId){
-        boolean flag = userService.removeById(userId);
+        boolean flag = iInUserService.removeById(userId);
         return ResponseEntity.ok(flag);
     }
 
@@ -47,7 +47,7 @@ public class InUserController {
      */
     @PutMapping("/update")
     public ResponseEntity update(InUser user){
-        boolean flag = userService.updateById(user);
+        boolean flag = iInUserService.updateById(user);
         return ResponseEntity.ok(flag);
     }
 
@@ -61,7 +61,7 @@ public class InUserController {
     @GetMapping("/login")
     public ResponseEntity<InUser> findUser(String username,String password){
         if(username != null || password !=null){
-            InUser user = userService.findUser(username,password);
+            InUser user = iInUserService.findUser(username,password);
             return ResponseEntity.ok(user);
         }else {
             //返回自定义异常
@@ -77,7 +77,7 @@ public class InUserController {
      */
     @GetMapping("/queryLike")
     public ResponseEntity<List<InUser>> queryLikeByUser(String params){
-        List<InUser> users = userService.queryLikeByUser(params);
+        List<InUser> users = iInUserService.queryLikeByUser(params);
         return ResponseEntity.ok(users);
     }
 
@@ -88,7 +88,7 @@ public class InUserController {
      */
     @GetMapping("/queryName")
     public ResponseEntity<InUser> queryUserByNick(String nick){
-        InUser user = userService.queryUserByNick(nick);
+        InUser user = iInUserService.queryUserByNick(nick);
         return ResponseEntity.ok(user);
     }
 
