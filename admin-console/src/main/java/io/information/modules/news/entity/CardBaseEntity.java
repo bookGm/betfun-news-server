@@ -14,7 +14,6 @@ import lombok.Data;
  * @email zhangxiaos@163.com
  * @date 2019-09-26 12:06:25
  */
-@Data
 @TableName("in_card_base")
 public class CardBaseEntity implements Serializable {
 	private static final long serialVersionUID = 1L;
@@ -45,4 +44,51 @@ public class CardBaseEntity implements Serializable {
 	 */
 	private Integer cHide;
 
+	public Long getcId() {
+		return cId;
+	}
+
+	public void setcId(Long cId) {
+		this.cId = cId;
+	}
+
+	public Long getuId() {
+		return uId;
+	}
+
+	public void setuId(Long uId) {
+		this.uId = uId;
+	}
+
+	public Integer getcCategory() {
+		return cCategory;
+	}
+
+	public void setcCategory(Integer cCategory) {
+		this.cCategory = cCategory;
+	}
+
+	public Integer getcNodeCategory() {
+		return cNodeCategory;
+	}
+
+	public void setcNodeCategory(Integer cNodeCategory) {
+		this.cNodeCategory = cNodeCategory;
+	}
+
+	public String getcContent() {
+		return cContent;
+	}
+
+	public void setcContent(String cContent) {
+		this.cContent = cContent;
+	}
+
+	public Integer getcHide() {
+		return cHide;
+	}
+
+	public void setcHide(Integer cHide) {
+		this.cHide = cHide;
+	}
 }

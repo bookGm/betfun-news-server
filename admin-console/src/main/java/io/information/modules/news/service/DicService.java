@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import io.information.common.utils.PageUtils;
 import io.information.modules.news.entity.DicEntity;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -11,10 +12,17 @@ import java.util.Map;
  *
  * @author zxs
  * @email zhangxiaos@163.com
- * @date 2019-09-26 12:06:25
+ * @date 2019-09-29 13:13:05
  */
 public interface DicService extends IService<DicEntity> {
 
     PageUtils queryPage(Map<String, Object> params);
+
+    List<DicEntity> queryDidAscList();
+
+    /**
+     * 获取字典列表
+     */
+    List<DicEntity> getListAll(String dict);
 }
 

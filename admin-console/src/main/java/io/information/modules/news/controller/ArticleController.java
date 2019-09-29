@@ -69,8 +69,8 @@ public class ArticleController {
     @PostMapping("/save")
     @RequiresPermissions("news:article:save")
     public R save(@RequestBody ArticleEntity article) {
-        article.setAId(new IdWorker().nextId());
-        article.setACreateTime(new Date());
+        article.setaId(new IdWorker().nextId());
+        article.setaCreateTime(new Date());
         articleService.save(article);
 
         return R.ok();
@@ -90,7 +90,7 @@ public class ArticleController {
     /**
      * 删除
      */
-    @RequestMapping("/delete")
+    @PostMapping("/delete")
     @RequiresPermissions("news:article:delete")
     public R delete(@RequestBody Long[] aIds) {
         articleService.removeByIds(Arrays.asList(aIds));

@@ -3,6 +3,7 @@ package io.information.modules.news.entity;
 import com.baomidou.mybatisplus.annotation.TableName;
 
 import java.io.Serializable;
+import java.util.Date;
 
 /**
  * 
@@ -27,33 +28,34 @@ public class TagEntity implements Serializable {
 	 * 标签来源（0：抓取  1：后台维护）
 	 */
 	private Integer tFrom;
-//	/**
-//	 * 标签创建时间
-//	 */
-//	private Date tCreateTime;
+	/**
+	 * 标签创建时间
+	 */
+	private Date tCreateTime;
 
 
 	public Long gettId() {
 		return tId;
 	}
-
 	public void settId(Long tId) {
 		this.tId = tId;
 	}
-
 	public String gettName() {
 		return tName;
 	}
-
 	public void settName(String tName) {
 		this.tName = tName;
 	}
-
 	public Integer gettFrom() {
 		return tFrom;
 	}
-
 	public void settFrom(Integer tFrom) {
 		this.tFrom = tFrom;
+	}
+	public Date gettCreateTime() {
+		return tCreateTime;
+	}
+	public void settCreateTime(Date tCreateTime) {
+		this.tCreateTime = tCreateTime;
 	}
 }

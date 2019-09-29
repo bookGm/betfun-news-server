@@ -33,11 +33,11 @@ public class SysCitysServiceImpl extends ServiceImpl<SysCitysDao, SysCitysEntity
     }
 
     @Override
-    @Cacheable(value = "citys",key = "#key")
+    @Cacheable(value = "citys", key = "#key")
     public Map<String, List<SysCitysEntity>> getListAll(String key) {
-        List<SysCitysEntity> citys=list();
-        Map<String,List<SysCitysEntity>> cs=citys.stream().collect(Collectors.groupingBy(n->{
-            switch(n.getLevel()){
+        List<SysCitysEntity> citys = list();
+        Map<String, List<SysCitysEntity>> cs = citys.stream().collect(Collectors.groupingBy(n -> {
+            switch (n.getLevel()) {
                 case 1:
                     return "province";
                 case 2:

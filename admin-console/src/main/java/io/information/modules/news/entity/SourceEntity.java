@@ -14,7 +14,6 @@ import lombok.Data;
  * @email zhangxiaos@163.com
  * @date 2019-09-26 12:06:25
  */
-@Data
 @TableName("in_source")
 public class SourceEntity implements Serializable {
 	private static final long serialVersionUID = 1L;
@@ -49,4 +48,59 @@ public class SourceEntity implements Serializable {
 	 */
 	private Date sCreateTime;
 
+	public String getsUrl() {
+		return sUrl;
+	}
+
+	public void setsUrl(String sUrl) {
+		this.sUrl = sUrl;
+	}
+
+	public String getsComponent() {
+		return sComponent;
+	}
+
+	public void setsComponent(String sComponent) {
+		this.sComponent = sComponent;
+	}
+
+	public String getsName() {
+		return sName;
+	}
+
+	public void setsName(String sName) {
+		this.sName = sName;
+	}
+
+	public Long getsOperationUserid() {
+		return sOperationUserid;
+	}
+
+	public void setsOperationUserid(Long sOperationUserid) {
+		this.sOperationUserid = sOperationUserid;
+	}
+
+	public Integer getsDisable() {
+		return sDisable;
+	}
+
+	public void setsDisable(Integer sDisable) {
+		this.sDisable = sDisable;
+	}
+
+	public Date getsUpdateTime() {
+		return sUpdateTime;
+	}
+
+	public void setsUpdateTime(Date sUpdateTime) {
+		this.sUpdateTime = sUpdateTime;
+	}
+
+	public Date getsCreateTime() {
+		return sCreateTime;
+	}
+
+	public void setsCreateTime(Date sCreateTime) {
+		this.sCreateTime = sCreateTime;
+	}
 }

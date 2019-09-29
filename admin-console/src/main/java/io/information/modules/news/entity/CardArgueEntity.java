@@ -14,7 +14,6 @@ import lombok.Data;
  * @email zhangxiaos@163.com
  * @date 2019-09-26 12:06:25
  */
-@Data
 @TableName("in_card_argue")
 public class CardArgueEntity implements Serializable {
 	private static final long serialVersionUID = 1L;
@@ -45,4 +44,52 @@ public class CardArgueEntity implements Serializable {
 	 */
 	private Date caCloseTime;
 
+
+	public Long getcId() {
+		return cId;
+	}
+
+	public void setcId(Long cId) {
+		this.cId = cId;
+	}
+
+	public String getCaFside() {
+		return caFside;
+	}
+
+	public void setCaFside(String caFside) {
+		this.caFside = caFside;
+	}
+
+	public String getCaRside() {
+		return caRside;
+	}
+
+	public void setCaRside(String caRside) {
+		this.caRside = caRside;
+	}
+
+	public String getCaFsideUids() {
+		return caFsideUids;
+	}
+
+	public void setCaFsideUids(String caFsideUids) {
+		this.caFsideUids = caFsideUids;
+	}
+
+	public String getCaRsideUids() {
+		return caRsideUids;
+	}
+
+	public void setCaRsideUids(String caRsideUids) {
+		this.caRsideUids = caRsideUids;
+	}
+
+	public Date getCaCloseTime() {
+		return caCloseTime;
+	}
+
+	public void setCaCloseTime(Date caCloseTime) {
+		this.caCloseTime = caCloseTime;
+	}
 }

@@ -1,7 +1,8 @@
 package io.information.modules.news.controller;
 
-import io.information.common.utils.PageUtils;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import io.information.common.utils.R;
+import io.information.common.utils.RedisKeys;
 import io.information.modules.news.entity.DicEntity;
 import io.information.modules.news.service.DicService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -9,7 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
-import java.util.Map;
+import java.util.List;
 
 
 
@@ -18,7 +19,7 @@ import java.util.Map;
  *
  * @author zxs
  * @email zhangxiaos@163.com
- * @date 2019-09-26 12:06:25
+ * @date 2019-09-29 13:13:05
  */
 @RestController
 @RequestMapping("news/dic")
@@ -26,15 +27,44 @@ public class DicController {
     @Autowired
     private DicService dicService;
 
+
     /**
-     * 列表
+     * 所有字典列表
+     */
+    @GetMapping("/listAll")
+    public R listAll(){
+        return R.ok().put("dict", dicService.getListAll(RedisKeys.CONSTANT_CITYS));
+    }
+
+    /**
+     * 所有菜单列表
      */
     @GetMapping("/list")
     @RequiresPermissions("news:dic:list")
-    public R list(@RequestParam Map<String, Object> params){
-        PageUtils page = dicService.queryPage(params);
+    public List<DicEntity> list(){
+        List<DicEntity> dicList = dicService.list();
+        return dicList;
+    }
 
-        return R.ok().put("page", page);
+
+    /**
+     * 选择菜单(添加、修改菜单)
+     */
+    @GetMapping("/select")
+    @RequiresPermissions("news:dic:select")
+    public R select(){
+        //查询列表数据
+        List<DicEntity> dicList = dicService.queryDidAscList();
+
+        //添加顶级菜单
+        DicEntity root = new DicEntity();
+        root.setdId(0L);
+        root.setdName("顶级编码");
+        root.setpId(-1L);;
+        root.setOpen(true);
+        dicList.add(root);
+
+        return R.ok().put("dicList", dicList);
     }
 
 
@@ -74,10 +104,18 @@ public class DicController {
     /**
      * 删除
      */
-    @PostMapping("/delete")
+    @PostMapping("/delete/{dId}")
     @RequiresPermissions("news:dic:delete")
-    public R delete(@RequestBody Long[] dIds){
-		dicService.removeByIds(Arrays.asList(dIds));
+    public R delete(@PathVariable("dId") Long[] dIds){
+        //删除编码先判断是包含子编码
+        QueryWrapper<DicEntity> queryWrapper = new QueryWrapper<>();
+        queryWrapper.lambda().in(DicEntity::getpId,Arrays.asList(dIds));
+        List<DicEntity> dicEntities = dicService.list(queryWrapper);
+        if(dicEntities.isEmpty()){
+            dicService.removeByIds(Arrays.asList(dIds));
+        }else {
+            return R.error("请先删除子编码");
+        }
 
         return R.ok();
     }

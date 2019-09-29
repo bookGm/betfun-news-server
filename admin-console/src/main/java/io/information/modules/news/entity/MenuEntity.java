@@ -14,7 +14,6 @@ import lombok.Data;
  * @email zhangxiaos@163.com
  * @date 2019-09-26 12:06:25
  */
-@Data
 @TableName("in_menu")
 public class MenuEntity implements Serializable {
 	private static final long serialVersionUID = 1L;
@@ -45,4 +44,51 @@ public class MenuEntity implements Serializable {
 	 */
 	private Integer mDisable;
 
+	public Long getmId() {
+		return mId;
+	}
+
+	public void setmId(Long mId) {
+		this.mId = mId;
+	}
+
+	public String getmName() {
+		return mName;
+	}
+
+	public void setmName(String mName) {
+		this.mName = mName;
+	}
+
+	public String getmCode() {
+		return mCode;
+	}
+
+	public void setmCode(String mCode) {
+		this.mCode = mCode;
+	}
+
+	public String getmPcode() {
+		return mPcode;
+	}
+
+	public void setmPcode(String mPcode) {
+		this.mPcode = mPcode;
+	}
+
+	public String getmUrl() {
+		return mUrl;
+	}
+
+	public void setmUrl(String mUrl) {
+		this.mUrl = mUrl;
+	}
+
+	public Integer getmDisable() {
+		return mDisable;
+	}
+
+	public void setmDisable(Integer mDisable) {
+		this.mDisable = mDisable;
+	}
 }

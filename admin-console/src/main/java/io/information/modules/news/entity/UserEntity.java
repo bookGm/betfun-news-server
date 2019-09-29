@@ -14,7 +14,6 @@ import lombok.Data;
  * @email zhangxiaos@163.com
  * @date 2019-09-26 12:06:25
  */
-@Data
 @TableName("in_user")
 public class UserEntity implements Serializable {
 	private static final long serialVersionUID = 1L;
@@ -65,4 +64,91 @@ public class UserEntity implements Serializable {
 	 */
 	private String uToken;
 
+	public Long getuId() {
+		return uId;
+	}
+
+	public void setuId(Long uId) {
+		this.uId = uId;
+	}
+
+	public String getuName() {
+		return uName;
+	}
+
+	public void setuName(String uName) {
+		this.uName = uName;
+	}
+
+	public String getuPwd() {
+		return uPwd;
+	}
+
+	public void setuPwd(String uPwd) {
+		this.uPwd = uPwd;
+	}
+
+	public String getuSalt() {
+		return uSalt;
+	}
+
+	public void setuSalt(String uSalt) {
+		this.uSalt = uSalt;
+	}
+
+	public String getuNick() {
+		return uNick;
+	}
+
+	public void setuNick(String uNick) {
+		this.uNick = uNick;
+	}
+
+	public String getuPhone() {
+		return uPhone;
+	}
+
+	public void setuPhone(String uPhone) {
+		this.uPhone = uPhone;
+	}
+
+	public String getuIntro() {
+		return uIntro;
+	}
+
+	public void setuIntro(String uIntro) {
+		this.uIntro = uIntro;
+	}
+
+	public Long getuFans() {
+		return uFans;
+	}
+
+	public void setuFans(Long uFans) {
+		this.uFans = uFans;
+	}
+
+	public Integer getuFocus() {
+		return uFocus;
+	}
+
+	public void setuFocus(Integer uFocus) {
+		this.uFocus = uFocus;
+	}
+
+	public Integer getuAuthStatus() {
+		return uAuthStatus;
+	}
+
+	public void setuAuthStatus(Integer uAuthStatus) {
+		this.uAuthStatus = uAuthStatus;
+	}
+
+	public String getuToken() {
+		return uToken;
+	}
+
+	public void setuToken(String uToken) {
+		this.uToken = uToken;
+	}
 }

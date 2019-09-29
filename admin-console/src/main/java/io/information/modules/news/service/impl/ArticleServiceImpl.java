@@ -32,7 +32,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleDao, ArticleEntity> i
     @Override
     public PageUtils queryAllArticle(Long userId) {
         QueryWrapper<ArticleEntity> queryWrapper = new QueryWrapper<>();
-        queryWrapper.lambda().eq(ArticleEntity::getUId,userId);
+        queryWrapper.lambda().eq(ArticleEntity::getuId,userId);
         Page<ArticleEntity> page = new Page<>(1, 10);
         IPage<ArticleEntity> iPage = this.baseMapper.selectPage(page, queryWrapper);
         return new PageUtils(iPage);
@@ -41,9 +41,9 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleDao, ArticleEntity> i
     @Override
     public void deleteAllActive(Long userId) {
         QueryWrapper<ArticleEntity> queryWrapper = new QueryWrapper<>();
-        queryWrapper.lambda().eq(ArticleEntity::getUId,userId);
+        queryWrapper.lambda().eq(ArticleEntity::getuId,userId);
         List<ArticleEntity> activities = this.list(queryWrapper);
-        List<Long> activeIds = activities.stream().map(ArticleEntity::getAId).collect(Collectors.toList());
+        List<Long> activeIds = activities.stream().map(ArticleEntity::getaId).collect(Collectors.toList());
         this.removeByIds(activeIds);
     }
 

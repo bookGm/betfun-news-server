@@ -10,7 +10,6 @@ import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Arrays;
 import java.util.Map;
 
 
@@ -82,8 +81,8 @@ public class TagController {
     @PostMapping("/delete")
     @RequiresPermissions("news:tag:delete")
     public R delete(@RequestBody Long[] tIds){
-
-		tagService.removeByIds(Arrays.asList(tIds));
+        Long tId = tIds[0];
+        tagService.delete(tIds);
 
         return R.ok();
     }

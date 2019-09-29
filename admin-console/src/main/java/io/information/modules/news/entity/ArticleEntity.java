@@ -14,7 +14,6 @@ import lombok.Data;
  * @email zhangxiaos@163.com
  * @date 2019-09-26 12:06:25
  */
-@Data
 @TableName("in_article")
 public class ArticleEntity implements Serializable {
 	private static final long serialVersionUID = 1L;
@@ -77,4 +76,115 @@ public class ArticleEntity implements Serializable {
 	 */
 	private Date aCreateTime;
 
+	public Long getaId() {
+		return aId;
+	}
+
+	public void setaId(Long aId) {
+		this.aId = aId;
+	}
+
+	public Long getuId() {
+		return uId;
+	}
+
+	public void setuId(Long uId) {
+		this.uId = uId;
+	}
+
+	public String getaTitle() {
+		return aTitle;
+	}
+
+	public void setaTitle(String aTitle) {
+		this.aTitle = aTitle;
+	}
+
+	public String getaContent() {
+		return aContent;
+	}
+
+	public void setaContent(String aContent) {
+		this.aContent = aContent;
+	}
+
+	public String getaBrief() {
+		return aBrief;
+	}
+
+	public void setaBrief(String aBrief) {
+		this.aBrief = aBrief;
+	}
+
+	public String getaKeyword() {
+		return aKeyword;
+	}
+
+	public void setaKeyword(String aKeyword) {
+		this.aKeyword = aKeyword;
+	}
+
+	public String getaCover() {
+		return aCover;
+	}
+
+	public void setaCover(String aCover) {
+		this.aCover = aCover;
+	}
+
+	public Integer getaType() {
+		return aType;
+	}
+
+	public void setaType(Integer aType) {
+		this.aType = aType;
+	}
+
+	public String getaSource() {
+		return aSource;
+	}
+
+	public void setaSource(String aSource) {
+		this.aSource = aSource;
+	}
+
+	public String getaLink() {
+		return aLink;
+	}
+
+	public void setaLink(String aLink) {
+		this.aLink = aLink;
+	}
+
+	public Long getaLike() {
+		return aLike;
+	}
+
+	public void setaLike(Long aLike) {
+		this.aLike = aLike;
+	}
+
+	public Integer getaCollect() {
+		return aCollect;
+	}
+
+	public void setaCollect(Integer aCollect) {
+		this.aCollect = aCollect;
+	}
+
+	public Long getaCritic() {
+		return aCritic;
+	}
+
+	public void setaCritic(Long aCritic) {
+		this.aCritic = aCritic;
+	}
+
+	public Date getaCreateTime() {
+		return aCreateTime;
+	}
+
+	public void setaCreateTime(Date aCreateTime) {
+		this.aCreateTime = aCreateTime;
+	}
 }

@@ -1,6 +1,7 @@
 package io.information.modules.news.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.guansuo.common.StringUtil;
@@ -13,7 +14,9 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 
@@ -38,8 +41,18 @@ public class TagServiceImpl extends ServiceImpl<TagDao, TagEntity> implements Ta
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void saveTag(TagEntity tag) {
-//        tag.setTCreateTime(new Date());
+        tag.settCreateTime(new Date());
         this.save(tag);
     }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void delete(Long[] tIds) {
+        List<Long> list = Arrays.asList(tIds);
+        UpdateWrapper<TagEntity> updateWrapper = new UpdateWrapper<>();
+        updateWrapper.lambda().in(TagEntity::gettId,list);
+        this.remove(updateWrapper);
+    }
+
 
 }
