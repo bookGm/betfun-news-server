@@ -8,8 +8,10 @@ import io.information.common.utils.Query;
 import io.information.modules.news.dao.DicDao;
 import io.information.modules.news.entity.DicEntity;
 import io.information.modules.news.service.DicService;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -35,10 +37,13 @@ public class DicServiceImpl extends ServiceImpl<DicDao, DicEntity> implements Di
     }
 
     @Override
-    public List<DicEntity> getListAll(String dict) {
+    @Cacheable(value = "dict",key = "#key")
+    public Map<String,List<DicEntity>> getListAll(String key) {
+        HashMap<String, List<DicEntity>> map = new HashMap<>();
         QueryWrapper<DicEntity> queryWrapper = new QueryWrapper<>();
-//        List<DicEntity> dicts = this.list(queryWrapper);
-        return this.list(queryWrapper);
+        List<DicEntity> dicts = this.list(queryWrapper);
+        map.put("dict",dicts);
+        return map;
     }
 
 }

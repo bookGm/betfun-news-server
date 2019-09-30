@@ -2,6 +2,7 @@
 
 package io.information.modules.sys.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import io.information.common.utils.PageUtils;
 import io.information.modules.sys.dao.SysCitysDao;
@@ -35,7 +36,8 @@ public class SysCitysServiceImpl extends ServiceImpl<SysCitysDao, SysCitysEntity
     @Override
     @Cacheable(value = "citys", key = "#key")
     public Map<String, List<SysCitysEntity>> getListAll(String key) {
-        List<SysCitysEntity> citys = list();
+        QueryWrapper<SysCitysEntity> queryWrapper = new QueryWrapper<>();
+        List<SysCitysEntity> citys = this.list(queryWrapper);
         Map<String, List<SysCitysEntity>> cs = citys.stream().collect(Collectors.groupingBy(n -> {
             switch (n.getLevel()) {
                 case 1:

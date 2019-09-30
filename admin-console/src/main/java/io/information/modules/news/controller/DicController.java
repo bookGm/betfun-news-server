@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
 import java.util.List;
-
+import java.util.Map;
 
 
 /**
@@ -32,8 +32,9 @@ public class DicController {
      * 所有字典列表
      */
     @GetMapping("/listAll")
-    public R listAll(){
-        return R.ok().put("dict", dicService.getListAll(RedisKeys.CONSTANT_CITYS));
+    public R listAll(String key){
+        Map<String, List<DicEntity>> listAll = dicService.getListAll(RedisKeys.CONSTANT_CITYS);
+        return R.ok().put("dict", listAll);
     }
 
     /**
@@ -60,7 +61,7 @@ public class DicController {
         DicEntity root = new DicEntity();
         root.setdId(0L);
         root.setdName("顶级编码");
-        root.setpId(-1L);;
+        root.setpId(-1L);
         root.setOpen(true);
         dicList.add(root);
 

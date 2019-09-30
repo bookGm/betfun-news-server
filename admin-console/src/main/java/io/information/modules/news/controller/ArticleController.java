@@ -5,6 +5,7 @@ import io.information.common.utils.R;
 import io.information.modules.app.config.IdWorker;
 import io.information.modules.news.entity.ArticleEntity;
 import io.information.modules.news.service.ArticleService;
+import io.information.modules.news.service.DicService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -47,7 +48,7 @@ public class ArticleController {
     @RequiresPermissions("news:article:info")
     public R info(@PathVariable("aId") Long aId) {
         ArticleEntity article = articleService.getById(aId);
-
+//        dicService.q
         return R.ok().put("article", article);
     }
 

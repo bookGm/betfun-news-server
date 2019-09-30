@@ -23,6 +23,6 @@ public interface DicService extends IService<DicEntity> {
     /**
      * 获取字典列表
      */
-    List<DicEntity> getListAll(String dict);
+    Map<String,List<DicEntity>> getListAll(String key);
 }
 
