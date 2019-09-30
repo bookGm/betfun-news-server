@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 
@@ -39,12 +41,26 @@ public class SourceController {
 
 
     /**
+     * 角色列表
+     */
+    @GetMapping("/select")
+    @RequiresPermissions("sys:role:select")
+    public R select(){
+        Map<String, Object> map = new HashMap<>();
+
+        List<SourceEntity> list = (List<SourceEntity>) sourceService.listByMap(map);
+
+        return R.ok().put("list", list);
+    }
+
+
+    /**
      * 信息
      */
     @GetMapping("/info/{sUrl}")
     @RequiresPermissions("news:source:info")
     public R info(@PathVariable("sUrl") String sUrl){
-		SourceEntity source = sourceService.getById(sUrl);
+		SourceEntity source = sourceService.getByUrl(sUrl);
 
         return R.ok().put("source", source);
     }
@@ -66,7 +82,7 @@ public class SourceController {
     @RequestMapping("/update")
     @RequiresPermissions("news:source:update")
     public R update(@RequestBody SourceEntity source){
-		sourceService.updateById(source);
+		sourceService.updateByUrl(source);
 
         return R.ok();
     }
@@ -77,7 +93,7 @@ public class SourceController {
     @PostMapping("/delete")
     @RequiresPermissions("news:source:delete")
     public R delete(@RequestBody String[] sUrls){
-		sourceService.removeByIds(Arrays.asList(sUrls));
+		sourceService.removeByUrl(Arrays.asList(sUrls));
 
         return R.ok();
     }

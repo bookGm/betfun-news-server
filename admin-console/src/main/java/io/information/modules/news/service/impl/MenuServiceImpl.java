@@ -1,5 +1,6 @@
 package io.information.modules.news.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -24,6 +25,13 @@ public class MenuServiceImpl extends ServiceImpl<MenuDao, MenuEntity> implements
         );
 
         return new PageUtils(page);
+    }
+
+    @Override
+    public MenuEntity getByCode(String mCode) {
+        LambdaQueryWrapper<MenuEntity> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(MenuEntity::getmCode, mCode);
+        return this.getOne(queryWrapper);
     }
 
 }

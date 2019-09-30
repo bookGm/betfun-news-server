@@ -1,6 +1,8 @@
 package io.information.modules.news.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import io.information.common.utils.PageUtils;
@@ -9,7 +11,9 @@ import io.information.modules.news.dao.SourceDao;
 import io.information.modules.news.entity.SourceEntity;
 import io.information.modules.news.service.SourceService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Map;
 
 
@@ -24,6 +28,29 @@ public class SourceServiceImpl extends ServiceImpl<SourceDao, SourceEntity> impl
         );
 
         return new PageUtils(page);
+    }
+
+    @Override
+    public SourceEntity getByUrl(String sUrl) {
+        LambdaQueryWrapper<SourceEntity> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(SourceEntity::getsUrl,sUrl);
+        return this.getOne(queryWrapper);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void updateByUrl(SourceEntity source) {
+        LambdaUpdateWrapper<SourceEntity> updateWrapper = new LambdaUpdateWrapper<>();
+        updateWrapper.eq(SourceEntity::getsUrl,source.getsUrl());
+        this.update(updateWrapper);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void removeByUrl(List<String> urlList) {
+        LambdaQueryWrapper<SourceEntity> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.in(SourceEntity::getsUrl,urlList);
+        this.remove(queryWrapper);
     }
 
 }

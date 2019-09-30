@@ -1,6 +1,5 @@
 package io.information.modules.news.controller;
 
-import io.information.common.utils.PageUtils;
 import io.information.common.utils.R;
 import io.information.modules.news.entity.MenuEntity;
 import io.information.modules.news.service.MenuService;
@@ -9,8 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
-import java.util.Map;
-
+import java.util.List;
 
 
 /**
@@ -31,20 +29,47 @@ public class MenuController {
      */
     @GetMapping("/list")
     @RequiresPermissions("news:menu:list")
-    public R list(@RequestParam Map<String, Object> params){
-        PageUtils page = menuService.queryPage(params);
+    public List<MenuEntity> list() {
+        List<MenuEntity> menuEntities = menuService.list();
+        for (MenuEntity menuEntity : menuEntities) {
+            MenuEntity parentMenuEntity = menuService.getByCode(menuEntity.getmCode());
+            if (parentMenuEntity != null) {
+                menuEntity.setmPname(parentMenuEntity.getmName());
+            }
+        }
 
-        return R.ok().put("page", page);
+        return menuEntities;
     }
 
+
+    /**
+     * 选择菜单(添加、修改菜单)
+     */
+    @GetMapping("/select")
+    @RequiresPermissions("sys:menu:select")
+    public R select(){
+        //查询列表数据
+        List<MenuEntity> menuList = menuService.list();
+
+        //添加顶级菜单
+        MenuEntity root = new MenuEntity();
+        //TODO  参数类型
+        root.setmCode("0");
+        root.setmName("一级菜单");
+        root.setmPcode("-1");
+        root.setOpen(true);
+        menuList.add(root);
+
+        return R.ok().put("menuList", menuList);
+    }
 
     /**
      * 信息
      */
     @GetMapping("/info/{mId}")
     @RequiresPermissions("news:menu:info")
-    public R info(@PathVariable("mId") Long mId){
-		MenuEntity menu = menuService.getById(mId);
+    public R info(@PathVariable("mId") Long mId) {
+        MenuEntity menu = menuService.getById(mId);
 
         return R.ok().put("menu", menu);
     }
@@ -54,8 +79,8 @@ public class MenuController {
      */
     @PostMapping("/save")
     @RequiresPermissions("news:menu:save")
-    public R save(@RequestBody MenuEntity menu){
-		menuService.save(menu);
+    public R save(@RequestBody MenuEntity menu) {
+        menuService.save(menu);
 
         return R.ok();
     }
@@ -65,8 +90,8 @@ public class MenuController {
      */
     @PostMapping("/update")
     @RequiresPermissions("news:menu:update")
-    public R update(@RequestBody MenuEntity menu){
-		menuService.updateById(menu);
+    public R update(@RequestBody MenuEntity menu) {
+        menuService.updateById(menu);
 
         return R.ok();
     }
@@ -76,8 +101,8 @@ public class MenuController {
      */
     @PostMapping("/delete")
     @RequiresPermissions("news:menu:delete")
-    public R delete(@RequestBody Long[] mIds){
-		menuService.removeByIds(Arrays.asList(mIds));
+    public R delete(@RequestBody Long[] mIds) {
+        menuService.removeByIds(Arrays.asList(mIds));
 
         return R.ok();
     }
