@@ -1,5 +1,6 @@
 package io.information.modules.news.controller;
 
+import io.information.common.utils.IdGenerator;
 import io.information.common.utils.R;
 import io.information.modules.news.entity.MenuEntity;
 import io.information.modules.news.service.MenuService;
@@ -32,7 +33,7 @@ public class MenuController {
     public List<MenuEntity> list() {
         List<MenuEntity> menuEntities = menuService.list();
         for (MenuEntity menuEntity : menuEntities) {
-            MenuEntity parentMenuEntity = menuService.getByCode(menuEntity.getmCode());
+            MenuEntity parentMenuEntity = menuService.getByCode(menuEntity.getmPcode());
             if (parentMenuEntity != null) {
                 menuEntity.setmPname(parentMenuEntity.getmName());
             }
@@ -80,6 +81,7 @@ public class MenuController {
     @PostMapping("/save")
     @RequiresPermissions("news:menu:save")
     public R save(@RequestBody MenuEntity menu) {
+        menu.setmCode(IdGenerator.getId()+"");
         menuService.save(menu);
 
         return R.ok();
@@ -99,10 +101,10 @@ public class MenuController {
     /**
      * 删除
      */
-    @PostMapping("/delete")
+    @PostMapping("/delete/{mId}")
     @RequiresPermissions("news:menu:delete")
-    public R delete(@RequestBody Long[] mIds) {
-        menuService.removeByIds(Arrays.asList(mIds));
+    public R delete(@PathVariable("mId") Long mId) {
+        menuService.removeById(mId);
 
         return R.ok();
     }

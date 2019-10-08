@@ -5,22 +5,22 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import io.information.common.utils.PageUtils;
 import io.information.common.utils.Query;
-import io.information.modules.news.dao.ActivityDao;
-import io.information.modules.news.entity.ActivityEntity;
-import io.information.modules.news.service.ActivityService;
+import io.information.modules.news.dao.CommonReplyDao;
+import io.information.modules.news.entity.CommonReplyEntity;
+import io.information.modules.news.service.CommonReplyService;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
 
 
-@Service("activityService")
-public class ActivityServiceImpl extends ServiceImpl<ActivityDao, ActivityEntity> implements ActivityService {
+@Service("commonReplyService")
+public class CommonReplyServiceImpl extends ServiceImpl<CommonReplyDao, CommonReplyEntity> implements CommonReplyService {
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
-        IPage<ActivityEntity> page = this.page(
-                new Query<ActivityEntity>().getPage(params),
-                new QueryWrapper<ActivityEntity>()
+        IPage<CommonReplyEntity> page = this.page(
+                new Query<CommonReplyEntity>().getPage(params),
+                new QueryWrapper<CommonReplyEntity>()
         );
 
         return new PageUtils(page);

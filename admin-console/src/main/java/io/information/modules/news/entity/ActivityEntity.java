@@ -5,6 +5,8 @@ import com.baomidou.mybatisplus.annotation.TableName;
 
 import java.io.Serializable;
 import java.util.Date;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
 /**
@@ -34,6 +36,7 @@ public class ActivityEntity implements Serializable {
 	/**
 	 * 活动时间
 	 */
+	@JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
 	private Date actTime;
 	/**
 	 * 活动分类（字典）
@@ -66,10 +69,12 @@ public class ActivityEntity implements Serializable {
 	/**
 	 * 活动开始时间
 	 */
+	@JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
 	private Date actStartTime;
 	/**
 	 * 活动结束时间
 	 */
+	@JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
 	private Date actCloseTime;
 	/**
 	 * 活动创建时间

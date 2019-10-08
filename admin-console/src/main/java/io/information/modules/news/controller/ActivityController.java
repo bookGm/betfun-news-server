@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
+import java.util.Date;
 import java.util.Map;
 
 
@@ -18,7 +19,7 @@ import java.util.Map;
  *
  * @author zxs
  * @email zhangxiaos@163.com
- * @date 2019-09-26 12:06:25
+ * @date 2019-10-08 17:01:27
  */
 @RestController
 @RequestMapping("news/activity")
@@ -29,7 +30,7 @@ public class ActivityController {
     /**
      * 列表
      */
-    @GetMapping("/list")
+    @RequestMapping("/list")
     @RequiresPermissions("news:activity:list")
     public R list(@RequestParam Map<String, Object> params){
         PageUtils page = activityService.queryPage(params);
@@ -39,20 +40,9 @@ public class ActivityController {
 
 
     /**
-     * 用户查询
-     */
-    @GetMapping("/infoAll/{uId}")
-    @RequiresPermissions("news:activity:infoAll")
-    public R infoAll(@PathVariable("uId") Long uId){
-        PageUtils userActivity = activityService.queryUserActivity(uId);
-        return R.ok().put("userActivity", userActivity);
-    }
-
-
-    /**
      * 信息
      */
-    @GetMapping("/info/{actId}")
+    @RequestMapping("/info/{actId}")
     @RequiresPermissions("news:activity:info")
     public R info(@PathVariable("actId") Long actId){
 		ActivityEntity activity = activityService.getById(actId);
@@ -63,9 +53,12 @@ public class ActivityController {
     /**
      * 保存
      */
-    @PostMapping("/save")
+    @RequestMapping("/save")
     @RequiresPermissions("news:activity:save")
     public R save(@RequestBody ActivityEntity activity){
+        //TODO
+        activity.setuId(0L);
+        activity.setActCreateTime(new Date());
 		activityService.save(activity);
 
         return R.ok();
@@ -74,7 +67,7 @@ public class ActivityController {
     /**
      * 修改
      */
-    @PostMapping("/update")
+    @RequestMapping("/update")
     @RequiresPermissions("news:activity:update")
     public R update(@RequestBody ActivityEntity activity){
 		activityService.updateById(activity);
@@ -85,7 +78,7 @@ public class ActivityController {
     /**
      * 删除
      */
-    @PostMapping("/delete")
+    @RequestMapping("/delete")
     @RequiresPermissions("news:activity:delete")
     public R delete(@RequestBody Long[] actIds){
 		activityService.removeByIds(Arrays.asList(actIds));

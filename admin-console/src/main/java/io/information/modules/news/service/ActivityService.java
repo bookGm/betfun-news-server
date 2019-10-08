@@ -16,7 +16,5 @@ import java.util.Map;
 public interface ActivityService extends IService<ActivityEntity> {
 
     PageUtils queryPage(Map<String, Object> params);
-
-    PageUtils queryUserActivity(Long uId);
 }
 

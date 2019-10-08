@@ -2,22 +2,19 @@ package io.information.modules.news.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import io.information.common.utils.PageUtils;
-import io.information.modules.news.entity.MenuEntity;
+import io.information.modules.news.entity.CommonReplyEntity;
 
-import java.util.List;
 import java.util.Map;
 
 /**
- * 资讯菜单表
+ * 评论回复表
  *
  * @author zxs
  * @email zhangxiaos@163.com
- * @date 2019-09-26 12:06:25
+ * @date 2019-10-08 15:11:28
  */
-public interface MenuService extends IService<MenuEntity> {
+public interface CommonReplyService extends IService<CommonReplyEntity> {
 
     PageUtils queryPage(Map<String, Object> params);
-
-    MenuEntity getByCode(String mPcode);
 }
 

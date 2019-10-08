@@ -4,8 +4,6 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 
 import java.io.Serializable;
-import java.util.Date;
-import lombok.Data;
 
 /**
  * 资讯菜单资源关系表
@@ -19,7 +17,7 @@ public class MenuSourceEntity implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	/**
-	 * 
+	 * 中间表ID
 	 */
 	@TableId
 	private Long msId;
@@ -32,7 +30,7 @@ public class MenuSourceEntity implements Serializable {
 	 */
 	private String sName;
 	/**
-	 * 
+	 * 菜单编码
 	 */
 	private String mCode;
 	/**

@@ -16,5 +16,5 @@ public class RedisKeys {
     //登录手机验证码
     public static String LOGIN_PHONECODE=BASEKEY+"login:phonecode:";
     //常量：城市
-    public static String CONSTANT_CITYS=BASEKEY+"constant:citys";
+    public static String  CONSTANT_CITYS=BASEKEY+"constant:citys";
 }

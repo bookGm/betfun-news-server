@@ -28,9 +28,9 @@ public class MenuServiceImpl extends ServiceImpl<MenuDao, MenuEntity> implements
     }
 
     @Override
-    public MenuEntity getByCode(String mCode) {
+    public MenuEntity getByCode(String mPcode) {
         LambdaQueryWrapper<MenuEntity> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(MenuEntity::getmCode, mCode);
+        queryWrapper.eq(MenuEntity::getmCode, mPcode);
         return this.getOne(queryWrapper);
     }
 

@@ -1,6 +1,6 @@
 package io.information.modules.news.entity;
 
-import lombok.Data;
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -54,6 +54,7 @@ public class CardVo implements Serializable {
     /**
      * 辩论结束日期
      */
+    @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
     private Date caCloseTime;
     /**
      * 投票选项信息（逗号分隔）
@@ -62,6 +63,7 @@ public class CardVo implements Serializable {
     /**
      * 投票结束日期
      */
+    @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
     private Date cvCloseTime;
 
     private Integer cv0;

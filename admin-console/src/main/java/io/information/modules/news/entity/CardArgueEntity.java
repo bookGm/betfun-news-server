@@ -2,10 +2,10 @@ package io.information.modules.news.entity;
 
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 import java.io.Serializable;
 import java.util.Date;
-import lombok.Data;
 
 /**
  * 资讯帖子辩论表
@@ -42,6 +42,7 @@ public class CardArgueEntity implements Serializable {
 	/**
 	 * 辩论结束日期
 	 */
+	@JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
 	private Date caCloseTime;
 
 
