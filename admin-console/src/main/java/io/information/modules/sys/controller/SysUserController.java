@@ -48,7 +48,6 @@ public class SysUserController extends AbstractController {
 			params.put("createUserId", getUserId());
 		}
 		PageUtils page = sysUserService.queryPage(params);
-
 		return R.ok().put("page", page);
 	}
 	
