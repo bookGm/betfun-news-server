@@ -36,7 +36,7 @@ public class ActivityEntity implements Serializable {
 	/**
 	 * 活动时间
 	 */
-	@JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
+	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
 	private Date actTime;
 	/**
 	 * 活动分类（字典）
@@ -69,12 +69,12 @@ public class ActivityEntity implements Serializable {
 	/**
 	 * 活动开始时间
 	 */
-	@JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
+	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
 	private Date actStartTime;
 	/**
 	 * 活动结束时间
 	 */
-	@JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
+	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
 	private Date actCloseTime;
 	/**
 	 * 活动创建时间

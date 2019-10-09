@@ -2,6 +2,7 @@ package io.information.modules.news.entity;
 
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -46,6 +47,7 @@ public class CommonReplyEntity implements Serializable {
     /**
      * 评论或回复时间
      */
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
     private Date crTime;
 
     public Long getCrId() {

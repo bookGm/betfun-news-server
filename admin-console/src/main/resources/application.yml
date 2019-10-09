@@ -77,3 +77,5 @@ bet:
     expire: 604800
     header: token
 
+img:
+  fileUploadPath:

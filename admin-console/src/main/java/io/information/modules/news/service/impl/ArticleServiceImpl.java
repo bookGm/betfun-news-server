@@ -21,7 +21,6 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleDao, ArticleEntity> i
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
-
         IPage<ArticleEntity> page = this.page(
                 new Query<ArticleEntity>().getPage(params),
                 new QueryWrapper<ArticleEntity>()

@@ -1,18 +1,25 @@
 package io.information.modules.news.controller;
 
+import io.information.common.utils.MD5Util;
 import io.information.common.utils.PageUtils;
 import io.information.common.utils.R;
 import io.information.modules.app.config.IdWorker;
 import io.information.modules.news.entity.ArticleEntity;
 import io.information.modules.news.service.ArticleService;
-import io.information.modules.news.service.DicService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 
+import javax.servlet.http.HttpServletRequest;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.List;
 import java.util.Map;
 
 
@@ -28,6 +35,8 @@ import java.util.Map;
 public class ArticleController {
     @Autowired
     private ArticleService articleService;
+    @Value("${img:fileUploadPath:#{'http://localhost:8080'}}")
+    private String fileUploadPath;
 
     /**
      * 列表
@@ -109,6 +118,4 @@ public class ArticleController {
         articleService.deleteAllActive(uId);
         return R.ok();
     }
-
-
 }
