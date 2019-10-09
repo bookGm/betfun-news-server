@@ -31,16 +31,6 @@ public class CardBaseServiceImpl extends ServiceImpl<CardBaseDao, CardBaseEntity
     private CardVoteService voteService;
 
     @Override
-    public PageUtils queryPage(Map<String, Object> params) {
-        IPage<CardBaseEntity> page = this.page(
-                new Query<CardBaseEntity>().getPage(params),
-                new QueryWrapper<CardBaseEntity>()
-        );
-
-        return new PageUtils(page);
-    }
-
-    @Override
     @Transactional(rollbackFor = Exception.class)
     public void addCard(CardVo cardVo){
         CardBaseEntity baseEntity = BeanHelper.copyProperties(cardVo, CardBaseEntity.class);
@@ -50,6 +40,16 @@ public class CardBaseServiceImpl extends ServiceImpl<CardBaseDao, CardBaseEntity
         argueService.save(argueEntity);
         voteService.save(voteEntity);
 
+    }
+
+    @Override
+    public PageUtils queryPage(Map<String, Object> params) {
+        IPage<CardBaseEntity> page = this.page(
+                new Query<CardBaseEntity>().getPage(params),
+                new QueryWrapper<CardBaseEntity>()
+        );
+
+        return new PageUtils(page);
     }
 
     @Override

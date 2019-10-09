@@ -12,7 +12,7 @@ server:
 spring:
   # 环境 dev|test|prod
   profiles:
-    active: dev
+    active: dev,mq
   # jackson时间格式化
   jackson:
     time-zone: GMT+8
@@ -39,8 +39,6 @@ spring:
     throw-exception-if-no-handler-found: true
 #  resources:
 #    add-mappings: false
-
-
 #mybatis
 mybatis-plus:
   mapper-locations: classpath*:/mapper/**/*.xml
@@ -78,3 +76,4 @@ bet:
     # token有效时长，7天，单位秒
     expire: 604800
     header: token
+

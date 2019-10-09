@@ -9,6 +9,7 @@
         <module>admin-console</module>
 		<module>admin-es</module>
 		<module>admin-commons</module>
+		<module>admin-mq</module>
 	</modules>
     <packaging>pom</packaging>
 	<description>bet information platform</description>

@@ -1,10 +1,12 @@
 package io.information.modules.app.controller;
 
 
+import io.mq.utils.Constants;
 import io.information.common.utils.PageUtils;
 import io.information.modules.app.config.IdWorker;
 import io.information.modules.app.entity.InArticle;
 import io.information.modules.app.service.IInArticleService;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,6 +29,8 @@ import java.util.List;
 public class InArticleController {
     @Autowired
     private IInArticleService articleService;
+    @Autowired
+    private RabbitTemplate rabbitTemplate;
 
     /**
      * 添加
@@ -38,6 +42,8 @@ public class InArticleController {
         article.setAId(new IdWorker().nextId());
         article.setACreateTime(LocalDateTime.now());
         articleService.save(article);
+        rabbitTemplate.convertAndSend(Constants.defaultExchange,
+                Constants.routeKey, "es同步数据");
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 

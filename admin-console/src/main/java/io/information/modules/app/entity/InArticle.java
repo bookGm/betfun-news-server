@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 * @since 2019-09-24
 */
     @Data
-        @EqualsAndHashCode(callSuper = false)
+    @EqualsAndHashCode(callSuper = false)
     @Accessors(chain = true)
     public class InArticle implements Serializable {
 
