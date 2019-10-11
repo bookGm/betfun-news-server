@@ -123,17 +123,21 @@ public class AppLoginController {
             Long uid= IdGenerator.getId();
             R r=resultToken(uid);
             String salt = RandomStringUtils.randomAlphanumeric(20);
+            String phone =form.getUPhone();
             user=new InUser();
             user.setUId(uid);
             user.setUSalt(salt);
-            user.setUPhone(form.getUPhone());
+            user.setUPhone(phone);
+            user.setUSalt(new Sha256Hash(phone.substring(phone.length()-6), salt).toHex());
             user.setUToken(r.get("token").toString());
-            iInUserService.save(user);
-            return r;
+            if(iInUserService.saveWithCache(user)){
+                return r;
+            }else{
+                return R.error("注册失败");
+            }
         }else{
             return R.error("验证码输入错误");
         }
-
     }
 
     public R resultToken(Long userid){

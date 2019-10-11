@@ -22,7 +22,8 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("news/cardvote")
-public class CardVoteController {
+public class
+CardVoteController {
     @Autowired
     private CardVoteService cardVoteService;
 

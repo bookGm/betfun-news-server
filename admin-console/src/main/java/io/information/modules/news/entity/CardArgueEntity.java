@@ -1,5 +1,6 @@
 package io.information.modules.news.entity;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -18,6 +19,11 @@ import java.util.Date;
 public class CardArgueEntity implements Serializable {
 	private static final long serialVersionUID = 1L;
 
+	/**
+	 * 普通帖子
+	 */
+	@TableField(exist = false)
+	private CardBaseEntity baseCard;
 	/**
 	 * 帖子id
 	 */
@@ -92,5 +98,13 @@ public class CardArgueEntity implements Serializable {
 
 	public void setCaCloseTime(Date caCloseTime) {
 		this.caCloseTime = caCloseTime;
+	}
+
+	public CardBaseEntity getBaseCard() {
+		return baseCard;
+	}
+
+	public void setBaseCard(CardBaseEntity baseCard) {
+		this.baseCard = baseCard;
 	}
 }

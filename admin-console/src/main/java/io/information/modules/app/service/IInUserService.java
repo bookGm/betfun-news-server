@@ -23,4 +23,6 @@ public interface IInUserService extends IService<InUser> {
     InUser queryUserByNick(String nick);
 
     List<InUser> queryUsersByArgueIds(String userIds);
+
+    public Boolean saveWithCache(InUser inUser);
 }

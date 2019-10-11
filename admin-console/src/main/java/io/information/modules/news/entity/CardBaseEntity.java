@@ -1,5 +1,7 @@
 package io.information.modules.news.entity;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 
@@ -19,12 +21,17 @@ public class CardBaseEntity implements Serializable {
 	/**
 	 * 帖子id
 	 */
-	@TableId
+	@TableId(type = IdType.INPUT)
 	private Long cId;
 	/**
 	 * 用户id
 	 */
 	private Long uId;
+	/**
+	 * 用户名称
+	 */
+	@TableField(exist = false)
+	private String uName;
 	/**
 	 * 帖子分类（字典）
 	 */
@@ -89,4 +96,14 @@ public class CardBaseEntity implements Serializable {
 	public void setcHide(Integer cHide) {
 		this.cHide = cHide;
 	}
+
+	public String getuName() {
+		return uName;
+	}
+
+	public void setuName(String uName) {
+		this.uName = uName;
+	}
+
+
 }

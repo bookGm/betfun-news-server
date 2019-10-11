@@ -1,5 +1,6 @@
 package io.information.modules.news.entity;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -17,7 +18,11 @@ import java.util.Date;
 @TableName("in_card_vote")
 public class CardVoteEntity implements Serializable {
     private static final long serialVersionUID = 1L;
-
+    /**
+     * 普通帖子
+     */
+    @TableField(exist = false)
+    private CardBaseEntity baseCard;
     /**
      * 帖子id
      */
@@ -36,122 +41,182 @@ public class CardVoteEntity implements Serializable {
      *
      */
     private Integer cv0;
+    @TableField(exist = false)
+    private String info0;
     /**
      *
      */
     private Integer cv1;
+    @TableField(exist = false)
+    private String info1;
     /**
      *
      */
     private Integer cv2;
+    @TableField(exist = false)
+    private String info2;
     /**
      *
      */
     private Integer cv3;
+    @TableField(exist = false)
+    private String info3;
     /**
      *
      */
     private Integer cv4;
+    @TableField(exist = false)
+    private String info4;
     /**
      *
      */
     private Integer cv5;
+    @TableField(exist = false)
+    private String info5;
     /**
      *
      */
     private Integer cv6;
+    @TableField(exist = false)
+    private String info6;
     /**
      *
      */
     private Integer cv7;
+    @TableField(exist = false)
+    private String info7;
     /**
      *
      */
     private Integer cv8;
+    @TableField(exist = false)
+    private String info8;
     /**
      *
      */
     private Integer cv9;
+    @TableField(exist = false)
+    private String info9;
     /**
      *
      */
     private Integer cv10;
+    @TableField(exist = false)
+    private String info10;
     /**
      *
      */
     private Integer cv11;
+    @TableField(exist = false)
+    private String info11;
     /**
      *
      */
     private Integer cv12;
+    @TableField(exist = false)
+    private String info12;
     /**
      *
      */
     private Integer cv13;
+    @TableField(exist = false)
+    private String info13;
     /**
      *
      */
     private Integer cv14;
+    @TableField(exist = false)
+    private String info14;
     /**
      *
      */
     private Integer cv15;
+    @TableField(exist = false)
+    private String info15;
     /**
      *
      */
     private Integer cv16;
+    @TableField(exist = false)
+    private String info16;
     /**
      *
      */
     private Integer cv17;
+    @TableField(exist = false)
+    private String info17;
     /**
      *
      */
     private Integer cv18;
+    @TableField(exist = false)
+    private String info18;
     /**
      *
      */
     private Integer cv19;
+    @TableField(exist = false)
+    private String info19;
     /**
      *
      */
     private Integer cv20;
+    @TableField(exist = false)
+    private String info20;
     /**
      *
      */
     private Integer cv21;
+    @TableField(exist = false)
+    private String info21;
     /**
      *
      */
     private Integer cv22;
+    @TableField(exist = false)
+    private String info22;
     /**
      *
      */
     private Integer cv23;
+    @TableField(exist = false)
+    private String info23;
     /**
      *
      */
     private Integer cv24;
+    @TableField(exist = false)
+    private String info24;
     /**
      *
      */
     private Integer cv25;
+    @TableField(exist = false)
+    private String info25;
     /**
      *
      */
     private Integer cv26;
+    @TableField(exist = false)
+    private String info26;
     /**
      *
      */
     private Integer cv27;
+    @TableField(exist = false)
+    private String info27;
     /**
      *
      */
     private Integer cv28;
+    @TableField(exist = false)
+    private String info28;
     /**
      *
      */
     private Integer cv29;
+    @TableField(exist = false)
+    private String info29;
 
     public Long getcId() {
         return cId;
@@ -415,5 +480,348 @@ public class CardVoteEntity implements Serializable {
 
     public void setCv29(Integer cv29) {
         this.cv29 = cv29;
+    }
+
+    public void setInfo(Integer index,String info){
+        switch(index){
+            case 0 :
+                this.info0 = info;
+                break;
+            case 1 :
+                this.info1 = info;
+                break;
+            case 2 :
+                this.info2 = info;
+                break;
+            case 3 :
+                this.info3 = info;
+                break;
+            case 4 :
+                this.info4 = info;
+                break;
+            case 5 :
+                this.info5 = info;
+                break;
+            case 6 :
+                this.info6 = info;
+                break;
+            case 7 :
+                this.info7 = info;
+                break;
+            case 8 :
+                this.info8 = info;
+                break;
+            case 9 :
+                this.info9 = info;
+                break;
+            case 10 :
+                this.info10 = info;
+                break;
+            case 11 :
+                this.info11 = info;
+                break;
+            case 12 :
+                this.info12 = info;
+                break;
+            case 13 :
+                this.info13 = info;
+                break;
+            case 14 :
+                this.info14 = info;
+                break;
+            case 15 :
+                this.info15 = info;
+                break;
+            case 16 :
+                this.info16 = info;
+                break;
+            case 17 :
+                this.info17 = info;
+                break;
+            case 18 :
+                this.info18 = info;
+                break;
+            case 19 :
+                this.info19 = info;
+                break;
+            case 20 :
+                this.info20 = info;
+                break;
+            case 21 :
+                this.info21 = info;
+                break;
+            case 22 :
+                this.info22 = info;
+                break;
+            case 23 :
+                this.info23 = info;
+                break;
+            case 24 :
+                this.info24 = info;
+                break;
+            case 25 :
+                this.info25 = info;
+                break;
+            case 26 :
+                this.info26 = info;
+                break;
+            case 27 :
+                this.info27 = info;
+                break;
+            case 28 :
+                this.info28 = info;
+                break;
+            case 29 :
+                this.info29 = info;
+                break;
+        }
+    }
+
+    public String getInfo0() {
+        return info0;
+    }
+
+    public void setInfo0(String info0) {
+        this.info0 = info0;
+    }
+
+    public String getInfo1() {
+        return info1;
+    }
+
+    public void setInfo1(String info1) {
+        this.info1 = info1;
+    }
+
+    public String getInfo2() {
+        return info2;
+    }
+
+    public void setInfo2(String info2) {
+        this.info2 = info2;
+    }
+
+    public String getInfo3() {
+        return info3;
+    }
+
+    public void setInfo3(String info3) {
+        this.info3 = info3;
+    }
+
+    public String getInfo4() {
+        return info4;
+    }
+
+    public void setInfo4(String info4) {
+        this.info4 = info4;
+    }
+
+    public String getInfo5() {
+        return info5;
+    }
+
+    public void setInfo5(String info5) {
+        this.info5 = info5;
+    }
+
+    public String getInfo6() {
+        return info6;
+    }
+
+    public void setInfo6(String info6) {
+        this.info6 = info6;
+    }
+
+    public String getInfo7() {
+        return info7;
+    }
+
+    public void setInfo7(String info7) {
+        this.info7 = info7;
+    }
+
+    public String getInfo8() {
+        return info8;
+    }
+
+    public void setInfo8(String info8) {
+        this.info8 = info8;
+    }
+
+    public String getInfo9() {
+        return info9;
+    }
+
+    public void setInfo9(String info9) {
+        this.info9 = info9;
+    }
+
+    public String getInfo10() {
+        return info10;
+    }
+
+    public void setInfo10(String info10) {
+        this.info10 = info10;
+    }
+
+    public String getInfo11() {
+        return info11;
+    }
+
+    public void setInfo11(String info11) {
+        this.info11 = info11;
+    }
+
+    public String getInfo12() {
+        return info12;
+    }
+
+    public void setInfo12(String info12) {
+        this.info12 = info12;
+    }
+
+    public String getInfo13() {
+        return info13;
+    }
+
+    public void setInfo13(String info13) {
+        this.info13 = info13;
+    }
+
+    public String getInfo14() {
+        return info14;
+    }
+
+    public void setInfo14(String info14) {
+        this.info14 = info14;
+    }
+
+    public String getInfo15() {
+        return info15;
+    }
+
+    public void setInfo15(String info15) {
+        this.info15 = info15;
+    }
+
+    public String getInfo16() {
+        return info16;
+    }
+
+    public void setInfo16(String info16) {
+        this.info16 = info16;
+    }
+
+    public String getInfo17() {
+        return info17;
+    }
+
+    public void setInfo17(String info17) {
+        this.info17 = info17;
+    }
+
+    public String getInfo18() {
+        return info18;
+    }
+
+    public void setInfo18(String info18) {
+        this.info18 = info18;
+    }
+
+    public String getInfo19() {
+        return info19;
+    }
+
+    public void setInfo19(String info19) {
+        this.info19 = info19;
+    }
+
+    public String getInfo20() {
+        return info20;
+    }
+
+    public void setInfo20(String info20) {
+        this.info20 = info20;
+    }
+
+    public String getInfo21() {
+        return info21;
+    }
+
+    public void setInfo21(String info21) {
+        this.info21 = info21;
+    }
+
+    public String getInfo22() {
+        return info22;
+    }
+
+    public void setInfo22(String info22) {
+        this.info22 = info22;
+    }
+
+    public String getInfo23() {
+        return info23;
+    }
+
+    public void setInfo23(String info23) {
+        this.info23 = info23;
+    }
+
+    public String getInfo24() {
+        return info24;
+    }
+
+    public void setInfo24(String info24) {
+        this.info24 = info24;
+    }
+
+    public String getInfo25() {
+        return info25;
+    }
+
+    public void setInfo25(String info25) {
+        this.info25 = info25;
+    }
+
+    public String getInfo26() {
+        return info26;
+    }
+
+    public void setInfo26(String info26) {
+        this.info26 = info26;
+    }
+
+    public String getInfo27() {
+        return info27;
+    }
+
+    public void setInfo27(String info27) {
+        this.info27 = info27;
+    }
+
+    public String getInfo28() {
+        return info28;
+    }
+
+    public void setInfo28(String info28) {
+        this.info28 = info28;
+    }
+
+    public String getInfo29() {
+        return info29;
+    }
+
+    public void setInfo29(String info29) {
+        this.info29 = info29;
+    }
+
+    public CardBaseEntity getBaseCard() {
+        return baseCard;
+    }
+
+    public void setBaseCard(CardBaseEntity baseCard) {
+        this.baseCard = baseCard;
     }
 }

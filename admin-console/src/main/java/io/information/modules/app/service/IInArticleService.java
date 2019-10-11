@@ -21,4 +21,15 @@ public interface IInArticleService extends IService<InArticle> {
     List<InArticle> queryAllArticle(Long userId);
 
     PageUtils queryPage(int page,int szie);
+
+    /**
+     * 点赞
+     * @return
+     */
+    public boolean giveALike(Long aid,Long uid);
+    /**
+     * 收藏
+     * @return
+     */
+    public boolean collect(Long aid, Long uid);
 }

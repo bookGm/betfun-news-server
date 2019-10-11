@@ -7,10 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.*;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -187,4 +184,42 @@ public class RedisUtils {
     public double hincr(String key,Object hashKey ,double delta) {
         return redisTemplate.opsForHash().increment(key, hashKey, delta);
     }
+
+    /**
+     * 获取所有hash key
+     * @param key
+     * @return
+     */
+    public Set getAllHashKeys(String key) {
+        return redisTemplate.opsForHash().keys(key);
+    }
+
+    /**
+     * 添加hash
+     * @param key
+     * @param hashKey
+     * @param value
+     */
+    public void hset(String key,Object hashKey,Object value){
+        redisTemplate.opsForHash().put(key,hashKey,value);
+    }
+    /**
+     * 获取hash
+     * @param key
+     * @param hashKey
+     * @return Object
+     */
+    public Object hget(String key,Object hashKey){
+       return redisTemplate.opsForHash().get(key,hashKey);
+    }
+
+    /**
+     * 批量添加hash
+     * @param key
+     * @param map
+     */
+    public void hmset(String key, Map<?,?> map){
+        redisTemplate.opsForHash().putAll(key,map);
+    }
+
 }

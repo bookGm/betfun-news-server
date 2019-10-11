@@ -12,9 +12,15 @@ public class RedisKeys {
     public static String getSysConfigKey(String key){
         return "sys:config:" + key;
     }
-    public static String BASEKEY="news:";
+    public static final String BASEKEY="news:";
     //登录手机验证码
-    public static String LOGIN_PHONECODE=BASEKEY+"login:phonecode:";
-    //常量：城市
-    public static String  CONSTANT_CITYS=BASEKEY+"constant:citys";
+    public static final String LOGIN_PHONECODE=BASEKEY+"login:phonecode:";
+    //常量
+    public static final String CONSTANT=BASEKEY+"constant";
+    //点赞
+    public static final String LIKE=BASEKEY+"like";
+    //收藏
+    public static final String COLLECT=BASEKEY+"collect";
+    //app用户
+    public static final String INUSER=BASEKEY+"inuser";
 }

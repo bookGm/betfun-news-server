@@ -1,5 +1,6 @@
 package io.information.init;
 
+import io.information.common.utils.CityHelper;
 import io.information.common.utils.RedisKeys;
 import io.information.common.utils.RedisUtils;
 import io.information.modules.sys.entity.SysCitysEntity;
@@ -20,8 +21,7 @@ public class InitCitys {
     @Autowired
     SysCitysService sysCitysService;
     @Autowired
-    RedisUtils redis;
-
+    private CityHelper cityHelper;
     @PostConstruct
     void init(){
         List<SysCitysEntity> citys=sysCitysService.list();
@@ -35,6 +35,10 @@ public class InitCitys {
                     return "region";
             }
         }));
-        redis.set(RedisKeys.CONSTANT_CITYS,cs);
+        try {
+            cityHelper.init(citys);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

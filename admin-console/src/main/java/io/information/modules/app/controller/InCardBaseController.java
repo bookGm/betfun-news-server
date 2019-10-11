@@ -1,6 +1,7 @@
 package io.information.modules.app.controller;
 
 
+import io.information.common.utils.IdGenerator;
 import io.information.modules.app.config.IdWorker;
 import io.information.modules.app.entity.*;
 import io.information.modules.app.service.IInCardBaseService;
@@ -35,7 +36,8 @@ public class InCardBaseController {
      */
     @PostMapping("/addCardBase")
     public ResponseEntity<Void> addCardBase(InCardBase cardBase){
-        cardBase.setCId(new IdWorker().nextId());
+        Long id= IdGenerator.getId();
+        cardBase.setCId(id);
         cardBaseService.save(cardBase);
         return ResponseEntity.status(HttpStatus.OK).build();
     }

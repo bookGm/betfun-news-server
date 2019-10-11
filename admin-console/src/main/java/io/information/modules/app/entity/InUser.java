@@ -18,7 +18,7 @@ import java.io.Serializable;
 * @since 2019-09-24
 */
     @Data
-        @EqualsAndHashCode(callSuper = false)
+    @EqualsAndHashCode(callSuper = false)
     @Accessors(chain = true)
     public class InUser implements Serializable {
 

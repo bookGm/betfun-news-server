@@ -34,7 +34,6 @@ public class CardBaseController {
     @RequiresPermissions("news:cardbase:list")
     public R list(@RequestParam Map<String, Object> params){
         PageUtils page = cardBaseService.queryPage(params);
-
         return R.ok().put("page", page);
     }
 

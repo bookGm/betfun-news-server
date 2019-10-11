@@ -4,9 +4,14 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import io.information.common.exception.ExceptionEnum;
 import io.information.common.exception.IMException;
+import io.information.common.utils.RedisKeys;
+import io.information.common.utils.RedisUtils;
 import io.information.modules.app.dao.InUserDao;
 import io.information.modules.app.entity.InUser;
 import io.information.modules.app.service.IInUserService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -24,6 +29,9 @@ import java.util.stream.Collectors;
  */
 @Service
 public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements IInUserService {
+    private static final Logger LOG = LoggerFactory.getLogger(InUserServiceImpl.class);
+    @Autowired
+    RedisUtils redisUtils;
 
     @Override
     public List<InUser> queryLikeByUser(String params) {
@@ -72,6 +80,19 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
         List<InUser> userList = this.list(queryWrapper);
 
         return userList;
+    }
+
+    @Override
+    public Boolean saveWithCache(InUser inUser) {
+        if(this.save(inUser)){
+            try {
+                redisUtils.hset(RedisKeys.INUSER,inUser.getUId(),inUser);
+            } catch (Exception e) {
+                LOG.error("新注册用户:"+inUser.getUPhone()+"放入缓存失败");
+            }
+            return true;
+        }
+        return false;
     }
 
     @Override

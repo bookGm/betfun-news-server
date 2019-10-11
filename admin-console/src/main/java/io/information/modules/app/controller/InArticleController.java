@@ -1,6 +1,7 @@
 package io.information.modules.app.controller;
 
 
+import io.information.modules.sys.controller.AbstractController;
 import io.mq.utils.Constants;
 import io.information.common.utils.PageUtils;
 import io.information.modules.app.config.IdWorker;
@@ -26,7 +27,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/news/article")
-public class InArticleController {
+public class InArticleController extends AbstractController {
     @Autowired
     private IInArticleService articleService;
     @Autowired
@@ -119,5 +120,31 @@ public class InArticleController {
                                                            @RequestParam(defaultValue = "10")int size){
         List<InArticle> articles = articleService.queryAllArticle(userId);
         return ResponseEntity.ok(new PageUtils(articles,articles.size(),size,curPage));
+    }
+
+    /**
+     * 点赞
+     * @param aid
+     * @return
+     */
+    @PostMapping("giveALike")
+    public ResponseEntity giveALike(Long aid){
+        if(articleService.giveALike(aid,getAppUserId())){
+            return ResponseEntity.status(HttpStatus.OK).build();
+        }
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+    }
+
+    /**
+     * 收藏
+     * @param aid
+     * @return
+     */
+    @PostMapping("collect")
+    public ResponseEntity collect(Long aid){
+        if(articleService.collect(aid,getAppUserId())){
+            return ResponseEntity.status(HttpStatus.OK).build();
+        }
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
     }
 }

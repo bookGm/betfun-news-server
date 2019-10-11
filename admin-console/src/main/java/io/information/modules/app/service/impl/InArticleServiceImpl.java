@@ -5,9 +5,12 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import io.information.common.utils.PageUtils;
+import io.information.common.utils.RedisKeys;
 import io.information.modules.app.dao.InArticleDao;
 import io.information.modules.app.entity.InArticle;
 import io.information.modules.app.service.IInArticleService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,6 +27,9 @@ import java.util.stream.Collectors;
  */
 @Service
 public class InArticleServiceImpl extends ServiceImpl<InArticleDao, InArticle> implements IInArticleService {
+    @Autowired
+    InArticleDao inArticleDao;
+
     @Override
     @Transactional
     public void deleteAllArticle(Long userId) {
@@ -48,5 +54,29 @@ public class InArticleServiceImpl extends ServiceImpl<InArticleDao, InArticle> i
         IPage<InArticle> iPage = this.baseMapper.selectPage(
                 page1, new QueryWrapper<InArticle>());
         return new PageUtils(iPage);
+    }
+
+    @Override
+    @CachePut(value= RedisKeys.LIKE,key = "#aid+'-'+#uid")
+    public boolean giveALike(Long aid, Long uid) {
+        try {
+            inArticleDao.addALike(aid);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    @CachePut(value= RedisKeys.COLLECT,key = "#aid+'-'+#uid")
+    public boolean collect(Long aid, Long uid) {
+        try {
+            inArticleDao.addACollect(aid);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+        return true;
     }
 }

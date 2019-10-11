@@ -14,5 +14,15 @@ import org.apache.ibatis.annotations.Mapper;
  */
 @Mapper
 public interface InArticleDao extends BaseMapper<InArticle> {
+    /**
+     * 增加点赞数
+     * @param aid
+     */
+    void addALike (Long aid);
+    /**
+     * 增加收藏数
+     * @param aid
+     */
+    void addACollect (Long aid);
 
 }

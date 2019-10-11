@@ -4,17 +4,16 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.guansuo.newsenum.NewsEnum;
 import io.information.common.utils.BeanHelper;
 import io.information.common.utils.PageUtils;
 import io.information.common.utils.Query;
 import io.information.modules.news.dao.CardBaseDao;
-import io.information.modules.news.entity.CardArgueEntity;
-import io.information.modules.news.entity.CardBaseEntity;
-import io.information.modules.news.entity.CardVo;
-import io.information.modules.news.entity.CardVoteEntity;
+import io.information.modules.news.entity.*;
 import io.information.modules.news.service.CardArgueService;
 import io.information.modules.news.service.CardBaseService;
 import io.information.modules.news.service.CardVoteService;
+import io.information.modules.news.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,6 +28,8 @@ public class CardBaseServiceImpl extends ServiceImpl<CardBaseDao, CardBaseEntity
     private CardArgueService argueService;
     @Autowired
     private CardVoteService voteService;
+    @Autowired
+    private UserService userService;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -39,16 +40,22 @@ public class CardBaseServiceImpl extends ServiceImpl<CardBaseDao, CardBaseEntity
         this.save(baseEntity);
         argueService.save(argueEntity);
         voteService.save(voteEntity);
-
     }
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
+        LambdaQueryWrapper<CardBaseEntity> qw=new LambdaQueryWrapper<>();
+        qw.eq(CardBaseEntity::getcCategory, NewsEnum.帖子分类_投票帖.getCode());
         IPage<CardBaseEntity> page = this.page(
                 new Query<CardBaseEntity>().getPage(params),
                 new QueryWrapper<CardBaseEntity>()
         );
-
+        for(CardBaseEntity c:page.getRecords()){
+            UserEntity u=userService.getById(c.getuId());
+            if(null!=u){
+                c.setuName(u.getuName());
+            }
+        }
         return new PageUtils(page);
     }
 

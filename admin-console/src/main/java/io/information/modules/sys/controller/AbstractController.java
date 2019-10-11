@@ -2,6 +2,7 @@
 
 package io.information.modules.sys.controller;
 
+import io.information.modules.app.entity.InUser;
 import io.information.modules.sys.entity.SysUserEntity;
 import org.apache.shiro.SecurityUtils;
 import org.slf4j.Logger;
@@ -19,7 +20,14 @@ public abstract class AbstractController {
 		return (SysUserEntity) SecurityUtils.getSubject().getPrincipal();
 	}
 
+	protected InUser getAppUser() {
+		return (InUser) SecurityUtils.getSubject().getPrincipal();
+	}
+
 	protected Long getUserId() {
 		return getUser().getUserId();
+	}
+	protected Long getAppUserId() {
+		return getAppUser().getUId();
 	}
 }
