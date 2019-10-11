@@ -10,8 +10,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.Date;
 
 /**
  * <p>
@@ -35,7 +35,7 @@ public class InActivityController {
     @PostMapping("/addActivity")
     public ResponseEntity<Void> addActivity(InActivity activity){
         activity.setActId(new IdWorker().nextId());
-        activity.setActCreateTime(LocalDateTime.now());
+        activity.setActCreateTime(new Date());
 
         activityService.save(activity);
         return ResponseEntity.status(HttpStatus.OK).build();
@@ -79,7 +79,7 @@ public class InActivityController {
 
 
     /**
-     * TODO 用户查询
+     * 用户查询
      * @param userId
      * @return
      */

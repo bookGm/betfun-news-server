@@ -21,5 +21,6 @@ public interface ArticleService extends IService<ArticleEntity> {
     PageUtils queryAllArticle(Long userId);
 
     void deleteAllActive(Long userId);
+
 }
 

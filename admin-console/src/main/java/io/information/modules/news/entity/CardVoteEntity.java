@@ -29,6 +29,11 @@ public class CardVoteEntity implements Serializable {
     @TableId
     private Long cId;
     /**
+     * 帖子类型
+     * 0单选 1多选
+     */
+    private int cvType;
+    /**
      * 投票选项信息（逗号分隔）
      */
     private String cvInfo;
@@ -37,183 +42,123 @@ public class CardVoteEntity implements Serializable {
      */
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date cvCloseTime;
-    /**
-     *
-     */
+
     private Integer cv0;
     @TableField(exist = false)
     private String info0;
-    /**
-     *
-     */
+
     private Integer cv1;
     @TableField(exist = false)
     private String info1;
-    /**
-     *
-     */
+
     private Integer cv2;
     @TableField(exist = false)
     private String info2;
-    /**
-     *
-     */
+
     private Integer cv3;
     @TableField(exist = false)
     private String info3;
-    /**
-     *
-     */
+
     private Integer cv4;
     @TableField(exist = false)
     private String info4;
-    /**
-     *
-     */
+
     private Integer cv5;
     @TableField(exist = false)
     private String info5;
-    /**
-     *
-     */
+
     private Integer cv6;
     @TableField(exist = false)
     private String info6;
-    /**
-     *
-     */
+
     private Integer cv7;
     @TableField(exist = false)
     private String info7;
-    /**
-     *
-     */
+
     private Integer cv8;
     @TableField(exist = false)
     private String info8;
-    /**
-     *
-     */
     private Integer cv9;
+
     @TableField(exist = false)
     private String info9;
-    /**
-     *
-     */
+
     private Integer cv10;
     @TableField(exist = false)
     private String info10;
-    /**
-     *
-     */
+
     private Integer cv11;
     @TableField(exist = false)
     private String info11;
-    /**
-     *
-     */
+
     private Integer cv12;
     @TableField(exist = false)
     private String info12;
-    /**
-     *
-     */
+
     private Integer cv13;
     @TableField(exist = false)
     private String info13;
-    /**
-     *
-     */
+
     private Integer cv14;
     @TableField(exist = false)
     private String info14;
-    /**
-     *
-     */
+
     private Integer cv15;
     @TableField(exist = false)
     private String info15;
-    /**
-     *
-     */
+
     private Integer cv16;
     @TableField(exist = false)
     private String info16;
-    /**
-     *
-     */
+
     private Integer cv17;
     @TableField(exist = false)
     private String info17;
-    /**
-     *
-     */
+
     private Integer cv18;
     @TableField(exist = false)
     private String info18;
-    /**
-     *
-     */
+
     private Integer cv19;
     @TableField(exist = false)
     private String info19;
-    /**
-     *
-     */
+
     private Integer cv20;
     @TableField(exist = false)
     private String info20;
-    /**
-     *
-     */
+
     private Integer cv21;
     @TableField(exist = false)
     private String info21;
-    /**
-     *
-     */
+
     private Integer cv22;
     @TableField(exist = false)
     private String info22;
-    /**
-     *
-     */
+
     private Integer cv23;
     @TableField(exist = false)
     private String info23;
-    /**
-     *
-     */
+
     private Integer cv24;
     @TableField(exist = false)
     private String info24;
-    /**
-     *
-     */
+
     private Integer cv25;
     @TableField(exist = false)
     private String info25;
-    /**
-     *
-     */
+
     private Integer cv26;
     @TableField(exist = false)
     private String info26;
-    /**
-     *
-     */
+
     private Integer cv27;
     @TableField(exist = false)
     private String info27;
-    /**
-     *
-     */
+
     private Integer cv28;
     @TableField(exist = false)
     private String info28;
-    /**
-     *
-     */
+
     private Integer cv29;
     @TableField(exist = false)
     private String info29;
@@ -224,6 +169,14 @@ public class CardVoteEntity implements Serializable {
 
     public void setcId(Long cId) {
         this.cId = cId;
+    }
+
+    public int getCvType() {
+        return cvType;
+    }
+
+    public void setCvType(int cvType) {
+        this.cvType = cvType;
     }
 
     public String getCvInfo() {
@@ -482,96 +435,96 @@ public class CardVoteEntity implements Serializable {
         this.cv29 = cv29;
     }
 
-    public void setInfo(Integer index,String info){
-        switch(index){
-            case 0 :
+    public void setInfo(Integer index, String info) {
+        switch (index) {
+            case 0:
                 this.info0 = info;
                 break;
-            case 1 :
+            case 1:
                 this.info1 = info;
                 break;
-            case 2 :
+            case 2:
                 this.info2 = info;
                 break;
-            case 3 :
+            case 3:
                 this.info3 = info;
                 break;
-            case 4 :
+            case 4:
                 this.info4 = info;
                 break;
-            case 5 :
+            case 5:
                 this.info5 = info;
                 break;
-            case 6 :
+            case 6:
                 this.info6 = info;
                 break;
-            case 7 :
+            case 7:
                 this.info7 = info;
                 break;
-            case 8 :
+            case 8:
                 this.info8 = info;
                 break;
-            case 9 :
+            case 9:
                 this.info9 = info;
                 break;
-            case 10 :
+            case 10:
                 this.info10 = info;
                 break;
-            case 11 :
+            case 11:
                 this.info11 = info;
                 break;
-            case 12 :
+            case 12:
                 this.info12 = info;
                 break;
-            case 13 :
+            case 13:
                 this.info13 = info;
                 break;
-            case 14 :
+            case 14:
                 this.info14 = info;
                 break;
-            case 15 :
+            case 15:
                 this.info15 = info;
                 break;
-            case 16 :
+            case 16:
                 this.info16 = info;
                 break;
-            case 17 :
+            case 17:
                 this.info17 = info;
                 break;
-            case 18 :
+            case 18:
                 this.info18 = info;
                 break;
-            case 19 :
+            case 19:
                 this.info19 = info;
                 break;
-            case 20 :
+            case 20:
                 this.info20 = info;
                 break;
-            case 21 :
+            case 21:
                 this.info21 = info;
                 break;
-            case 22 :
+            case 22:
                 this.info22 = info;
                 break;
-            case 23 :
+            case 23:
                 this.info23 = info;
                 break;
-            case 24 :
+            case 24:
                 this.info24 = info;
                 break;
-            case 25 :
+            case 25:
                 this.info25 = info;
                 break;
-            case 26 :
+            case 26:
                 this.info26 = info;
                 break;
-            case 27 :
+            case 27:
                 this.info27 = info;
                 break;
-            case 28 :
+            case 28:
                 this.info28 = info;
                 break;
-            case 29 :
+            case 29:
                 this.info29 = info;
                 break;
         }

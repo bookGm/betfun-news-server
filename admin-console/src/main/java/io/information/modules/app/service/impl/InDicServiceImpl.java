@@ -44,7 +44,7 @@ public class InDicServiceImpl extends ServiceImpl<InDicDao, InDic> implements II
         if(dics != null && !dics.isEmpty()){
             //修改子节点中的父节点
             dics.forEach(dicSon->{
-                dicSon.setDPcode(dic.getDCode());
+                dicSon.setdPcode(dic.getdCode());
                 this.updateById(dicSon);
             });
         }
@@ -67,7 +67,7 @@ public class InDicServiceImpl extends ServiceImpl<InDicDao, InDic> implements II
     @Override
     public List<InDic> queryNameDic(String dicName) {
         LambdaQueryWrapper<InDic> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.like(InDic::getDName,dicName);
+        queryWrapper.like(InDic::getdName,dicName);
         List<InDic> dics = this.list(queryWrapper);
         return dics;
     }
@@ -82,7 +82,7 @@ public class InDicServiceImpl extends ServiceImpl<InDicDao, InDic> implements II
     @Override
     public List<InDic> queryDicByCode(String dicCode) {
         QueryWrapper<InDic> queryWrapper = new QueryWrapper<>();
-        queryWrapper.lambda().eq(InDic::getDCode,dicCode);
+        queryWrapper.lambda().eq(InDic::getdCode,dicCode);
         List<InDic> dicList = this.list(queryWrapper);
         dicList.forEach(dic -> {
             dicList.addAll(this.findPSDic(dic));
@@ -95,7 +95,7 @@ public class InDicServiceImpl extends ServiceImpl<InDicDao, InDic> implements II
     //查询节点和其下子节点
     private List<InDic> findPSDic(InDic dic){
         LambdaQueryWrapper<InDic> queryWrapper = new LambdaQueryWrapper<InDic>();
-        queryWrapper.eq(InDic::getDPcode,dic.getDCode());
+        queryWrapper.eq(InDic::getdPcode,dic.getdCode());
         List<InDic> dics = this.list(queryWrapper);
         return dics;
     }

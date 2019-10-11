@@ -22,8 +22,6 @@ public class InTagServiceImpl extends ServiceImpl<InTagDao, InTag> implements II
 
     @Override
     public List<InTag> queryAllTag() {
-        LambdaQueryWrapper<InTag> queryWrapper = new LambdaQueryWrapper<>();
-        List<InTag> tagList = this.list(queryWrapper);
-        return tagList;
+        return this.list();
     }
 }

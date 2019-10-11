@@ -54,7 +54,6 @@ public class MenuController {
 
         //添加顶级菜单
         MenuEntity root = new MenuEntity();
-        //TODO  参数类型
         root.setmCode("0");
         root.setmName("一级菜单");
         root.setmPcode("-1");

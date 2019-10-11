@@ -26,10 +26,6 @@ public interface IInCardBaseService extends IService<InCardBase> {
 
     void deleteAllCardBase(Long userId);
 
-    void addCard(InCardBase base, InCardArgue argue, InCardVote vote);
-
-    void updateCard(InCardBase base, InCardArgue argue, InCardVote vote);
-
     InCard queryCard(Long cardId);
 
     List<InCard> queryAllCard(Long userId);

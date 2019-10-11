@@ -53,14 +53,14 @@ public class AppLoginController {
         if(redis.exists(rkey))return R.error("请稍后发送");
         if (StringUtil.isBlank(phone)) return R.error(HttpStatus.SC_UNAUTHORIZED,"请输入手机号码！");
         LambdaQueryWrapper<InUser> qw=new LambdaQueryWrapper<InUser>();
-        qw.eq(InUser::getUPhone,phone);
+        qw.eq(InUser::getuPhone,phone);
         InUser user=iInUserService.getOne(qw);
         if(null==user){
             return R.error("不存在该用户，请先注册!");
         }
         int rand =  100000 + (int)(Math.random() * 899999);
         if (rand > 0){
-            Boolean status = SmsUtil.sendSMS(user.getUPhone(), MessageFormat.format(SmsTemplate.loginCodeTemplate,rand));
+            Boolean status = SmsUtil.sendSMS(user.getuPhone(), MessageFormat.format(SmsTemplate.loginCodeTemplate,rand));
             if(status){
                 redis.set(rkey,rand,60);
                 return R.ok();
@@ -76,13 +76,13 @@ public class AppLoginController {
     public R pwdLogin(@RequestBody @Validated(PwdLogin.class) LoginForm form){
         //用户登录
         LambdaQueryWrapper<InUser> qw=new LambdaQueryWrapper<InUser>();
-        qw.eq(InUser::getUPhone,form.getUPhone());
+        qw.eq(InUser::getuPhone,form.getUPhone());
         InUser user=iInUserService.getOne(qw);
-        if(null == user || !user.getUPwd().equals(new Sha256Hash(form.getUPwd(), user.getUSalt()).toHex())) {
+        if(null == user || !user.getuPwd().equals(new Sha256Hash(form.getUPwd(), user.getuSalt()).toHex())) {
             return R.error("" +
                     "手机号或密码不正确");
         }
-        return resultToken(user.getUId());
+        return resultToken(user.getuId());
     }
     @PostMapping("codeLogin")
     @ApiOperation("验证码登录")
@@ -92,14 +92,14 @@ public class AppLoginController {
             return R.error("验证码已超时");
         }
         LambdaQueryWrapper<InUser> qw=new LambdaQueryWrapper<InUser>();
-        qw.eq(InUser::getUPhone,form.getUPhone());
+        qw.eq(InUser::getuPhone,form.getUPhone());
         InUser user=iInUserService.getOne(qw);
         if(null == user) {
             return R.error("手机号不存在");
         }
         if(redis.get(rkey).equals(form.getCode())){
             redis.delete(rkey);
-            return resultToken(user.getUId());
+            return resultToken(user.getuId());
         }else{
             return R.error("验证码输入错误");
         }
@@ -114,7 +114,7 @@ public class AppLoginController {
             return R.error("验证码已超时");
         }
         LambdaQueryWrapper<InUser> qw=new LambdaQueryWrapper<InUser>();
-        qw.eq(InUser::getUPhone,form.getUPhone());
+        qw.eq(InUser::getuPhone,form.getUPhone());
         InUser user=iInUserService.getOne(qw);
         if(null != user) {
             return R.error("手机号已存在");
@@ -125,11 +125,11 @@ public class AppLoginController {
             String salt = RandomStringUtils.randomAlphanumeric(20);
             String phone =form.getUPhone();
             user=new InUser();
-            user.setUId(uid);
-            user.setUSalt(salt);
-            user.setUPhone(phone);
-            user.setUSalt(new Sha256Hash(phone.substring(phone.length()-6), salt).toHex());
-            user.setUToken(r.get("token").toString());
+            user.setuId(uid);
+            user.setuSalt(salt);
+            user.setuPhone(phone);
+            user.setuSalt(new Sha256Hash(phone.substring(phone.length()-6), salt).toHex());
+            user.setuToken(r.get("token").toString());
             if(iInUserService.saveWithCache(user)){
                 return r;
             }else{

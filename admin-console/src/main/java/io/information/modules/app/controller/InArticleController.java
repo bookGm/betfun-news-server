@@ -1,20 +1,20 @@
 package io.information.modules.app.controller;
 
 
-import io.information.modules.sys.controller.AbstractController;
-import io.mq.utils.Constants;
 import io.information.common.utils.PageUtils;
 import io.information.modules.app.config.IdWorker;
 import io.information.modules.app.entity.InArticle;
 import io.information.modules.app.service.IInArticleService;
+import io.information.modules.sys.controller.AbstractController;
+import io.mq.utils.Constants;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -40,11 +40,11 @@ public class InArticleController extends AbstractController {
      */
     @PostMapping("/addArticle")
     public ResponseEntity<Void> addArticle(InArticle article){
-        article.setAId(new IdWorker().nextId());
-        article.setACreateTime(LocalDateTime.now());
+        article.setaId(new IdWorker().nextId());
+        article.setaCreateTime(new Date());
         articleService.save(article);
         rabbitTemplate.convertAndSend(Constants.defaultExchange,
-                Constants.routeKey, "es同步数据");
+                Constants.routeKey, article);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 

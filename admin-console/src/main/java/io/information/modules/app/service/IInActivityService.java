@@ -17,5 +17,4 @@ public interface IInActivityService extends IService<InActivity> {
     PageUtils queryActivitiesByUserId(Long userId);
 
     void deleteAllActive(Long userId);
-
 }

@@ -50,7 +50,7 @@ public class InCardBaseServiceImpl extends ServiceImpl<InCardBaseDao, InCardBase
     @Override
     public List<InCardBase> queryAllCardBase(Long userId) {
         QueryWrapper<InCardBase> queryWrapper = new QueryWrapper<>();
-        queryWrapper.lambda().eq(InCardBase::getUId,userId);
+        queryWrapper.lambda().eq(InCardBase::getuId,userId);
         return this.list(queryWrapper);
     }
 
@@ -59,7 +59,7 @@ public class InCardBaseServiceImpl extends ServiceImpl<InCardBaseDao, InCardBase
         List<InCard> cards = new ArrayList<>();
         //查询Ids
         List<InCardBase> baseList = this.queryAllCardBase(userId);
-        List<Long> cardIds = baseList.stream().map(InCardBase::getCId).collect(Collectors.toList());
+        List<Long> cardIds = baseList.stream().map(InCardBase::getcId).collect(Collectors.toList());
         //添加信息
         cardIds.forEach(cardId -> {
             cards.add(this.queryCard(cardId));
@@ -72,7 +72,7 @@ public class InCardBaseServiceImpl extends ServiceImpl<InCardBaseDao, InCardBase
     @Transactional(rollbackFor = Exception.class)
     public void deleteAllCard(Long userId) {
         List<InCardBase> baseList = this.queryAllCardBase(userId);
-        List<Long> cardIds = baseList.stream().map(InCardBase::getCId).collect(Collectors.toList());
+        List<Long> cardIds = baseList.stream().map(InCardBase::getcId).collect(Collectors.toList());
         this.deleteCard(cardIds);
     }
 
@@ -88,27 +88,7 @@ public class InCardBaseServiceImpl extends ServiceImpl<InCardBaseDao, InCardBase
     @Transactional(rollbackFor = Exception.class)
     public void deleteAllCardBase(Long userId) {
         List<InCardBase> cardList = this.queryAllCardBase(userId);
-        List<Long> cardIds = cardList.stream().map(InCardBase::getCId).collect(Collectors.toList());
+        List<Long> cardIds = cardList.stream().map(InCardBase::getcId).collect(Collectors.toList());
         this.removeByIds(cardIds);
-    }
-
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public void addCard(InCardBase base, InCardArgue argue, InCardVote vote) {
-        argue.setCId(base.getCId());
-        vote.setCId(base.getCId());
-        this.save(base);
-        cardArgueService.save(argue);
-        cardVoteService.save(vote);
-    }
-
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public void updateCard(InCardBase base, InCardArgue argue, InCardVote vote) {
-        argue.setCId(base.getCId());
-        vote.setCId(base.getCId());
-        this.updateById(base);
-        cardArgueService.updateById(argue);
-        cardVoteService.updateById(vote);
     }
 }

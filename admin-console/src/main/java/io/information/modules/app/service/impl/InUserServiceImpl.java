@@ -39,25 +39,25 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
 
         QueryWrapper<InUser> queryWrapper = new QueryWrapper<>();
         //根据昵称查询
-        queryWrapper.lambda().like(InUser::getUNick,params);
+        queryWrapper.lambda().like(InUser::getuNick,params);
         InUser user1 = this.getOne(queryWrapper);
-        user1.setUPwd(null);
-        user1.setUToken(null);
-        user1.setUName(null);
+        user1.setuPwd(null);
+        user1.setuToken(null);
+        user1.setuName(null);
         users.add(user1);
         //根据电话查询
-        queryWrapper.lambda().eq(InUser::getUPhone,params);
+        queryWrapper.lambda().eq(InUser::getuPhone,params);
         InUser user2 = this.getOne(queryWrapper);
-        user1.setUPwd(null);
-        user1.setUToken(null);
-        user1.setUName(null);
+        user1.setuPwd(null);
+        user1.setuToken(null);
+        user1.setuName(null);
         users.add(user2);
         //根据用户简介查询
-        queryWrapper.lambda().like(InUser::getUIntro,params);
+        queryWrapper.lambda().like(InUser::getuIntro,params);
         InUser user3 = this.getOne(queryWrapper);
-        user1.setUPwd(null);
-        user1.setUToken(null);
-        user1.setUName(null);
+        user1.setuPwd(null);
+        user1.setuToken(null);
+        user1.setuName(null);
         users.add(user3);
 
         return users;
@@ -66,7 +66,7 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
     @Override
     public InUser queryUserByNick(String nick) {
         QueryWrapper<InUser> queryWrapper = new QueryWrapper<>();
-        queryWrapper.lambda().eq(InUser::getUNick,nick);
+        queryWrapper.lambda().eq(InUser::getuNick,nick);
         return this.getOne(queryWrapper);
     }
 
@@ -76,7 +76,7 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
         List<Long> idList = Arrays.stream(ids).map(Long::valueOf).collect(Collectors.toList());
 
         QueryWrapper<InUser> queryWrapper = new QueryWrapper<>();
-        queryWrapper.lambda().eq(InUser::getUId,idList);
+        queryWrapper.lambda().in(InUser::getuId,idList);
         List<InUser> userList = this.list(queryWrapper);
 
         return userList;
@@ -86,9 +86,9 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
     public Boolean saveWithCache(InUser inUser) {
         if(this.save(inUser)){
             try {
-                redisUtils.hset(RedisKeys.INUSER,inUser.getUId(),inUser);
+                redisUtils.hset(RedisKeys.INUSER,inUser.getuId(),inUser);
             } catch (Exception e) {
-                LOG.error("新注册用户:"+inUser.getUPhone()+"放入缓存失败");
+                LOG.error("新注册用户:"+inUser.getuPhone()+"放入缓存失败");
             }
             return true;
         }
@@ -98,7 +98,7 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
     @Override
     public InUser findUser(String username, String password) {
         QueryWrapper<InUser> queryWrapper = new QueryWrapper<>();
-        queryWrapper.lambda().eq(InUser::getUName,username);
+        queryWrapper.lambda().eq(InUser::getuName,username);
         InUser user = this.getOne(queryWrapper);
         //2. 判断是否存在
         if(user == null){
@@ -107,7 +107,7 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
         }
 
         //3. 校验密码  解密
-        if(!password.equals(user.getUPwd())){
+        if(!password.equals(user.getuPwd())){
             //密码错误
             throw new IMException(ExceptionEnum.INVALID_USERNAME_PASSWORD);
         }

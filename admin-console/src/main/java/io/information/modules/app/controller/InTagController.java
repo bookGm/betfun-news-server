@@ -9,7 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -33,8 +33,8 @@ public class InTagController {
      */
     @PostMapping("/addTag")
     public ResponseEntity<Void> addTag(InTag tag){
-        tag.setTId(new IdWorker().nextId());
-        tag.setTCreateTime(LocalDateTime.now());
+        tag.settId(new IdWorker().nextId());
+        tag.settCreateTime(new Date());
         tagService.save(tag);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
@@ -94,8 +94,4 @@ public class InTagController {
         List<InTag> tags = tagService.queryAllTag();
         return ResponseEntity.ok(tags);
     }
-
-
-
-    //TODO 多标签查询
 }

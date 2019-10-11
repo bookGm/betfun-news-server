@@ -9,7 +9,6 @@ import io.information.common.utils.RedisKeys;
 import io.information.modules.app.dao.InArticleDao;
 import io.information.modules.app.entity.InArticle;
 import io.information.modules.app.service.IInArticleService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,15 +26,13 @@ import java.util.stream.Collectors;
  */
 @Service
 public class InArticleServiceImpl extends ServiceImpl<InArticleDao, InArticle> implements IInArticleService {
-    @Autowired
-    InArticleDao inArticleDao;
 
     @Override
     @Transactional
     public void deleteAllArticle(Long userId) {
         List<InArticle> articleList = this.queryAllArticle(userId);
         List<Long> articleIds = articleList.stream()
-                .map(InArticle::getAId)
+                .map(InArticle::getaId)
                 .collect(Collectors.toList());
         this.removeByIds(articleIds);
     }
@@ -43,7 +40,7 @@ public class InArticleServiceImpl extends ServiceImpl<InArticleDao, InArticle> i
     @Override
     public List<InArticle> queryAllArticle(Long userId) {
         QueryWrapper<InArticle> queryWrapper = new QueryWrapper<>();
-        queryWrapper.lambda().eq(InArticle::getUId,userId);
+        queryWrapper.lambda().eq(InArticle::getuId,userId);
         List<InArticle> articleList = this.list(queryWrapper);
         return articleList;
     }
@@ -60,7 +57,7 @@ public class InArticleServiceImpl extends ServiceImpl<InArticleDao, InArticle> i
     @CachePut(value= RedisKeys.LIKE,key = "#aid+'-'+#uid")
     public boolean giveALike(Long aid, Long uid) {
         try {
-            inArticleDao.addALike(aid);
+            this.baseMapper.addALike(aid);
         } catch (Exception e) {
             e.printStackTrace();
             return false;
@@ -72,7 +69,7 @@ public class InArticleServiceImpl extends ServiceImpl<InArticleDao, InArticle> i
     @CachePut(value= RedisKeys.COLLECT,key = "#aid+'-'+#uid")
     public boolean collect(Long aid, Long uid) {
         try {
-            inArticleDao.addACollect(aid);
+            this.baseMapper.addACollect(aid);
         } catch (Exception e) {
             e.printStackTrace();
             return false;

@@ -18,10 +18,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -41,14 +40,14 @@ public class InMenuServiceImpl extends ServiceImpl<InMenuDao, InMenu> implements
     @Override
     @Transactional
     public void addMenu(InMenu menu, InMenuSource menuSource, InSource source) {
-        menu.setMId(new IdWorker().nextId());
+        menu.setmId(new IdWorker().nextId());
         menuSource.setMsId(new IdWorker().nextId());
-        source.setSCreateTime(LocalDateTime.now());
+        source.setsCreateTime(new Date());
 
-        menuSource.setMName(menu.getMName());
-        menuSource.setMCode(menu.getMCode());
-        menuSource.setSName(source.getSName());
-        menuSource.setSUrl(source.getSUrl());
+        menuSource.setmName(menu.getmName());
+        menuSource.setmCode(menu.getmCode());
+        menuSource.setsName(source.getsName());
+        menuSource.setsUrl(source.getsUrl());
 
         this.save(menu);
         sourceService.save(source);
@@ -61,13 +60,13 @@ public class InMenuServiceImpl extends ServiceImpl<InMenuDao, InMenu> implements
         //删除菜单
         //找到对应的Menu
         QueryWrapper<InMenu> menuQueryWrapper = new QueryWrapper<>();
-        menuQueryWrapper.lambda().eq(InMenu::getMId,menuId);
+        menuQueryWrapper.lambda().eq(InMenu::getmId,menuId);
         InMenu menu = this.getOne(menuQueryWrapper);
-        String menuCode = menu.getMCode();
+        String menuCode = menu.getmCode();
 
         //确定编码是否为父编码，为父编码时不可删除,需要先删除子编码
         QueryWrapper<InMenu> queryWrapper = new QueryWrapper<>();
-        queryWrapper.lambda().eq(InMenu::getMPcode,menuCode);
+        queryWrapper.lambda().in(InMenu::getmPcode,menuCode);
         List<InMenu> menus = this.list(queryWrapper);
         if(menus != null && !menus.isEmpty()){
             throw new IMException(ExceptionEnum.NODE_PARENT_PATH);
@@ -76,8 +75,8 @@ public class InMenuServiceImpl extends ServiceImpl<InMenuDao, InMenu> implements
             InMenuSource menuSource = this.findMenuSource(menu);
             //找到MenuSource对应的source
             QueryWrapper<InSource> sourceQueryWrapper = new QueryWrapper<>();
-            sourceQueryWrapper.lambda().eq(InSource::getSUrl,menuSource.getSUrl())
-                                       .eq(InSource::getSName,menuSource.getSName());
+            sourceQueryWrapper.lambda().eq(InSource::getsUrl,menuSource.getsUrl())
+                                       .eq(InSource::getsName,menuSource.getsName());
             //执行删除
             sourceService.remove(sourceQueryWrapper);
             this.removeById(menuId);
@@ -88,25 +87,25 @@ public class InMenuServiceImpl extends ServiceImpl<InMenuDao, InMenu> implements
     @Override
     @Transactional
     public void updateMenu(InMenu menu, InMenuSource menuSource, InSource source) {
-        source.setSUpdateTime(LocalDateTime.now());
-        String mCode = menu.getMCode();
+        source.setsUpdateTime(new Date());
+        String mCode = menu.getmCode();
 
         //更新子节点中的父节点信息
         QueryWrapper<InMenu> queryWrapper = new QueryWrapper<>();
-        queryWrapper.lambda().eq(InMenu::getMPcode,mCode);
+        queryWrapper.lambda().in(InMenu::getmPcode,mCode);
         List<InMenu> menus = this.list(queryWrapper);
         if(menus!=null && !menus.isEmpty()){
-            menus.forEach(menu1 -> {
-                InMenu menu2 = menu.setMPcode(mCode);
-                this.updateById(menu2);
+            menus.forEach(menus1 ->{
+                menus1.setmPcode(mCode);
+                this.updateById(menus1);
             });
         }
 
         InMenuSource menuSource1 = this.findMenuSource(menu);
-        menuSource1.setMCode(mCode);
+        menuSource1.setmCode(mCode);
 
         UpdateWrapper<InSource> updateWrapper = new UpdateWrapper<>();
-        updateWrapper.lambda().eq(InSource::getSUrl,source.getSUrl());
+        updateWrapper.lambda().eq(InSource::getsUrl,source.getsUrl());
         sourceService.update(updateWrapper);
 
         this.updateById(menu);
@@ -130,7 +129,7 @@ public class InMenuServiceImpl extends ServiceImpl<InMenuDao, InMenu> implements
     public InMSource queryLikeMenu(String menuName) {
         InMSource mSource = new InMSource();
         QueryWrapper<InMenu> queryWrapper = new QueryWrapper<>();
-        queryWrapper.lambda().like(InMenu::getMName,menuName);
+        queryWrapper.lambda().like(InMenu::getmName,menuName);
         List<InMenu> menus = this.list(queryWrapper);
         menus.forEach(menu -> {
             InMenuSource menuSource = this.findMenuSource(menu);
@@ -145,10 +144,9 @@ public class InMenuServiceImpl extends ServiceImpl<InMenuDao, InMenu> implements
     @Override
     public List<InMSource> queryAllMenu() {
         ArrayList<InMSource> mSources = new ArrayList<>();
-        QueryWrapper<InMenu> queryWrapper = new QueryWrapper<>();
-        List<InMenu> menus = this.list(queryWrapper);
+        List<InMenu> menus = this.list();
         menus.forEach(menu -> {
-            InMSource mSource = this.queryMenuById(menu.getMId());
+            InMSource mSource = this.queryMenuById(menu.getmId());
             mSources.add(mSource);
         });
 
@@ -158,18 +156,18 @@ public class InMenuServiceImpl extends ServiceImpl<InMenuDao, InMenu> implements
 
     //根据MenuSource获得Source
     private InSource findSource(InMenuSource menuSource){
-        String sourceUrl = menuSource.getSUrl();
-        String sourceName = menuSource.getSName();
+        String sourceUrl = menuSource.getsUrl();
+        String sourceName = menuSource.getsName();
         QueryWrapper<InSource> sourceQueryWrapper = new QueryWrapper<>();
-        sourceQueryWrapper.lambda().eq(InSource::getSComponent,sourceUrl).eq(InSource::getSName,sourceName);
+        sourceQueryWrapper.lambda().eq(InSource::getsComponent,sourceUrl).eq(InSource::getsName,sourceName);
         return sourceService.getOne(sourceQueryWrapper);
     }
     //根据Menu获得MenuSource
     private InMenuSource findMenuSource(InMenu menu){
-        String menuCode = menu.getMCode();
-        String menuName = menu.getMName();
+        String menuCode = menu.getmCode();
+        String menuName = menu.getmName();
         QueryWrapper<InMenuSource> menuSourceQueryWrapper = new QueryWrapper<>();
-        menuSourceQueryWrapper.lambda().eq(InMenuSource::getMCode,menuCode).eq(InMenuSource::getMName,menuName);
+        menuSourceQueryWrapper.lambda().eq(InMenuSource::getmCode,menuCode).eq(InMenuSource::getmName,menuName);
         return menuSourceService.getOne(menuSourceQueryWrapper);
     }
 }

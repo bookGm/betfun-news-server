@@ -32,7 +32,7 @@ public class InDicController {
      */
     @PostMapping("/addDic")
     public ResponseEntity<Void> addDic(InDic dic){
-        dic.setDId(new IdWorker().nextId());
+        dic.setdId(new IdWorker().nextId());
         dicService.save(dic);
         return ResponseEntity.status(HttpStatus.OK).build();
     }

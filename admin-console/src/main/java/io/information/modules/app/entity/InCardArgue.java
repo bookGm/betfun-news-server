@@ -1,5 +1,6 @@
 package io.information.modules.app.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -7,52 +8,98 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.Date;
 
 /**
-* <p>
-    * 资讯帖子辩论表
-    * </p>
-*
-* @author ZXS
-* @since 2019-09-24
-*/
-    @Data
-        @EqualsAndHashCode(callSuper = false)
-    @Accessors(chain = true)
-    public class InCardArgue implements Serializable {
+ * <p>
+ * 资讯帖子辩论表
+ * </p>
+ *
+ * @author ZXS
+ * @since 2019-09-24
+ */
+@EqualsAndHashCode(callSuper = false)
+@Accessors(chain = true)
+public class InCardArgue implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-            /**
-            * 帖子id
-            */
+    /**
+     * 帖子id
+     */
     private Long cId;
 
-            /**
-            * 正方观点
-            */
+    /**
+     * 正方观点
+     */
     private String caFside;
 
-            /**
-            * 反方观点
-            */
+    /**
+     * 反方观点
+     */
     private String caRside;
 
-            /**
-            * 正方观点投票人ids，逗号分隔
-            */
+    /**
+     * 正方观点投票人ids，逗号分隔
+     */
     private String caFsideUids;
 
-            /**
-            * 反方观点投票人ids，逗号分隔
-            */
+    /**
+     * 反方观点投票人ids，逗号分隔
+     */
     private String caRsideUids;
 
-            /**
-            * 辩论结束日期
-            */
-            @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime caCloseTime;
+    /**
+     * 辩论结束日期
+     */
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    private Date caCloseTime;
 
+    public Long getcId() {
+        return cId;
+    }
 
+    public void setcId(Long cId) {
+        this.cId = cId;
+    }
+
+    public String getCaFside() {
+        return caFside;
+    }
+
+    public void setCaFside(String caFside) {
+        this.caFside = caFside;
+    }
+
+    public String getCaRside() {
+        return caRside;
+    }
+
+    public void setCaRside(String caRside) {
+        this.caRside = caRside;
+    }
+
+    public String getCaFsideUids() {
+        return caFsideUids;
+    }
+
+    public void setCaFsideUids(String caFsideUids) {
+        this.caFsideUids = caFsideUids;
+    }
+
+    public String getCaRsideUids() {
+        return caRsideUids;
+    }
+
+    public void setCaRsideUids(String caRsideUids) {
+        this.caRsideUids = caRsideUids;
+    }
+
+    public Date getCaCloseTime() {
+        return caCloseTime;
+    }
+
+    public void setCaCloseTime(Date caCloseTime) {
+        this.caCloseTime = caCloseTime;
+    }
 }

@@ -17,33 +17,17 @@ public class EsPageController {
     private LocationServiceImpl locationService;
 
     /**
-     * 添加
-     * @param id
-     * @param firstName
-     * @param lastName
-     * @param age
-     * @param about
-     * @return
+     * 添加索引
      */
     @PostMapping("/add")
-    public ResponseEntity addEsData(String id, String firstName, String lastName, Integer age, String about){
-        for(int i=0;i<100;i++){
-            LocationEntity entity = new LocationEntity();
-            entity.setId(id+i);
-            entity.setFirstName(firstName+i);
-            entity.setLastName(i+lastName);
-            entity.setAge(age);
-            entity.setAbout(about);
-            locationService.save(entity);
-        }
+    public ResponseEntity addEsData(LocationEntity entity) {
+        locationService.save(entity);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
 
-
     /**
-     * 根据ID查询
-     * @return
+     * 根据索引ID查询
      */
     @GetMapping("/queryById")
     public ResponseEntity queryById(String id) {
@@ -53,11 +37,9 @@ public class EsPageController {
 
     /**
      * 删除
-     * @param entity
-     * @return
      */
     @PostMapping("/update")
-    public ResponseEntity delete(LocationEntity entity){
+    public ResponseEntity delete(LocationEntity entity) {
         locationService.delete(entity);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
@@ -65,15 +47,16 @@ public class EsPageController {
 
     /**
      * 分页
-     * @param params 查询条件
+     *
+     * @param params   查询条件
      * @param currPage 当前页
      * @param pageSize 显示数量
      * @return
      */
     @GetMapping("/queryByPage")
-    public PageUtils queryListByPage(@RequestParam(value = "key", required = false)String params,
-                                                @RequestParam(defaultValue = "1")Integer currPage,
-                                                @RequestParam(defaultValue = "10")Integer pageSize){
+    public PageUtils queryListByPage(@RequestParam(value = "key", required = false) String params,
+                                     @RequestParam(defaultValue = "1") Integer currPage,
+                                     @RequestParam(defaultValue = "10") Integer pageSize) {
 
         return locationService.findPage(params, currPage, pageSize);
     }

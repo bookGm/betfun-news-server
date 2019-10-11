@@ -28,7 +28,7 @@ public class InActivityServiceImpl extends ServiceImpl<InActivityDao, InActivity
     public PageUtils queryActivitiesByUserId(Long userId) {
         Page<InActivity> page = new Page<>(1, 10);
         QueryWrapper<InActivity> queryWrapper = new QueryWrapper<>();
-        queryWrapper.lambda().eq(InActivity::getUId,userId);
+        queryWrapper.lambda().eq(InActivity::getuId,userId);
         IPage<InActivity> inActivityIPage = this.baseMapper.selectPage(page, queryWrapper);
         return new PageUtils(inActivityIPage);
     }
@@ -37,7 +37,7 @@ public class InActivityServiceImpl extends ServiceImpl<InActivityDao, InActivity
     @Override
     public void deleteAllActive(Long userId) {
         QueryWrapper<InActivity> queryWrapper = new QueryWrapper<>();
-        queryWrapper.lambda().eq(InActivity::getUId,userId);
+        queryWrapper.lambda().eq(InActivity::getuId,userId);
         List<InActivity> activities = this.list(queryWrapper);
         List<Long> activeIds = activities.stream().map(InActivity::getActId).collect(Collectors.toList());
         this.removeByIds(activeIds);

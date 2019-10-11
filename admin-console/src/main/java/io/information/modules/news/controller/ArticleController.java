@@ -1,6 +1,5 @@
 package io.information.modules.news.controller;
 
-import io.information.common.utils.MD5Util;
 import io.information.common.utils.PageUtils;
 import io.information.common.utils.R;
 import io.information.modules.app.config.IdWorker;
@@ -9,15 +8,11 @@ import io.information.modules.news.service.ArticleService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.HashOperations;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.SetOperations;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.MultipartHttpServletRequest;
 
-import javax.servlet.http.HttpServletRequest;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Map;
@@ -35,8 +30,12 @@ import java.util.Map;
 public class ArticleController {
     @Autowired
     private ArticleService articleService;
+
     @Value("${img:fileUploadPath:#{'http://localhost:8080'}}")
     private String fileUploadPath;
+
+    @Autowired
+    private RedisTemplate redisTemplate;
 
     /**
      * 列表
@@ -118,4 +117,36 @@ public class ArticleController {
         articleService.deleteAllActive(uId);
         return R.ok();
     }
+
+
+    /**
+     * 点赞
+     * 文章ID
+     * 用户ID
+     */
+    @PostMapping("add/like/{aId}/{uId}")
+    public R addLike(@PathVariable("aId") Long aId, @PathVariable("uId") Long uId) {
+        ArticleEntity article = articleService.getById(aId);
+        //需要在redis中创建一个Set保存信息
+        SetOperations opsForSet = redisTemplate.opsForSet();
+        //添加被点赞的文章
+        Long articleSet = opsForSet.add("article_set", aId);
+        //添加点赞的用户
+        Long articleUserSet = opsForSet.add("article_user_set" + "_" + aId, uId);
+        //将用户和文章的对应关系放入Hash
+        HashOperations opsForHash = redisTemplate.opsForHash();
+        String hashStr = "article_user_like" + "_" + aId + "_" + uId;
+        //如果有一样的字段，则添加失败
+        Boolean aBoolean = opsForHash.putIfAbsent(hashStr, articleSet,articleUserSet);
+        //判断是否收藏(添加是否成功,true代表收藏成功，false代表收藏过)
+        if (aBoolean){
+            //同步数据库
+            article.setaLike(article.getaLike()+1);
+            articleService.updateById(article);
+        }else {
+            R.error();
+        }
+        return R.ok();
+    }
+
 }

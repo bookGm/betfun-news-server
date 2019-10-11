@@ -37,22 +37,8 @@ public class InCardBaseController {
     @PostMapping("/addCardBase")
     public ResponseEntity<Void> addCardBase(InCardBase cardBase){
         Long id= IdGenerator.getId();
-        cardBase.setCId(id);
+        cardBase.setcId(id);
         cardBaseService.save(cardBase);
-        return ResponseEntity.status(HttpStatus.OK).build();
-    }
-
-
-    /**
-     * 添加帖子<包含关联表>
-     * @param base
-     * @param argue
-     * @param vote
-     * @return
-     */
-    @PostMapping("/addCard")
-    public ResponseEntity<Void> addCard(InCardBase base, InCardArgue argue, InCardVote vote){
-        cardBaseService.addCard(base,argue,vote);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
@@ -68,17 +54,6 @@ public class InCardBaseController {
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
-
-    /**
-     * 删除所有信息<包含关联表>
-     * @param cardIds
-     * @return
-     */
-    @DeleteMapping("/deleteCard")
-    public ResponseEntity<Void> deleteCard(List<Long> cardIds){
-        cardBaseService.deleteCard(cardIds);
-        return ResponseEntity.status(HttpStatus.OK).build();
-    }
 
 
     /**
@@ -115,21 +90,6 @@ public class InCardBaseController {
         cardBaseService.updateById(cardBase);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
-
-
-    /**
-     * 修改帖子<包含关联表>
-     * @param base
-     * @param argue
-     * @param vote
-     * @return
-     */
-    @PutMapping("/updateCard")
-    public ResponseEntity<Void> updateAllCard(InCardBase base, InCardArgue argue, InCardVote vote){
-        cardBaseService.updateCard(base,argue,vote);
-        return ResponseEntity.status(HttpStatus.OK).build();
-    }
-
 
     /**
      * 根据帖子ID查询基础帖子
@@ -189,6 +149,4 @@ public class InCardBaseController {
         List<InUser> userList = iInUserService.queryUsersByArgueIds(userIds);
         return ResponseEntity.ok(userList);
     }
-
-    //TODO 帖子节点分类<字典>
 }
