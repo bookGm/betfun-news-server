@@ -12,5 +12,9 @@ import io.information.modules.app.entity.InCardVote;
  * @since 2019-09-24
  */
 public interface IInCardVoteService extends IService<InCardVote> {
-
+    /**
+     * 投票
+     * @return
+     */
+    public boolean vote(Long cid, Long uid,Integer optIndex);
 }

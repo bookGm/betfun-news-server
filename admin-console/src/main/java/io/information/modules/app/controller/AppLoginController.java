@@ -13,7 +13,7 @@ import io.information.common.utils.R;
 import io.information.common.utils.RedisKeys;
 import io.information.common.utils.RedisUtils;
 import io.information.modules.app.entity.InUser;
-import io.information.modules.app.form.LoginForm;
+import io.information.modules.app.form.AppLoginForm;
 import io.information.modules.app.service.IInUserService;
 import io.information.modules.app.utils.JwtUtils;
 import io.swagger.annotations.Api;
@@ -35,7 +35,7 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("/app")
-@Api("APP登录接口")
+@Api(tags = "APP登录接口")
 public class AppLoginController {
     @Autowired
     private IInUserService iInUserService;
@@ -46,9 +46,9 @@ public class AppLoginController {
 
 
 
-    @ApiOperation(value = "获取手机验证码")
-    @PostMapping("getVerificationCode")
-    public R getVerificationCode(String phone){
+    @ApiOperation(value = "登录获取手机验证码")
+    @PostMapping("getLoginVerificationCode")
+    public R getLoginVerificationCode(String phone){
         String rkey=RedisKeys.LOGIN_PHONECODE+phone;
         if(redis.exists(rkey))return R.error("请稍后发送");
         if (StringUtil.isBlank(phone)) return R.error(HttpStatus.SC_UNAUTHORIZED,"请输入手机号码！");
@@ -71,9 +71,34 @@ public class AppLoginController {
         return R.error("短信发送失败，请重试");
     }
 
+    @ApiOperation(value = "注册获取手机验证码")
+    @PostMapping("getRegistVerificationCode")
+    public R getRegistVerificationCode(String phone){
+        String rkey=RedisKeys.LOGIN_PHONECODE+phone;
+        if(redis.exists(rkey))return R.error("请稍后发送");
+        if (StringUtil.isBlank(phone)) return R.error(HttpStatus.SC_UNAUTHORIZED,"请输入手机号码！");
+        LambdaQueryWrapper<InUser> qw=new LambdaQueryWrapper<InUser>();
+        qw.eq(InUser::getUPhone,phone);
+        InUser user=iInUserService.getOne(qw);
+        if(null!=user){
+            return R.error("手机号码已被注册");
+        }
+        int rand =  100000 + (int)(Math.random() * 899999);
+        if (rand > 0){
+            Boolean status = SmsUtil.sendSMS(user.getUPhone(), MessageFormat.format(SmsTemplate.loginCodeTemplate,rand));
+            if(status){
+                redis.set(rkey,rand,60);
+                return R.ok();
+            }else{
+                return R.error("短信发送失败，请重试");
+            }
+        }
+        return R.error("短信发送失败，请重试");
+    }
+
     @PostMapping("pwdLogin")
     @ApiOperation("密码登录")
-    public R pwdLogin(@RequestBody @Validated(PwdLogin.class) LoginForm form){
+    public R pwdLogin(@RequestBody @Validated(PwdLogin.class) AppLoginForm form){
         //用户登录
         LambdaQueryWrapper<InUser> qw=new LambdaQueryWrapper<InUser>();
         qw.eq(InUser::getuPhone,form.getUPhone());
@@ -86,7 +111,7 @@ public class AppLoginController {
     }
     @PostMapping("codeLogin")
     @ApiOperation("验证码登录")
-    public R codeLogin(@RequestBody @Validated(CodeLogin.class)  LoginForm form){
+    public R codeLogin(@RequestBody @Validated(CodeLogin.class)  AppLoginForm form){
         String rkey=RedisKeys.LOGIN_PHONECODE+form.getUPhone();
         if(!redis.exists(rkey)){
             return R.error("验证码已超时");
@@ -108,7 +133,7 @@ public class AppLoginController {
 
     @PostMapping("codeRegist")
     @ApiOperation("验证码注册")
-    public R codeRegist(@RequestBody @Validated(CodeLogin.class)  LoginForm form){
+    public R codeRegist(@RequestBody @Validated(CodeLogin.class) AppLoginForm form){
         String rkey=RedisKeys.LOGIN_PHONECODE+form.getUPhone();
         if(!redis.exists(rkey)){
             return R.error("验证码已超时");
@@ -117,7 +142,7 @@ public class AppLoginController {
         qw.eq(InUser::getuPhone,form.getUPhone());
         InUser user=iInUserService.getOne(qw);
         if(null != user) {
-            return R.error("手机号已存在");
+            return R.error("手机号码已被注册");
         }
         if(redis.get(rkey).equals(form.getCode())){
             Long uid= IdGenerator.getId();

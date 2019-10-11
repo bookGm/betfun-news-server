@@ -3,6 +3,7 @@ package io.information.modules.app.dao;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import io.information.modules.app.entity.InCardVote;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 /**
  * <p>
@@ -15,4 +16,10 @@ import org.apache.ibatis.annotations.Mapper;
 @Mapper
 public interface InCardVoteDao extends BaseMapper<InCardVote> {
 
+    /**
+     * 投票
+     * @param cid 帖子id
+     * @param optIndex 选项id
+     */
+    void addVote (@Param("cid")Long cid,@Param("optIndex")Integer optIndex);
 }

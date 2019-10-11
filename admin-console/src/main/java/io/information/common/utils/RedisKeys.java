@@ -23,4 +23,6 @@ public class RedisKeys {
     public static final String COLLECT=BASEKEY+"collect";
     //app用户
     public static final String INUSER=BASEKEY+"inuser";
+    //投票
+    public static final String VOTE=BASEKEY+"vote";
 }

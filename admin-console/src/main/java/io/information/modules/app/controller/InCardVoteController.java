@@ -3,6 +3,7 @@ package io.information.modules.app.controller;
 
 import io.information.modules.app.entity.InCardVote;
 import io.information.modules.app.service.IInCardVoteService;
+import io.information.modules.sys.controller.AbstractController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +21,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/news/card/vote")
-public class InCardVoteController {
+public class InCardVoteController extends AbstractController {
     @Autowired
     private IInCardVoteService cardVoteService;
 
@@ -32,6 +33,15 @@ public class InCardVoteController {
     @PostMapping("/addCardVote")
     public ResponseEntity<Void> add(InCardVote cardVote){
         cardVoteService.save(cardVote);
+        return ResponseEntity.status(HttpStatus.OK).build();
+    }
+
+
+    @PostMapping("/vote")
+    public ResponseEntity<Void> vote(Long cid,List<Integer> optIndexs){
+        for(Integer optIndex:optIndexs){
+            cardVoteService.vote(cid,getUserId(),optIndex);
+        }
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
