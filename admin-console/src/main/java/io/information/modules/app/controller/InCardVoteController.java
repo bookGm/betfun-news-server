@@ -1,6 +1,7 @@
 package io.information.modules.app.controller;
 
 
+import io.information.common.utils.PageUtils;
 import io.information.modules.app.entity.InCardVote;
 import io.information.modules.app.service.IInCardVoteService;
 import io.information.modules.sys.controller.AbstractController;
@@ -9,7 +10,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -26,17 +29,18 @@ public class InCardVoteController extends AbstractController {
     private IInCardVoteService cardVoteService;
 
     /**
-     * 添加投票贴
-     * @param cardVote
-     * @return
+     * 添加
      */
-    @PostMapping("/addCardVote")
-    public ResponseEntity<Void> add(InCardVote cardVote){
+    @PostMapping("/save")
+    public ResponseEntity<Void> save(@RequestBody InCardVote cardVote){
         cardVoteService.save(cardVote);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
 
+    /**
+     * 投票
+     */
     @PostMapping("/vote")
     public ResponseEntity<Void> vote(Long cid,List<Integer> optIndexs){
         for(Integer optIndex:optIndexs){
@@ -47,38 +51,41 @@ public class InCardVoteController extends AbstractController {
 
 
     /**
-     * 删除投票贴子
-     * @param cardIds
-     * @return
+     * 删除
      */
-    @DeleteMapping("/deleteCardVote")
-    public ResponseEntity<Void> delete(List<Long> cardIds){
-        cardVoteService.removeByIds(cardIds);
+    @DeleteMapping("/delete")
+    public ResponseEntity<Void> delete(@RequestBody Long[] cIds){
+        cardVoteService.removeByIds(Arrays.asList(cIds));
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
 
     /**
-     * 修改投票帖子
-     * @param cardVote
-     * @return
+     * 修改
      */
-    @PutMapping("/updateCardVote")
-    public ResponseEntity<Void> updateCardVote(InCardVote cardVote){
+    @PutMapping("/update")
+    public ResponseEntity<Void> update(@RequestBody InCardVote cardVote){
         cardVoteService.updateById(cardVote);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
 
     /**
-     * 根据帖子ID查询
-     * @param cardIds
-     * @return
+     * 查询
      */
-    @GetMapping("/queryCardVote")
-    public ResponseEntity<InCardVote> queryCardVote(Long cardIds){
-        InCardVote cardArgue = cardVoteService.getById(cardIds);
+    @GetMapping("/info/{cId}")
+    public ResponseEntity<InCardVote> queryCardVote(@PathVariable("cId") Long cId){
+        InCardVote cardArgue = cardVoteService.getById(cId);
         return ResponseEntity.ok(cardArgue);
     }
 
+
+    /**
+     * 列表
+     */
+    @GetMapping("/list")
+    public ResponseEntity<PageUtils> list(@RequestParam Map<String, Object> params) {
+        PageUtils page = cardVoteService.queryPage(params);
+        return ResponseEntity.ok(page);
+    }
 }

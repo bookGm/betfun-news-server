@@ -1,7 +1,7 @@
 package io.elasticsearch.listener;
 
-import io.elasticsearch.entity.EsArticleEntity;
-import io.elasticsearch.service.EsArticleService;
+import io.elasticsearch.entity.EsCardEntity;
+import io.elasticsearch.service.EsCardService;
 import io.mq.utils.Constants;
 import org.springframework.amqp.rabbit.annotation.Exchange;
 import org.springframework.amqp.rabbit.annotation.Queue;
@@ -11,46 +11,46 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
-public class ArticleListener {
+public class CardListener {
     @Autowired
-    private EsArticleService articleService;
+    private EsCardService cardService;
 
 
     /**
-     * 文章发布
+     * 帖子发布
      */
     @RabbitListener(bindings = @QueueBinding(
             value = @Queue(name = Constants.queue),
             exchange = @Exchange(name = Constants.defaultExchange),
             key = Constants.routeKey
     ))
-    public void created(EsArticleEntity articleEntity){
-        articleService.saveArticle(articleEntity);
+    public void created(EsCardEntity cardEntity){
+        cardService.saveCard(cardEntity);
     }
 
 
     /**
-     * 文章删除
+     * 帖子删除
      */
     @RabbitListener(bindings = @QueueBinding(
             value = @Queue(name = Constants.queue),
             exchange = @Exchange(name = Constants.defaultExchange),
             key = Constants.routeKey
     ))
-    public void remove(EsArticleEntity articleEntity){
-        articleService.removeArticle(articleEntity);
+    public void remove(EsCardEntity cardEntity){
+        cardService.removeCard(cardEntity);
     }
 
 
     /**
-     * 文章更新
+     * 帖子更新
      */
     @RabbitListener(bindings = @QueueBinding(
             value = @Queue(name = Constants.queue),
             exchange = @Exchange(name = Constants.defaultExchange),
             key = Constants.routeKey
     ))
-    public void update(EsArticleEntity articleEntity){
-        articleService.updatedArticle(articleEntity);
+    public void update(EsCardEntity cardEntity){
+        cardService.updatedCard(cardEntity);
     }
 }

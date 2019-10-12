@@ -1,10 +1,11 @@
 package io.information.modules.app.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import io.information.common.utils.PageUtils;
+import io.information.common.utils.Query;
 import io.information.common.utils.RedisKeys;
 import io.information.modules.app.dao.InArticleDao;
 import io.information.modules.app.entity.InArticle;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -30,7 +32,9 @@ public class InArticleServiceImpl extends ServiceImpl<InArticleDao, InArticle> i
     @Override
     @Transactional
     public void deleteAllArticle(Long userId) {
-        List<InArticle> articleList = this.queryAllArticle(userId);
+        LambdaQueryWrapper<InArticle> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(InArticle::getuId,userId);
+        List<InArticle> articleList = this.list(queryWrapper);
         List<Long> articleIds = articleList.stream()
                 .map(InArticle::getaId)
                 .collect(Collectors.toList());
@@ -38,23 +42,27 @@ public class InArticleServiceImpl extends ServiceImpl<InArticleDao, InArticle> i
     }
 
     @Override
-    public List<InArticle> queryAllArticle(Long userId) {
+    public PageUtils queryAllArticle(Map<String, Object> params, Long userId) {
         QueryWrapper<InArticle> queryWrapper = new QueryWrapper<>();
-        queryWrapper.lambda().eq(InArticle::getuId,userId);
-        List<InArticle> articleList = this.list(queryWrapper);
-        return articleList;
+        queryWrapper.lambda().eq(InArticle::getuId, userId);
+        IPage<InArticle> page = this.page(
+                new Query<InArticle>().getPage(params),
+                queryWrapper
+        );
+        return new PageUtils(page);
     }
 
     @Override
-    public PageUtils queryPage(int page,int size) {
-        Page<InArticle> page1 = new Page<>(page, size);
-        IPage<InArticle> iPage = this.baseMapper.selectPage(
-                page1, new QueryWrapper<InArticle>());
-        return new PageUtils(iPage);
+    public PageUtils queryPage(Map<String, Object> params) {
+        IPage<InArticle> page = this.page(
+                new Query<InArticle>().getPage(params),
+                new QueryWrapper<InArticle>()
+        );
+        return new PageUtils(page);
     }
 
     @Override
-    @CachePut(value= RedisKeys.LIKE,key = "#aid+'-'+#uid")
+    @CachePut(value = RedisKeys.LIKE, key = "#aid+'-'+#uid")
     public boolean giveALike(Long aid, Long uid) {
         try {
             this.baseMapper.addALike(aid);
@@ -66,7 +74,7 @@ public class InArticleServiceImpl extends ServiceImpl<InArticleDao, InArticle> i
     }
 
     @Override
-    @CachePut(value= RedisKeys.COLLECT,key = "#aid+'-'+#uid")
+    @CachePut(value = RedisKeys.COLLECT, key = "#aid+'-'+#uid")
     public boolean collect(Long aid, Long uid) {
         try {
             this.baseMapper.addACollect(aid);

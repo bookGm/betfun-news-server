@@ -1,6 +1,7 @@
 package io.information.modules.app.controller;
 
 
+import io.information.common.utils.PageUtils;
 import io.information.modules.app.config.IdWorker;
 import io.information.modules.app.entity.InTag;
 import io.information.modules.app.service.IInTagService;
@@ -9,8 +10,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -28,11 +31,10 @@ public class InTagController {
 
 
     /**
-     * 添加标签
-     * @return
+     * 添加
      */
-    @PostMapping("/addTag")
-    public ResponseEntity<Void> addTag(InTag tag){
+    @PostMapping("/save")
+    public ResponseEntity<Void> save(@RequestBody InTag tag){
         tag.settId(new IdWorker().nextId());
         tag.settCreateTime(new Date());
         tagService.save(tag);
@@ -41,57 +43,41 @@ public class InTagController {
 
 
     /**
-     * 删除标签
-     * @return
+     * 删除
      */
-    @DeleteMapping("/deleteTag")
-    public ResponseEntity<Void> deleteTag(Long tagId){
-        tagService.removeById(tagId);
+    @DeleteMapping("/delete")
+    public ResponseEntity<Void> delete(@RequestBody Long[] tIds){
+        tagService.removeByIds(Arrays.asList(tIds));
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
 
     /**
-     * 批量删除标签
-     * @return
+     * 修改
      */
-    @DeleteMapping("/deleteBatchTag")
-    public ResponseEntity<Void> deleteBatchTag(List<Long> tagIds){
-        tagService.removeByIds(tagIds);
-        return ResponseEntity.status(HttpStatus.OK).build();
-    }
-
-
-    /**
-     * 修改标签
-     * @param tag
-     * @return
-     */
-    @PutMapping("/updateTage")
-    public ResponseEntity<Void> updateTage(InTag tag){
+    @PutMapping("/update")
+    public ResponseEntity<Void> update(@RequestBody InTag tag){
         tagService.updateById(tag);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
 
     /**
-     * 查询标签
-     * @return
+     * 查询
      */
-    @GetMapping("/queryTag")
-    public ResponseEntity<InTag> queryTag(Long tagId){
-        InTag tag = tagService.getById(tagId);
+    @GetMapping("/info/{tId}")
+    public ResponseEntity<InTag> queryTag(@PathVariable("tId") Long tId){
+        InTag tag = tagService.getById(tId);
         return ResponseEntity.ok(tag);
     }
 
 
     /**
-     * 获取所有标签
-     * @return
+     * 列表
      */
-    @GetMapping("/queryAllTag")
-    public ResponseEntity<List<InTag>> queryAllTag(){
-        List<InTag> tags = tagService.queryAllTag();
-        return ResponseEntity.ok(tags);
+    @GetMapping("/list")
+    public ResponseEntity<PageUtils> list(@RequestParam Map<String,Object> params){
+        PageUtils page = tagService.queryPage(params);
+        return ResponseEntity.ok(page);
     }
 }

@@ -4,7 +4,6 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import io.information.common.utils.PageUtils;
 import io.information.modules.news.entity.ArticleEntity;
 
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -18,7 +17,7 @@ public interface ArticleService extends IService<ArticleEntity> {
 
     PageUtils queryPage(Map<String, Object> params);
 
-    PageUtils queryAllArticle(Long userId);
+    PageUtils queryAllArticle(Map<String, Object> params, Long userId);
 
     void deleteAllActive(Long userId);
 

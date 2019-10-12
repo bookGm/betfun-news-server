@@ -4,6 +4,8 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import io.information.common.utils.PageUtils;
 import io.information.modules.app.entity.InActivity;
 
+import java.util.Map;
+
 /**
  * <p>
  * 资讯活动表 服务类
@@ -14,7 +16,7 @@ import io.information.modules.app.entity.InActivity;
  */
 public interface IInActivityService extends IService<InActivity> {
 
-    PageUtils queryActivitiesByUserId(Long userId);
+    PageUtils queryActivitiesByUserId(Map<String,Object> params,Long userId);
 
     void deleteAllActive(Long userId);
 }

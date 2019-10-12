@@ -15,7 +15,7 @@ import java.util.List;
  */
 public interface IInDicService extends IService<InDic> {
 
-    void deleteDic(Long disId);
+    void deleteDic(Long[] dIds);
 
     void updateDic(InDic dic);
 

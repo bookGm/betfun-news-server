@@ -3,8 +3,10 @@ package io.information.modules.app.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import io.information.common.utils.PageUtils;
 import io.information.modules.app.entity.InArticle;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -18,9 +20,9 @@ public interface IInArticleService extends IService<InArticle> {
 
     void deleteAllArticle(Long userId);
 
-    List<InArticle> queryAllArticle(Long userId);
+    PageUtils queryAllArticle(Map<String, Object> params,Long userId);
 
-    PageUtils queryPage(int page,int szie);
+    PageUtils queryPage(Map<String,Object> params);
 
     /**
      * 点赞

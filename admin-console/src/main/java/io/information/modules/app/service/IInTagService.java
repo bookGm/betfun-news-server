@@ -1,10 +1,12 @@
 package io.information.modules.app.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import io.information.common.utils.PageUtils;
 import io.information.modules.app.entity.InTag;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -16,5 +18,5 @@ import java.util.List;
  */
 public interface IInTagService extends IService<InTag> {
 
-    List<InTag> queryAllTag();
+    PageUtils queryPage(Map<String, Object> params);
 }

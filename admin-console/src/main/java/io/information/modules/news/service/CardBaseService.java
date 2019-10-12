@@ -2,10 +2,8 @@ package io.information.modules.news.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import io.information.common.utils.PageUtils;
-import io.information.modules.news.entity.CardArgueEntity;
 import io.information.modules.news.entity.CardBaseEntity;
 import io.information.modules.news.entity.CardVo;
-import io.information.modules.news.entity.CardVoteEntity;
 
 import java.util.Map;
 
@@ -24,6 +22,6 @@ public interface CardBaseService extends IService<CardBaseEntity> {
 
     void deleteCard(Long[] cardIds);
 
-    PageUtils queryAllCard(Long userId);
+    PageUtils queryAllCard(Map<String, Object> params, Long userId);
 }
 

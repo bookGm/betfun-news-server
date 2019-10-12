@@ -27,8 +27,8 @@ import java.util.Map;
 
 @Service
 public class EsArticleServiceImpl implements EsArticleService {
-//    @Autowired
-//    private EsArticleDao articleDao;
+    @Autowired
+    private EsArticleDao articleDao;
     @Autowired
     private ElasticsearchTemplate elasticsearchTemplate;
 
@@ -46,7 +46,7 @@ public class EsArticleServiceImpl implements EsArticleService {
      * ES添加文章
      */
     public void saveArticle(EsArticleEntity articleEntity) {
-//        articleDao.save(articleEntity);
+        articleDao.save(articleEntity);
     }
 
 
@@ -54,7 +54,16 @@ public class EsArticleServiceImpl implements EsArticleService {
      * ES删除文章
      */
     public void removeArticle(EsArticleEntity articleEntity) {
-//        articleDao.delete(articleEntity);
+        articleDao.deleteById(articleEntity.getaId());
+    }
+
+
+    /**
+     *  ES更新文章
+     */
+    public void updatedArticle(EsArticleEntity articleEntity){
+        articleDao.deleteById(articleEntity.getaId());
+        articleDao.save(articleEntity);
     }
 
 
@@ -93,8 +102,6 @@ public class EsArticleServiceImpl implements EsArticleService {
         // 构造PageUtils，并返回
         return new PageUtils(articleList,totalCount,pageSize,currPage);
     }
-
-
 
 
 }

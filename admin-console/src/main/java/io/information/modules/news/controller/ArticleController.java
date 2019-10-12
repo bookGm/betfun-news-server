@@ -5,6 +5,7 @@ import io.information.common.utils.R;
 import io.information.modules.app.config.IdWorker;
 import io.information.modules.news.entity.ArticleEntity;
 import io.information.modules.news.service.ArticleService;
+import io.information.modules.sys.controller.AbstractController;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -27,15 +28,12 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("news/article")
-public class ArticleController {
+public class ArticleController extends AbstractController {
     @Autowired
     private ArticleService articleService;
 
     @Value("${img:fileUploadPath:#{'http://localhost:8080'}}")
     private String fileUploadPath;
-
-    @Autowired
-    private RedisTemplate redisTemplate;
 
     /**
      * 列表
@@ -56,7 +54,6 @@ public class ArticleController {
     @RequiresPermissions("news:article:info")
     public R info(@PathVariable("aId") Long aId) {
         ArticleEntity article = articleService.getById(aId);
-//        dicService.q
         return R.ok().put("article", article);
     }
 
@@ -64,10 +61,10 @@ public class ArticleController {
     /**
      * 用户ID查询
      */
-    @GetMapping("/infoAll/{uId}")
+    @GetMapping("/infoAll")
     @RequiresPermissions("news:article:infoAll")
-    public R infoAll(@PathVariable("uId") Long uId) {
-        PageUtils pageUtils = articleService.queryAllArticle(uId);
+    public R infoAll(Map<String, Object> params) {
+        PageUtils pageUtils = articleService.queryAllArticle(params, getUserId());
         return R.ok().put("userArticle", pageUtils);
     }
 
@@ -80,8 +77,8 @@ public class ArticleController {
     public R save(@RequestBody ArticleEntity article) {
         article.setaId(new IdWorker().nextId());
         article.setaCreateTime(new Date());
+        article.setuId(getUserId());
         articleService.save(article);
-
         return R.ok();
     }
 
@@ -111,42 +108,50 @@ public class ArticleController {
     /**
      * 用户ID删除
      */
-    @PostMapping("/deleteAll/{uId}")
+    @PostMapping("/deleteAll")
     @RequiresPermissions("news:article:deleteAll")
-    public R deleteAll(@PathVariable("uId") Long uId) {
-        articleService.deleteAllActive(uId);
+    public R deleteAll() {
+        articleService.deleteAllActive(getUserId());
         return R.ok();
     }
 
 
-    /**
+
+
+
+
+
+
+
+
+/*    *//**
      * 点赞
      * 文章ID
      * 用户ID
-     */
-    @PostMapping("add/like/{aId}/{uId}")
-    public R addLike(@PathVariable("aId") Long aId, @PathVariable("uId") Long uId) {
+     *//*
+    @PostMapping("add/like/{aId}")
+    public R addLike(@PathVariable("aId") Long aId) {
         ArticleEntity article = articleService.getById(aId);
         //需要在redis中创建一个Set保存信息
         SetOperations opsForSet = redisTemplate.opsForSet();
         //添加被点赞的文章
         Long articleSet = opsForSet.add("article_set", aId);
         //添加点赞的用户
-        Long articleUserSet = opsForSet.add("article_user_set" + "_" + aId, uId);
+        Long articleUserSet = opsForSet.add("article_user_set" + "_" + aId, getUserId());
         //将用户和文章的对应关系放入Hash
         HashOperations opsForHash = redisTemplate.opsForHash();
-        String hashStr = "article_user_like" + "_" + aId + "_" + uId;
+        String hashStr = "article_user_like" + "_" + aId + "_" + getUserId();
         //如果有一样的字段，则添加失败
-        Boolean aBoolean = opsForHash.putIfAbsent(hashStr, articleSet,articleUserSet);
+        Boolean aBoolean = opsForHash.putIfAbsent(hashStr, articleSet, articleUserSet);
         //判断是否收藏(添加是否成功,true代表收藏成功，false代表收藏过)
-        if (aBoolean){
+        if (aBoolean) {
             //同步数据库
-            article.setaLike(article.getaLike()+1);
+            article.setaLike(article.getaLike() + 1);
             articleService.updateById(article);
-        }else {
+        } else {
             R.error();
         }
         return R.ok();
-    }
+    }*/
 
 }

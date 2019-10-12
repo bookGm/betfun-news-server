@@ -31,32 +31,33 @@ public class CardBaseServiceImpl extends ServiceImpl<CardBaseDao, CardBaseEntity
     @Autowired
     private UserService userService;
 
+
+    @Override
+    public PageUtils queryPage(Map<String, Object> params) {
+        LambdaQueryWrapper<CardBaseEntity> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(CardBaseEntity::getcCategory, NewsEnum.帖子分类_投票帖.getCode());
+        IPage<CardBaseEntity> page = this.page(
+                new Query<CardBaseEntity>().getPage(params),
+                queryWrapper
+        );
+        for (CardBaseEntity c : page.getRecords()) {
+            UserEntity u = userService.getById(c.getuId());
+            if (null != u) {
+                c.setuName(u.getuName());
+            }
+        }
+        return new PageUtils(page);
+    }
+
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void addCard(CardVo cardVo){
+    public void addCard(CardVo cardVo) {
         CardBaseEntity baseEntity = BeanHelper.copyProperties(cardVo, CardBaseEntity.class);
         CardArgueEntity argueEntity = BeanHelper.copyProperties(cardVo, CardArgueEntity.class);
         CardVoteEntity voteEntity = BeanHelper.copyProperties(cardVo, CardVoteEntity.class);
         this.save(baseEntity);
         argueService.save(argueEntity);
         voteService.save(voteEntity);
-    }
-
-    @Override
-    public PageUtils queryPage(Map<String, Object> params) {
-        LambdaQueryWrapper<CardBaseEntity> qw=new LambdaQueryWrapper<>();
-        qw.eq(CardBaseEntity::getcCategory, NewsEnum.帖子分类_投票帖.getCode());
-        IPage<CardBaseEntity> page = this.page(
-                new Query<CardBaseEntity>().getPage(params),
-                new QueryWrapper<CardBaseEntity>()
-        );
-        for(CardBaseEntity c:page.getRecords()){
-            UserEntity u=userService.getById(c.getuId());
-            if(null!=u){
-                c.setuName(u.getuName());
-            }
-        }
-        return new PageUtils(page);
     }
 
     @Override
@@ -69,11 +70,14 @@ public class CardBaseServiceImpl extends ServiceImpl<CardBaseDao, CardBaseEntity
     }
 
     @Override
-    public PageUtils queryAllCard(Long userId) {
-        LambdaQueryWrapper<CardVo> queryWrapper = new LambdaQueryWrapper<>();
-//        queryWrapper
-
-        return new PageUtils(null);
+    public PageUtils queryAllCard(Map<String, Object> params, Long userId) {
+        LambdaQueryWrapper<CardBaseEntity> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.in(CardBaseEntity::getuId, userId);
+        IPage<CardBaseEntity> page = this.page(
+                new Query<CardBaseEntity>().getPage(params),
+                queryWrapper
+        );
+        return new PageUtils(page);
     }
 
 

@@ -1,10 +1,17 @@
 package io.information.modules.app.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.service.additional.query.impl.QueryChainWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import io.information.common.utils.PageUtils;
+import io.information.common.utils.Query;
 import io.information.modules.app.dao.InCardArgueDao;
 import io.information.modules.app.entity.InCardArgue;
 import io.information.modules.app.service.IInCardArgueService;
 import org.springframework.stereotype.Service;
+
+import java.util.Map;
 
 /**
  * <p>
@@ -17,4 +24,12 @@ import org.springframework.stereotype.Service;
 @Service
 public class InCardArgueServiceImpl extends ServiceImpl<InCardArgueDao, InCardArgue> implements IInCardArgueService {
 
+    @Override
+    public PageUtils queryPage(Map<String, Object> params) {
+        IPage<InCardArgue> page = this.page(
+                new Query<InCardArgue>().getPage(params),
+                new QueryWrapper<InCardArgue>()
+        );
+        return new PageUtils(page);
+    }
 }

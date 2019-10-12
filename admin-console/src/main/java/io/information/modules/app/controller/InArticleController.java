@@ -2,7 +2,6 @@ package io.information.modules.app.controller;
 
 
 import io.information.common.utils.PageUtils;
-import io.information.modules.app.config.IdWorker;
 import io.information.modules.app.entity.InArticle;
 import io.information.modules.app.service.IInArticleService;
 import io.information.modules.sys.controller.AbstractController;
@@ -15,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
 import java.util.Date;
-import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -35,14 +34,13 @@ public class InArticleController extends AbstractController {
 
     /**
      * 添加
-     * @param article
-     * @return
      */
-    @PostMapping("/addArticle")
-    public ResponseEntity<Void> addArticle(InArticle article){
-        article.setaId(new IdWorker().nextId());
+    @PostMapping("/save")
+    public ResponseEntity<Void> save(@RequestBody InArticle article) {
+        article.setuId(getUserId());
         article.setaCreateTime(new Date());
         articleService.save(article);
+        //rabbit
         rabbitTemplate.convertAndSend(Constants.defaultExchange,
                 Constants.routeKey, article);
         return ResponseEntity.status(HttpStatus.OK).build();
@@ -51,35 +49,29 @@ public class InArticleController extends AbstractController {
 
     /**
      * 删除
-     * @param articleIds
-     * @return
      */
-    @DeleteMapping("/deleteArticle")
-    public ResponseEntity<Void> deleteArticle(Long[] articleIds){
-        articleService.removeByIds(Arrays.asList(articleIds));
+    @DeleteMapping("/delete")
+    public ResponseEntity<Void> delete(@RequestBody Long[] aIds) {
+        articleService.removeByIds(Arrays.asList(aIds));
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
 
     /**
      * 用户删除
-     * @param userId
-     * @return
      */
-    @DeleteMapping("/deleteAllArticle")
-    public ResponseEntity<Void> deleteAllArticle(Long userId){
-        articleService.deleteAllArticle(userId);
+    @DeleteMapping("/deleteList")
+    public ResponseEntity<Void> deleteList() {
+        articleService.deleteAllArticle(getUserId());
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
 
     /**
      * 修改
-     * @param article
-     * @return
      */
-    @PutMapping("/updateArticle")
-    public ResponseEntity<Void> updateArticle(InArticle article){
+    @PutMapping("/update")
+    public ResponseEntity<Void> update(@RequestBody InArticle article) {
         articleService.updateById(article);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
@@ -87,49 +79,39 @@ public class InArticleController extends AbstractController {
 
     /**
      * 列表
-     * @return
      */
-    @GetMapping("/queryAllArticle")
-    public ResponseEntity<PageUtils> queryAllArticle(@RequestParam(defaultValue = "1")int curPage,
-                                                     @RequestParam(defaultValue = "10")int size){
-        PageUtils page = articleService.queryPage(curPage,size);
+    @GetMapping("/list")
+    public ResponseEntity<PageUtils> list(@RequestParam Map<String, Object> params) {
+        PageUtils page = articleService.queryPage(params);
         return ResponseEntity.ok(page);
     }
 
 
     /**
      * 查询
-     * @param articleId
-     * @return
      */
-    @GetMapping("/queryArticle")
-    public ResponseEntity<InArticle> queryArticle(Long articleId){
-        InArticle article = articleService.getById(articleId);
+    @GetMapping("/info/{aId}")
+    public ResponseEntity<InArticle> queryArticle(@PathVariable("aId") Long aId) {
+        InArticle article = articleService.getById(aId);
         return ResponseEntity.ok(article);
     }
 
 
     /**
      * 用户查询
-     * @param userId
-     * @return
      */
-    @GetMapping("/queryUserArticle")
-    public ResponseEntity<PageUtils> queryUserArticle(Long userId,
-                                                           @RequestParam(defaultValue = "1")int curPage,
-                                                           @RequestParam(defaultValue = "10")int size){
-        List<InArticle> articles = articleService.queryAllArticle(userId);
-        return ResponseEntity.ok(new PageUtils(articles,articles.size(),size,curPage));
+    @GetMapping("/userList")
+    public ResponseEntity<PageUtils> queryUserArticle(@RequestParam Map<String, Object> params) {
+        PageUtils page = articleService.queryAllArticle(params, getUserId());
+        return ResponseEntity.ok(page);
     }
 
     /**
      * 点赞
-     * @param aid
-     * @return
      */
     @PostMapping("giveALike")
-    public ResponseEntity giveALike(Long aid){
-        if(articleService.giveALike(aid,getAppUserId())){
+    public ResponseEntity giveALike(Long aid) {
+        if (articleService.giveALike(aid, getAppUserId())) {
             return ResponseEntity.status(HttpStatus.OK).build();
         }
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
@@ -137,12 +119,10 @@ public class InArticleController extends AbstractController {
 
     /**
      * 收藏
-     * @param aid
-     * @return
      */
     @PostMapping("collect")
-    public ResponseEntity collect(Long aid){
-        if(articleService.collect(aid,getAppUserId())){
+    public ResponseEntity collect(Long aid) {
+        if (articleService.collect(aid, getAppUserId())) {
             return ResponseEntity.status(HttpStatus.OK).build();
         }
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();

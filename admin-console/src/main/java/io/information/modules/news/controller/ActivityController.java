@@ -4,6 +4,7 @@ import io.information.common.utils.PageUtils;
 import io.information.common.utils.R;
 import io.information.modules.news.entity.ActivityEntity;
 import io.information.modules.news.service.ActivityService;
+import io.information.modules.sys.controller.AbstractController;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -23,7 +24,7 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("news/activity")
-public class ActivityController {
+public class ActivityController extends AbstractController {
     @Autowired
     private ActivityService activityService;
 
@@ -56,8 +57,7 @@ public class ActivityController {
     @RequestMapping("/save")
     @RequiresPermissions("news:activity:save")
     public R save(@RequestBody ActivityEntity activity){
-        //TODO
-        activity.setuId(0L);
+        activity.setuId(getUserId());
         activity.setActCreateTime(new Date());
 		activityService.save(activity);
 

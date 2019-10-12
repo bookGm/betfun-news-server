@@ -1,8 +1,11 @@
 package io.information.modules.app.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import io.information.common.utils.PageUtils;
 import io.information.modules.app.entity.InMenuSource;
 import org.apache.ibatis.annotations.Mapper;
+
+import java.util.Map;
 
 /**
  * <p>
@@ -14,4 +17,5 @@ import org.apache.ibatis.annotations.Mapper;
  */
 public interface IInMenuSourceService extends IService<InMenuSource> {
 
+    PageUtils queryPage(Map<String, Object> params);
 }

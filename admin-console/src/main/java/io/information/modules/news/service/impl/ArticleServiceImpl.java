@@ -1,10 +1,7 @@
 package io.information.modules.news.service.impl;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import io.information.common.utils.PageUtils;
 import io.information.common.utils.Query;
@@ -33,19 +30,21 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleDao, ArticleEntity> i
     }
 
     @Override
-    public PageUtils queryAllArticle(Long userId) {
+    public PageUtils queryAllArticle(Map<String, Object> params, Long userId) {
         QueryWrapper<ArticleEntity> queryWrapper = new QueryWrapper<>();
-        queryWrapper.lambda().eq(ArticleEntity::getuId,userId);
-        Page<ArticleEntity> page = new Page<>(1, 10);
-        IPage<ArticleEntity> iPage = this.baseMapper.selectPage(page, queryWrapper);
-        return new PageUtils(iPage);
+        queryWrapper.lambda().eq(ArticleEntity::getuId, userId);
+        IPage<ArticleEntity> page = this.page(
+                new Query<ArticleEntity>().getPage(params),
+                queryWrapper
+        );
+        return new PageUtils(page);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void deleteAllActive(Long userId) {
         QueryWrapper<ArticleEntity> queryWrapper = new QueryWrapper<>();
-        queryWrapper.lambda().eq(ArticleEntity::getuId,userId);
+        queryWrapper.lambda().eq(ArticleEntity::getuId, userId);
         List<ArticleEntity> activities = this.list(queryWrapper);
         List<Long> activeIds = activities.stream().map(ArticleEntity::getaId).collect(Collectors.toList());
         this.removeByIds(activeIds);

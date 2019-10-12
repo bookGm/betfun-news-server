@@ -2,9 +2,9 @@ package io.information.modules.app.controller;
 
 
 import io.information.common.utils.PageUtils;
-import io.information.modules.app.config.IdWorker;
 import io.information.modules.app.entity.InActivity;
 import io.information.modules.app.service.IInActivityService;
+import io.information.modules.sys.controller.AbstractController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
 import java.util.Date;
+import java.util.Map;
 
 /**
  * <p>
@@ -23,20 +24,17 @@ import java.util.Date;
  */
 @RestController
 @RequestMapping("/news/activity")
-public class InActivityController {
+public class InActivityController extends AbstractController {
     @Autowired
     private IInActivityService activityService;
 
     /**
      * 添加
-     * @param activity
-     * @return
      */
-    @PostMapping("/addActivity")
-    public ResponseEntity<Void> addActivity(InActivity activity){
-        activity.setActId(new IdWorker().nextId());
+    @PostMapping("/save")
+    public ResponseEntity<Void> save(@RequestParam InActivity activity) {
         activity.setActCreateTime(new Date());
-
+        activity.setuId(getUserId());
         activityService.save(activity);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
@@ -44,35 +42,29 @@ public class InActivityController {
 
     /**
      * 删除
-     * @param activeIds
-     * @return
      */
-    @DeleteMapping("/deleteActive")
-    public ResponseEntity<Void> deleteActive(Long[] activeIds){
-        activityService.removeByIds(Arrays.asList(activeIds));
+    @DeleteMapping("/delete")
+    public ResponseEntity<Void> delete(@RequestBody Long[] actIds) {
+        activityService.removeByIds(Arrays.asList(actIds));
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
 
     /**
      * 用户删除
-     * @param userId
-     * @return
      */
-    @DeleteMapping("/deleteAllActive")
-    public ResponseEntity<Void> deleteAllActive(Long userId){
-        activityService.deleteAllActive(userId);
+    @DeleteMapping("/deleteList")
+    public ResponseEntity<Void> deleteList() {
+        activityService.deleteAllActive(getUserId());
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
 
     /**
      * 修改
-     * @param activity
-     * @return
      */
-    @PutMapping("/updateActivity")
-    public ResponseEntity<Void> updateActivity(InActivity activity){
+    @PutMapping("/update")
+    public ResponseEntity<Void> update(@RequestBody InActivity activity) {
         activityService.updateById(activity);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
@@ -80,24 +72,20 @@ public class InActivityController {
 
     /**
      * 用户查询
-     * @param userId
-     * @return
      */
-    @GetMapping("/queryAllActivity")
-    public PageUtils queryAllActivity(Long userId){
-        PageUtils pageUtils = activityService.queryActivitiesByUserId(userId);
-        return pageUtils;
+    @GetMapping("/list")
+    public ResponseEntity<PageUtils> list(@RequestParam Map<String, Object> params) {
+        PageUtils pageUtils = activityService.queryActivitiesByUserId(params, getUserId());
+        return ResponseEntity.ok(pageUtils);
     }
 
 
     /**
      * 查询
-     * @param activeId
-     * @return
      */
-    @GetMapping("/queryActivity")
-    public ResponseEntity<InActivity> queryActivity(Long activeId){
-        InActivity activity = activityService.getById(activeId);
+    @GetMapping("/info/{actId}")
+    public ResponseEntity<InActivity> info(@PathVariable("actId") Long actId) {
+        InActivity activity = activityService.getById(actId);
         return ResponseEntity.ok(activity);
     }
 

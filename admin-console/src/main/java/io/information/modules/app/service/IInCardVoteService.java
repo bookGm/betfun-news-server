@@ -1,7 +1,10 @@
 package io.information.modules.app.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import io.information.common.utils.PageUtils;
 import io.information.modules.app.entity.InCardVote;
+
+import java.util.Map;
 
 /**
  * <p>
@@ -16,5 +19,7 @@ public interface IInCardVoteService extends IService<InCardVote> {
      * 投票
      * @return
      */
-    public boolean vote(Long cid, Long uid,Integer optIndex);
+    boolean vote(Long cid, Long uid,Integer optIndex);
+
+    PageUtils queryPage(Map<String, Object> params);
 }

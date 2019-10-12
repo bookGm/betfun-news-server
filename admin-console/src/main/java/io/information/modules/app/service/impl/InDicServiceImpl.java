@@ -25,15 +25,17 @@ import java.util.List;
 public class InDicServiceImpl extends ServiceImpl<InDicDao, InDic> implements IInDicService {
 
     @Override
-    public void deleteDic(Long disId) {
+    public void deleteDic(Long[] dIds) {
         //判断是否为父字典
-        InDic dic = this.getById(disId);
-        List<InDic> dics = this.findPSDic(dic);
-        if(dics != null && !dics.isEmpty()){
-            throw new IMException(ExceptionEnum.NODE_PARENT_PATH);
-        }else {
-            //删除
-            this.removeByIds(dics);
+        for (Long dId : dIds) {
+            InDic dic = this.getById(dId);
+            List<InDic> dics = this.findPSDic(dic);
+            if(dics != null && !dics.isEmpty()){
+                throw new IMException(ExceptionEnum.NODE_PARENT_PATH);
+            }else {
+                //删除
+                this.removeByIds(dics);
+            }
         }
     }
 

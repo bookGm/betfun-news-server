@@ -1,7 +1,10 @@
 package io.information.modules.app.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import io.information.common.utils.PageUtils;
 import io.information.modules.app.entity.InCardArgue;
+
+import java.util.Map;
 
 /**
  * <p>
@@ -12,4 +15,5 @@ import io.information.modules.app.entity.InCardArgue;
  * @since 2019-09-24
  */
 public interface IInCardArgueService extends IService<InCardArgue> {
+    PageUtils queryPage(Map<String, Object> params);
 }

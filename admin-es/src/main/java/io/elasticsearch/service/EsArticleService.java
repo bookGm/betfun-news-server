@@ -9,5 +9,7 @@ public interface EsArticleService {
 
     void removeArticle(EsArticleEntity articleEntity);
 
+    void updatedArticle(EsArticleEntity articleEntity);
+
     PageUtils articleSearchKey(SearchRequest request);
 }

@@ -1,12 +1,14 @@
 package io.information.modules.app.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import io.information.common.utils.PageUtils;
 import io.information.modules.app.entity.InCard;
 import io.information.modules.app.entity.InCardArgue;
 import io.information.modules.app.entity.InCardBase;
 import io.information.modules.app.entity.InCardVote;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -28,5 +30,5 @@ public interface IInCardBaseService extends IService<InCardBase> {
 
     InCard queryCard(Long cardId);
 
-    List<InCard> queryAllCard(Long userId);
+    PageUtils queryAllCard(Map<String, Object> params, Long userId);
 }
