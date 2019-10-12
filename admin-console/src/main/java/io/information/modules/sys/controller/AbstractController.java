@@ -28,6 +28,6 @@ public abstract class AbstractController {
 		return getUser().getUserId();
 	}
 	protected Long getAppUserId() {
-		return getAppUser().getUId();
+		return getAppUser().getuId();
 	}
 }
