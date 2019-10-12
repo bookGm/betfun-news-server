@@ -18,19 +18,37 @@ public class EsArticleController {
     private EsArticleService articleService;
 
     /**
-     * 关键字查询
+     * 文章关键字查询
      */
     @RequestMapping("/page")
     //pageSize 每页数量   currPage  当页数
-    public PageUtils searchPage(SearchRequest request) {
+    public PageUtils articleSearch(SearchRequest request) {
+        return articleService.articleSearchKey(request);
+    }
+
+    /**
+     * 文章过滤查询
+     */
+    @RequestMapping("/filter")
+    public ResponseEntity<Map<String, List<?>>> articleFilter(@RequestBody SearchRequest request){
+        return ResponseEntity.ok(articleService.articleFilter(request));
+    }
+
+
+    /**
+     * 帖子关键字查询
+     */
+    @RequestMapping("/page")
+    //pageSize 每页数量   currPage  当页数
+    public PageUtils cardSearch(SearchRequest request) {
         return articleService.searchPage(request);
     }
 
     /**
-     * 过滤查询
+     * 帖子过滤查询
      */
     @RequestMapping("/filter")
-    public ResponseEntity<Map<String, List<?>>> filter(@RequestBody SearchRequest request){
-        return ResponseEntity.ok(articleService.queryFilter(request));
+    public ResponseEntity<Map<String, List<?>>> cardFilter(@RequestBody SearchRequest request){
+        return null;
     }
 }
