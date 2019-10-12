@@ -74,6 +74,10 @@ public class ArticleEntity implements Serializable {
 	 */
 	private Long aCritic;
 	/**
+	 * 文章状态（0：草稿箱，1：审核中，2：已发布）
+	 */
+	private Integer aStatus;
+	/**
 	 * 创建时间
 	 */
 	private Date aCreateTime;
@@ -188,5 +192,13 @@ public class ArticleEntity implements Serializable {
 
 	public void setaCreateTime(Date aCreateTime) {
 		this.aCreateTime = aCreateTime;
+	}
+
+	public Integer getaStatus() {
+		return aStatus;
+	}
+
+	public void setaStatus(Integer aStatus) {
+		this.aStatus = aStatus;
 	}
 }
