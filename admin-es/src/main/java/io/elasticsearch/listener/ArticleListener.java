@@ -1,7 +1,7 @@
 package io.elasticsearch.listener;
 
+import io.elasticsearch.entity.EsArticleEntity;
 import io.elasticsearch.service.EsArticleService;
-import io.elasticsearch.service.EsCardService;
 import io.mq.utils.Constants;
 import org.springframework.amqp.rabbit.annotation.Exchange;
 import org.springframework.amqp.rabbit.annotation.Queue;
@@ -23,9 +23,9 @@ public class ArticleListener {
             exchange = @Exchange(name = Constants.defaultExchange),
             key = Constants.routeKey
     ))
-    public void created(Long aId){
+    public void created(EsArticleEntity articleEntity){
         //把es 的索引创建出来
-        articleService.saveArticle(aId);
+        articleService.saveArticle(articleEntity);
     }
 
     /**
@@ -36,8 +36,8 @@ public class ArticleListener {
             exchange = @Exchange(name = Constants.defaultExchange),
             key = Constants.routeKey
     ))
-    public void remove(Long aId){
+    public void remove(EsArticleEntity articleEntity){
         //删除es的文档
-        articleService.removeArticle(aId);
+        articleService.removeArticle(articleEntity);
     }
 }
