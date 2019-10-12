@@ -22,6 +22,4 @@ public class EsArticleController {
         return articleService.articleSearchKey(request);
     }
 
-
-
 }

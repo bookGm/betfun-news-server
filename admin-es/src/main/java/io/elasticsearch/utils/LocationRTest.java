@@ -1,6 +1,8 @@
 package io.elasticsearch.utils;
 
+import io.elasticsearch.dao.EsArticleDao;
 import io.elasticsearch.dao.LocationDao;
+import io.elasticsearch.entity.EsArticleEntity;
 import io.elasticsearch.entity.LocationEntity;
 import org.elasticsearch.common.geo.GeoDistance;
 import org.elasticsearch.common.unit.DistanceUnit;
@@ -15,36 +17,36 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.elasticsearch.core.geo.GeoPoint;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest
+@SpringBootTest(classes = LocationRTest.class)
 public class LocationRTest {
     @Autowired
     LocationDao employeeDao;
+    @Autowired
+    EsArticleDao articleDao;
 
     @Test
     //导入数据
     public void testAdd(){
-        List<LocationEntity> employees = new ArrayList<>();
+        List<EsArticleEntity> employees = new ArrayList<>();
         for(int i=0;i<10;i++){
-            LocationEntity location = new LocationEntity();
-            location.setAbout("AliP15");
-            location.setFirstName("sun");
-            location.setLastName("lin");
-            location.setAge(21);
-            location.setId(i+"");
-            //lat lon
-            GeoPoint geoPoint = new GeoPoint(12.7+(i/10),13.25+(i/10));
-            location.setGeo(geoPoint);
+            EsArticleEntity location = new EsArticleEntity();
+            location.setuId(0L);
+            location.setaBrief("摘要"+i);
+            location.setaId((long) i);
+            location.setaContent("内容"+i);
+            location.setaCreateTime(new Date());
+            location.setaTitle("标题"+i);
             employees.add(location);
         }
-    employeeDao.saveAll(employees);
+    articleDao.saveAll(employees);
     }
 
 

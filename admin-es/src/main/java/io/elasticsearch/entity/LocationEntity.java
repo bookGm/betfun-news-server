@@ -1,8 +1,10 @@
 package io.elasticsearch.entity;
 
 import lombok.Data;
+import org.springframework.data.annotation.Id;
 import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
+import org.springframework.data.elasticsearch.annotations.FieldType;
 import org.springframework.data.elasticsearch.annotations.GeoPointField;
 import org.springframework.data.elasticsearch.core.geo.GeoPoint;
 
@@ -13,18 +15,19 @@ import java.io.Serializable;
  *
  */
 @Data
-@Document(indexName = "pojo",type = "person",shards = 1,replicas = 0,refreshInterval = "-1")
+@Document(indexName = "pojo",type = "person",shards = 5,replicas = 1,refreshInterval = "-1")
 public class LocationEntity implements Serializable {
     private static final long serialVersionUID = 1L;
-    @Field
+    @Id
+    @Field(type = FieldType.Keyword)
     private String id;
-    @Field
+    @Field(type = FieldType.Keyword)
     private String firstName;
-    @Field
+    @Field(type = FieldType.Keyword)
     private String lastName;
-    @Field
+    @Field(type = FieldType.Integer)
     private Integer age = 0;
-    @Field
+    @Field(type = FieldType.Keyword)
     private String about;
 
     @GeoPointField

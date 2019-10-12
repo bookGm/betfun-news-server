@@ -8,13 +8,13 @@ import org.springframework.data.elasticsearch.annotations.FieldType;
 import java.io.Serializable;
 import java.util.Date;
 
-@Document(indexName = "articles", type = "arts", shards = 1, replicas = 1)
+@Document(indexName = "articles", type = "article", shards = 5, replicas = 1,refreshInterval = "-1")
 public class EsArticleEntity implements Serializable {
     private static final Long serialVersionUID = 1L;
     @Id
-    @Field(type = FieldType.Keyword)
+    @Field(type = FieldType.Long)
     private Long aId; // 文章Id
-    @Field(type = FieldType.Keyword)
+    @Field(type = FieldType.Long)
     private Long uId;   //用户Id
     @Field(type = FieldType.Keyword)
     private String aTitle;  //文章标题
@@ -31,7 +31,7 @@ public class EsArticleEntity implements Serializable {
 //    private Long aLike; //点赞数
 //    private Integer aCollect;   //收藏数
 //    private Long aCritic;   //评论数
-    @Field(type = FieldType.Keyword)
+    @Field(type = FieldType.Date)
     private Date aCreateTime;// 创建时间
 
 

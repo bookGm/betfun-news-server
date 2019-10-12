@@ -3,78 +3,79 @@ package io.elasticsearch.entity;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
+import org.springframework.data.elasticsearch.annotations.FieldType;
 
 import java.io.Serializable;
 import java.util.Date;
 
-@Document(indexName = "cards", type = "cars", shards = 1, replicas = 1)
+@Document(indexName = "cards", type = "card", shards = 5, replicas = 1,refreshInterval = "-1")
 public class EsCardEntity implements Serializable {
     private static final Long serialVersionUID = 1L;
     /**
      * 帖子id
      */
     @Id
-    @Field
+    @Field(type = FieldType.Long)
     private Long cId;
     /**
      * 用户id
      */
-    @Field
+    @Field(type = FieldType.Long)
     private Long uId;
     /**
      * 帖子分类（字典）
      */
-    @Field
+    @Field(type = FieldType.Integer)
     private Integer cCategory;
     /**
      * 帖子节点分类（字典）
      */
-    @Field
+    @Field(type = FieldType.Integer)
     private Integer cNodeCategory;
     /**
      * 帖子正文
      */
-    @Field
+    @Field(type = FieldType.Keyword)
     private String cContent;
     /**
      * 回帖仅作者可见（0：是  1：否）
      */
-    @Field
+    @Field(type = FieldType.Integer)
     private Integer cHide;
     /**
      * 正方观点
      */
-    @Field(index = false)
+    @Field(type = FieldType.Keyword,index = false)
     private String caFside;
     /**
      * 反方观点
      */
-    @Field(index = false)
+    @Field(type = FieldType.Keyword,index = false)
     private String caRside;
     /**
      * 正方观点投票人ids，逗号分隔
      */
-    @Field(index = false)
+    @Field(type = FieldType.Keyword,index = false)
     private String caFsideUids;
     /**
      * 反方观点投票人ids，逗号分隔
      */
-    @Field(index = false)
+    @Field(type = FieldType.Keyword,index = false)
     private String caRsideUids;
     /**
      * 辩论结束日期
      */
-    @Field
+    @Field(type = FieldType.Date)
     private Date caCloseTime;
     /**
      * 投票选项信息（逗号分隔）
      */
-    @Field(index = false)
+    @Field(type = FieldType.Keyword,index = false)
     private String cvInfo;
     /**
      * 投票结束日期
      */
-    @Field
+    @Field(type = FieldType.Date)
     private Date cvCloseTime;
 
     public Long getcId() {
