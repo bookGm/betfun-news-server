@@ -5,10 +5,12 @@ import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
 import org.springframework.data.elasticsearch.annotations.FieldType;
 
+import java.io.Serializable;
 import java.util.Date;
 
 @Document(indexName = "articles", type = "arts", shards = 1, replicas = 1)
-public class EsArticleEntity {
+public class EsArticleEntity implements Serializable {
+    private static final Long serialVersionUID = 1L;
     @Id
     @Field(type = FieldType.Keyword)
     private Long aId; // 文章Id
@@ -16,7 +18,7 @@ public class EsArticleEntity {
     private Long uId;   //用户Id
     @Field(type = FieldType.Keyword)
     private String aTitle;  //文章标题
-    @Field(type = FieldType.Keyword, index = false)
+    @Field(type = FieldType.Keyword)
     private String aContent;    //文章内容
     @Field(type = FieldType.Keyword)
     private String aBrief;  //文章摘要

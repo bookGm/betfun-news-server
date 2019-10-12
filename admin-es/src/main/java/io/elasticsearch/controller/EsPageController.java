@@ -3,6 +3,7 @@ package io.elasticsearch.controller;
 import io.elasticsearch.entity.LocationEntity;
 import io.elasticsearch.service.impl.LocationServiceImpl;
 import io.elasticsearch.utils.PageUtils;
+import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
+//@RunWith()
 public class EsPageController {
     @Autowired
     private LocationServiceImpl locationService;
@@ -24,6 +26,8 @@ public class EsPageController {
         locationService.save(entity);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
+
+
 
 
     /**

@@ -1,7 +1,7 @@
 package io.elasticsearch.listener;
 
 import io.elasticsearch.entity.EsArticleEntity;
-import io.elasticsearch.service.EsArticleService;
+import io.elasticsearch.service.impl.EsArticleServiceImpl;
 import io.mq.utils.Constants;
 import org.springframework.amqp.rabbit.annotation.Exchange;
 import org.springframework.amqp.rabbit.annotation.Queue;
@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class ArticleListener {
     @Autowired
-    private EsArticleService articleService;
+    private EsArticleServiceImpl articleService;
 
     /**
      * 文章发布

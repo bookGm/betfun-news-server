@@ -28,6 +28,11 @@ public class CardVo implements Serializable {
      */
     private Integer cNodeCategory;
     /**
+     * 帖子类型
+     * 0单选 1多选
+     */
+    private int cvType;
+    /**
      * 帖子正文
      */
     private String cContent;
@@ -156,6 +161,14 @@ public class CardVo implements Serializable {
 
     public void setcNodeCategory(Integer cNodeCategory) {
         this.cNodeCategory = cNodeCategory;
+    }
+
+    public int getCvType() {
+        return cvType;
+    }
+
+    public void setCvType(int cvType) {
+        this.cvType = cvType;
     }
 
     public String getcContent() {

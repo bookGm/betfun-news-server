@@ -35,7 +35,7 @@ public class NewsTask{
 	 */
 	public void synchronizeInUser(){
 		List<InUser> us=iInUserService.list();
-		Map<Long,InUser> m=us.stream().collect(Collectors.toMap(InUser::getUId, u->u));
+		Map<Long,InUser> m=us.stream().collect(Collectors.toMap(InUser::getuId, u->u));
 		redisUtils.hmset(RedisKeys.INUSER,m);
 	}
 }

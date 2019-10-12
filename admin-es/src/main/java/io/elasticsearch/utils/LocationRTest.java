@@ -1,4 +1,4 @@
-package io.elasticsearch;
+package io.elasticsearch.utils;
 
 import io.elasticsearch.dao.LocationDao;
 import io.elasticsearch.entity.LocationEntity;

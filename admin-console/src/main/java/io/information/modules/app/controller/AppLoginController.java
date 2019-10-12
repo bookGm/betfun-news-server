@@ -78,14 +78,14 @@ public class AppLoginController {
         if(redis.exists(rkey))return R.error("请稍后发送");
         if (StringUtil.isBlank(phone)) return R.error(HttpStatus.SC_UNAUTHORIZED,"请输入手机号码！");
         LambdaQueryWrapper<InUser> qw=new LambdaQueryWrapper<InUser>();
-        qw.eq(InUser::getUPhone,phone);
+        qw.eq(InUser::getuPhone,phone);
         InUser user=iInUserService.getOne(qw);
         if(null!=user){
             return R.error("手机号码已被注册");
         }
         int rand =  100000 + (int)(Math.random() * 899999);
         if (rand > 0){
-            Boolean status = SmsUtil.sendSMS(user.getUPhone(), MessageFormat.format(SmsTemplate.loginCodeTemplate,rand));
+            Boolean status = SmsUtil.sendSMS(user.getuPhone(), MessageFormat.format(SmsTemplate.loginCodeTemplate,rand));
             if(status){
                 redis.set(rkey,rand,60);
                 return R.ok();

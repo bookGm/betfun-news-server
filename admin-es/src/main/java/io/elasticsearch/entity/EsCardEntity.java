@@ -1,0 +1,184 @@
+package io.elasticsearch.entity;
+
+import org.springframework.data.annotation.Id;
+import org.springframework.data.elasticsearch.annotations.Document;
+import org.springframework.data.elasticsearch.annotations.Field;
+
+import java.io.Serializable;
+import java.util.Date;
+
+@Document(indexName = "cards", type = "cars", shards = 1, replicas = 1)
+public class EsCardEntity implements Serializable {
+    private static final Long serialVersionUID = 1L;
+    /**
+     * 帖子id
+     */
+    @Id
+    @Field
+    private Long cId;
+    /**
+     * 用户id
+     */
+    @Field
+    private Long uId;
+    /**
+     * 帖子分类（字典）
+     */
+    @Field
+    private Integer cCategory;
+    /**
+     * 帖子节点分类（字典）
+     */
+    @Field
+    private Integer cNodeCategory;
+    /**
+     * 帖子正文
+     */
+    @Field
+    private String cContent;
+    /**
+     * 回帖仅作者可见（0：是  1：否）
+     */
+    @Field
+    private Integer cHide;
+    /**
+     * 正方观点
+     */
+    @Field(index = false)
+    private String caFside;
+    /**
+     * 反方观点
+     */
+    @Field(index = false)
+    private String caRside;
+    /**
+     * 正方观点投票人ids，逗号分隔
+     */
+    @Field(index = false)
+    private String caFsideUids;
+    /**
+     * 反方观点投票人ids，逗号分隔
+     */
+    @Field(index = false)
+    private String caRsideUids;
+    /**
+     * 辩论结束日期
+     */
+    @Field
+    private Date caCloseTime;
+    /**
+     * 投票选项信息（逗号分隔）
+     */
+    @Field(index = false)
+    private String cvInfo;
+    /**
+     * 投票结束日期
+     */
+    @Field
+    private Date cvCloseTime;
+
+    public Long getcId() {
+        return cId;
+    }
+
+    public void setcId(Long cId) {
+        this.cId = cId;
+    }
+
+    public Long getuId() {
+        return uId;
+    }
+
+    public void setuId(Long uId) {
+        this.uId = uId;
+    }
+
+    public Integer getcCategory() {
+        return cCategory;
+    }
+
+    public void setcCategory(Integer cCategory) {
+        this.cCategory = cCategory;
+    }
+
+    public Integer getcNodeCategory() {
+        return cNodeCategory;
+    }
+
+    public void setcNodeCategory(Integer cNodeCategory) {
+        this.cNodeCategory = cNodeCategory;
+    }
+
+    public String getcContent() {
+        return cContent;
+    }
+
+    public void setcContent(String cContent) {
+        this.cContent = cContent;
+    }
+
+    public Integer getcHide() {
+        return cHide;
+    }
+
+    public void setcHide(Integer cHide) {
+        this.cHide = cHide;
+    }
+
+    public String getCaFside() {
+        return caFside;
+    }
+
+    public void setCaFside(String caFside) {
+        this.caFside = caFside;
+    }
+
+    public String getCaRside() {
+        return caRside;
+    }
+
+    public void setCaRside(String caRside) {
+        this.caRside = caRside;
+    }
+
+    public String getCaFsideUids() {
+        return caFsideUids;
+    }
+
+    public void setCaFsideUids(String caFsideUids) {
+        this.caFsideUids = caFsideUids;
+    }
+
+    public String getCaRsideUids() {
+        return caRsideUids;
+    }
+
+    public void setCaRsideUids(String caRsideUids) {
+        this.caRsideUids = caRsideUids;
+    }
+
+    public Date getCaCloseTime() {
+        return caCloseTime;
+    }
+
+    public void setCaCloseTime(Date caCloseTime) {
+        this.caCloseTime = caCloseTime;
+    }
+
+    public String getCvInfo() {
+        return cvInfo;
+    }
+
+    public void setCvInfo(String cvInfo) {
+        this.cvInfo = cvInfo;
+    }
+
+    public Date getCvCloseTime() {
+        return cvCloseTime;
+    }
+
+    public void setCvCloseTime(Date cvCloseTime) {
+        this.cvCloseTime = cvCloseTime;
+    }
+
+}
