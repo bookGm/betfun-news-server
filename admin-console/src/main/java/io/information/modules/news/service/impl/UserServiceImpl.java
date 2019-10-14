@@ -29,11 +29,14 @@ public class UserServiceImpl extends ServiceImpl<UserDao, UserEntity> implements
     }
 
     @Override
-    public PageUtils queryUserByNick(String nick) {
-        Page<UserEntity> page1 = new Page<>(1, 10);
+    public PageUtils queryUserByNick(Map<String, Object> params) {
+        String nick = (String)params.get("uNick");
         LambdaQueryWrapper<UserEntity> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(UserEntity::getuNick,nick);
-        IPage<UserEntity> page = this.baseMapper.selectPage(page1, queryWrapper);
+        IPage<UserEntity> page = this.page(
+                new Query<UserEntity>().getPage(params),
+                queryWrapper
+        );
         return new PageUtils(page);
     }
 

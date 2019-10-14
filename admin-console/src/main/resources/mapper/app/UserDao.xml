@@ -3,5 +3,23 @@
 
 <mapper namespace="io.information.modules.app.dao.UserDao">
 
+    <!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.information.modules.app.entity.InUser" id="userMap">
+        <result property="uId" column="u_id"/>
+        <result property="uName" column="u_name"/>
+        <result property="uPwd" column="u_pwd"/>
+        <result property="uSalt" column="u_salt"/>
+        <result property="uNick" column="u_nick"/>
+        <result property="uPhone" column="u_phone"/>
+        <result property="uIntro" column="u_intro"/>
+        <result property="uFans" column="u_fans"/>
+        <result property="uFocus" column="u_focus"/>
+        <result property="uAuthStatus" column="u_auth_status"/>
+        <result property="uToken" column="u_token"/>
+        <result property="uIdcard" column="u_idcard"/>
+        <result property="uIdcardA" column="u_idcard_a"/>
+        <result property="uIdcardB" column="u_idcard_b"/>
+        <result property="uIdcardHand" column="u_idcard_hand"/>
+    </resultMap>
 
 </mapper>

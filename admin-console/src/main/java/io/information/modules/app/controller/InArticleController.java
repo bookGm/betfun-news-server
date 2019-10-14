@@ -25,7 +25,7 @@ import java.util.Map;
  * @since 2019-09-24
  */
 @RestController
-@RequestMapping("/news/article")
+@RequestMapping("/app/article")
 public class InArticleController extends AbstractController {
     @Autowired
     private IInArticleService articleService;
@@ -107,9 +107,19 @@ public class InArticleController extends AbstractController {
     }
 
     /**
+     * 用户查看草稿箱
+     */
+    @GetMapping("/uDraft")
+    public ResponseEntity<PageUtils> uDraft(@RequestParam Map<String, Object> params) {
+        PageUtils page = articleService.uDraft(params, getUserId());
+        return ResponseEntity.ok(page);
+    }
+
+
+    /**
      * 点赞
      */
-    @PostMapping("giveALike")
+    @PostMapping("/giveALike")
     public ResponseEntity giveALike(Long aid) {
         if (articleService.giveALike(aid, getAppUserId())) {
             return ResponseEntity.status(HttpStatus.OK).build();
@@ -120,11 +130,13 @@ public class InArticleController extends AbstractController {
     /**
      * 收藏
      */
-    @PostMapping("collect")
+    @PostMapping("/collect")
     public ResponseEntity collect(Long aid) {
         if (articleService.collect(aid, getAppUserId())) {
             return ResponseEntity.status(HttpStatus.OK).build();
         }
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
     }
+
+
 }

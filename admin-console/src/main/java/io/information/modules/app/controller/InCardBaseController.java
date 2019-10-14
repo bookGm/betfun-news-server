@@ -27,7 +27,7 @@ import java.util.Map;
  * @since 2019-09-24
  */
 @RestController
-@RequestMapping("/news/card/base")
+@RequestMapping("/app/card/base")
 public class InCardBaseController extends AbstractController {
     @Autowired
     private IInCardBaseService cardBaseService;
@@ -128,11 +128,10 @@ public class InCardBaseController extends AbstractController {
 
     /**
      * 根据正反方ids字符串,查询用户信息
-     * TODO
      */
     @GetMapping("/idsUser")
-    public ResponseEntity<List<InUser>> idsUser(String userIds){
-        List<InUser> userList = iInUserService.queryUsersByArgueIds(userIds);
-        return ResponseEntity.ok(userList);
+    public ResponseEntity<PageUtils> idsUser(@RequestParam Map<String,Object> params){
+        PageUtils page = iInUserService.queryUsersByArgueIds(params);
+        return ResponseEntity.ok(page);
     }
 }

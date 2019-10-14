@@ -1,6 +1,7 @@
 package io.information.modules.news.controller;
 
 import io.information.common.utils.R;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -16,6 +17,9 @@ import java.util.Date;
 @RestController
 @RequestMapping("news/uploadDown")
 public class UploadDownController {
+
+    @Value("${img:fileUploadPath:#{'http://localhost:8080'}}")
+    private String fileUploadPath;
 
     /**
      * 文件上传

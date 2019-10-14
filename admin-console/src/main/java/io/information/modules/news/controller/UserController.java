@@ -52,11 +52,10 @@ public class UserController {
 
     /**
      * 根据用户昵称查询 <昵称不可重复>
-     * @return
      */
-    @GetMapping("/exact")
-    public R queryUserByNick(String nick){
-        PageUtils pageNice = userService.queryUserByNick(nick);
+    @GetMapping("/nice")
+    public R nice(Map<String, Object> params){
+        PageUtils pageNice = userService.queryUserByNick(params);
         return R.ok().put("pageNice",pageNice);
     }
 

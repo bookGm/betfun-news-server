@@ -23,7 +23,7 @@ import java.util.Map;
  * @since 2019-09-24
  */
 @RestController
-@RequestMapping("/news/activity")
+@RequestMapping("/app/activity")
 public class InActivityController extends AbstractController {
     @Autowired
     private IInActivityService activityService;

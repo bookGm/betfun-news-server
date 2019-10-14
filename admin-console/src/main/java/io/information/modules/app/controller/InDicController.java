@@ -21,7 +21,7 @@ import java.util.List;
  * @since 2019-09-24
  */
 @RestController
-@RequestMapping("/news/dic")
+@RequestMapping("/app/dic")
 public class InDicController {
     @Autowired
     private IInDicService dicService;

@@ -24,7 +24,7 @@ import java.util.Map;
  * @since 2019-09-24
  */
 @RestController
-@RequestMapping("/news/source")
+@RequestMapping("/app/source")
 public class InSourceController {
     @Autowired
     private IInSourceService sourceService;

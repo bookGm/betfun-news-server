@@ -22,7 +22,7 @@ import java.util.List;
  * @since 2019-09-24
  */
 @RestController
-@RequestMapping("/news/menu")
+@RequestMapping("/app/menu")
 public class InMenuController {
     @Autowired
     private IInMenuService menuService;

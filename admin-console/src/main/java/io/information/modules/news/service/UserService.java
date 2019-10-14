@@ -17,6 +17,6 @@ public interface UserService extends IService<UserEntity> {
 
     PageUtils queryPage(Map<String, Object> params);
 
-    PageUtils queryUserByNick(String nick);
+    PageUtils queryUserByNick(Map<String, Object> params);
 }
 

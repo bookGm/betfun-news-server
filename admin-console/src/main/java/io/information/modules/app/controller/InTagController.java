@@ -24,7 +24,7 @@ import java.util.Map;
  * @since 2019-09-24
  */
 @RestController
-@RequestMapping("/news/tag")
+@RequestMapping("/app/tag")
 public class InTagController {
     @Autowired
     private IInTagService tagService;

@@ -76,6 +76,22 @@ public class InUser implements Serializable {
      * 用户令牌
      */
     private String uToken;
+    /**
+     * 身份证号
+     */
+    private String uIdcard;
+    /**
+     * 身份证正面
+     */
+    private String uIdcardA;
+    /**
+     * 身份证背面
+     */
+    private String uIdcardB;
+    /**
+     * 手持身份证照
+     */
+    private String uIdcardHand;
 
 
     public Long getuId() {
@@ -164,5 +180,37 @@ public class InUser implements Serializable {
 
     public void setuToken(String uToken) {
         this.uToken = uToken;
+    }
+
+    public String getuIdcard() {
+        return uIdcard;
+    }
+
+    public void setuIdcard(String uIdcard) {
+        this.uIdcard = uIdcard;
+    }
+
+    public String getuIdcardA() {
+        return uIdcardA;
+    }
+
+    public void setuIdcardA(String uIdcardA) {
+        this.uIdcardA = uIdcardA;
+    }
+
+    public String getuIdcardB() {
+        return uIdcardB;
+    }
+
+    public void setuIdcardB(String uIdcardB) {
+        this.uIdcardB = uIdcardB;
+    }
+
+    public String getuIdcardHand() {
+        return uIdcardHand;
+    }
+
+    public void setuIdcardHand(String uIdcardHand) {
+        this.uIdcardHand = uIdcardHand;
     }
 }

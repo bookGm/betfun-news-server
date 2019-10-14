@@ -16,6 +16,10 @@
         <result property="uFocus" column="u_focus"/>
         <result property="uAuthStatus" column="u_auth_status"/>
         <result property="uToken" column="u_token"/>
+        <result property="uIdcard" column="u_idcard"/>
+        <result property="uIdcardA" column="u_idcard_a"/>
+        <result property="uIdcardB" column="u_idcard_b"/>
+        <result property="uIdcardHand" column="u_idcard_hand"/>
     </resultMap>
 
 

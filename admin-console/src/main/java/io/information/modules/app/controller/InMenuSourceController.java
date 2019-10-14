@@ -20,7 +20,7 @@ import java.util.Map;
  * @since 2019-09-25
  */
 @RestController
-@RequestMapping("/news/menusource")
+@RequestMapping("/app/menusource")
 public class InMenuSourceController {
     @Autowired
     private IInMenuSourceService menuSourceService;

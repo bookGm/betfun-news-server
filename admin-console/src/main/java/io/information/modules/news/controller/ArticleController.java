@@ -8,10 +8,7 @@ import io.information.modules.news.service.ArticleService;
 import io.information.modules.sys.controller.AbstractController;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.redis.core.HashOperations;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.SetOperations;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
@@ -31,9 +28,6 @@ import java.util.Map;
 public class ArticleController extends AbstractController {
     @Autowired
     private ArticleService articleService;
-
-    @Value("${img:fileUploadPath:#{'http://localhost:8080'}}")
-    private String fileUploadPath;
 
     /**
      * 列表
@@ -111,12 +105,19 @@ public class ArticleController extends AbstractController {
     @PostMapping("/deleteAll")
     @RequiresPermissions("news:article:deleteAll")
     public R deleteAll() {
-        articleService.deleteAllActive(getUserId());
+        articleService.deleteAllArticle(getUserId());
         return R.ok();
     }
 
 
-
+    /**
+     * 获取审核状态文章
+     */
+    @GetMapping("/draft")
+    public ResponseEntity<PageUtils> draft(@RequestParam Map<String, Object> params) {
+        PageUtils page = articleService.audit(params);
+        return ResponseEntity.ok(page);
+    }
 
 
 

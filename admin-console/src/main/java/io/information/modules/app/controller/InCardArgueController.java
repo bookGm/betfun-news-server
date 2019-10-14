@@ -22,7 +22,7 @@ import java.util.Map;
  * @since 2019-09-24
  */
 @RestController
-@RequestMapping("/news/card/argue")
+@RequestMapping("/app/card/argue")
 public class InCardArgueController {
     @Autowired
     private IInCardArgueService cardArgueService;

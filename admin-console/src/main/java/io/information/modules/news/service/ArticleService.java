@@ -19,7 +19,8 @@ public interface ArticleService extends IService<ArticleEntity> {
 
     PageUtils queryAllArticle(Map<String, Object> params, Long userId);
 
-    void deleteAllActive(Long userId);
+    void deleteAllArticle(Long userId);
 
+    PageUtils audit(Map<String, Object> params);
 }
 

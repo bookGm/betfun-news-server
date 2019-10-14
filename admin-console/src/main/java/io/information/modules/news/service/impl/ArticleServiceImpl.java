@@ -42,13 +42,23 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleDao, ArticleEntity> i
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void deleteAllActive(Long userId) {
+    public void deleteAllArticle(Long userId) {
         QueryWrapper<ArticleEntity> queryWrapper = new QueryWrapper<>();
         queryWrapper.lambda().eq(ArticleEntity::getuId, userId);
-        List<ArticleEntity> activities = this.list(queryWrapper);
-        List<Long> activeIds = activities.stream().map(ArticleEntity::getaId).collect(Collectors.toList());
-        this.removeByIds(activeIds);
+        List<ArticleEntity> articleEntities = this.list(queryWrapper);
+        List<Long> article = articleEntities.stream().map(ArticleEntity::getaId).collect(Collectors.toList());
+        this.removeByIds(article);
     }
 
+    @Override
+    public PageUtils audit(Map<String, Object> params) {
+        QueryWrapper<ArticleEntity> queryWrapper = new QueryWrapper<>();
+        queryWrapper.lambda().eq(ArticleEntity::getaStatus, 1);
+        IPage<ArticleEntity> page = this.page(
+                new Query<ArticleEntity>().getPage(params),
+                queryWrapper
+        );
+        return new PageUtils(page);
+    }
 
 }

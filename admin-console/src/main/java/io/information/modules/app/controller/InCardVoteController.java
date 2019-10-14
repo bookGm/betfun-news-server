@@ -23,7 +23,7 @@ import java.util.Map;
  * @since 2019-09-24
  */
 @RestController
-@RequestMapping("/news/card/vote")
+@RequestMapping("/app/card/vote")
 public class InCardVoteController extends AbstractController {
     @Autowired
     private IInCardVoteService cardVoteService;

@@ -62,6 +62,17 @@ public class InArticleServiceImpl extends ServiceImpl<InArticleDao, InArticle> i
     }
 
     @Override
+    public PageUtils uDraft(Map<String, Object> params, Long userId) {
+        QueryWrapper<InArticle> queryWrapper = new QueryWrapper<>();
+        queryWrapper.lambda().eq(InArticle::getuId, userId).eq(InArticle::getaStatus, 0);
+        IPage<InArticle> page = this.page(
+                new Query<InArticle>().getPage(params),
+                queryWrapper
+        );
+        return new PageUtils(page);
+    }
+
+    @Override
     @CachePut(value = RedisKeys.LIKE, key = "#aid+'-'+#uid")
     public boolean giveALike(Long aid, Long uid) {
         try {
@@ -84,4 +95,5 @@ public class InArticleServiceImpl extends ServiceImpl<InArticleDao, InArticle> i
         }
         return true;
     }
+
 }
