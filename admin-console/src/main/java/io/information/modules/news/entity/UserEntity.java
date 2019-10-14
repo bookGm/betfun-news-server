@@ -59,6 +59,10 @@ public class UserEntity implements Serializable {
 	 * 认证状态（0：未通过 1：审核中 1：审核通过 ）
 	 */
 	private Integer uAuthStatus;
+    /**
+     * 认证类型（0：个人 1：媒体 2：企业）
+     */
+    private Integer uAuthType;
 	/**
 	 * 用户令牌
 	 */
@@ -79,6 +83,19 @@ public class UserEntity implements Serializable {
 	 * 手持身份证照
 	 */
 	private String uIdcardHand;
+    /**
+     * 企业名称
+     */
+    private String uCompanyName;
+    /**
+     * 营业注册号
+     */
+    private String uBrNumber;
+    /**
+     * 营业执照扫描件
+     */
+    private String uBrPicture;
+
 
     public Long getuId() {
         return uId;
@@ -198,5 +215,37 @@ public class UserEntity implements Serializable {
 
     public void setuIdcardHand(String uIdcardHand) {
         this.uIdcardHand = uIdcardHand;
+    }
+
+    public Integer getuAuthType() {
+        return uAuthType;
+    }
+
+    public void setuAuthType(Integer uAuthType) {
+        this.uAuthType = uAuthType;
+    }
+
+    public String getuCompanyName() {
+        return uCompanyName;
+    }
+
+    public void setuCompanyName(String uCompanyName) {
+        this.uCompanyName = uCompanyName;
+    }
+
+    public String getuBrNumber() {
+        return uBrNumber;
+    }
+
+    public void setuBrNumber(String uBrNumber) {
+        this.uBrNumber = uBrNumber;
+    }
+
+    public String getuBrPicture() {
+        return uBrPicture;
+    }
+
+    public void setuBrPicture(String uBrPicture) {
+        this.uBrPicture = uBrPicture;
     }
 }
