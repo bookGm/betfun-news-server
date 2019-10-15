@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import io.information.common.exception.ExceptionEnum;
 import io.information.common.exception.IMException;
+import io.information.common.utils.IdGenerator;
 import io.information.common.utils.PageUtils;
 import io.information.common.utils.Query;
 import io.information.modules.app.config.IdWorker;
@@ -48,10 +49,9 @@ public class InMenuServiceImpl extends ServiceImpl<InMenuDao, InMenu> implements
         InMenu menu = menus.getMenu();
         InMenuSource menuSource = menus.getMenuSource();
         InSource source = menus.getSource();
-        menu.setmId(new IdWorker().nextId());
         menuSource.setMsId(new IdWorker().nextId());
         source.setsCreateTime(new Date());
-
+        menu.setmCode(IdGenerator.getId()+"");
         menuSource.setmName(menu.getmName());
         menuSource.setmCode(menu.getmCode());
         menuSource.setsName(source.getsName());
@@ -98,6 +98,11 @@ public class InMenuServiceImpl extends ServiceImpl<InMenuDao, InMenu> implements
         InMenu menu = menus.getMenu();
         InMenuSource menuSource = menus.getMenuSource();
         InSource source = menus.getSource();
+
+        menuSource.setmName(menu.getmName());
+        menuSource.setmCode(menu.getmCode());
+        menuSource.setsName(source.getsName());
+        menuSource.setsUrl(source.getsUrl());
         source.setsUpdateTime(new Date());
         String mCode = menu.getmCode();
 
@@ -114,11 +119,7 @@ public class InMenuServiceImpl extends ServiceImpl<InMenuDao, InMenu> implements
 
         InMenuSource menuSource1 = this.findMenuSource(menu);
         menuSource1.setmCode(mCode);
-
-        UpdateWrapper<InSource> updateWrapper = new UpdateWrapper<>();
-        updateWrapper.lambda().eq(InSource::getsUrl, source.getsUrl());
-        sourceService.update(updateWrapper);
-
+        sourceService.updateByUrl(source);
         this.updateById(menu);
         menuSourceService.updateById(menuSource);
     }

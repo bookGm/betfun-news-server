@@ -3,12 +3,12 @@ package io.information.modules.news.controller;
 import io.information.common.utils.IdGenerator;
 import io.information.common.utils.R;
 import io.information.modules.news.entity.MenuEntity;
+import io.information.modules.news.entity.MenusEntity;
 import io.information.modules.news.service.MenuService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Arrays;
 import java.util.List;
 
 
@@ -48,7 +48,7 @@ public class MenuController {
      */
     @GetMapping("/select")
     @RequiresPermissions("sys:menu:select")
-    public R select(){
+    public R select() {
         //查询列表数据
         List<MenuEntity> menuList = menuService.list();
 
@@ -63,48 +63,90 @@ public class MenuController {
         return R.ok().put("menuList", menuList);
     }
 
+//    /**
+//     * 信息
+//     */
+//    @GetMapping("/info/{mId}")
+//    @RequiresPermissions("news:menu:info")
+//    public R info(@PathVariable("mId") Long mId) {
+//        MenuEntity menu = menuService.getById(mId);
+//
+//        return R.ok().put("menu", menu);
+//    }
+
+
     /**
-     * 信息
+     * 查询
      */
     @GetMapping("/info/{mId}")
     @RequiresPermissions("news:menu:info")
     public R info(@PathVariable("mId") Long mId) {
-        MenuEntity menu = menuService.getById(mId);
-
-        return R.ok().put("menu", menu);
+        MenusEntity menus = menuService.queryMenusById(mId);
+        return R.ok().put("menus", menus);
     }
 
+//    /**
+//     * 保存
+//     */
+//    @PostMapping("/saveList")
+//    @RequiresPermissions("news:menu:save")
+//    public R save(@RequestBody MenuEntity menu) {
+//        menu.setmCode(IdGenerator.getId()+"");
+//        menuService.save(menu);
+//
+//        return R.ok();
+//    }
+
     /**
-     * 保存
+     * 添加<包含关联表>
      */
     @PostMapping("/save")
     @RequiresPermissions("news:menu:save")
-    public R save(@RequestBody MenuEntity menu) {
-        menu.setmCode(IdGenerator.getId()+"");
-        menuService.save(menu);
-
+    public R saveList(@RequestBody MenusEntity menus) {
+        menuService.saveList(menus);
         return R.ok();
     }
 
+
+//    /**
+//     * 修改
+//     */
+//    @PostMapping("/updateList")
+//    @RequiresPermissions("news:menu:update")
+//    public R update(@RequestBody MenuEntity menu) {
+//        menuService.updateById(menu);
+//
+//        return R.ok();
+//    }
+
     /**
-     * 修改
+     * 修改<包含关联表>
      */
     @PostMapping("/update")
     @RequiresPermissions("news:menu:update")
-    public R update(@RequestBody MenuEntity menu) {
-        menuService.updateById(menu);
-
+    public R updateList(@RequestBody MenusEntity menus) {
+        menuService.updateAll(menus);
         return R.ok();
     }
 
+//    /**
+//     * 删除
+//     */
+//    @PostMapping("/deleteAll/{mId}")
+//    @RequiresPermissions("news:menu:delete")
+//    public R delete(@PathVariable("mId") Long mId) {
+//        menuService.removeById(mId);
+//
+//        return R.ok();
+//    }
+
     /**
-     * 删除
+     * 删除<包含关联表>
      */
     @PostMapping("/delete/{mId}")
     @RequiresPermissions("news:menu:delete")
-    public R delete(@PathVariable("mId") Long mId) {
-        menuService.removeById(mId);
-
+    public R deleteAll(@PathVariable("mId") Long mId) {
+        menuService.deleteAll(mId);
         return R.ok();
     }
 

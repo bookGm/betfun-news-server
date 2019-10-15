@@ -71,7 +71,7 @@ public class SourceController {
     @PostMapping("/save")
     @RequiresPermissions("news:source:save")
     public R save(@RequestBody SourceEntity source){
-		sourceService.save(source);
+        sourceService.save(source);
 
         return R.ok();
     }

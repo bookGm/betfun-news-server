@@ -3,9 +3,7 @@ package io.information.modules.app.controller;
 
 import io.information.common.utils.PageUtils;
 import io.information.modules.app.entity.InMenu;
-import io.information.modules.app.entity.InMenuSource;
 import io.information.modules.app.entity.InMenus;
-import io.information.modules.app.entity.InSource;
 import io.information.modules.app.service.IInMenuService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -41,86 +39,95 @@ public class InMenuController {
         menuService.save(menu);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
+
     /**
      * 添加<包含关联表>
      */
-    @ApiOperation(value = "新增咨询菜单、资讯资源",httpMethod = "POST")
-    @ApiImplicitParam(name = "menus",value = "菜单资源信息",required = true)
+    @ApiOperation(value = "新增咨询菜单、资讯资源", httpMethod = "POST")
+    @ApiImplicitParam(name = "menus", value = "菜单资源信息", required = true)
     @PostMapping("/saveList")
-    public ResponseEntity<Void> saveList(InMenus menus) {
+    public ResponseEntity<Void> saveList(@RequestBody InMenus menus) {
         menuService.addMenu(menus);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
-
 
 
     /**
      * 删除
      */
     @DeleteMapping("/delete/{mId}")
-    @ApiOperation(value = "单个删除咨询菜单")
+    @ApiOperation(value = "单个删除咨询菜单", httpMethod = "DELETE")
+    @ApiImplicitParam(name = "mId", value = "菜单ID", required = true)
     public ResponseEntity<Void> delete(@PathVariable("mId") Long mId) {
         menuService.deleteMenu(mId);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
+
     /**
      * 删除
      */
     @DeleteMapping("/deleteAll/{mId}")
-    @ApiOperation(value = "删除咨询菜单、资讯资源")
+    @ApiOperation(value = "删除咨询菜单、资讯资源", httpMethod = "DELETE")
+    @ApiImplicitParam(name = "mId", value = "菜单ID", required = true)
     public ResponseEntity<Void> deleteAll(@PathVariable("mId") Long mId) {
         menuService.deleteAll(mId);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
 
-
     /**
      * 修改
      */
     @PutMapping("/update")
-    @ApiOperation(value = "修改咨询菜单")
+    @ApiOperation(value = "修改咨询菜单", httpMethod = "PUT")
+    @ApiImplicitParam(name = "menu", value = "菜单信息", required = true)
     public ResponseEntity<Void> update(@RequestBody InMenu menu) {
         menuService.updateById(menu);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
+
     /**
      * 修改<包含关联表>
      */
     @PutMapping("/updateList")
-    @ApiOperation(value = "修改咨询菜单、资讯资源")
-    public ResponseEntity<Void> updateList(InMenus menus) {
+    @ApiOperation(value = "修改咨询菜单、资讯资源", httpMethod = "PUT")
+    @ApiImplicitParam(name = "menus", value = "菜单信息、资源信息", required = true)
+    public ResponseEntity<Void> updateList(@RequestBody InMenus menus) {
         menuService.updateMenu(menus);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
-
 
 
     /**
      * 查询
      */
     @GetMapping("/info/{mId}")
-    @ApiOperation(value = "查询单个咨询菜单")
+    @ApiOperation(value = "查询单个咨询菜单", httpMethod = "GET")
+    @ApiImplicitParam(name = "mId", value = "菜单信ID", required = true)
     public ResponseEntity<InMenus> info(@PathVariable("mId") Long mId) {
         InMenus mSource = menuService.queryMenuById(mId);
         return ResponseEntity.ok(mSource);
     }
+
     /**
      * 名称模糊查询
      */
     @GetMapping("/infoName/{mName}")
-    @ApiOperation(value = "名称模糊查询咨询菜单")
+    @ApiOperation(value = "名称模糊查询咨询菜单", httpMethod = "GET")
+    @ApiImplicitParam(name = "mName", value = "菜单大致名称", required = true)
     public ResponseEntity<InMenus> infoName(@PathVariable("mName") String mName) {
         InMenus mSource = menuService.queryLikeMenu(mName);
         return ResponseEntity.ok(mSource);
     }
+
     /**
      * 列表
      */
     @GetMapping("/list")
-    @ApiOperation(value = "获取所有咨询菜单")
-    public ResponseEntity<PageUtils> list(@RequestParam Map<String, Object> params) {
-        PageUtils page = menuService.queryPage(params);
+    @ApiOperation(value = "获取所有咨询菜单", httpMethod = "GET")
+    @ApiImplicitParam(name = "map", value = "分页数据", required = true)
+    public ResponseEntity<PageUtils> list(@RequestParam Map<String, Object> map) {
+        PageUtils page = menuService.queryPage(map);
         return ResponseEntity.ok(page);
     }
 }
