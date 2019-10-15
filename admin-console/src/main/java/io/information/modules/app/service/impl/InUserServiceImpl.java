@@ -17,7 +17,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -38,40 +37,25 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
     RedisUtils redisUtils;
 
     @Override
-    public List<InUser> queryLikeByUser(String params) {
-        List<InUser> users = new ArrayList<>();
+    public PageUtils queryLikeByUser(Map<String, Object> params) {
+        String uNick = (String) params.get("uNick");
+        int totalCount = (int) params.get("totalCount");
+        int pageSize = (int) params.get("pageSize");
+        int currPage = (int) params.get("currPage");
+        if (!uNick.isEmpty()) {
+            QueryWrapper<InUser> queryWrapper = new QueryWrapper<>();
+            //根据昵称查询
+            queryWrapper.lambda().like(InUser::getuNick, uNick);
+            List<InUser> list = this.list(queryWrapper);
+            for (InUser inUser : list) {
+                inUser.setuPhone(null);
+                inUser.setuPwd(null);
+                inUser.setuIdcard(null);
+            }
 
-        QueryWrapper<InUser> queryWrapper = new QueryWrapper<>();
-        //根据昵称查询
-        queryWrapper.lambda().like(InUser::getuNick, params);
-        InUser user1 = this.getOne(queryWrapper);
-        user1.setuPwd(null);
-        user1.setuToken(null);
-        user1.setuName(null);
-        users.add(user1);
-        //根据电话查询
-        queryWrapper.lambda().eq(InUser::getuPhone, params);
-        InUser user2 = this.getOne(queryWrapper);
-        user2.setuPwd(null);
-        user2.setuToken(null);
-        user2.setuName(null);
-        users.add(user2);
-        //根据用户简介查询
-        queryWrapper.lambda().like(InUser::getuIntro, params);
-        InUser user3 = this.getOne(queryWrapper);
-        user3.setuPwd(null);
-        user3.setuToken(null);
-        user3.setuName(null);
-        users.add(user3);
-
-        return users;
-    }
-
-    @Override
-    public InUser queryUserByNick(String nick) {
-        QueryWrapper<InUser> queryWrapper = new QueryWrapper<>();
-        queryWrapper.lambda().eq(InUser::getuNick, nick);
-        return this.getOne(queryWrapper);
+            return new PageUtils(list, totalCount, pageSize, currPage);
+        }
+        return null;
     }
 
     @Override

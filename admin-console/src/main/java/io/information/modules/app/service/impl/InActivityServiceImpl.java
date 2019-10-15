@@ -26,6 +26,15 @@ import java.util.stream.Collectors;
 public class InActivityServiceImpl extends ServiceImpl<InActivityDao, InActivity> implements IInActivityService {
 
     @Override
+    public PageUtils queryPage(Map<String, Object> params) {
+        IPage<InActivity> page = this.page(
+                new Query<InActivity>().getPage(params),
+                new QueryWrapper<InActivity>()
+        );
+        return new PageUtils(page);
+    }
+
+    @Override
     public PageUtils queryActivitiesByUserId(Map<String, Object> params, Long userId) {
         QueryWrapper<InActivity> queryWrapper = new QueryWrapper<>();
         queryWrapper.lambda().eq(InActivity::getuId, userId);

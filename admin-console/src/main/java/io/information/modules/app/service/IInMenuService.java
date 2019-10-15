@@ -1,12 +1,13 @@
 package io.information.modules.app.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import io.information.modules.app.entity.InMSource;
+import io.information.common.utils.PageUtils;
 import io.information.modules.app.entity.InMenu;
 import io.information.modules.app.entity.InMenuSource;
+import io.information.modules.app.entity.InMenus;
 import io.information.modules.app.entity.InSource;
 
-import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -18,15 +19,17 @@ import java.util.List;
  */
 public interface IInMenuService extends IService<InMenu> {
 
-    void addMenu(InMenu menu, InMenuSource menuSource, InSource source);
+    void addMenu(InMenus menus);
 
     void deleteMenu(Long menuId);
 
-    void updateMenu(InMenu menu, InMenuSource menuSource, InSource source);
+    void updateMenu(InMenus menus);
 
-    InMSource queryMenuById(Long menuId);
+    InMenus queryMenuById(Long menuId);
 
-    InMSource queryLikeMenu(String menuName);
+    InMenus queryLikeMenu(String menuName);
 
-    List<InMSource> queryAllMenu();
+    PageUtils queryPage(Map<String, Object> params);
+
+    void deleteAll(Long mId);
 }

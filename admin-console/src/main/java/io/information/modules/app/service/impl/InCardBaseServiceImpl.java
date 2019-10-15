@@ -50,45 +50,49 @@ public class InCardBaseServiceImpl extends ServiceImpl<InCardBaseDao, InCardBase
         return card;
     }
 
-    @Override
-    public List<InCardBase> queryAllCardBase(Long userId) {
-        QueryWrapper<InCardBase> queryWrapper = new QueryWrapper<>();
-        queryWrapper.lambda().eq(InCardBase::getuId, userId);
-        return this.list(queryWrapper);
-    }
 
     @Override
-    public PageUtils queryAllCard(Map<String, Object> params, Long userId) {
-        LambdaQueryWrapper<InCardBase> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.in(InCardBase::getuId, userId);
+    public PageUtils queryAllCardBase(Map<String,Object> map,Long userId) {
+        QueryWrapper<InCardBase> queryWrapper = new QueryWrapper<>();
+        queryWrapper.lambda().eq(InCardBase::getuId, userId);
         IPage<InCardBase> page = this.page(
-                new Query<InCardBase>().getPage(params),
+                new Query<InCardBase>().getPage(map),
                 queryWrapper
         );
         return new PageUtils(page);
     }
 
+
     @Override
-    @Transactional(rollbackFor = Exception.class)
-    public void deleteAllCard(Long userId) {
-        List<InCardBase> baseList = this.queryAllCardBase(userId);
-        List<Long> cardIds = baseList.stream().map(InCardBase::getcId).collect(Collectors.toList());
-        this.deleteCard(cardIds);
+    public PageUtils queryPage(Map<String, Object> params) {
+        IPage<InCardBase> page = this.page(
+                new Query<InCardBase>().getPage(params),
+                new QueryWrapper<InCardBase>()
+        );
+        return new PageUtils(page);
     }
+
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void deleteCard(List<Long> cardIds) {
-        this.removeByIds(cardIds);
-        cardArgueService.removeByIds(cardIds);
+    public void deleteAllCard(Long userId) {
+        LambdaQueryWrapper<InCardBase> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(InCardBase::getuId,userId);
+        List<InCardBase> baseList = this.list(queryWrapper);
+        List<Long> cardIds = baseList.stream().map(InCardBase::getcId).collect(Collectors.toList());
         cardVoteService.removeByIds(cardIds);
+        cardArgueService.removeByIds(cardIds);
+        this.removeByIds(cardIds);
     }
+
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void deleteAllCardBase(Long userId) {
-        List<InCardBase> cardList = this.queryAllCardBase(userId);
-        List<Long> cardIds = cardList.stream().map(InCardBase::getcId).collect(Collectors.toList());
+        LambdaQueryWrapper<InCardBase> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(InCardBase::getuId,userId);
+        List<InCardBase> list = this.list(queryWrapper);
+        List<Long> cardIds = list.stream().map(InCardBase::getcId).collect(Collectors.toList());
         this.removeByIds(cardIds);
     }
 }

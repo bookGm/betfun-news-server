@@ -19,4 +19,6 @@ public interface IInActivityService extends IService<InActivity> {
     PageUtils queryActivitiesByUserId(Map<String,Object> params,Long userId);
 
     void deleteAllActive(Long userId);
+
+    PageUtils queryPage(Map<String, Object> params);
 }

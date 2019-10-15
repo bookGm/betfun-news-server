@@ -1,37 +1,26 @@
 package io.information.modules.app.entity;
 
-
-import lombok.EqualsAndHashCode;
-import lombok.experimental.Accessors;
-
 import java.io.Serializable;
 
 /**
- * <p>
- * 资讯菜单总和
- * </p>
- *
- * @author ZXS
- * @since 2019-09-24
+ * 菜单资源前端字段
  */
-
-@EqualsAndHashCode(callSuper = false)
-@Accessors(chain = true)
-public class InMSource implements Serializable {
-    private static final long serialVersion = 1L;
+public class InMenus implements Serializable {
+    private static final long serialVersionUID = 1L;
 
     /**
-     * 资讯菜单
+     * 菜单表
      */
     private InMenu menu;
     /**
-     * 资讯菜单资源关系
+     * 菜单资源中间表
      */
     private InMenuSource menuSource;
     /**
-     * 咨讯资源
+     * 资源表
      */
     private InSource source;
+
 
     public InMenu getMenu() {
         return menu;

@@ -70,15 +70,13 @@ public class InDicServiceImpl extends ServiceImpl<InDicDao, InDic> implements II
     public List<InDic> queryNameDic(String dicName) {
         LambdaQueryWrapper<InDic> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.like(InDic::getdName,dicName);
-        List<InDic> dics = this.list(queryWrapper);
-        return dics;
+        return this.list(queryWrapper);
     }
 
     @Override
     public List<InDic> queryAllDic() {
         QueryWrapper<InDic> queryWrapper = new QueryWrapper<>();
-        List<InDic> dics = this.list(queryWrapper);
-        return dics;
+        return this.list(queryWrapper);
     }
 
     @Override
@@ -98,8 +96,7 @@ public class InDicServiceImpl extends ServiceImpl<InDicDao, InDic> implements II
     private List<InDic> findPSDic(InDic dic){
         LambdaQueryWrapper<InDic> queryWrapper = new LambdaQueryWrapper<InDic>();
         queryWrapper.eq(InDic::getdPcode,dic.getdCode());
-        List<InDic> dics = this.list(queryWrapper);
-        return dics;
+        return this.list(queryWrapper);
     }
 
 }

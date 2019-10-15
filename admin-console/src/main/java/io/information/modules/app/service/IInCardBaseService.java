@@ -20,15 +20,13 @@ import java.util.Map;
  */
 public interface IInCardBaseService extends IService<InCardBase> {
 
-    List<InCardBase> queryAllCardBase(Long userId);
+    PageUtils queryPage(Map<String, Object> params);
 
-    void deleteAllCard(Long userId);
-
-    void deleteCard(List<Long> cardIds);
-
-    void deleteAllCardBase(Long userId);
+    PageUtils queryAllCardBase(Map<String,Object> map,Long userId);
 
     InCard queryCard(Long cardId);
 
-    PageUtils queryAllCard(Map<String, Object> params, Long userId);
+    void deleteAllCardBase(Long userId);
+
+    void deleteAllCard(Long userId);
 }

@@ -1,112 +1,126 @@
 package io.information.modules.app.controller;
 
 
-import io.information.modules.app.entity.InMSource;
+import io.information.common.utils.PageUtils;
 import io.information.modules.app.entity.InMenu;
 import io.information.modules.app.entity.InMenuSource;
+import io.information.modules.app.entity.InMenus;
 import io.information.modules.app.entity.InSource;
 import io.information.modules.app.service.IInMenuService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
  * 资讯菜单表 前端控制器
  * </p>
- *  TODO
+ *
  * @author ZXS
  * @since 2019-09-24
  */
 @RestController
 @RequestMapping("/app/menu")
+@Api(value = "APP咨讯菜单接口<关联资源接口>")
 public class InMenuController {
     @Autowired
     private IInMenuService menuService;
 
     /**
-     * 添加<包含关联表>
-     */
-    @PostMapping("/saveList")
-    public ResponseEntity<Void> saveList(InMenu menu, InMenuSource menuSource, InSource source){
-        menuService.addMenu(menu,menuSource,source);
-        return ResponseEntity.status(HttpStatus.OK).build();
-    }
-
-    /**
-     * 添加<包含关联表>
+     * 添加
      */
     @PostMapping("/save")
-    public ResponseEntity<Void> save(@RequestBody InMenu menu){
+    @ApiOperation(value = "新增咨询菜单")
+    public ResponseEntity<Void> save(@RequestBody InMenu menu) {
         menuService.save(menu);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
+    /**
+     * 添加<包含关联表>
+     */
+    @ApiOperation(value = "新增咨询菜单、资讯资源",httpMethod = "POST")
+    @ApiImplicitParam(name = "menus",value = "菜单资源信息",required = true)
+    @PostMapping("/saveList")
+    public ResponseEntity<Void> saveList(InMenus menus) {
+        menuService.addMenu(menus);
+        return ResponseEntity.status(HttpStatus.OK).build();
+    }
+
 
 
     /**
      * 删除
      */
     @DeleteMapping("/delete/{mId}")
-    public ResponseEntity<Void> delete(@PathVariable("mId") Long mId){
+    @ApiOperation(value = "单个删除咨询菜单")
+    public ResponseEntity<Void> delete(@PathVariable("mId") Long mId) {
         menuService.deleteMenu(mId);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
-
-
     /**
-     * 修改<包含关联表>
+     * 删除
      */
-    @PutMapping("/updateList")
-    public ResponseEntity<Void> updateList(InMenu menu, InMenuSource menuSource, InSource source){
-        menuService.updateMenu(menu,menuSource,source);
+    @DeleteMapping("/deleteAll/{mId}")
+    @ApiOperation(value = "删除咨询菜单、资讯资源")
+    public ResponseEntity<Void> deleteAll(@PathVariable("mId") Long mId) {
+        menuService.deleteAll(mId);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
+
 
 
     /**
      * 修改
      */
     @PutMapping("/update")
-    public ResponseEntity<Void> update(@RequestBody InMenu menu){
+    @ApiOperation(value = "修改咨询菜单")
+    public ResponseEntity<Void> update(@RequestBody InMenu menu) {
         menuService.updateById(menu);
+        return ResponseEntity.status(HttpStatus.OK).build();
+    }
+    /**
+     * 修改<包含关联表>
+     */
+    @PutMapping("/updateList")
+    @ApiOperation(value = "修改咨询菜单、资讯资源")
+    public ResponseEntity<Void> updateList(InMenus menus) {
+        menuService.updateMenu(menus);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
 
+
     /**
-     * 根据ID查询咨讯菜单
-     * @param menuId
-     * @return
+     * 查询
      */
-    @GetMapping("/queryMenuById")
-    public ResponseEntity<InMSource> queryMenuById(Long menuId){
-        InMSource mSource = menuService.queryMenuById(menuId);
+    @GetMapping("/info/{mId}")
+    @ApiOperation(value = "查询单个咨询菜单")
+    public ResponseEntity<InMenus> info(@PathVariable("mId") Long mId) {
+        InMenus mSource = menuService.queryMenuById(mId);
         return ResponseEntity.ok(mSource);
     }
-
-
     /**
-     * 根据菜单名称模糊查询咨讯菜单
-     * @param menuName
-     * @return
+     * 名称模糊查询
      */
-    @GetMapping("/queryLikeMenu")
-    public ResponseEntity<InMSource> queryLikeMenu(String menuName){
-        InMSource mSource = menuService.queryLikeMenu(menuName);
+    @GetMapping("/infoName/{mName}")
+    @ApiOperation(value = "名称模糊查询咨询菜单")
+    public ResponseEntity<InMenus> infoName(@PathVariable("mName") String mName) {
+        InMenus mSource = menuService.queryLikeMenu(mName);
         return ResponseEntity.ok(mSource);
     }
-
-
     /**
-     * 获取所有咨讯菜单
-     * @return
+     * 列表
      */
-    @GetMapping("/queryAllMenu")
-    public ResponseEntity<List<InMSource>> queryAllMenu(){
-        List<InMSource> mSourceList = menuService.queryAllMenu();
-        return ResponseEntity.ok(mSourceList);
+    @GetMapping("/list")
+    @ApiOperation(value = "获取所有咨询菜单")
+    public ResponseEntity<PageUtils> list(@RequestParam Map<String, Object> params) {
+        PageUtils page = menuService.queryPage(params);
+        return ResponseEntity.ok(page);
     }
 }
