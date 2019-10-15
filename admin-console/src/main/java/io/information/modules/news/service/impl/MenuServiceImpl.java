@@ -4,7 +4,6 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import io.information.common.utils.IdGenerator;
 import io.information.common.utils.PageUtils;
 import io.information.common.utils.Query;
 import io.information.modules.app.config.IdWorker;
@@ -20,10 +19,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 
 @Service("menuService")
@@ -54,20 +51,27 @@ public class MenuServiceImpl extends ServiceImpl<MenuDao, MenuEntity> implements
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void saveList(MenusEntity menus) {
-        MenuEntity menu = menus.getMenu();
-        MenuSourceEntity menuSource = menus.getMenuSource();
-        SourceEntity source = menus.getSource();
-        menuSource.setMsId(new IdWorker().nextId());
-        source.setsCreateTime(new Date());
-        menu.setmCode(IdGenerator.getId()+"");
-        menuSource.setmName(menu.getmName());
-        menuSource.setmCode(menu.getmCode());
-        menuSource.setsName(source.getsName());
-        menuSource.setsUrl(source.getsUrl());
+        MenuSourceEntity menuSource = new MenuSourceEntity();
 
+        MenuEntity menu = menus.getMenu();
+        SourceEntity source = menus.getSource();
+        if (source != null && !"".equals(source)) {
+            List<MenuSourceEntity> sources = menuSourceService.list();
+            Set<String> collect = sources.stream().map(MenuSourceEntity::getsUrl).collect(Collectors.toSet());
+            if (collect.add(source.getsUrl())) {
+                menuSource.setMsId(new IdWorker().nextId());
+                source.setsCreateTime(new Date());
+
+                menuSource.setmName(menu.getmName());
+                menuSource.setmCode(menu.getmCode());
+                menuSource.setsName(source.getsName());
+                menuSource.setsUrl(source.getsUrl());
+
+                sourceService.save(source);
+                menuSourceService.save(menuSource);
+            }
+        }
         this.save(menu);
-        sourceService.save(source);
-        menuSourceService.save(menuSource);
     }
 
     @Override
@@ -76,15 +80,20 @@ public class MenuServiceImpl extends ServiceImpl<MenuDao, MenuEntity> implements
         LambdaQueryWrapper<MenuEntity> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(MenuEntity::getmId, mId);
         MenuEntity menu = this.getOne(queryWrapper);
+
         String code = menu.getmCode();
+
         LambdaQueryWrapper<MenuSourceEntity> queryWrapper1 = new LambdaQueryWrapper<>();
         queryWrapper1.eq(MenuSourceEntity::getmCode, code);
         MenuSourceEntity menuSource = menuSourceService.getOne(queryWrapper1);
+
         if (menuSource != null && !"".equals(menuSource)) {
             String url = menuSource.getsUrl();
+
             LambdaQueryWrapper<SourceEntity> queryWrapper2 = new LambdaQueryWrapper<>();
             queryWrapper2.eq(SourceEntity::getsUrl, url);
             SourceEntity source = sourceService.getOne(queryWrapper2);
+
             if (source != null && !"".equals(source)) {
                 String getsUrl = source.getsUrl();
                 ArrayList<String> list = new ArrayList<>();
@@ -98,15 +107,8 @@ public class MenuServiceImpl extends ServiceImpl<MenuDao, MenuEntity> implements
 
     @Override
     public void updateAll(MenusEntity menus) {
+        MenuSourceEntity menuSource = new MenuSourceEntity();
         MenuEntity menu = menus.getMenu();
-        MenuSourceEntity menuSource = menus.getMenuSource();
-        SourceEntity source = menus.getSource();
-
-        menuSource.setmName(menu.getmName());
-        menuSource.setmCode(menu.getmCode());
-        menuSource.setsName(source.getsName());
-        menuSource.setsUrl(source.getsUrl());
-        source.setsUpdateTime(new Date());
         String mCode = menu.getmCode();
 
         //更新子节点中的父节点信息
@@ -120,11 +122,19 @@ public class MenuServiceImpl extends ServiceImpl<MenuDao, MenuEntity> implements
             });
         }
 
-        MenuSourceEntity menuSource1 = this.findMenuSource(menu);
-        menuSource1.setmCode(mCode);
-        sourceService.updateByUrl(source);
+        SourceEntity source = menus.getSource();
+        if (source != null && !"".equals(source)) {
+            source.setsUpdateTime(new Date());
+
+            menuSource.setmName(menu.getmName());
+            menuSource.setmCode(menu.getmCode());
+            menuSource.setsName(source.getsName());
+            menuSource.setsUrl(source.getsUrl());
+
+            sourceService.updateByUrl(source);
+            menuSourceService.updatesUrl(menuSource);
+        }
         this.updateById(menu);
-        menuSourceService.updateById(menuSource);
     }
 
     @Override

@@ -18,4 +18,6 @@ import java.util.Map;
 public interface IInMenuSourceService extends IService<InMenuSource> {
 
     PageUtils queryPage(Map<String, Object> params);
+
+    void updatesUrl(InMenuSource menuSource);
 }

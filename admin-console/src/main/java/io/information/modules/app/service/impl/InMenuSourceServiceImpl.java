@@ -1,6 +1,7 @@
 package io.information.modules.app.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import io.information.common.utils.PageUtils;
@@ -30,5 +31,12 @@ public class InMenuSourceServiceImpl extends ServiceImpl<InMenuSourceDao, InMenu
         );
 
         return new PageUtils(page);
+    }
+
+    @Override
+    public void updatesUrl(InMenuSource menuSource) {
+        LambdaUpdateWrapper<InMenuSource> updateWrapper = new LambdaUpdateWrapper<>();
+        updateWrapper.eq(InMenuSource::getsUrl,menuSource.getsUrl());
+        this.update(updateWrapper);
     }
 }

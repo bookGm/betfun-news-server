@@ -39,12 +39,23 @@ public class MenuSourceController {
 
 
     /**
-     * 信息
+     * 查询
      */
     @GetMapping("/info/{msId}")
     @RequiresPermissions("news:menusource:info")
     public R info(@PathVariable("msId") Long msId){
 		MenuSourceEntity menuSource = menuSourceService.getById(msId);
+
+        return R.ok().put("menuSource", menuSource);
+    }
+
+    /**
+     * URL查询
+     */
+    @GetMapping("/infoUrl/{sUrl}")
+    @RequiresPermissions("news:menusource:info")
+    public R infoUrl(@PathVariable("sUrl") String sUrl){
+        MenuSourceEntity menuSource = menuSourceService.infoUrl(sUrl);
 
         return R.ok().put("menuSource", menuSource);
     }

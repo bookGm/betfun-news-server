@@ -2,12 +2,10 @@ package io.information.modules.app.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import io.information.common.exception.ExceptionEnum;
 import io.information.common.exception.IMException;
-import io.information.common.utils.IdGenerator;
 import io.information.common.utils.PageUtils;
 import io.information.common.utils.Query;
 import io.information.modules.app.config.IdWorker;
@@ -23,10 +21,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -46,20 +42,27 @@ public class InMenuServiceImpl extends ServiceImpl<InMenuDao, InMenu> implements
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void addMenu(InMenus menus) {
-        InMenu menu = menus.getMenu();
-        InMenuSource menuSource = menus.getMenuSource();
-        InSource source = menus.getSource();
-        menuSource.setMsId(new IdWorker().nextId());
-        source.setsCreateTime(new Date());
-        menu.setmCode(IdGenerator.getId()+"");
-        menuSource.setmName(menu.getmName());
-        menuSource.setmCode(menu.getmCode());
-        menuSource.setsName(source.getsName());
-        menuSource.setsUrl(source.getsUrl());
+        InMenuSource menuSource = new InMenuSource();
 
+        InMenu menu = menus.getMenu();
+        InSource source = menus.getSource();
+        if (source != null && !"".equals(source)) {
+            List<InMenuSource> sources = menuSourceService.list();
+            Set<String> collect = sources.stream().map(InMenuSource::getsUrl).collect(Collectors.toSet());
+            if (collect.add(source.getsUrl())) {
+                menuSource.setMsId(new IdWorker().nextId());
+                source.setsCreateTime(new Date());
+
+                menuSource.setmName(menu.getmName());
+                menuSource.setmCode(menu.getmCode());
+                menuSource.setsName(source.getsName());
+                menuSource.setsUrl(source.getsUrl());
+
+                sourceService.save(source);
+                menuSourceService.save(menuSource);
+            }
+        }
         this.save(menu);
-        sourceService.save(source);
-        menuSourceService.save(menuSource);
     }
 
     @Override
@@ -95,15 +98,8 @@ public class InMenuServiceImpl extends ServiceImpl<InMenuDao, InMenu> implements
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void updateMenu(InMenus menus) {
+        InMenuSource menuSource = new InMenuSource();
         InMenu menu = menus.getMenu();
-        InMenuSource menuSource = menus.getMenuSource();
-        InSource source = menus.getSource();
-
-        menuSource.setmName(menu.getmName());
-        menuSource.setmCode(menu.getmCode());
-        menuSource.setsName(source.getsName());
-        menuSource.setsUrl(source.getsUrl());
-        source.setsUpdateTime(new Date());
         String mCode = menu.getmCode();
 
         //更新子节点中的父节点信息
@@ -117,11 +113,19 @@ public class InMenuServiceImpl extends ServiceImpl<InMenuDao, InMenu> implements
             });
         }
 
-        InMenuSource menuSource1 = this.findMenuSource(menu);
-        menuSource1.setmCode(mCode);
-        sourceService.updateByUrl(source);
+        InSource source = menus.getSource();
+        if (source != null && !"".equals(source)) {
+
+            menuSource.setmName(menu.getmName());
+            menuSource.setmCode(menu.getmCode());
+            menuSource.setsName(source.getsName());
+            menuSource.setsUrl(source.getsUrl());
+            source.setsUpdateTime(new Date());
+
+            sourceService.updateByUrl(source);
+            menuSourceService.updatesUrl(menuSource);
+        }
         this.updateById(menu);
-        menuSourceService.updateById(menuSource);
     }
 
     @Override
@@ -152,15 +156,20 @@ public class InMenuServiceImpl extends ServiceImpl<InMenuDao, InMenu> implements
         LambdaQueryWrapper<InMenu> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(InMenu::getmId, mId);
         InMenu menu = this.getOne(queryWrapper);
+
         String code = menu.getmCode();
+
         LambdaQueryWrapper<InMenuSource> queryWrapper1 = new LambdaQueryWrapper<>();
         queryWrapper1.eq(InMenuSource::getmCode, code);
         InMenuSource menuSource = menuSourceService.getOne(queryWrapper1);
+
         if (menuSource != null && !"".equals(menuSource)) {
             String url = menuSource.getsUrl();
+
             LambdaQueryWrapper<InSource> queryWrapper2 = new LambdaQueryWrapper<>();
             queryWrapper2.eq(InSource::getsUrl, url);
             InSource source = sourceService.getOne(queryWrapper2);
+
             if (source != null && !"".equals(source)) {
                 String getsUrl = source.getsUrl();
                 ArrayList<String> list = new ArrayList<>();

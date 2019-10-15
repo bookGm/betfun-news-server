@@ -16,5 +16,9 @@ import java.util.Map;
 public interface MenuSourceService extends IService<MenuSourceEntity> {
 
     PageUtils queryPage(Map<String, Object> params);
+
+    MenuSourceEntity infoUrl(String sUrl);
+
+    void updatesUrl(MenuSourceEntity menuSource);
 }
 
