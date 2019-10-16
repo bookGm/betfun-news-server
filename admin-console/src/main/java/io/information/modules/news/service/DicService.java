@@ -16,13 +16,15 @@ import java.util.Map;
  */
 public interface DicService extends IService<DicEntity> {
 
-    PageUtils queryPage(Map<String, Object> params);
-
     List<DicEntity> queryDidAscList();
 
     /**
      * 获取字典列表
      */
     Map<String,List<DicEntity>> getListAll(String key);
+
+    void deleteDic(Long[] dIds);
+
+    void updateDic(DicEntity dic);
 }
 

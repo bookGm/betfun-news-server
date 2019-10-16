@@ -25,34 +25,11 @@ public class TagServiceImpl extends ServiceImpl<TagDao, TagEntity> implements Ta
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
-        String tName = (String) params.get("tName");
-        Long tId = (Long) params.get("tId");
-
         IPage<TagEntity> page = this.page(
                 new Query<TagEntity>().getPage(params),
                 new QueryWrapper<TagEntity>()
-                    .like(StringUtils.isNotBlank(tName),"t_name",tName)
-                    .eq(tId!=null,"t_id",tId)
         );
-
         return new PageUtils(page);
     }
-
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public void saveTag(TagEntity tag) {
-        tag.settCreateTime(new Date());
-        this.save(tag);
-    }
-
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public void delete(Long[] tIds) {
-        List<Long> list = Arrays.asList(tIds);
-        UpdateWrapper<TagEntity> updateWrapper = new UpdateWrapper<>();
-        updateWrapper.lambda().in(TagEntity::gettId,list);
-        this.remove(updateWrapper);
-    }
-
 
 }

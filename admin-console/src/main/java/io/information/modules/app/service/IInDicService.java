@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import io.information.modules.app.entity.InDic;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -17,13 +18,15 @@ public interface IInDicService extends IService<InDic> {
 
     void deleteDic(Long[] dIds);
 
+    List<InDic> queryDidAscList();
+
     void updateDic(InDic dic);
+
+    Map<String, List<InDic>> getListAll(String key);
 
     List<InDic> queryDicById(Long dicId);
 
     List<InDic> queryNameDic(String dicName);
-
-    List<InDic> queryAllDic();
 
     List<InDic> queryDicByCode(String dicCode);
 }

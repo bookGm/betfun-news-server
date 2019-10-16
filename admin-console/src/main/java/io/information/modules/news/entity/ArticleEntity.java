@@ -78,6 +78,10 @@ public class ArticleEntity implements Serializable {
 	 */
 	private Integer aStatus;
 	/**
+	 * 浏览量
+	 */
+	private Long aReadNumber;
+	/**
 	 * 创建时间
 	 */
 	private Date aCreateTime;
@@ -200,5 +204,13 @@ public class ArticleEntity implements Serializable {
 
 	public void setaStatus(Integer aStatus) {
 		this.aStatus = aStatus;
+	}
+
+	public Long getaReadNumber() {
+		return aReadNumber;
+	}
+
+	public void setaReadNumber(Long aReadNumber) {
+		this.aReadNumber = aReadNumber;
 	}
 }

@@ -16,9 +16,5 @@ import java.util.Map;
 public interface TagService extends IService<TagEntity> {
 
     PageUtils queryPage(Map<String, Object> params);
-
-    void saveTag(TagEntity tag);
-
-    void delete(Long[] tIds);
 }
 

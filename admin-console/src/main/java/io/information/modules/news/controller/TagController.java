@@ -4,12 +4,15 @@ import io.information.common.annotation.SysLog;
 import io.information.common.utils.PageUtils;
 import io.information.common.utils.R;
 import io.information.common.validator.ValidatorUtils;
+import io.information.modules.app.config.IdWorker;
 import io.information.modules.news.entity.TagEntity;
 import io.information.modules.news.service.TagService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Arrays;
+import java.util.Date;
 import java.util.Map;
 
 
@@ -57,8 +60,10 @@ public class TagController {
     @PostMapping("/save")
     @RequiresPermissions("news:tag:save")
     public R save(@RequestBody TagEntity tag){
+        tag.settId(new IdWorker().nextId());
+        tag.settCreateTime(new Date());
         ValidatorUtils.validateEntity(tag);
-		tagService.saveTag(tag);
+		tagService.save(tag);
 
         return R.ok();
     }
@@ -81,8 +86,7 @@ public class TagController {
     @PostMapping("/delete")
     @RequiresPermissions("news:tag:delete")
     public R delete(@RequestBody Long[] tIds){
-        Long tId = tIds[0];
-        tagService.delete(tIds);
+        tagService.removeByIds(Arrays.asList(tIds));
 
         return R.ok();
     }

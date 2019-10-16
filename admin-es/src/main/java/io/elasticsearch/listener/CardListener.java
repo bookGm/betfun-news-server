@@ -20,9 +20,9 @@ public class CardListener {
      * 帖子发布
      */
     @RabbitListener(bindings = @QueueBinding(
-            value = @Queue(name = Constants.queue),
-            exchange = @Exchange(name = Constants.defaultExchange),
-            key = Constants.routeKey
+            value = @Queue(name = Constants.card_Save_Queue),
+            exchange = @Exchange(name = Constants.cardExchange),
+            key = Constants.card_Save_RouteKey
     ))
     public void created(EsCardEntity cardEntity){
         cardService.saveCard(cardEntity);
@@ -33,12 +33,12 @@ public class CardListener {
      * 帖子删除
      */
     @RabbitListener(bindings = @QueueBinding(
-            value = @Queue(name = Constants.queue),
-            exchange = @Exchange(name = Constants.defaultExchange),
-            key = Constants.routeKey
+            value = @Queue(name = Constants.card_Delete_Queue),
+            exchange = @Exchange(name = Constants.cardExchange),
+            key = Constants.card_Delete_RouteKey
     ))
-    public void remove(EsCardEntity cardEntity){
-        cardService.removeCard(cardEntity);
+    public void remove(Long[] cIds){
+        cardService.removeCard(cIds);
     }
 
 
@@ -46,9 +46,9 @@ public class CardListener {
      * 帖子更新
      */
     @RabbitListener(bindings = @QueueBinding(
-            value = @Queue(name = Constants.queue),
-            exchange = @Exchange(name = Constants.defaultExchange),
-            key = Constants.routeKey
+            value = @Queue(name = Constants.card_Update_Queue),
+            exchange = @Exchange(name = Constants.cardExchange),
+            key = Constants.card_Update_RouteKey
     ))
     public void update(EsCardEntity cardEntity){
         cardService.updatedCard(cardEntity);

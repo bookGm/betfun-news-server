@@ -5,20 +5,20 @@ import io.information.common.utils.IdGenerator;
 import io.information.common.utils.PageUtils;
 import io.information.modules.app.entity.InCard;
 import io.information.modules.app.entity.InCardBase;
-import io.information.modules.app.entity.InUser;
 import io.information.modules.app.service.IInCardBaseService;
 import io.information.modules.app.service.IInUserService;
 import io.information.modules.sys.controller.AbstractController;
+import io.mq.utils.Constants;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -37,6 +37,8 @@ public class InCardBaseController extends AbstractController {
     private IInCardBaseService cardBaseService;
     @Autowired
     private IInUserService iInUserService;
+    @Autowired
+    private RabbitTemplate rabbitTemplate;
 
     /**
      * 添加
@@ -48,6 +50,9 @@ public class InCardBaseController extends AbstractController {
         Long id= IdGenerator.getId();
         cardBase.setcId(id);
         cardBaseService.save(cardBase);
+        //rabbit
+        rabbitTemplate.convertAndSend(Constants.cardExchange,
+                Constants.card_Save_RouteKey, cardBase);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
@@ -60,6 +65,9 @@ public class InCardBaseController extends AbstractController {
     @ApiImplicitParam(name = "cIds",value = "帖子ID",dataType = "Array",required = true)
     public ResponseEntity<Void> delete(@RequestBody Long[] cIds){
         cardBaseService.removeByIds(Arrays.asList(cIds));
+        //rabbit
+        rabbitTemplate.convertAndSend(Constants.cardExchange,
+                Constants.card_Delete_RouteKey, cIds);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
@@ -77,7 +85,7 @@ public class InCardBaseController extends AbstractController {
 
 
     /**
-     * 删除<包含关联表>
+     * 用户删除<包含关联表>
      */
     @DeleteMapping("/deleteAll")
     @ApiOperation(value = "同时删除用户的基础帖子、辩论帖子和投票帖子",httpMethod = "DELETE",notes = "自动获取用户信息")
@@ -95,6 +103,9 @@ public class InCardBaseController extends AbstractController {
     @ApiImplicitParam(name = "cardBase",value = "基础帖子信息",required = true)
     public ResponseEntity<Void> update(@RequestBody InCardBase cardBase){
         cardBaseService.updateById(cardBase);
+        //rabbit
+        rabbitTemplate.convertAndSend(Constants.cardExchange,
+                Constants.card_Update_RouteKey, cardBase);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 

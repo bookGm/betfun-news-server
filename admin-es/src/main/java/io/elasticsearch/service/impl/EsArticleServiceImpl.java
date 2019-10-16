@@ -25,6 +25,8 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Map;
 
+import static org.elasticsearch.index.query.QueryBuilders.termQuery;
+
 @Service
 public class EsArticleServiceImpl implements EsArticleService {
     @Autowired
@@ -34,74 +36,86 @@ public class EsArticleServiceImpl implements EsArticleService {
 
 
     private static final Logger LOG = LoggerFactory.getLogger(EsArticleServiceImpl.class);
+
     @RabbitListener(queues = Constants.queue)
-    public void receive(String payload, Channel channel,
-                        @Header(AmqpHeaders.DELIVERY_TAG) long tag) {
+    public void receive(String payload, Channel channel, @Header(AmqpHeaders.DELIVERY_TAG) long tag) {
         LOG.info("消费内容为：{}", payload);
         RabbitMQUtils.askMessage(channel, tag, LOG);
     }
 
-
-    /**
-     * ES添加文章
-     */
+    @Override
     public void saveArticle(EsArticleEntity articleEntity) {
         articleDao.save(articleEntity);
     }
 
-
-    /**
-     * ES删除文章
-     */
-    public void removeArticle(EsArticleEntity articleEntity) {
-        articleDao.deleteById(articleEntity.getaId());
+    @Override
+    public void removeArticle(Long[] aIds) {
+        for (Long aId : aIds) {
+            articleDao.deleteById(aId);
+        }
     }
 
-
-    /**
-     *  ES更新文章
-     */
-    public void updatedArticle(EsArticleEntity articleEntity){
+    @Override
+    public void updatedArticle(EsArticleEntity articleEntity) {
         articleDao.deleteById(articleEntity.getaId());
         articleDao.save(articleEntity);
     }
 
-
-    /**
-     * 文章搜索关键词
-     */
+    @Override
     public PageUtils articleSearchKey(SearchRequest request) {
-        // 创建原生搜索器
         NativeSearchQueryBuilder queryBuilder = new NativeSearchQueryBuilder();
         //搜索的关键词
         String key = request.getKey();
         //多字段匹配[关键字，标题，内容，摘要]
         queryBuilder.withQuery(QueryBuilders
-                .multiMatchQuery(key,"aKeyword","aTitle","aContent","aBrief")
+                .multiMatchQuery(key, "aKeyword", "aTitle", "aContent", "aBrief")
                 .operator(Operator.AND)
                 .minimumShouldMatch("75%"));
         //过滤项[可无]
         Map<String, String> params = request.getParams();
-        if(params != null || params.size() != 0){
+        if (params != null || params.size() != 0) {
             for (String filter : params.keySet()) {
                 //根据某个字段和其值  完全匹配值
                 queryBuilder.withQuery(QueryBuilders.boolQuery()
-                        .filter(QueryBuilders.termQuery(filter,params.get(filter))));
+                        .filter(termQuery(filter, params.get(filter))));
             }
         }
-        // 分页
-        Integer currPage = request.getCurrPage();
-        Integer pageSize = request.getPageSize();
-        queryBuilder.withPageable(PageRequest.of(currPage,pageSize));
-        // 发送搜索器，并获取返回值
-        AggregatedPage<EsArticleEntity> aggregatedPage = elasticsearchTemplate.queryForPage(queryBuilder.build(), EsArticleEntity.class);
-        // 解析返回值
-        List<EsArticleEntity> articleList = aggregatedPage.getContent();
-        long totalCount = aggregatedPage.getTotalElements();
-//        int totalPages = aggregatedPage.getTotalPages();
-        // 构造PageUtils，并返回
-        return new PageUtils(articleList,totalCount,pageSize,currPage);
+        return pageOk(queryBuilder, request);
     }
 
+    @Override
+    public PageUtils articleSearch(SearchRequest request) {
+        //查询所有已发布的文章
+        NativeSearchQueryBuilder queryBuilder = new NativeSearchQueryBuilder();
+        queryBuilder.withQuery(termQuery("aStatus", 2));
+        return pageOk(queryBuilder, request);
+    }
+
+    @Override
+    public PageUtils articleSearchStatus(SearchRequest request) {
+        Map<String, String> map = request.getParams();
+        String uId = map.get("uId");
+        String aStatus = map.get("aStatus");
+        //根据状态查询用户文章
+        NativeSearchQueryBuilder queryBuilder = new NativeSearchQueryBuilder();
+        queryBuilder.withQuery(QueryBuilders.boolQuery()
+                .must(termQuery("uId", uId))
+                .must(termQuery("aStatus", aStatus))
+        );
+        return pageOk(queryBuilder,request);
+    }
+
+    //数据填充
+    private PageUtils pageOk(NativeSearchQueryBuilder queryBuilder, SearchRequest request) {
+        //设置分页数据
+        Integer currPage = request.getCurrPage();
+        Integer pageSize = request.getPageSize();
+        queryBuilder.withPageable(PageRequest.of(currPage, pageSize));
+        //查询数据
+        AggregatedPage<EsArticleEntity> aggregatedPage = elasticsearchTemplate.queryForPage(queryBuilder.build(), EsArticleEntity.class);
+        List<EsArticleEntity> articleList = aggregatedPage.getContent();
+        long totalCount = aggregatedPage.getTotalElements();
+        return new PageUtils(articleList, totalCount, pageSize, currPage);
+    }
 
 }

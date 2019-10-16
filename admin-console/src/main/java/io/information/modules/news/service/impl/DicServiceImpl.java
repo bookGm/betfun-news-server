@@ -1,8 +1,11 @@
 package io.information.modules.news.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import io.information.common.exception.ExceptionEnum;
+import io.information.common.exception.IMException;
 import io.information.common.utils.PageUtils;
 import io.information.common.utils.Query;
 import io.information.common.utils.RedisKeys;
@@ -21,16 +24,6 @@ import java.util.Map;
 public class DicServiceImpl extends ServiceImpl<DicDao, DicEntity> implements DicService {
 
     @Override
-    public PageUtils queryPage(Map<String, Object> params) {
-        IPage<DicEntity> page = this.page(
-                new Query<DicEntity>().getPage(params),
-                new QueryWrapper<DicEntity>()
-        );
-
-        return new PageUtils(page);
-    }
-
-    @Override
     public List<DicEntity> queryDidAscList() {
         QueryWrapper<DicEntity> queryWrapper = new QueryWrapper<>();
         queryWrapper.lambda().orderByAsc(DicEntity::getdId);
@@ -47,4 +40,41 @@ public class DicServiceImpl extends ServiceImpl<DicDao, DicEntity> implements Di
         return map;
     }
 
+    @Override
+    public void deleteDic(Long[] dIds) {
+        //判断是否为父字典
+        for (Long dId : dIds) {
+            DicEntity dic = this.getById(dId);
+            List<DicEntity> dics = this.findPSDic(dic);
+            if(dics != null && !dics.isEmpty()){
+                throw new IMException(ExceptionEnum.NODE_PARENT_PATH);
+            }else {
+                //删除
+                this.removeByIds(dics);
+            }
+        }
+    }
+
+    @Override
+    public void updateDic(DicEntity dic) {
+        //判断是否为父字典
+        List<DicEntity> dics = this.findPSDic(dic);
+        if(dics != null && !dics.isEmpty()){
+            //修改子节点中的父节点
+            dics.forEach(dicSon->{
+                dicSon.setdPcode(dic.getdCode());
+                this.updateById(dicSon);
+            });
+        }
+        //更新
+        this.updateById(dic);
+    }
+
+
+    //查询节点和其下子节点
+    private List<DicEntity> findPSDic(DicEntity dic){
+        LambdaQueryWrapper<DicEntity> queryWrapper = new LambdaQueryWrapper<DicEntity>();
+        queryWrapper.eq(DicEntity::getdPcode,dic.getdCode());
+        return this.list(queryWrapper);
+    }
 }

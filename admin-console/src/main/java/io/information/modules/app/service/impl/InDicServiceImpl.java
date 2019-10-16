@@ -8,10 +8,13 @@ import io.information.common.exception.IMException;
 import io.information.modules.app.dao.InDicDao;
 import io.information.modules.app.entity.InDic;
 import io.information.modules.app.service.IInDicService;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -37,6 +40,23 @@ public class InDicServiceImpl extends ServiceImpl<InDicDao, InDic> implements II
                 this.removeByIds(dics);
             }
         }
+    }
+
+    @Override
+    public List<InDic> queryDidAscList() {
+        QueryWrapper<InDic> queryWrapper = new QueryWrapper<>();
+        queryWrapper.lambda().orderByAsc(InDic::getdId);
+        return this.list(queryWrapper);
+    }
+
+    @Override
+    @Cacheable(value= "dics",key = "#key")
+    public Map<String,List<InDic>> getListAll(String key) {
+        HashMap<String, List<InDic>> map = new HashMap<>();
+        QueryWrapper<InDic> queryWrapper = new QueryWrapper<>();
+        List<InDic> dicts = this.list(queryWrapper);
+        map.put("dict",dicts);
+        return map;
     }
 
     @Override
@@ -73,11 +93,6 @@ public class InDicServiceImpl extends ServiceImpl<InDicDao, InDic> implements II
         return this.list(queryWrapper);
     }
 
-    @Override
-    public List<InDic> queryAllDic() {
-        QueryWrapper<InDic> queryWrapper = new QueryWrapper<>();
-        return this.list(queryWrapper);
-    }
 
     @Override
     public List<InDic> queryDicByCode(String dicCode) {

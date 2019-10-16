@@ -7,9 +7,13 @@ import io.elasticsearch.utils.SearchRequest;
 public interface EsArticleService {
     void saveArticle(EsArticleEntity articleEntity);
 
-    void removeArticle(EsArticleEntity articleEntity);
+    void removeArticle(Long[] aIds);
 
     void updatedArticle(EsArticleEntity articleEntity);
 
     PageUtils articleSearchKey(SearchRequest request);
+
+    PageUtils articleSearch(SearchRequest request);
+
+    PageUtils articleSearchStatus(SearchRequest request);
 }

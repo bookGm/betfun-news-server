@@ -3,6 +3,7 @@ package io.information.modules.news.controller;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import io.information.common.utils.R;
 import io.information.common.utils.RedisKeys;
+import io.information.modules.app.config.IdWorker;
 import io.information.modules.news.entity.DicEntity;
 import io.information.modules.news.service.DicService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -32,7 +33,7 @@ public class DicController {
      * 所有字典列表
      */
     @GetMapping("/listAll")
-    public R listAll(String key){
+    public R listAll(){
         Map<String, List<DicEntity>> listAll = dicService.getListAll(RedisKeys.CONSTANT);
         return R.ok().put("dict", listAll);
     }
@@ -49,7 +50,7 @@ public class DicController {
 
 
     /**
-     * 选择菜单(添加、修改菜单)
+     * 选择字典(添加、修改字典)
      */
     @GetMapping("/select")
     @RequiresPermissions("news:dic:select")
@@ -57,10 +58,10 @@ public class DicController {
         //查询列表数据
         List<DicEntity> dicList = dicService.queryDidAscList();
 
-        //添加顶级菜单
+        //添加顶级字典节点
         DicEntity root = new DicEntity();
         root.setdId(0L);
-        root.setdName("顶级编码");
+        root.setdName("顶级节点");
         root.setpId(-1L);
         root.setOpen(true);
         dicList.add(root);
@@ -86,6 +87,7 @@ public class DicController {
     @PostMapping("/save")
     @RequiresPermissions("news:dic:save")
     public R save(@RequestBody DicEntity dic){
+        dic.setdId(new IdWorker().nextId());
 		dicService.save(dic);
 
         return R.ok();
@@ -97,8 +99,7 @@ public class DicController {
     @PostMapping("/update")
     @RequiresPermissions("news:dic:update")
     public R update(@RequestBody DicEntity dic){
-		dicService.updateById(dic);
-
+		dicService.updateDic(dic);
         return R.ok();
     }
 
@@ -108,16 +109,7 @@ public class DicController {
     @PostMapping("/delete/{dId}")
     @RequiresPermissions("news:dic:delete")
     public R delete(@PathVariable("dId") Long[] dIds){
-        //删除编码先判断是包含子编码
-        QueryWrapper<DicEntity> queryWrapper = new QueryWrapper<>();
-        queryWrapper.lambda().in(DicEntity::getpId,Arrays.asList(dIds));
-        List<DicEntity> dicEntities = dicService.list(queryWrapper);
-        if(dicEntities.isEmpty()){
-            dicService.removeByIds(Arrays.asList(dIds));
-        }else {
-            return R.error("请先删除子编码");
-        }
-
+        dicService.deleteDic(dIds);
         return R.ok();
     }
 

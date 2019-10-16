@@ -20,9 +20,9 @@ public class ArticleListener {
      * 文章发布
      */
     @RabbitListener(bindings = @QueueBinding(
-            value = @Queue(name = Constants.queue),
-            exchange = @Exchange(name = Constants.defaultExchange),
-            key = Constants.routeKey
+            value = @Queue(name = Constants.article_Save_Queue),
+            exchange = @Exchange(name = Constants.articleExchange),
+            key = Constants.article_Save_RouteKey
     ))
     public void created(EsArticleEntity articleEntity){
         articleService.saveArticle(articleEntity);
@@ -33,12 +33,12 @@ public class ArticleListener {
      * 文章删除
      */
     @RabbitListener(bindings = @QueueBinding(
-            value = @Queue(name = Constants.queue),
-            exchange = @Exchange(name = Constants.defaultExchange),
-            key = Constants.routeKey
+            value = @Queue(name = Constants.article_Delete_Queue),
+            exchange = @Exchange(name = Constants.articleExchange),
+            key = Constants.article_Delete_RouteKey
     ))
-    public void remove(EsArticleEntity articleEntity){
-        articleService.removeArticle(articleEntity);
+    public void remove(Long[] aIds){
+        articleService.removeArticle(aIds);
     }
 
 
@@ -46,9 +46,9 @@ public class ArticleListener {
      * 文章更新
      */
     @RabbitListener(bindings = @QueueBinding(
-            value = @Queue(name = Constants.queue),
+            value = @Queue(name = Constants.article_Update_Queue),
             exchange = @Exchange(name = Constants.defaultExchange),
-            key = Constants.routeKey
+            key = Constants.article_Update_RouteKey
     ))
     public void update(EsArticleEntity articleEntity){
         articleService.updatedArticle(articleEntity);

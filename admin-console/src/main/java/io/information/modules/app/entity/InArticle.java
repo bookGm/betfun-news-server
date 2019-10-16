@@ -26,62 +26,50 @@ public class InArticle implements Serializable {
      * 文章id
      */
     private Long aId;
-
     /**
      * 用户id
      */
     private Long uId;
-
     /**
      * 文章标题
      */
     private String aTitle;
-
     /**
      * 文章内容
      */
     private String aContent;
-
     /**
      * 文章摘要
      */
     private String aBrief;
-
     /**
      * 文章关键字（例：1,2,3）
      */
     private String aKeyword;
-
     /**
      * 文章封面URL
      */
     private String aCover;
-
     /**
      * 文章类型（字典）
      */
     private Integer aType;
-
     /**
      * 文章来源（非转载类型，此字段为空）
      */
     private String aSource;
-
     /**
      * 文章链接（非转载类型，此字段为空）
      */
     private String aLink;
-
     /**
      * 点赞数
      */
     private Long aLike;
-
     /**
      * 收藏数
      */
     private Integer aCollect;
-
     /**
      * 评论数
      */
@@ -90,7 +78,10 @@ public class InArticle implements Serializable {
      * 文章状态（0：草稿箱，1：审核中，2：已发布）
      */
     private Integer aStatus;
-
+    /**
+     * 浏览量
+     */
+    private Long aReadNumber;
     /**
      * 创建时间
      */
@@ -215,5 +206,13 @@ public class InArticle implements Serializable {
 
     public void setaStatus(Integer aStatus) {
         this.aStatus = aStatus;
+    }
+
+    public Long getaReadNumber() {
+        return aReadNumber;
+    }
+
+    public void setaReadNumber(Long aReadNumber) {
+        this.aReadNumber = aReadNumber;
     }
 }

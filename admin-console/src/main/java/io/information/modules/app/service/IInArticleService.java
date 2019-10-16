@@ -33,4 +33,6 @@ public interface IInArticleService extends IService<InArticle> {
     boolean collect(Long aid, Long uid);
 
     PageUtils uDraft(Map<String, Object> params, Long userId);
+
+    void updateReadNumber(Long aLong,Long aId);
 }

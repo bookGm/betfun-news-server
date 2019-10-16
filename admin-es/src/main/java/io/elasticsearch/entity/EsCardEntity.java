@@ -1,5 +1,6 @@
 package io.elasticsearch.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
@@ -7,6 +8,7 @@ import org.springframework.data.elasticsearch.annotations.FieldType;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 @Document(indexName = "cards", type = "card", shards = 5, replicas = 1,refreshInterval = "-1")
 public class EsCardEntity implements Serializable {
@@ -66,16 +68,20 @@ public class EsCardEntity implements Serializable {
      * 辩论结束日期
      */
     @Field(type = FieldType.Date)
+    @JsonFormat (shape = JsonFormat.Shape.STRING, pattern ="yyyy-MM-dd HH:mm:ss")
     private Date caCloseTime;
     /**
      * 投票选项信息（逗号分隔）
      */
     @Field(type = FieldType.Keyword,index = false)
     private String cvInfo;
+
+    private String[] cvInfoList;
     /**
      * 投票结束日期
      */
     @Field(type = FieldType.Date)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern ="yyyy-MM-dd HH:mm:ss")
     private Date cvCloseTime;
 
     public Long getcId() {
@@ -182,4 +188,11 @@ public class EsCardEntity implements Serializable {
         this.cvCloseTime = cvCloseTime;
     }
 
+    public String[] getCvInfoList() {
+        return cvInfoList;
+    }
+
+    public void setCvInfoList(String[] cvInfoList) {
+        this.cvInfoList = cvInfoList;
+    }
 }

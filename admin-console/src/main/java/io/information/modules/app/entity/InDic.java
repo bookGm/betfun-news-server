@@ -1,11 +1,13 @@
 package io.information.modules.app.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * <p>
@@ -27,6 +29,11 @@ public class InDic implements Serializable {
      */
     @TableId(value = "d_id", type = IdType.AUTO)
     private Long dId;
+
+    /**
+     * 字典父编码
+     */
+    private Long pId;
 
     /**
      * 字典名称
@@ -58,6 +65,14 @@ public class InDic implements Serializable {
      */
     private String dUrl;
 
+    /**
+     * ztree属性
+     */
+    @TableField(exist = false)
+    private Boolean open;
+
+    @TableField(exist = false)
+    private List<?> list;
 
     public Long getdId() {
         return dId;
@@ -113,5 +128,29 @@ public class InDic implements Serializable {
 
     public void setdUrl(String dUrl) {
         this.dUrl = dUrl;
+    }
+
+    public Long getpId() {
+        return pId;
+    }
+
+    public void setpId(Long pId) {
+        this.pId = pId;
+    }
+
+    public Boolean getOpen() {
+        return open;
+    }
+
+    public void setOpen(Boolean open) {
+        this.open = open;
+    }
+
+    public List<?> getList() {
+        return list;
+    }
+
+    public void setList(List<?> list) {
+        this.list = list;
     }
 }

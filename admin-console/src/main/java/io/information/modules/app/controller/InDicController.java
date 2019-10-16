@@ -1,6 +1,7 @@
 package io.information.modules.app.controller;
 
 
+import io.information.common.utils.RedisKeys;
 import io.information.modules.app.config.IdWorker;
 import io.information.modules.app.entity.InDic;
 import io.information.modules.app.service.IInDicService;
@@ -14,12 +15,13 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
  * 资讯字典表 前端控制器
  * </p>
- *  TODO
+ *
  * @author ZXS
  * @since 2019-09-24
  */
@@ -29,6 +31,49 @@ import java.util.List;
 public class InDicController {
     @Autowired
     private IInDicService dicService;
+
+
+    /**
+     * 所有字典列表
+     */
+    @GetMapping("/listAll")
+    public ResponseEntity listAll(){
+        Map<String, List<InDic>> listAll = dicService.getListAll(RedisKeys.CONSTANT);
+        return ResponseEntity.ok(listAll);
+    }
+
+
+    /**
+     * 所有菜单列表
+     */
+    @GetMapping("/list")
+    @ApiOperation(value = "获取所有字典节点信息",httpMethod = "GET",notes = "不需要任何参数")
+    public ResponseEntity<List<InDic>>list(){
+        List<InDic> dicList = dicService.list();
+        return ResponseEntity.ok(dicList);
+    }
+
+
+    /**
+     * 选择字典(添加、修改字典)
+     */
+    @GetMapping("/select")
+
+    public ResponseEntity<List<InDic>> select(){
+        //查询列表数据
+        List<InDic> dicList = dicService.queryDidAscList();
+
+        //添加顶级字典节点
+        InDic root = new InDic();
+        root.setdId(0L);
+        root.setdName("顶级节点");
+        root.setpId(-1L);
+        root.setOpen(true);
+        dicList.add(root);
+
+        return ResponseEntity.ok(dicList);
+    }
+
 
     /**
      * 新增
@@ -100,15 +145,5 @@ public class InDicController {
         return ResponseEntity.ok(dicList);
     }
 
-
-    /**
-     * 列表
-     */
-    @GetMapping("/list")
-    @ApiOperation(value = "获取所有字典节点信息",httpMethod = "GET",notes = "不需要任何参数")
-    public ResponseEntity<List<InDic>> list(){
-        List<InDic> dicList = dicService.queryAllDic();
-        return ResponseEntity.ok(dicList);
-    }
 
 }

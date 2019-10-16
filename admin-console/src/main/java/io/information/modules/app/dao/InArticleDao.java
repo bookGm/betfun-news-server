@@ -3,6 +3,8 @@ package io.information.modules.app.dao;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import io.information.modules.app.entity.InArticle;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+import org.springframework.beans.factory.annotation.Value;
 
 /**
  * <p>
@@ -25,4 +27,10 @@ public interface InArticleDao extends BaseMapper<InArticle> {
      */
     void addACollect (Long aid);
 
+    /**
+     * 增加访问量
+     * @param aReadNumber
+     * @param aId
+     */
+    void addReadNumber(@Param("aReadNumber") Long aReadNumber, @Param("aId") Long aId);
 }

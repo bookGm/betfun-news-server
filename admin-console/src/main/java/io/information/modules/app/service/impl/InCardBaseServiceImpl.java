@@ -14,6 +14,8 @@ import io.information.modules.app.entity.InCardVote;
 import io.information.modules.app.service.IInCardArgueService;
 import io.information.modules.app.service.IInCardBaseService;
 import io.information.modules.app.service.IInCardVoteService;
+import io.mq.utils.Constants;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,6 +38,8 @@ public class InCardBaseServiceImpl extends ServiceImpl<InCardBaseDao, InCardBase
     private IInCardArgueService cardArgueService;
     @Autowired
     private IInCardVoteService cardVoteService;
+    @Autowired
+    private RabbitTemplate rabbitTemplate;
 
 
     @Override
@@ -82,6 +86,9 @@ public class InCardBaseServiceImpl extends ServiceImpl<InCardBaseDao, InCardBase
         List<Long> cardIds = baseList.stream().map(InCardBase::getcId).collect(Collectors.toList());
         cardVoteService.removeByIds(cardIds);
         cardArgueService.removeByIds(cardIds);
+        //rabbit
+        rabbitTemplate.convertAndSend(Constants.cardExchange,
+                Constants.card_Delete_RouteKey, cardIds);
         this.removeByIds(cardIds);
     }
 
@@ -93,6 +100,9 @@ public class InCardBaseServiceImpl extends ServiceImpl<InCardBaseDao, InCardBase
         queryWrapper.eq(InCardBase::getuId,userId);
         List<InCardBase> list = this.list(queryWrapper);
         List<Long> cardIds = list.stream().map(InCardBase::getcId).collect(Collectors.toList());
+        //rabbit
+        rabbitTemplate.convertAndSend(Constants.cardExchange,
+                Constants.card_Delete_RouteKey, cardIds);
         this.removeByIds(cardIds);
     }
 }
