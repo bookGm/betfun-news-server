@@ -25,4 +25,6 @@ public class RedisKeys {
     public static final String INUSER=BASEKEY+"inuser";
     //投票
     public static final String VOTE=BASEKEY+"vote";
+    //浏览量
+    public static final String BROWSE=BASEKEY+"browse:";
 }

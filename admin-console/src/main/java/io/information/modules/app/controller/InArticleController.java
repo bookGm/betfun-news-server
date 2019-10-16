@@ -2,6 +2,7 @@ package io.information.modules.app.controller;
 
 
 import io.information.common.utils.PageUtils;
+import io.information.common.utils.RedisKeys;
 import io.information.modules.app.entity.InArticle;
 import io.information.modules.app.service.IInArticleService;
 import io.information.modules.sys.controller.AbstractController;
@@ -17,13 +18,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Map;
-import java.util.UUID;
 
 /**
  * <p>
@@ -43,7 +42,6 @@ public class InArticleController extends AbstractController {
     private RabbitTemplate rabbitTemplate;
     @Autowired
     private RedisTemplate redisTemplate;
-
 
 
     /**
@@ -124,19 +122,13 @@ public class InArticleController extends AbstractController {
     public ResponseEntity<InArticle> queryArticle(@PathVariable("aId") Long aId, HttpServletRequest request, HttpServletResponse response) {
         String ip = request.getHeader("x-forwarded-for");
         InArticle article = articleService.getById(aId);
-        Cookie[] cookies = request.getCookies();
-        for (Cookie cookie1 : cookies) {
-            if(cookie1.getValue().equals(ip+aId)){
-                redisTemplate.setValueSerializer(new GenericToStringSerializer<Long>(Long.class));
-                Long aLong = redisTemplate.opsForValue().increment("aReadNumber", 1);//如果通过自增1
-                if(aLong-200 > 0){
-                    long readNumber = aLong + article.getaReadNumber();
-                    articleService.updateReadNumber(readNumber,article.getaId());
-                }
-            }else {
-                Cookie cookie = new Cookie("articleRead", ip + aId);
-                cookie.setMaxAge(60*60*2);//存在时间2小时
-                response.addCookie(cookie);
+        Boolean aBoolean = redisTemplate.hasKey(ip + aId);
+        if (!aBoolean) {
+            redisTemplate.opsForValue().set(ip + aId, aId, 60 * 60 * 2);
+            redisTemplate.setValueSerializer(new GenericToStringSerializer<Long>(Long.class));
+            Long aLong = redisTemplate.opsForValue().increment(RedisKeys.BROWSE+aId, 1);//如果通过自增1
+            if (aLong%100 == 0) {
+                articleService.updateReadNumber(aLong, article.getaId());
             }
         }
         return ResponseEntity.ok(article);
