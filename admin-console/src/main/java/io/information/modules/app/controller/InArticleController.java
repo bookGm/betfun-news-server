@@ -128,7 +128,9 @@ public class InArticleController extends AbstractController {
             redisTemplate.setValueSerializer(new GenericToStringSerializer<Long>(Long.class));
             Long aLong = redisTemplate.opsForValue().increment(RedisKeys.BROWSE+aId, 1);//如果通过自增1
             if (aLong%100 == 0) {
-                articleService.updateReadNumber(aLong, article.getaId());
+                redisTemplate.delete(ip + aId);
+                long readNumber = aLong + article.getaReadNumber();
+                articleService.updateReadNumber(readNumber, article.getaId());
             }
         }
         return ResponseEntity.ok(article);
