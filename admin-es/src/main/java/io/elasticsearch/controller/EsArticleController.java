@@ -41,28 +41,4 @@ public class EsArticleController {
     public PageUtils statusSearch(@RequestBody SearchRequest request) {
         return articleService.articleSearchStatus(request);
     }
-
-    /**
-     * ES文章新增
-     */
-    @RequestMapping("/save")
-    public void articleSave(@RequestBody EsArticleEntity articleEntity) {
-        articleService.saveArticle(articleEntity);
-    }
-
-    /**
-     * ES文章删除
-     */
-    @RequestMapping("/delete")
-    public void articleDelete(Long[] aIds) {
-        articleService.removeArticle(aIds);
-    }
-
-    /**
-     * ES文章修改
-     */
-    @RequestMapping("/update")
-    public void articleUpdate(@RequestBody EsArticleEntity articleEntity) {
-        articleService.updatedArticle(articleEntity);
-    }
 }

@@ -5,4 +5,5 @@ import org.springframework.data.elasticsearch.repository.ElasticsearchRepository
 
 
 public interface EsCardDao extends ElasticsearchRepository<EsCardEntity,Long> {
+    EsCardEntity findBycId(Long cId);
 }

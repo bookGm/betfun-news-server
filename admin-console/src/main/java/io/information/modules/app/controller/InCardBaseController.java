@@ -3,6 +3,7 @@ package io.information.modules.app.controller;
 
 import io.information.common.utils.IdGenerator;
 import io.information.common.utils.PageUtils;
+import io.information.common.utils.R;
 import io.information.modules.app.entity.InCard;
 import io.information.modules.app.entity.InCardBase;
 import io.information.modules.app.service.IInCardBaseService;
@@ -14,8 +15,6 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
@@ -31,7 +30,7 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("/app/card/base")
-@Api(value = "APP帖子_基础表")
+@Api(value = "/app/card/base",tags = "APP帖子_基础表")
 public class InCardBaseController extends AbstractController {
     @Autowired
     private IInCardBaseService cardBaseService;
@@ -46,14 +45,14 @@ public class InCardBaseController extends AbstractController {
     @PostMapping("/save")
     @ApiOperation(value = "新增基础帖子",httpMethod = "POST")
     @ApiImplicitParam(name="cardBase",value = "基础帖子信息",required =  true)
-    public ResponseEntity<Void> save(@RequestBody InCardBase cardBase){
+    public R save(@RequestBody InCardBase cardBase){
         Long id= IdGenerator.getId();
         cardBase.setcId(id);
         cardBaseService.save(cardBase);
         //rabbit
         rabbitTemplate.convertAndSend(Constants.cardExchange,
                 Constants.card_Save_RouteKey, cardBase);
-        return ResponseEntity.status(HttpStatus.OK).build();
+        return R.ok();
     }
 
 
@@ -63,12 +62,12 @@ public class InCardBaseController extends AbstractController {
     @DeleteMapping("/delete")
     @ApiOperation(value = "单个或批量删除基础帖子",httpMethod = "DELETE",notes = "根据cId[数组]删除基础帖子")
     @ApiImplicitParam(name = "cIds",value = "帖子ID",dataType = "Array",required = true)
-    public ResponseEntity<Void> delete(@RequestBody Long[] cIds){
+    public R delete(@RequestBody Long[] cIds){
         cardBaseService.removeByIds(Arrays.asList(cIds));
         //rabbit
         rabbitTemplate.convertAndSend(Constants.cardExchange,
                 Constants.card_Delete_RouteKey, cIds);
-        return ResponseEntity.status(HttpStatus.OK).build();
+        return R.ok();
     }
 
 
@@ -78,9 +77,9 @@ public class InCardBaseController extends AbstractController {
      */
     @DeleteMapping("/deleteList")
     @ApiOperation(value = "删除用户的所有基础帖子",httpMethod = "DELETE",notes = "自动获取用户信息")
-    public ResponseEntity<Void> deleteList(){
+    public R deleteList(){
         cardBaseService.deleteAllCardBase(getUserId());
-        return ResponseEntity.status(HttpStatus.OK).build();
+        return R.ok();
     }
 
 
@@ -89,9 +88,9 @@ public class InCardBaseController extends AbstractController {
      */
     @DeleteMapping("/deleteAll")
     @ApiOperation(value = "同时删除用户的基础帖子、辩论帖子和投票帖子",httpMethod = "DELETE",notes = "自动获取用户信息")
-    public ResponseEntity<Void> deleteAll(){
+    public R deleteAll(){
         cardBaseService.deleteAllCard(getUserId());
-        return ResponseEntity.status(HttpStatus.OK).build();
+        return R.ok();
     }
 
 
@@ -101,12 +100,12 @@ public class InCardBaseController extends AbstractController {
     @PutMapping("/update")
     @ApiOperation(value = "修改基础帖子",httpMethod = "PUT")
     @ApiImplicitParam(name = "cardBase",value = "基础帖子信息",required = true)
-    public ResponseEntity<Void> update(@RequestBody InCardBase cardBase){
+    public R update(@RequestBody InCardBase cardBase){
         cardBaseService.updateById(cardBase);
         //rabbit
         rabbitTemplate.convertAndSend(Constants.cardExchange,
                 Constants.card_Update_RouteKey, cardBase);
-        return ResponseEntity.status(HttpStatus.OK).build();
+        return R.ok();
     }
 
     /**
@@ -115,9 +114,9 @@ public class InCardBaseController extends AbstractController {
     @GetMapping("/info/{cId}")
     @ApiOperation(value = "查询单个基础帖子",httpMethod = "GET")
     @ApiImplicitParam(name = "cId",value = "帖子ID",required = true)
-    public ResponseEntity<InCardBase> info(@PathVariable("cId") Long cId){
+    public R info(@PathVariable("cId") Long cId){
         InCardBase cardBase = cardBaseService.getById(cId);
-        return ResponseEntity.ok(cardBase);
+        return R.ok().put("cardBase",cardBase);
     }
 
 
@@ -127,9 +126,9 @@ public class InCardBaseController extends AbstractController {
     @GetMapping("/infoList/{cId}")
     @ApiOperation(value = "同时查询基础帖子、辩论帖子和投票帖子",httpMethod = "GET")
     @ApiImplicitParam(name = "cId",value="帖子ID",required=true)
-    public ResponseEntity<InCard> infoList(@PathVariable("cId") Long cId){
+    public R infoList(@PathVariable("cId") Long cId){
         InCard card = cardBaseService.queryCard(cId);
-        return ResponseEntity.ok(card);
+        return R.ok().put("card",card);
     }
 
 
@@ -139,9 +138,9 @@ public class InCardBaseController extends AbstractController {
     @GetMapping("/list")
     @ApiOperation(value = "查询全部基础帖子",httpMethod = "GET")
     @ApiImplicitParam(name = "map",value = "分页数据",required = true)
-    public ResponseEntity<PageUtils> list(@RequestParam Map<String,Object> map){
+    public R list(@RequestParam Map<String,Object> map){
         PageUtils page = cardBaseService.queryPage(map);
-        return ResponseEntity.ok(page);
+        return R.ok().put("page",page);
     }
 
     /**
@@ -150,9 +149,9 @@ public class InCardBaseController extends AbstractController {
     @GetMapping("/uIdList")
     @ApiOperation(value = "查询用户的基础帖子",httpMethod = "GET",notes = "自动获取用户信息")
     @ApiImplicitParam(name = "map",value = "分页数据",required = true)
-    public ResponseEntity<PageUtils> uIdList(@RequestParam Map<String,Object> map){
+    public R uIdList(@RequestParam Map<String,Object> map){
         PageUtils page = cardBaseService.queryAllCardBase(map,getUserId());
-        return ResponseEntity.ok(page);
+        return R.ok().put("page",page);
     }
 
 
@@ -162,8 +161,8 @@ public class InCardBaseController extends AbstractController {
     @GetMapping("/idsUser")
     @ApiOperation(value = "分割查询用户信息",httpMethod = "GET",notes = "根据正反方ids字符串，用 ，分隔")
     @ApiImplicitParam(name = "map",value = "分页数据、正反方ids字符串",required = true)
-    public ResponseEntity<PageUtils> idsUser(@RequestParam Map<String,Object> map){
+    public R idsUser(@RequestParam Map<String,Object> map){
         PageUtils page = iInUserService.queryUsersByArgueIds(map);
-        return ResponseEntity.ok(page);
+        return R.ok().put("page",page);
     }
 }

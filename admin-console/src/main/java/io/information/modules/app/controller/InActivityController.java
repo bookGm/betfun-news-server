@@ -2,15 +2,16 @@ package io.information.modules.app.controller;
 
 
 import io.information.common.utils.PageUtils;
+import io.information.common.utils.R;
 import io.information.modules.app.entity.InActivity;
+import io.information.modules.app.entity.InUser;
 import io.information.modules.app.service.IInActivityService;
+import io.information.modules.app.service.IInUserService;
 import io.information.modules.sys.controller.AbstractController;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
@@ -27,10 +28,12 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("/app/activity")
-@Api(tags = "APP咨讯活动接口")
+@Api(value = "/app/activity", tags = "APP咨讯活动接口")
 public class InActivityController extends AbstractController {
     @Autowired
     private IInActivityService activityService;
+    @Autowired
+    private IInUserService userService;
 
     /**
      * 添加
@@ -38,11 +41,16 @@ public class InActivityController extends AbstractController {
     @ApiOperation(value = "新增咨讯活动", httpMethod = "POST")
     @ApiImplicitParam(name = "activity", value = "活动信息", required = true)
     @PostMapping("/save")
-    public ResponseEntity<Void> save(@RequestParam InActivity activity) {
-        activity.setActCreateTime(new Date());
-        activity.setuId(getUserId());
-        activityService.save(activity);
-        return ResponseEntity.status(HttpStatus.OK).build();
+    public R save(@RequestParam InActivity activity) {
+        InUser user = userService.getById(getUserId());
+        if (user.getuAuthStatus() != 2) {
+            return R.error("此操作需要认证通过");
+        } else {
+            activity.setActCreateTime(new Date());
+            activity.setuId(getUserId());
+            activityService.save(activity);
+            return R.ok();
+        }
     }
 
 
@@ -52,9 +60,14 @@ public class InActivityController extends AbstractController {
     @ApiOperation(value = "单个批量删除咨讯活动", httpMethod = "DELETE", notes = "根据actId[数组]删除活动")
     @ApiImplicitParam(name = "actIds", value = "活动ID", required = true, dataType = "Array")
     @DeleteMapping("/delete")
-    public ResponseEntity<Void> delete(@RequestBody Long[] actIds) {
-        activityService.removeByIds(Arrays.asList(actIds));
-        return ResponseEntity.status(HttpStatus.OK).build();
+    public R delete(@RequestBody Long[] actIds) {
+        InUser user = userService.getById(getUserId());
+        if (user.getuAuthStatus() != 2) {
+            return R.error("此操作需要认证通过");
+        } else {
+            activityService.removeByIds(Arrays.asList(actIds));
+            return R.ok();
+        }
     }
 
 
@@ -62,10 +75,15 @@ public class InActivityController extends AbstractController {
      * 用户删除
      */
     @DeleteMapping("/deleteList")
-    @ApiOperation(value = "删除用户发布的所有活动",httpMethod = "DELETE",notes = "自动获取当前用户")
-    public ResponseEntity<Void> deleteList() {
-        activityService.deleteAllActive(getUserId());
-        return ResponseEntity.status(HttpStatus.OK).build();
+    @ApiOperation(value = "删除用户发布的所有活动", httpMethod = "DELETE", notes = "自动获取当前用户")
+    public R deleteList() {
+        InUser user = userService.getById(getUserId());
+        if (user.getuAuthStatus() != 2) {
+            return R.error("此操作需要认证通过");
+        } else {
+            activityService.deleteAllActive(getUserId());
+            return R.ok();
+        }
     }
 
 
@@ -73,11 +91,16 @@ public class InActivityController extends AbstractController {
      * 修改
      */
     @PutMapping("/update")
-    @ApiOperation(value = "修改咨讯活动",httpMethod = "PUT")
+    @ApiOperation(value = "修改咨讯活动", httpMethod = "PUT")
     @ApiImplicitParam(name = "activity", value = "活动信息", required = true)
-    public ResponseEntity<Void> update(@RequestBody InActivity activity) {
-        activityService.updateById(activity);
-        return ResponseEntity.status(HttpStatus.OK).build();
+    public R update(@RequestBody InActivity activity) {
+        InUser user = userService.getById(getUserId());
+        if (user.getuAuthStatus() != 2) {
+            return R.error("此操作需要认证通过");
+        } else {
+            activityService.updateById(activity);
+            return R.ok();
+        }
     }
 
 
@@ -85,33 +108,33 @@ public class InActivityController extends AbstractController {
      * 列表
      */
     @GetMapping("/list")
-    @ApiOperation(value = "获取全部咨讯活动",httpMethod = "GET")
-    @ApiImplicitParam(name = "map",value = "分页数据",required = true)
-    public ResponseEntity<PageUtils> list(@RequestParam Map<String, Object> map) {
-        PageUtils pageUtils = activityService.queryPage(map);
-        return ResponseEntity.ok(pageUtils);
+    @ApiOperation(value = "获取全部咨讯活动", httpMethod = "GET")
+    @ApiImplicitParam(name = "map", value = "分页数据", required = true)
+    public R list(@RequestParam Map<String, Object> map) {
+        PageUtils page = activityService.queryPage(map);
+        return R.ok().put("page", page);
     }
 
     /**
      * 用户查询
      */
     @GetMapping("/userActivity")
-    @ApiOperation(value = "获取用户发布的活动",httpMethod = "GET",notes = "自动获取用户信息")
-    @ApiImplicitParam(name = "map",value = "分页数据",required = true)
-    public ResponseEntity<PageUtils> userActivity(@RequestParam Map<String, Object> params) {
-        PageUtils pageUtils = activityService.queryActivitiesByUserId(params, getUserId());
-        return ResponseEntity.ok(pageUtils);
+    @ApiOperation(value = "获取用户发布的活动", httpMethod = "GET", notes = "自动获取用户信息")
+    @ApiImplicitParam(name = "map", value = "分页数据", required = true)
+    public R userActivity(@RequestParam Map<String, Object> params) {
+        PageUtils page = activityService.queryActivitiesByUserId(params, getUserId());
+        return R.ok().put("page", page);
     }
 
     /**
      * 查询
      */
     @GetMapping("/info/{actId}")
-    @ApiOperation(value = "查询单个活动信息", httpMethod = "GET",notes = "根据actId查询活动信息")
-    @ApiImplicitParam(name = "actId",value = "活动ID",required = true)
-    public ResponseEntity<InActivity> info(@PathVariable("actId") Long actId) {
+    @ApiOperation(value = "查询单个活动信息", httpMethod = "GET", notes = "根据actId查询活动信息")
+    @ApiImplicitParam(name = "actId", value = "活动ID", required = true)
+    public R info(@PathVariable("actId") Long actId) {
         InActivity activity = activityService.getById(actId);
-        return ResponseEntity.ok(activity);
+        return R.ok().put("activity", activity);
     }
 
 }

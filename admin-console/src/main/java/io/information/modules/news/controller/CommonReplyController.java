@@ -82,4 +82,13 @@ public class CommonReplyController {
         return R.ok();
     }
 
+
+    /**
+     * 查询
+     */
+    public R search(Long crIds){
+        commonReplyService.search(crIds);
+        return R.ok();
+    }
+
 }

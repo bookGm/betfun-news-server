@@ -2,6 +2,7 @@ package io.information.modules.app.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
+import io.swagger.annotations.ApiModel;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 
@@ -19,6 +20,7 @@ import java.util.Date;
 
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
+@ApiModel(value = "InTag",description = "标签信息")
 public class InTag implements Serializable {
 
     private static final long serialVersionUID = 1L;

@@ -24,7 +24,7 @@ public class CardListener {
             exchange = @Exchange(name = Constants.cardExchange),
             key = Constants.card_Save_RouteKey
     ))
-    public void created(EsCardEntity cardEntity){
+    public void created(EsCardEntity cardEntity) {
         cardService.saveCard(cardEntity);
     }
 
@@ -37,7 +37,7 @@ public class CardListener {
             exchange = @Exchange(name = Constants.cardExchange),
             key = Constants.card_Delete_RouteKey
     ))
-    public void remove(Long[] cIds){
+    public void remove(Long[] cIds) {
         cardService.removeCard(cIds);
     }
 
@@ -50,7 +50,7 @@ public class CardListener {
             exchange = @Exchange(name = Constants.cardExchange),
             key = Constants.card_Update_RouteKey
     ))
-    public void update(EsCardEntity cardEntity){
+    public void update(EsCardEntity cardEntity) {
         cardService.updatedCard(cardEntity);
     }
 }

@@ -66,4 +66,34 @@ public class Constants {
      * 帖子修改
      */
     public static final String card_Update_RouteKey="update_news_card";
+
+
+    /**
+     * 用户交换机
+     */
+    public static final String userExchange="exchangeUser";
+    /**
+     * 用户新增队列
+     */
+    public static final String user_Save_Queue="news_user_save";
+    /**
+     * 用户删除队列
+     */
+    public static final String user_Delete_Queue="news_user_delete";
+    /**
+     * 用户修改队列
+     */
+    public static final String user_Update_Queue="news_user_update";
+    /**
+     * 用户新增
+     */
+    public static final String user_Save_RouteKey="save_news_user";
+    /**
+     * 用户删除
+     */
+    public static final String user_Delete_RouteKey="delete_news_user";
+    /**
+     * 用户修改
+     */
+    public static final String user_Update_RouteKey="update_news_user";
 }

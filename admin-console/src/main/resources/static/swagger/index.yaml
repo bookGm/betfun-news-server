@@ -209,6 +209,122 @@ paths:
           schema:
             $ref: '#/definitions/R'
 
+  /app/tag/list:
+    get:
+      tags:
+        - 标签管理
+      summary: 标签列表
+      produces:
+        - application/json
+      parameters:
+        - name: page
+          description: 页码
+          in: query
+          type: integer
+          required: true
+        - name: limit
+          description: 每页条数
+          in: query
+          type: integer
+          required: true
+        - name: sidx
+          description: 排序字段
+          in: query
+          type: string
+        - name: order
+          description: 排序方式，如：asc、desc
+          in: query
+          type: string
+      responses:
+        '200':
+          description: 返回标签列表
+          schema:
+            $ref: '#/definitions/InTag'
+  /app/tag/info/{tId}:
+    get:
+      tags:
+        - 标签管理
+      summary: 获取标签信息
+      produces:
+        - application/json
+      parameters:
+        - name: tId
+          description: 标签ID
+          in: path
+          type: long
+          required: true
+      responses:
+        '200':
+          description: 获取标签信息
+          schema:
+            type: object
+            properties:
+              code:
+                description: 状态码 0：成功  非0：失败
+                type: integer
+                format: int32
+              tag:
+                $ref: '#/definitions/InTag'
+  /app/tag/save:
+    post:
+      tags:
+        - 标签管理
+      summary: 添加标签
+      produces:
+        - application/json
+      parameters:
+        - name: body
+          description: 标签对象
+          in: body
+          type: string
+          schema:
+            $ref: '#/definitions/InTag'
+          required: true
+      responses:
+        '200':
+          schema:
+            $ref: '#/definitions/HttpStatus'
+  /app/tag/update:
+    post:
+      tags:
+        - 标签管理
+      summary: 修改标签
+      produces:
+        - application/json
+      parameters:
+        - name: body
+          description: 标签对象
+          in: body
+          type: string
+          schema:
+            $ref: '#/definitions/InTag'
+          required: true
+      responses:
+        '200':
+          schema:
+            $ref: '#/definitions/HttpStatus'
+  /app/tag/delete:
+    post:
+      tags:
+        - 标签管理
+      summary: 删除标签
+      produces:
+        - application/json
+      parameters:
+        - name: body
+          description: 标签ID列表
+          in: body
+          type: array
+          items:
+            type: long
+            format: int64
+            default: 0
+          required: true
+      responses:
+        '200':
+          schema:
+            $ref: '#/definitions/HttpStatus'
+
   /sys/role/list:
     get:
       tags:
@@ -1308,7 +1424,6 @@ definitions:
         description: 排序
         type: integer
         format: int32
-
   SysLogEntity:
     type: object
     properties:

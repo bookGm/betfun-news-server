@@ -8,7 +8,6 @@ import org.springframework.data.elasticsearch.annotations.FieldType;
 
 import java.io.Serializable;
 import java.util.Date;
-import java.util.List;
 
 @Document(indexName = "cards", type = "card", shards = 5, replicas = 1,refreshInterval = "-1")
 public class EsCardEntity implements Serializable {
@@ -75,7 +74,7 @@ public class EsCardEntity implements Serializable {
      */
     @Field(type = FieldType.Keyword,index = false)
     private String cvInfo;
-
+    //投票选项拆分
     private String[] cvInfoList;
     /**
      * 投票结束日期
@@ -83,6 +82,10 @@ public class EsCardEntity implements Serializable {
     @Field(type = FieldType.Date)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern ="yyyy-MM-dd HH:mm:ss")
     private Date cvCloseTime;
+    //用户展示信息
+    private EsUserEntity userEs;
+
+
 
     public Long getcId() {
         return cId;
@@ -194,5 +197,13 @@ public class EsCardEntity implements Serializable {
 
     public void setCvInfoList(String[] cvInfoList) {
         this.cvInfoList = cvInfoList;
+    }
+
+    public EsUserEntity getUserEs() {
+        return userEs;
+    }
+
+    public void setUserEs(EsUserEntity userEs) {
+        this.userEs = userEs;
     }
 }

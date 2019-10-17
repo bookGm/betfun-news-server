@@ -1,6 +1,7 @@
 package io.information.modules.app.controller;
 
 
+import io.information.common.utils.R;
 import io.information.common.utils.RedisKeys;
 import io.information.modules.app.config.IdWorker;
 import io.information.modules.app.entity.InDic;
@@ -9,11 +10,8 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -27,7 +25,7 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("/app/dic")
-@Api(value = "APP咨讯字典接口")
+@Api(value = "/app/dic", tags = "APP咨讯字典接口")
 public class InDicController {
     @Autowired
     private IInDicService dicService;
@@ -37,9 +35,9 @@ public class InDicController {
      * 所有字典列表
      */
     @GetMapping("/listAll")
-    public ResponseEntity listAll(){
+    public R listAll() {
         Map<String, List<InDic>> listAll = dicService.getListAll(RedisKeys.CONSTANT);
-        return ResponseEntity.ok(listAll);
+        return R.ok().put("dict", listAll);
     }
 
 
@@ -47,10 +45,10 @@ public class InDicController {
      * 所有菜单列表
      */
     @GetMapping("/list")
-    @ApiOperation(value = "获取所有字典节点信息",httpMethod = "GET",notes = "不需要任何参数")
-    public ResponseEntity<List<InDic>>list(){
+    @ApiOperation(value = "获取所有字典节点信息", httpMethod = "GET", notes = "不需要任何参数")
+    public R list() {
         List<InDic> dicList = dicService.list();
-        return ResponseEntity.ok(dicList);
+        return R.ok().put("dicList", dicList);
     }
 
 
@@ -59,7 +57,7 @@ public class InDicController {
      */
     @GetMapping("/select")
 
-    public ResponseEntity<List<InDic>> select(){
+    public R select() {
         //查询列表数据
         List<InDic> dicList = dicService.queryDidAscList();
 
@@ -71,7 +69,7 @@ public class InDicController {
         root.setOpen(true);
         dicList.add(root);
 
-        return ResponseEntity.ok(dicList);
+        return R.ok().put("dicList", dicList);
     }
 
 
@@ -79,12 +77,12 @@ public class InDicController {
      * 新增
      */
     @PostMapping("/save")
-    @ApiOperation(value = "新增字典节点",httpMethod = "POST")
-    @ApiImplicitParam(name = "dic",value = "字典信息",required = true)
-    public ResponseEntity<Void> save(@RequestBody InDic dic){
+    @ApiOperation(value = "新增字典节点", httpMethod = "POST")
+    @ApiImplicitParam(name = "dic", value = "字典信息", required = true)
+    public R save(@RequestBody InDic dic) {
         dic.setdId(new IdWorker().nextId());
         dicService.save(dic);
-        return ResponseEntity.status(HttpStatus.OK).build();
+        return R.ok();
     }
 
 
@@ -92,11 +90,11 @@ public class InDicController {
      * 删除
      */
     @DeleteMapping("/delete")
-    @ApiOperation(value = "单个或批量删除字典节点",httpMethod = "DELETE",notes = "根据dId[数组]删除字典节点")
-    @ApiImplicitParam(name = "dIds",value = "字典ID",required = true)
-    public ResponseEntity<Void> delete(@RequestBody Long[] dIds){
+    @ApiOperation(value = "单个或批量删除字典节点", httpMethod = "DELETE", notes = "根据dId[数组]删除字典节点")
+    @ApiImplicitParam(name = "dIds", value = "字典ID", required = true)
+    public R delete(@RequestBody Long[] dIds) {
         dicService.deleteDic(dIds);
-        return ResponseEntity.status(HttpStatus.OK).build();
+        return R.ok();
     }
 
 
@@ -104,11 +102,11 @@ public class InDicController {
      * 修改
      */
     @PutMapping("/update")
-    @ApiOperation(value = "修改字典节点",httpMethod = "PUT")
-    @ApiImplicitParam(name = "dic",value = "字典信息",required = true)
-    public ResponseEntity<Void> update(@RequestBody InDic dic){
+    @ApiOperation(value = "修改字典节点", httpMethod = "PUT")
+    @ApiImplicitParam(name = "dic", value = "字典信息", required = true)
+    public R update(@RequestBody InDic dic) {
         dicService.updateDic(dic);
-        return ResponseEntity.status(HttpStatus.OK).build();
+        return R.ok();
     }
 
 
@@ -116,11 +114,11 @@ public class InDicController {
      * 查询
      */
     @GetMapping("/info/{dId}")
-    @ApiOperation(value = "查询节点信息",httpMethod = "GET",notes = "根据字典ID查询节点及其子节点")
-    @ApiImplicitParam(name = "dId",value = "字典ID",dataType = "Array")
-    public ResponseEntity<List<InDic>> info(@PathVariable("dId") Long dId){
+    @ApiOperation(value = "查询节点信息", httpMethod = "GET", notes = "根据字典ID查询节点及其子节点")
+    @ApiImplicitParam(name = "dId", value = "字典ID", dataType = "Array")
+    public R info(@PathVariable("dId") Long dId) {
         List<InDic> dics = dicService.queryDicById(dId);
-        return ResponseEntity.ok(dics);
+        return R.ok().put("dicList", dics);
     }
 
 
@@ -128,10 +126,10 @@ public class InDicController {
      * 编码查询
      */
     @GetMapping("/infoCode/{dCode}")
-    @ApiOperation(value = "dCode查询节点信息",httpMethod = "GET",notes="根据编码查询节点及其子节点")
-    public ResponseEntity<List<InDic>> infoCode(@PathVariable("dCode") String dCode){
+    @ApiOperation(value = "dCode查询节点信息", httpMethod = "GET", notes = "根据编码查询节点及其子节点")
+    public R infoCode(@PathVariable("dCode") String dCode) {
         List<InDic> dics = dicService.queryDicByCode(dCode);
-        return ResponseEntity.ok(dics);
+        return R.ok().put("dicList", dics);
     }
 
 
@@ -139,10 +137,10 @@ public class InDicController {
      * 名称模糊查询
      */
     @GetMapping("/infoLike/{dName}")
-    @ApiOperation(value = "dName查询节点信息",httpMethod = "GET",notes = "根据名称模糊查询节点及其子节点")
-    public ResponseEntity<List<InDic>> infoLike(@PathVariable("dName") String dName){
+    @ApiOperation(value = "dName查询节点信息", httpMethod = "GET", notes = "根据名称模糊查询节点及其子节点")
+    public R infoLike(@PathVariable("dName") String dName) {
         List<InDic> dicList = dicService.queryNameDic(dName);
-        return ResponseEntity.ok(dicList);
+        return R.ok().put("dicList", dicList);
     }
 
 

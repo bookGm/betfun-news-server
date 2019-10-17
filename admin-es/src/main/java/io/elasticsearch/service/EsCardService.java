@@ -17,4 +17,6 @@ public interface EsCardService {
     PageUtils statusSearch(SearchRequest request);
 
     PageUtils userSearch(SearchRequest request);
+
+    EsCardEntity infoSearch(SearchRequest request);
 }

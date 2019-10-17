@@ -62,6 +62,7 @@ public class EsArticleServiceImpl implements EsArticleService {
     }
 
     @Override
+    //TODO  未完全实现
     public PageUtils articleSearchKey(SearchRequest request) {
         NativeSearchQueryBuilder queryBuilder = new NativeSearchQueryBuilder();
         //搜索的关键词

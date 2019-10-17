@@ -10,6 +10,7 @@ import io.information.modules.news.entity.CommonReplyEntity;
 import io.information.modules.news.service.CommonReplyService;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Map;
 
 
@@ -24,6 +25,13 @@ public class CommonReplyServiceImpl extends ServiceImpl<CommonReplyDao, CommonRe
         );
 
         return new PageUtils(page);
+    }
+
+    @Override
+    public List<CommonReplyEntity> search(Long crIds) {
+        CommonReplyEntity commonReplyEntity = this.getById(crIds);
+
+        return null;
     }
 
 }

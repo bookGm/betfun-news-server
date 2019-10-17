@@ -6,8 +6,11 @@ import io.elasticsearch.utils.PageUtils;
 import io.elasticsearch.utils.SearchRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Date;
 
 /**
  * es帖子的操作
@@ -28,7 +31,7 @@ public class EsCardController {
     }
 
     /**
-     * 帖子查询[0：普通帖 1：辩论贴 2：投票贴]
+     * 全部帖子查询[0：普通帖 1：辩论贴 2：投票贴]
      */
     @GetMapping("/statusSearch")
     public PageUtils statusSearch(SearchRequest request) {
@@ -36,36 +39,19 @@ public class EsCardController {
     }
 
     /**
-     * 用户帖子查询
+     * 单个帖子查询
+     */
+    @GetMapping("/infoSearch")
+    public EsCardEntity infoSearch(SearchRequest request) {
+        return cardService.infoSearch(request);
+    }
+
+    /**
+     * 用户帖子查询[0：普通帖 1：辩论贴 2：投票贴]
      */
     @GetMapping("/userSearch")
     public PageUtils userSearch(SearchRequest request) {
         return cardService.userSearch(request);
     }
-
-    /**
-     * 帖子新增
-     */
-    @RequestMapping("/save")
-    public void cardSave(EsCardEntity cardEntity) {
-        cardService.saveCard(cardEntity);
-    }
-
-    /**
-     * 帖子删除
-     */
-    @RequestMapping("/delete")
-    public void cardDelete(Long[] cIds) {
-        cardService.removeCard(cIds);
-    }
-
-    /**
-     * 帖子修改
-     */
-    @RequestMapping("/update")
-    public void cardUpdate(EsCardEntity cardEntity) {
-        cardService.updatedCard(cardEntity);
-    }
-
 
 }
