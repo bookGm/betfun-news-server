@@ -3,6 +3,7 @@ package io.information.modules.app.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.guansuo.common.JsonUtil;
 import io.information.common.exception.ExceptionEnum;
 import io.information.common.exception.IMException;
 import io.information.common.utils.PageUtils;
@@ -89,9 +90,9 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
     public Boolean saveWithCache(InUser inUser) {
         if (this.save(inUser)) {
             try {
-                redisUtils.hset(RedisKeys.INUSER, inUser.getuId(), inUser);
+                redisUtils.hset(RedisKeys.INUSER,String.valueOf(inUser.getuId()), JsonUtil.toJSONString(inUser));
             } catch (Exception e) {
-                LOG.error("新注册用户:" + inUser.getuPhone() + "放入缓存失败");
+                LOG.error("新注册用户:"+inUser.getuPhone()+"放入缓存失败");
             }
             return true;
         }

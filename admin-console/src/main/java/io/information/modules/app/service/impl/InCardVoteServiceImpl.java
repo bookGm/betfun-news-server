@@ -9,7 +9,7 @@ import io.information.common.utils.RedisKeys;
 import io.information.modules.app.dao.InCardVoteDao;
 import io.information.modules.app.entity.InCardVote;
 import io.information.modules.app.service.IInCardVoteService;
-import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
@@ -26,7 +26,7 @@ import java.util.Map;
 public class InCardVoteServiceImpl extends ServiceImpl<InCardVoteDao, InCardVote> implements IInCardVoteService {
 
     @Override
-    @CachePut(value = RedisKeys.VOTE, key = "#cid+'-'+#uid+'-'+#optIndex")
+    @Cacheable(value = RedisKeys.VOTE, key = "#cid+'-'+#uid+'-'+#optIndex")
     public boolean vote(Long cid, Long uid, Integer optIndex) {
         try {
             this.baseMapper.addVote(cid, optIndex);

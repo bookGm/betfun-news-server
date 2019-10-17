@@ -14,6 +14,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * <p>
@@ -129,5 +132,41 @@ public class InMenuController {
     public ResponseEntity<PageUtils> list(@RequestParam Map<String, Object> map) {
         PageUtils page = menuService.queryPage(map);
         return ResponseEntity.ok(page);
+    }
+
+    /**
+     * 递归
+     * @param total
+     * @param menu
+     */
+    public void getMenuTree(List<InMenu> total,InMenu menu){
+        List<InMenu> tlist= new ArrayList<InMenu>(total);
+        List<InMenu> clist=new ArrayList<InMenu>();
+        Iterator<InMenu> iterator = tlist.iterator();
+        while (iterator.hasNext()) {
+            InMenu m = iterator.next();
+            if (m.getmPcode().equals(menu.getmCode())) {
+                clist.add(m);
+                iterator.remove();
+                getMenuTree(tlist,m);
+            }
+        }
+        if(clist.size()<1){
+            clist=null;
+        }else{
+            menu.setChildren(clist);
+        }
+    }
+
+    /**
+     * 获取所有咨讯菜单
+     * @return
+     */
+    @GetMapping("getAllMenu")
+    public ResponseEntity<List<InMenu>> getAllMenu(){
+        InMenu menu =new InMenu();
+        menu.setmCode("0");
+        getMenuTree(menuService.list(),menu);
+        return ResponseEntity.ok(menu.getChildren());
     }
 }

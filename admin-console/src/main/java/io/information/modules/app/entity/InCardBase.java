@@ -39,7 +39,10 @@ public class InCardBase implements Serializable {
      * 帖子节点分类（字典）
      */
     private Integer cNodeCategory;
-
+    /**
+     * 帖子标题
+     */
+    private String cTitle;
     /**
      * 帖子正文
      */
@@ -97,5 +100,13 @@ public class InCardBase implements Serializable {
 
     public void setcHide(Integer cHide) {
         this.cHide = cHide;
+    }
+
+    public String getcTitle() {
+        return cTitle;
+    }
+
+    public void setcTitle(String cTitle) {
+        this.cTitle = cTitle;
     }
 }

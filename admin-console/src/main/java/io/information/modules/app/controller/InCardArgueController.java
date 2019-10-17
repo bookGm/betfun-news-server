@@ -99,4 +99,24 @@ public class InCardArgueController {
         return ResponseEntity.ok(page);
     }
 
+    /**
+     * 辩论支持
+     */
+//    @GetMapping("/support")
+//    @ApiOperation(value = "支持辩论方",httpMethod = "GET")
+//    public ResponseEntity<PageUtils> support(Integer supportSide){
+//        cardArgueService
+//        return ResponseEntity.ok(page);
+//    }
+//
+//    /**
+//     * 加入辩论
+//     */
+//    @GetMapping("/join")
+//    @ApiOperation(value = "加入辩论方",httpMethod = "GET")
+//    public ResponseEntity<PageUtils> join(Integer joinSide){
+//
+//        return ResponseEntity.ok(page);
+//    }
+
 }

@@ -1,5 +1,3 @@
-
-
 package io.information.modules.app.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -14,6 +12,7 @@ import io.information.common.utils.RedisKeys;
 import io.information.common.utils.RedisUtils;
 import io.information.modules.app.entity.InUser;
 import io.information.modules.app.form.AppLoginForm;
+import io.information.modules.app.form.RegisterForm;
 import io.information.modules.app.service.IInUserService;
 import io.information.modules.app.utils.JwtUtils;
 import io.swagger.annotations.Api;
@@ -34,7 +33,7 @@ import java.util.Map;
  * @author Mark sunlightcs@gmail.com
  */
 @RestController
-@RequestMapping("/app")
+@RequestMapping("/news/app")
 @Api(tags = "APP登录接口")
 public class AppLoginController {
     @Autowired
@@ -85,7 +84,8 @@ public class AppLoginController {
         }
         int rand =  100000 + (int)(Math.random() * 899999);
         if (rand > 0){
-            Boolean status = SmsUtil.sendSMS(user.getuPhone(), MessageFormat.format(SmsTemplate.loginCodeTemplate,rand));
+            String msg=MessageFormat.format(SmsTemplate.loginCodeTemplate,rand+"");
+            Boolean status = SmsUtil.sendSMS(phone, msg);
             if(status){
                 redis.set(rkey,rand,60);
                 return R.ok();
@@ -133,13 +133,13 @@ public class AppLoginController {
 
     @PostMapping("codeRegist")
     @ApiOperation("验证码注册")
-    public R codeRegist(@RequestBody @Validated(CodeLogin.class) AppLoginForm form){
-        String rkey=RedisKeys.LOGIN_PHONECODE+form.getUPhone();
+    public R codeRegist(@RequestBody @Validated(CodeLogin.class) RegisterForm form){
+        String rkey=RedisKeys.LOGIN_PHONECODE+form.getPhone();
         if(!redis.exists(rkey)){
             return R.error("验证码已超时");
         }
         LambdaQueryWrapper<InUser> qw=new LambdaQueryWrapper<InUser>();
-        qw.eq(InUser::getuPhone,form.getUPhone());
+        qw.eq(InUser::getuPhone,form.getPhone());
         InUser user=iInUserService.getOne(qw);
         if(null != user) {
             return R.error("手机号码已被注册");
@@ -148,7 +148,7 @@ public class AppLoginController {
             Long uid= IdGenerator.getId();
             R r=resultToken(uid);
             String salt = RandomStringUtils.randomAlphanumeric(20);
-            String phone =form.getUPhone();
+            String phone =form.getPhone();
             user=new InUser();
             user.setuId(uid);
             user.setuSalt(salt);

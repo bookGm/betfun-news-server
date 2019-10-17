@@ -12,6 +12,8 @@
         <result property="mUrl" column="m_url"/>
         <result property="mDisable" column="m_disable"/>
     </resultMap>
-
+    <select id="getMaxCode" resultType="string">
+         select Max(m_code) from in_menu where m_pcode=#{mPcode}
+    </select>
 
 </mapper>

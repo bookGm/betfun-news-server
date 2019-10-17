@@ -17,7 +17,7 @@ import java.util.Date;
  *
  * @author Mark sunlightcs@gmail.com
  */
-@ConfigurationProperties(prefix = "renren.jwt")
+@ConfigurationProperties(prefix = "bet.jwt")
 @Component
 public class JwtUtils {
     private Logger logger = LoggerFactory.getLogger(getClass());

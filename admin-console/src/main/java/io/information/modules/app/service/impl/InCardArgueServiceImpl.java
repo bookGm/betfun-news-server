@@ -2,13 +2,14 @@ package io.information.modules.app.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.service.additional.query.impl.QueryChainWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import io.information.common.utils.PageUtils;
 import io.information.common.utils.Query;
+import io.information.common.utils.RedisKeys;
 import io.information.modules.app.dao.InCardArgueDao;
 import io.information.modules.app.entity.InCardArgue;
 import io.information.modules.app.service.IInCardArgueService;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
@@ -31,5 +32,17 @@ public class InCardArgueServiceImpl extends ServiceImpl<InCardArgueDao, InCardAr
                 new QueryWrapper<InCardArgue>()
         );
         return new PageUtils(page);
+    }
+
+    @Override
+    @Cacheable(value = RedisKeys.SUPPORT, key = "#cid+'-'+#uid")
+    public Integer support(Long cid,Long uid,Integer sIndex) {
+        return sIndex;
+    }
+
+    @Override
+    @Cacheable(value = RedisKeys.JOIN, key = "#cid+'-'+#uid")
+    public Integer join(Long cid,Long uid,Integer jIndex) {
+        return jIndex;
     }
 }

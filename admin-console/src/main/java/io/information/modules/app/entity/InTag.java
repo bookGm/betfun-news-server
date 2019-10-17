@@ -38,6 +38,10 @@ public class InTag implements Serializable {
      * 标签来源（0：抓取  1：后台维护）
      */
     private Integer tFrom;
+    /**
+     * 标签类型
+     */
+    private Integer tCategory;
 
     /**
      * 标签创建时间
@@ -75,5 +79,13 @@ public class InTag implements Serializable {
 
     public void settCreateTime(Date tCreateTime) {
         this.tCreateTime = tCreateTime;
+    }
+
+    public Integer gettCategory() {
+        return tCategory;
+    }
+
+    public void settCategory(Integer tCategory) {
+        this.tCategory = tCategory;
     }
 }

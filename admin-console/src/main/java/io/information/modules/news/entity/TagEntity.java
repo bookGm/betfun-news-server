@@ -29,6 +29,10 @@ public class TagEntity implements Serializable {
 	 */
 	private Integer tFrom;
 	/**
+	 * 标签类型
+	 */
+	private Integer tCategory;
+	/**
 	 * 标签创建时间
 	 */
 	private Date tCreateTime;
@@ -57,5 +61,11 @@ public class TagEntity implements Serializable {
 	}
 	public void settCreateTime(Date tCreateTime) {
 		this.tCreateTime = tCreateTime;
+	}
+	public Integer gettCategory() {
+		return tCategory;
+	}
+	public void settCategory(Integer tCategory) {
+		this.tCategory = tCategory;
 	}
 }

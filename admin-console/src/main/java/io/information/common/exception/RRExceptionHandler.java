@@ -16,7 +16,7 @@ import org.springframework.web.servlet.NoHandlerFoundException;
  *
  * @author Mark sunlightcs@gmail.com
  */
-@RestControllerAdvice
+//@RestControllerAdvice
 public class RRExceptionHandler {
 	private Logger logger = LoggerFactory.getLogger(getClass());
 

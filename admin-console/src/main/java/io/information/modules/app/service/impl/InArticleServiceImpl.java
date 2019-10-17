@@ -5,18 +5,23 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.guansuo.common.DateUtils;
 import io.information.common.utils.PageUtils;
 import io.information.common.utils.Query;
 import io.information.common.utils.RedisKeys;
+import io.information.common.utils.RedisUtils;
 import io.information.modules.app.dao.InArticleDao;
 import io.information.modules.app.entity.InArticle;
+import io.information.modules.app.entity.InUser;
 import io.information.modules.app.service.IInArticleService;
+import org.springframework.beans.factory.annotation.Autowired;
 import io.lettuce.core.dynamic.annotation.Param;
 import io.mq.utils.Constants;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,6 +39,8 @@ import java.util.stream.Collectors;
  */
 @Service
 public class InArticleServiceImpl extends ServiceImpl<InArticleDao, InArticle> implements IInArticleService {
+    @Autowired
+    RedisUtils redisUtils;
     @Autowired
     private RabbitTemplate rabbitTemplate;
 
@@ -68,6 +75,13 @@ public class InArticleServiceImpl extends ServiceImpl<InArticleDao, InArticle> i
                 new Query<InArticle>().getPage(params),
                 new QueryWrapper<InArticle>()
         );
+        for(InArticle a:page.getRecords()){
+            Object obj=redisUtils.hget(RedisKeys.INUSER,String.valueOf(a.getuId()));
+            if(null!=obj){
+                a.setuName(((InUser)obj).getuName());
+                a.setaSimpleTime(DateUtils.getSimpleTime(a.getaCreateTime()));
+            }
+        }
         return new PageUtils(page);
     }
 
@@ -100,7 +114,7 @@ public class InArticleServiceImpl extends ServiceImpl<InArticleDao, InArticle> i
     }
 
     @Override
-    @CachePut(value = RedisKeys.COLLECT, key = "#aid+'-'+#uid")
+    @Cacheable(value = RedisKeys.COLLECT, key = "#aid+'-'+#uid")
     public boolean collect(Long aid, Long uid) {
         try {
             this.baseMapper.addACollect(aid);

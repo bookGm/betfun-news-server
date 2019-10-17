@@ -16,9 +16,9 @@ import io.information.modules.news.service.MenuService;
 import io.information.modules.news.service.MenuSourceService;
 import io.information.modules.news.service.SourceService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -29,8 +29,8 @@ public class MenuServiceImpl extends ServiceImpl<MenuDao, MenuEntity> implements
     private MenuSourceService menuSourceService;
     @Autowired
     private SourceService sourceService;
-
-
+    @Autowired
+    MenuDao menuDao;
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
         IPage<MenuEntity> page = this.page(
@@ -168,4 +168,9 @@ public class MenuServiceImpl extends ServiceImpl<MenuDao, MenuEntity> implements
         menuSourceQueryWrapper.lambda().eq(MenuSourceEntity::getmCode, menuCode).eq(MenuSourceEntity::getmName, menuName);
         return menuSourceService.getOne(menuSourceQueryWrapper);
     }
+    @Override
+    public String getMaxCode(String pcode) {
+        return menuDao.getMaxCode(pcode);
+    }
+
 }
