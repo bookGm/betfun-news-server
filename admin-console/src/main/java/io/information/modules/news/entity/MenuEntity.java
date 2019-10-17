@@ -41,6 +41,10 @@ public class MenuEntity implements Serializable {
      */
     private String mPcode;
     /**
+     * 菜单组件
+     */
+    private String mComponent;
+    /**
      * 菜单路径（资源表）
      */
     private String mUrl;
@@ -88,6 +92,14 @@ public class MenuEntity implements Serializable {
 
     public void setmPcode(String mPcode) {
         this.mPcode = mPcode;
+    }
+
+    public String getmComponent() {
+        return mComponent;
+    }
+
+    public void setmComponent(String mComponent) {
+        this.mComponent = mComponent;
     }
 
     public String getmUrl() {

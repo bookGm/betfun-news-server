@@ -5,8 +5,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
-@Slf4j
-@ControllerAdvice
+//@Slf4j
+//@ControllerAdvice
 public class BasicExceptionAdvice {
 
     //自定义异常返回(400)

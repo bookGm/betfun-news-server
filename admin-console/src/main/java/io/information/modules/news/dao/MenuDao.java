@@ -3,6 +3,7 @@ package io.information.modules.news.dao;
 import io.information.modules.news.entity.MenuEntity;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 /**
  * 资讯菜单表
@@ -13,5 +14,5 @@ import org.apache.ibatis.annotations.Mapper;
  */
 @Mapper
 public interface MenuDao extends BaseMapper<MenuEntity> {
-	
+    String getMaxCode(@Param("mPcode")String pcode);
 }

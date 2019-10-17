@@ -1,5 +1,6 @@
 package io.information.modules.app.entity;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 
@@ -30,6 +31,12 @@ public class InArticle implements Serializable {
      * 用户id
      */
     private Long uId;
+    /**
+     * 用户
+     */
+    @TableField(exist = false)
+    private String uName;
+
     /**
      * 文章标题
      */
@@ -86,6 +93,11 @@ public class InArticle implements Serializable {
      * 创建时间
      */
     private Date aCreateTime;
+    /**
+     * 简单时间
+     */
+    @TableField(exist = false)
+    private String aSimpleTime;
 
 
     public Long getaId() {
@@ -206,6 +218,22 @@ public class InArticle implements Serializable {
 
     public void setaStatus(Integer aStatus) {
         this.aStatus = aStatus;
+    }
+
+    public String getuName() {
+        return uName;
+    }
+
+    public void setuName(String uName) {
+        this.uName = uName;
+    }
+
+    public String getaSimpleTime() {
+        return aSimpleTime;
+    }
+
+    public void setaSimpleTime(String aSimpleTime) {
+        this.aSimpleTime = aSimpleTime;
     }
 
     public Long getaReadNumber() {

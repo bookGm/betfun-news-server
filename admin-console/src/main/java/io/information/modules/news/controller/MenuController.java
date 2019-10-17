@@ -1,6 +1,8 @@
 package io.information.modules.news.controller;
 
-import io.information.common.utils.IdGenerator;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.guansuo.common.AutoCodeUtil;
+import com.guansuo.common.StringUtil;
 import io.information.common.utils.R;
 import io.information.modules.news.entity.MenuEntity;
 import io.information.modules.news.entity.MenusEntity;
@@ -102,8 +104,11 @@ public class MenuController {
      */
     @PostMapping("/save")
     @RequiresPermissions("news:menu:save")
-    public R saveList(@RequestBody MenusEntity menus) {
-        menuService.saveList(menus);
+    public R save(@RequestBody MenuEntity menu) {
+        String pcode=menu.getmPcode();
+        String code=menuService.getMaxCode(StringUtil.isBlank(pcode)?"0":pcode);
+        menu.setmCode(AutoCodeUtil.getDigitCode(3,code,pcode));
+        menuService.save(menu);
         return R.ok();
     }
 

@@ -55,6 +55,10 @@ public class InSource implements Serializable {
      * 资源创建时间
      */
     private Date sCreateTime;
+    /**
+     * 是否菜单资源（0：否 1：是）
+     */
+    private Integer sIsmenu;
 
     public String getsUrl() {
         return sUrl;
@@ -110,5 +114,13 @@ public class InSource implements Serializable {
 
     public void setsCreateTime(Date sCreateTime) {
         this.sCreateTime = sCreateTime;
+    }
+
+    public Integer getsIsmenu() {
+        return sIsmenu;
+    }
+
+    public void setsIsmenu(Integer sIsmenu) {
+        this.sIsmenu = sIsmenu;
     }
 }

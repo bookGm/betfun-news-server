@@ -28,5 +28,7 @@ public interface MenuService extends IService<MenuEntity> {
     void updateAll(MenusEntity menus);
 
     MenusEntity queryMenusById(Long mId);
+
+    String getMaxCode(String pcode);
 }
 

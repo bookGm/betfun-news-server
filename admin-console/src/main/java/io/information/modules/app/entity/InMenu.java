@@ -1,9 +1,11 @@
 package io.information.modules.app.entity;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * <p>
@@ -39,6 +41,10 @@ public class InMenu implements Serializable {
      * 菜单父编码
      */
     private String mPcode;
+    /**
+     * 菜单资源
+     */
+    private String mComponent;
 
     /**
      * 菜单路径（资源表）
@@ -49,6 +55,11 @@ public class InMenu implements Serializable {
      * 是否禁用（0：否  1：是）
      */
     private Integer mDisable;
+    /**
+     * 子节点
+     */
+    @TableField(exist = false)
+    private List<InMenu> children;
 
 
     public Long getmId() {
@@ -83,6 +94,14 @@ public class InMenu implements Serializable {
         this.mPcode = mPcode;
     }
 
+    public String getmComponent() {
+        return mComponent;
+    }
+
+    public void setmComponent(String mComponent) {
+        this.mComponent = mComponent;
+    }
+
     public String getmUrl() {
         return mUrl;
     }
@@ -97,5 +116,13 @@ public class InMenu implements Serializable {
 
     public void setmDisable(Integer mDisable) {
         this.mDisable = mDisable;
+    }
+
+    public List<InMenu> getChildren() {
+        return children;
+    }
+
+    public void setChildren(List<InMenu> children) {
+        this.children = children;
     }
 }
