@@ -3,6 +3,8 @@
 package io.information.modules.app.interceptor;
 
 
+import com.guansuo.common.StringUtil;
+import io.information.modules.app.service.IInUserService;
 import io.jsonwebtoken.Claims;
 import io.information.common.exception.RRException;
 import io.information.modules.app.utils.JwtUtils;
@@ -26,9 +28,12 @@ import javax.servlet.http.HttpServletResponse;
 public class AuthorizationInterceptor extends HandlerInterceptorAdapter {
     @Autowired
     private JwtUtils jwtUtils;
-
-    public static final String USER_KEY = "userId";
-
+    @Autowired
+    private IInUserService inUserService;
+    /**
+     * app登录用户 attribute key
+     */
+    public static final String USER_KEY = "AppUserId";
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         Login annotation;
@@ -57,9 +62,21 @@ public class AuthorizationInterceptor extends HandlerInterceptorAdapter {
         if(claims == null || jwtUtils.isTokenExpired(claims.getExpiration())){
             throw new RRException(jwtUtils.getHeader() + "失效，请重新登录", HttpStatus.UNAUTHORIZED.value());
         }
+        if(StringUtil.isBlank(claims.getSubject())){
+            throw new RRException("无效的token", HttpStatus.UNAUTHORIZED.value());
+        }
+        Long userId=0L;
+        try {
+            userId=Long.parseLong(claims.getSubject());
+        } catch (NumberFormatException e) {
+            throw new RRException("无效的token", HttpStatus.UNAUTHORIZED.value());
+        }
+        if(null==inUserService.getById(userId)){
+            throw new RRException("无效的token", HttpStatus.UNAUTHORIZED.value());
+        }
 
         //设置userId到request里，后续根据userId，获取用户信息
-        request.setAttribute(USER_KEY, Long.parseLong(claims.getSubject()));
+        request.setAttribute(USER_KEY, userId);
 
         return true;
     }

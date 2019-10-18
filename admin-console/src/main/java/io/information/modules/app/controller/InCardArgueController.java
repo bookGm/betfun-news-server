@@ -3,7 +3,9 @@ package io.information.modules.app.controller;
 
 import io.information.common.utils.PageUtils;
 import io.information.common.utils.R;
+import io.information.modules.app.annotation.LoginUser;
 import io.information.modules.app.entity.InCardArgue;
+import io.information.modules.app.entity.InUser;
 import io.information.modules.app.service.IInCardArgueService;
 import io.mq.utils.Constants;
 import io.swagger.annotations.Api;
@@ -11,6 +13,7 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
@@ -102,21 +105,19 @@ public class InCardArgueController {
     /**
      * 辩论支持
      */
-//    @GetMapping("/support")
-//    @ApiOperation(value = "支持辩论方",httpMethod = "GET")
-//    public ResponseEntity<PageUtils> support(Integer supportSide){
-//        cardArgueService
-//        return ResponseEntity.ok(page);
-//    }
-//
-//    /**
-//     * 加入辩论
-//     */
-//    @GetMapping("/join")
-//    @ApiOperation(value = "加入辩论方",httpMethod = "GET")
-//    public ResponseEntity<PageUtils> join(Integer joinSide){
-//
-//        return ResponseEntity.ok(page);
-//    }
+    @GetMapping("/support")
+    @ApiOperation(value = "支持辩论方",httpMethod = "GET")
+    public R support(Long cid, Integer supportSide, @LoginUser InUser user){
+        return R.ok().put("supportSide",cardArgueService.support(cid, user.getuId(),supportSide));
+    }
+
+    /**
+     * 加入辩论
+     */
+    @GetMapping("/join")
+    @ApiOperation(value = "加入辩论方",httpMethod = "GET")
+    public R join(Long cid,Integer joinSide, @LoginUser InUser user){
+        return R.ok().put("joinSide",cardArgueService.support(cid,user.getuId(),joinSide));
+    }
 
 }

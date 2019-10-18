@@ -71,9 +71,23 @@ public class InArticleServiceImpl extends ServiceImpl<InArticleDao, InArticle> i
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
+        LambdaQueryWrapper<InArticle> qw=new LambdaQueryWrapper<InArticle>();
+        if(params.containsKey("type")){
+            Object type=params.get("type");
+            switch(Integer.parseInt(String.valueOf(type))){
+                case 0:
+                    qw.orderByDesc(InArticle::getaCreateTime);
+                    break;
+                case 1:
+                    qw.orderByDesc(InArticle::getaReadNumber);
+                    break;
+                case 2:
+                    qw.orderByDesc(InArticle::getaCreateTime,InArticle::getaReadNumber);
+                    break;
+            }
+        }
         IPage<InArticle> page = this.page(
-                new Query<InArticle>().getPage(params),
-                new QueryWrapper<InArticle>()
+                new Query<InArticle>().getPage(params),qw
         );
         for(InArticle a:page.getRecords()){
             Object obj=redisUtils.hget(RedisKeys.INUSER,String.valueOf(a.getuId()));

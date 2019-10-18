@@ -25,6 +25,10 @@ public class TagEntity implements Serializable {
 	 */
 	private String tName;
 	/**
+	 * 标签描述
+	 */
+	private String tDescribe;
+	/**
 	 * 标签来源（0：抓取  1：后台维护）
 	 */
 	private Integer tFrom;
@@ -67,5 +71,13 @@ public class TagEntity implements Serializable {
 	}
 	public void settCategory(Integer tCategory) {
 		this.tCategory = tCategory;
+	}
+
+	public String gettDescribe() {
+		return tDescribe;
+	}
+
+	public void settDescribe(String tDescribe) {
+		this.tDescribe = tDescribe;
 	}
 }
