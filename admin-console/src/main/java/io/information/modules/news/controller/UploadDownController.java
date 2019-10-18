@@ -45,7 +45,6 @@ public class UploadDownController {
      * 文件上传
      *
      */
-    @PostMapping("/upload")
     public R upload(@RequestParam("picture") MultipartFile picture, HttpServletRequest request) {
 
         //获取文件在服务器的储存位置
@@ -90,6 +89,7 @@ public class UploadDownController {
      * @param FilePath 本地文件路径
      * @return 保存的文件名称
      */
+    @PostMapping("/upload")
     public String upload(String FilePath) throws IOException {
 
         String[] split = FilePath.split("\\.");
