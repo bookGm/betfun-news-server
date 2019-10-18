@@ -3,14 +3,15 @@ package io.information.modules.app.controller;
 
 import io.information.common.utils.R;
 import io.information.common.utils.RedisKeys;
-import io.information.modules.app.config.IdWorker;
 import io.information.modules.app.entity.InDic;
 import io.information.modules.app.service.IInDicService;
-import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 import java.util.Map;
@@ -25,7 +26,6 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("/app/dic")
-@Api(value = "/app/dic", tags = "APP咨讯字典接口")
 public class InDicController {
     @Autowired
     private IInDicService dicService;
@@ -74,43 +74,6 @@ public class InDicController {
 
 
     /**
-     * 新增
-     */
-    @PostMapping("/save")
-    @ApiOperation(value = "新增字典节点", httpMethod = "POST")
-    @ApiImplicitParam(name = "dic", value = "字典信息", required = true)
-    public R save(@RequestBody InDic dic) {
-        dic.setdId(new IdWorker().nextId());
-        dicService.save(dic);
-        return R.ok();
-    }
-
-
-    /**
-     * 删除
-     */
-    @DeleteMapping("/delete")
-    @ApiOperation(value = "单个或批量删除字典节点", httpMethod = "DELETE", notes = "根据dId[数组]删除字典节点")
-    @ApiImplicitParam(name = "dIds", value = "字典ID", required = true)
-    public R delete(@RequestBody Long[] dIds) {
-        dicService.deleteDic(dIds);
-        return R.ok();
-    }
-
-
-    /**
-     * 修改
-     */
-    @PutMapping("/update")
-    @ApiOperation(value = "修改字典节点", httpMethod = "PUT")
-    @ApiImplicitParam(name = "dic", value = "字典信息", required = true)
-    public R update(@RequestBody InDic dic) {
-        dicService.updateDic(dic);
-        return R.ok();
-    }
-
-
-    /**
      * 查询
      */
     @GetMapping("/info/{dId}")
@@ -121,27 +84,6 @@ public class InDicController {
         return R.ok().put("dicList", dics);
     }
 
-
-    /**
-     * 编码查询
-     */
-    @GetMapping("/infoCode/{dCode}")
-    @ApiOperation(value = "dCode查询节点信息", httpMethod = "GET", notes = "根据编码查询节点及其子节点")
-    public R infoCode(@PathVariable("dCode") String dCode) {
-        List<InDic> dics = dicService.queryDicByCode(dCode);
-        return R.ok().put("dicList", dics);
-    }
-
-
-    /**
-     * 名称模糊查询
-     */
-    @GetMapping("/infoLike/{dName}")
-    @ApiOperation(value = "dName查询节点信息", httpMethod = "GET", notes = "根据名称模糊查询节点及其子节点")
-    public R infoLike(@PathVariable("dName") String dName) {
-        List<InDic> dicList = dicService.queryNameDic(dName);
-        return R.ok().put("dicList", dicList);
-    }
 
 
 }

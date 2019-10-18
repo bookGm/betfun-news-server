@@ -45,14 +45,4 @@ public class InActivityServiceImpl extends ServiceImpl<InActivityDao, InActivity
         return new PageUtils(page);
     }
 
-
-    @Override
-    public void deleteAllActive(Long userId) {
-        QueryWrapper<InActivity> queryWrapper = new QueryWrapper<>();
-        queryWrapper.lambda().eq(InActivity::getuId, userId);
-        List<InActivity> activities = this.list(queryWrapper);
-        List<Long> activeIds = activities.stream().map(InActivity::getActId).collect(Collectors.toList());
-        this.removeByIds(activeIds);
-    }
-
 }

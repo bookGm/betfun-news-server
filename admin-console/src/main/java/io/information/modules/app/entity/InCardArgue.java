@@ -43,11 +43,15 @@ public class InCardArgue implements Serializable {
      * 正方观点投票人ids，逗号分隔
      */
     private String caFsideUids;
+    //正方数量
+    private Integer caFsideNumber;
 
     /**
      * 反方观点投票人ids，逗号分隔
      */
     private String caRsideUids;
+    //反方数量
+    private Integer caRsideNumber;
 
     /**
      * 辩论结束日期
@@ -77,6 +81,22 @@ public class InCardArgue implements Serializable {
 
     public void setCaRside(String caRside) {
         this.caRside = caRside;
+    }
+
+    public Integer getCaFsideNumber() {
+        return caFsideNumber;
+    }
+
+    public void setCaFsideNumber(Integer caFsideNumber) {
+        this.caFsideNumber = caFsideNumber;
+    }
+
+    public Integer getCaRsideNumber() {
+        return caRsideNumber;
+    }
+
+    public void setCaRsideNumber(Integer caRsideNumber) {
+        this.caRsideNumber = caRsideNumber;
     }
 
     public String getCaFsideUids() {

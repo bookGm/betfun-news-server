@@ -7,7 +7,6 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import io.information.common.utils.PageUtils;
 import io.information.common.utils.Query;
 import io.information.modules.app.dao.InCardBaseDao;
-import io.information.modules.app.entity.InCard;
 import io.information.modules.app.entity.InCardArgue;
 import io.information.modules.app.entity.InCardBase;
 import io.information.modules.app.entity.InCardVote;
@@ -43,31 +42,6 @@ public class InCardBaseServiceImpl extends ServiceImpl<InCardBaseDao, InCardBase
 
 
     @Override
-    public InCard queryCard(Long cardId) {
-        InCard card = new InCard();
-        InCardBase base = this.getById(cardId);
-        InCardArgue argue = cardArgueService.getById(cardId);
-        InCardVote vote = cardVoteService.getById(cardId);
-        card.setBase(base);
-        card.setArgue(argue);
-        card.setVote(vote);
-        return card;
-    }
-
-
-    @Override
-    public PageUtils queryAllCardBase(Map<String,Object> map,Long userId) {
-        QueryWrapper<InCardBase> queryWrapper = new QueryWrapper<>();
-        queryWrapper.lambda().eq(InCardBase::getuId, userId);
-        IPage<InCardBase> page = this.page(
-                new Query<InCardBase>().getPage(map),
-                queryWrapper
-        );
-        return new PageUtils(page);
-    }
-
-
-    @Override
     public PageUtils queryPage(Map<String, Object> params) {
         IPage<InCardBase> page = this.page(
                 new Query<InCardBase>().getPage(params),
@@ -76,33 +50,88 @@ public class InCardBaseServiceImpl extends ServiceImpl<InCardBaseDao, InCardBase
         return new PageUtils(page);
     }
 
-
     @Override
-    @Transactional(rollbackFor = Exception.class)
-    public void deleteAllCard(Long userId) {
-        LambdaQueryWrapper<InCardBase> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(InCardBase::getuId,userId);
-        List<InCardBase> baseList = this.list(queryWrapper);
-        List<Long> cardIds = baseList.stream().map(InCardBase::getcId).collect(Collectors.toList());
-        cardVoteService.removeByIds(cardIds);
-        cardArgueService.removeByIds(cardIds);
-        //rabbit
-        rabbitTemplate.convertAndSend(Constants.cardExchange,
-                Constants.card_Delete_RouteKey, cardIds);
-        this.removeByIds(cardIds);
+    public PageUtils queryStateCard(Map<String, Object> map, Long uId) {
+        int cCategory = (int) map.get("cCategory");
+        if (cCategory == 0) {
+            //普通帖子
+            QueryWrapper<InCardBase> queryWrapper = new QueryWrapper<>();
+            queryWrapper.lambda().eq(InCardBase::getuId, uId).eq(InCardBase::getcCategory, 0);
+            IPage<InCardBase> page = this.page(
+                    new Query<InCardBase>().getPage(map),
+                    queryWrapper
+            );
+            return new PageUtils(page);
+        } else if (cCategory == 1) {
+            //辩论帖子
+            QueryWrapper<InCardBase> queryWrapper = new QueryWrapper<>();
+            queryWrapper.lambda().eq(InCardBase::getuId, uId).eq(InCardBase::getcCategory, 1);
+            List<InCardBase> bases = this.list(queryWrapper);
+            List<Long> cIds = bases.stream().map(InCardBase::getcId).collect(Collectors.toList());
+            LambdaQueryWrapper<InCardArgue> queryWrapper1 = new LambdaQueryWrapper<>();
+            queryWrapper1.in(InCardArgue::getcId, cIds);
+            IPage<InCardArgue> page = cardArgueService.page(
+                    new Query<InCardArgue>().getPage(map),
+                    queryWrapper1
+            );
+            return new PageUtils(page);
+        } else {
+            //投票帖子
+            //辩论帖子
+            QueryWrapper<InCardBase> queryWrapper = new QueryWrapper<>();
+            queryWrapper.lambda().eq(InCardBase::getuId, uId).eq(InCardBase::getcCategory, 2);
+            List<InCardBase> bases = this.list(queryWrapper);
+            List<Long> cIds = bases.stream().map(InCardBase::getcId).collect(Collectors.toList());
+            LambdaQueryWrapper<InCardVote> queryWrapper2 = new LambdaQueryWrapper<>();
+            queryWrapper2.in(InCardVote::getcId, cIds);
+            IPage<InCardVote> page = cardVoteService.page(
+                    new Query<InCardVote>().getPage(map),
+                    queryWrapper2
+            );
+            return new PageUtils(page);
+        }
     }
 
-
     @Override
-    @Transactional(rollbackFor = Exception.class)
-    public void deleteAllCardBase(Long userId) {
-        LambdaQueryWrapper<InCardBase> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(InCardBase::getuId,userId);
-        List<InCardBase> list = this.list(queryWrapper);
-        List<Long> cardIds = list.stream().map(InCardBase::getcId).collect(Collectors.toList());
-        //rabbit
-        rabbitTemplate.convertAndSend(Constants.cardExchange,
-                Constants.card_Delete_RouteKey, cardIds);
-        this.removeByIds(cardIds);
+    public PageUtils status(Map<String, Object> map) {
+        int cCategory = (int) map.get("cCategory");
+        if (cCategory == 0) {
+            //普通帖子
+            QueryWrapper<InCardBase> queryWrapper = new QueryWrapper<>();
+            queryWrapper.lambda().eq(InCardBase::getcCategory, 0);
+            IPage<InCardBase> page = this.page(
+                    new Query<InCardBase>().getPage(map),
+                    queryWrapper
+            );
+            return new PageUtils(page);
+        } else if (cCategory == 1) {
+            //辩论帖子
+            QueryWrapper<InCardBase> queryWrapper = new QueryWrapper<>();
+            queryWrapper.lambda().eq(InCardBase::getcCategory, 1);
+            List<InCardBase> bases = this.list(queryWrapper);
+            List<Long> cIds = bases.stream().map(InCardBase::getcId).collect(Collectors.toList());
+            LambdaQueryWrapper<InCardArgue> queryWrapper1 = new LambdaQueryWrapper<>();
+            queryWrapper1.in(InCardArgue::getcId, cIds);
+            IPage<InCardArgue> page = cardArgueService.page(
+                    new Query<InCardArgue>().getPage(map),
+                    queryWrapper1
+            );
+            return new PageUtils(page);
+        } else {
+            //投票帖子
+            //辩论帖子
+            QueryWrapper<InCardBase> queryWrapper = new QueryWrapper<>();
+            queryWrapper.lambda().eq(InCardBase::getcCategory, 2);
+            List<InCardBase> bases = this.list(queryWrapper);
+            List<Long> cIds = bases.stream().map(InCardBase::getcId).collect(Collectors.toList());
+            LambdaQueryWrapper<InCardVote> queryWrapper2 = new LambdaQueryWrapper<>();
+            queryWrapper2.in(InCardVote::getcId, cIds);
+            IPage<InCardVote> page = cardVoteService.page(
+                    new Query<InCardVote>().getPage(map),
+                    queryWrapper2
+            );
+            return new PageUtils(page);
+        }
     }
+
 }

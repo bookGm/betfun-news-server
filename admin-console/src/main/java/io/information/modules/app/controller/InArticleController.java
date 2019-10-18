@@ -4,11 +4,11 @@ package io.information.modules.app.controller;
 import io.information.common.utils.PageUtils;
 import io.information.common.utils.R;
 import io.information.common.utils.RedisKeys;
+import io.information.modules.app.annotation.Login;
+import io.information.modules.app.annotation.LoginUser;
 import io.information.modules.app.entity.InArticle;
 import io.information.modules.app.entity.InUser;
 import io.information.modules.app.service.IInArticleService;
-import io.information.modules.app.service.IInUserService;
-import io.information.modules.sys.controller.AbstractController;
 import io.mq.utils.Constants;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -18,9 +18,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.GenericToStringSerializer;
 import org.springframework.web.bind.annotation.*;
+import springfox.documentation.annotations.ApiIgnore;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Map;
@@ -36,91 +36,69 @@ import java.util.Map;
 @RestController
 @RequestMapping("/app/article")
 @Api(value = "/app/article", tags = "APP咨讯文章接口")
-public class InArticleController extends AbstractController {
+public class InArticleController {
     @Autowired
     private IInArticleService articleService;
     @Autowired
     private RabbitTemplate rabbitTemplate;
     @Autowired
     private RedisTemplate redisTemplate;
-    @Autowired
-    private IInUserService userService;
 
 
     /**
      * 添加 esOK
      */
+    @Login
     @PostMapping("/save")
     @ApiOperation(value = "新增咨讯文章", httpMethod = "POST")
     @ApiImplicitParam(name = "article", value = "文章信息", required = true)
-    public R save(@RequestBody InArticle article) {
-        InUser user = userService.getById(getUserId());
-        if (user.getuAuthStatus() != 2) {
-            return R.error("此操作需要认证通过");
-        } else {
-            article.setuId(getUserId());
+    public R save(@RequestBody InArticle article, @ApiIgnore @LoginUser InUser user) {
+        if (user.getuAuthStatus() == 2) {
+            article.setuId(user.getuId());
             article.setaCreateTime(new Date());
             articleService.save(article);
-            //rabbit
             rabbitTemplate.convertAndSend(Constants.articleExchange,
                     Constants.article_Save_RouteKey, article);
             return R.ok();
         }
+        return R.error("此操作需要认证通过");
     }
 
 
     /**
      * 删除 esOK
      */
+    @Login
     @DeleteMapping("/delete")
     @ApiOperation(value = "单个或批量删除咨讯文章", httpMethod = "DELETE", notes = "根据aId[数组]删除活动")
     @ApiImplicitParam(name = "aIds", value = "文章ID", dataType = "Array", required = true)
-    public R delete(@RequestBody Long[] aIds) {
-        InUser user = userService.getById(getUserId());
-        if (user.getuAuthStatus() != 2) {
-            return R.error("此操作需要认证通过");
-        } else {
+    public R delete(@RequestBody Long[] aIds, @ApiIgnore @LoginUser InUser user) {
+        if (user.getuAuthStatus() == 2) {
             articleService.removeByIds(Arrays.asList(aIds));
-            //rabbit
             rabbitTemplate.convertAndSend(Constants.articleExchange,
                     Constants.article_Delete_RouteKey, aIds);
             return R.ok();
         }
+        return R.error("此操作需要认证通过");
     }
 
-
-    /**
-     * 用户删除 esOk
-     */
-    @DeleteMapping("/deleteList")
-    @ApiOperation(value = "删除用户发布的咨询文章", httpMethod = "DELETE", notes = "自动获取用户信息")
-    public R deleteList() {
-        InUser user = userService.getById(getUserId());
-        if (user.getuAuthStatus() != 2) {
-            return R.error("此操作需要认证通过");
-        } else {
-            articleService.deleteAllArticle(getUserId());
-            return R.ok();
-        }
-    }
 
 
     /**
      * 修改 esOK
      */
+    @Login
     @PutMapping("/update")
     @ApiOperation(value = "修改咨讯文章", httpMethod = "PUT")
     @ApiImplicitParam(name = "article", value = "文章信息", required = true)
-    public R update(@RequestBody InArticle article) {
-        InUser user = userService.getById(getUserId());
-        if (user.getuAuthStatus() != 2) {
-            return R.error("此操作需要认证通过");
-        } else {
+    public R update(@RequestBody InArticle article, @ApiIgnore @LoginUser InUser user) {
+        if (user.getuAuthStatus() == 2) {
             articleService.updateById(article);
             rabbitTemplate.convertAndSend(Constants.articleExchange,
                     Constants.article_Update_RouteKey, article);
             return R.ok();
         }
+        return R.error("此操作需要认证通过");
     }
 
 
@@ -141,8 +119,8 @@ public class InArticleController extends AbstractController {
      */
     @GetMapping("/info/{aId}")
     @ApiOperation(value = "查询单个咨讯文章", httpMethod = "GET", notes = "根据文章ID查询文章")
-    @ApiImplicitParam(name = "aId", value = "文章ID", required = true)
-    public R queryArticle(@PathVariable("aId") Long aId, HttpServletRequest request, HttpServletResponse response) {
+    @ApiImplicitParam(paramType = "query", name = "aId", value = "文章ID", required = true)
+    public R queryArticle(@PathVariable("aId") Long aId, HttpServletRequest request) {
         String ip = request.getHeader("x-forwarded-for");
         InArticle article = articleService.getById(aId);
         Boolean aBoolean = redisTemplate.hasKey(ip + aId);
@@ -161,25 +139,27 @@ public class InArticleController extends AbstractController {
 
 
     /**
-     * 用户查询 esOK
+     * 状态查询 esOK
      */
-    @GetMapping("/userArticle")
-    @ApiOperation(value = "获取用户发布的文章", httpMethod = "GET", notes = "自动获取用户信息")
+    @Login
+    @GetMapping("/status")
+    @ApiOperation(value = "获取已发布文章", httpMethod = "GET")
     @ApiImplicitParam(name = "map", value = "分页数据", required = true)
-    public R queryUserArticle(@RequestParam Map<String, Object> map) {
-        PageUtils page = articleService.queryAllArticle(map, getUserId());
+    public R status(@RequestParam Map<String, Object> map) {
+        PageUtils page = articleService.statusOK(map);
         return R.ok().put("page", page);
     }
 
 
     /**
-     * 用户查看草稿箱 esOK
+     * 状态查询用户 esOK
      */
-    @GetMapping("/uDraft")
-    @ApiOperation(value = "获取用户草稿箱", httpMethod = "GET", notes = "自动获取用户信息和文章状态")
-    @ApiImplicitParam(name = "map", value = "分页数据", required = true)
-    public R uDraft(@RequestParam Map<String, Object> map) {
-        PageUtils page = articleService.uDraft(map, getUserId());
+    @Login
+    @GetMapping("/statusUser")
+    @ApiOperation(value = "文章状态获取用户文章", httpMethod = "GET", notes = "自动获取用户信息")
+    @ApiImplicitParam(name = "map", value = "分页数据，文章状态<aStatus>", required = true)
+    public R statusArticleUser(@RequestParam Map<String, Object> map, @ApiIgnore @LoginUser InUser user) {
+        PageUtils page = articleService.statusArticleUser(map, user.getuId());
         return R.ok().put("page", page);
     }
 
@@ -187,11 +167,12 @@ public class InArticleController extends AbstractController {
     /**
      * 点赞
      */
+    @Login
     @PostMapping("/giveALike/{aId}")
     @ApiOperation(value = "文章点赞", httpMethod = "POST", notes = "根据文章ID点赞")
     @ApiImplicitParam(name = "aId", value = "文章ID", required = true)
-    public R giveALike(@PathVariable("aId") Long aId) {
-        if (articleService.giveALike(aId, getAppUserId())) {
+    public R giveALike(@PathVariable("aId") Long aId, @ApiIgnore @LoginUser InUser user) {
+        if (articleService.giveALike(aId, user.getuId())) {
             return R.ok();
         }
         return R.error("网络出错，请稍后重试");
@@ -200,14 +181,15 @@ public class InArticleController extends AbstractController {
     /**
      * 收藏
      */
+    @Login
     @PostMapping("/collect")
     @ApiOperation(value = "文章收藏", httpMethod = "POST", notes = "根据文章ID收藏")
     @ApiImplicitParam(name = "aId", value = "文章ID", required = true)
-    public R collect(@PathVariable("aId") Long aId) {
-        if (getUserId() == null) {
+    public R collect(@PathVariable("aId") Long aId, @ApiIgnore @LoginUser InUser user) {
+        if (user.getuId() == null) {
             return R.error("请先登录");
         } else {
-            if (articleService.collect(aId, getAppUserId())) {
+            if (articleService.collect(aId, user.getuId())) {
                 return R.ok();
             }
             return R.error("网络出错，请稍后重试");

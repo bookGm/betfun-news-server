@@ -25,8 +25,4 @@ public interface IInDicService extends IService<InDic> {
     Map<String, List<InDic>> getListAll(String key);
 
     List<InDic> queryDicById(Long dicId);
-
-    List<InDic> queryNameDic(String dicName);
-
-    List<InDic> queryDicByCode(String dicCode);
 }

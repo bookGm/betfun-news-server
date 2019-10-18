@@ -16,11 +16,13 @@ import java.util.Map;
  */
 public interface IInArticleService extends IService<InArticle> {
 
-    void deleteAllArticle(Long userId);
-
-    PageUtils queryAllArticle(Map<String, Object> params, Long userId);
+    void updateReadNumber(Long aLong, Long aId);
 
     PageUtils queryPage(Map<String, Object> params);
+
+    PageUtils statusOK(Map<String, Object> map);
+
+    PageUtils statusArticleUser(Map<String, Object> map, Long uId);
 
     /**
      * 点赞
@@ -32,7 +34,5 @@ public interface IInArticleService extends IService<InArticle> {
      */
     boolean collect(Long aid, Long uid);
 
-    PageUtils uDraft(Map<String, Object> params, Long userId);
 
-    void updateReadNumber(Long aLong,Long aId);
 }

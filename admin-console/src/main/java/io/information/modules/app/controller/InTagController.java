@@ -36,8 +36,6 @@ public class InTagController {
      * 添加
      */
     @PostMapping("/save")
-    @ApiOperation(value = "新增咨讯标签", httpMethod = "POST")
-    @ApiImplicitParam(name = "tag", value = "标签信息", required = true)
     public R save(@RequestBody InTag tag) {
         tag.settId(new IdWorker().nextId());
         tag.settCreateTime(new Date());
@@ -50,8 +48,6 @@ public class InTagController {
      * 删除
      */
     @DeleteMapping("/delete")
-    @ApiOperation(value = "单个或批量删除咨讯标签", httpMethod = "DELETE", notes = "根据tId[数组]删除标签")
-    @ApiImplicitParam(name = "tIds", value = "标签ID", dataType = "Array", required = true)
     public R delete(@RequestBody Long[] tIds) {
         tagService.removeByIds(Arrays.asList(tIds));
         return R.ok();
@@ -62,8 +58,6 @@ public class InTagController {
      * 修改
      */
     @PutMapping("/update")
-    @ApiOperation(value = "修改咨讯标签", httpMethod = "PUT")
-    @ApiImplicitParam(name = "tag", value = "标签资源", required = true)
     public R update(@RequestBody InTag tag) {
         tagService.updateById(tag);
         return R.ok();

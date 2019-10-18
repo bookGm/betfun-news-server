@@ -86,26 +86,6 @@ public class InDicServiceImpl extends ServiceImpl<InDicDao, InDic> implements II
         return dicList;
     }
 
-    @Override
-    public List<InDic> queryNameDic(String dicName) {
-        LambdaQueryWrapper<InDic> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.like(InDic::getdName,dicName);
-        return this.list(queryWrapper);
-    }
-
-
-    @Override
-    public List<InDic> queryDicByCode(String dicCode) {
-        QueryWrapper<InDic> queryWrapper = new QueryWrapper<>();
-        queryWrapper.lambda().eq(InDic::getdCode,dicCode);
-        List<InDic> dicList = this.list(queryWrapper);
-        dicList.forEach(dic -> {
-            dicList.addAll(this.findPSDic(dic));
-        });
-
-        return dicList;
-    }
-
 
     //查询节点和其下子节点
     private List<InDic> findPSDic(InDic dic){

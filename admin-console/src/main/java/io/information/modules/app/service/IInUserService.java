@@ -20,9 +20,9 @@ public interface IInUserService extends IService<InUser> {
 
     InUser findUser(String username, String password);
 
-    PageUtils queryLikeByUser(Map<String,Object> params);
-
     PageUtils queryUsersByArgueIds(Map<String,Object> params);
 
     Boolean saveWithCache(InUser inUser);
+
+    void change(Map<String, Object> map, InUser user);
 }

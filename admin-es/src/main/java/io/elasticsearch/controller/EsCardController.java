@@ -14,7 +14,7 @@ import java.util.Date;
 
 /**
  * es帖子的操作
- * TODO userId的来源
+ *
  */
 @RestController
 @RequestMapping("es/card")

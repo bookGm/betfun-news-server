@@ -3,9 +3,11 @@ package io.information.modules.app.controller;
 
 import io.information.common.utils.PageUtils;
 import io.information.common.utils.R;
+import io.information.modules.app.annotation.Login;
+import io.information.modules.app.annotation.LoginUser;
 import io.information.modules.app.entity.InCardVote;
+import io.information.modules.app.entity.InUser;
 import io.information.modules.app.service.IInCardVoteService;
-import io.information.modules.sys.controller.AbstractController;
 import io.mq.utils.Constants;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -13,6 +15,7 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import springfox.documentation.annotations.ApiIgnore;
 
 import java.util.Arrays;
 import java.util.List;
@@ -29,7 +32,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/app/card/vote")
 @Api(value = "/app/card/vote", tags = "APP帖子_投票帖子")
-public class InCardVoteController extends AbstractController {
+public class InCardVoteController {
     @Autowired
     private IInCardVoteService cardVoteService;
     @Autowired
@@ -41,24 +44,27 @@ public class InCardVoteController extends AbstractController {
     @PostMapping("/save")
     @ApiOperation(value = "新增投票帖子", httpMethod = "POST")
     @ApiImplicitParam(name = "cardVote", value = "投票帖子信息", required = true)
-    public R save(@RequestBody InCardVote cardVote) {
-        cardVoteService.save(cardVote);
-        //rabbit
-        rabbitTemplate.convertAndSend(Constants.cardExchange,
-                Constants.card_Save_RouteKey, cardVote);
-        return R.ok();
+    public R save(@RequestBody InCardVote cardVote, @ApiIgnore @LoginUser InUser user) {
+        if (2 == user.getuAuthStatus()) {
+            cardVoteService.save(cardVote);
+            rabbitTemplate.convertAndSend(Constants.cardExchange,
+                    Constants.card_Save_RouteKey, cardVote);
+            return R.ok();
+        }
+        return R.error("此操作需要认证通过");
     }
 
 
     /**
      * 投票
      */
+    @Login
     @PostMapping("/vote")
     @ApiOperation(value = "投票", httpMethod = "POST", notes = "根据帖子ID和选择的投票选项，更新投票选项数量")
     @ApiImplicitParam(name = "cid、optIndexs", value = "帖子ID、投票选项索引", dataType = "Long、List<int>")
-    public R vote(Long cid, List<Integer> optIndexs) {
+    public R vote(Long cid, List<Integer> optIndexs, @ApiIgnore @LoginUser InUser user) {
         for (Integer optIndex : optIndexs) {
-            cardVoteService.vote(cid, getUserId(), optIndex);
+            cardVoteService.vote(cid, user.getuId(), optIndex);
         }
         return R.ok();
     }
@@ -70,12 +76,14 @@ public class InCardVoteController extends AbstractController {
     @DeleteMapping("/delete")
     @ApiOperation(value = "单个或批量删除投票帖子", httpMethod = "DELETE", notes = "根据cIds[数组]删除投票帖子")
     @ApiImplicitParam(name = "cIds", value = "帖子ID", dataType = "Array", required = true)
-    public R delete(@RequestBody Long[] cIds) {
-        cardVoteService.removeByIds(Arrays.asList(cIds));
-        //rabbit
-        rabbitTemplate.convertAndSend(Constants.cardExchange,
-                Constants.card_Save_RouteKey, cIds);
-        return R.ok();
+    public R delete(@RequestBody Long[] cIds, @ApiIgnore @LoginUser InUser user) {
+        if (2 == user.getuAuthStatus()) {
+            cardVoteService.removeByIds(Arrays.asList(cIds));
+            rabbitTemplate.convertAndSend(Constants.cardExchange,
+                    Constants.card_Save_RouteKey, cIds);
+            return R.ok();
+        }
+        return R.error("此操作需要认证通过");
     }
 
 
@@ -85,12 +93,14 @@ public class InCardVoteController extends AbstractController {
     @PutMapping("/update")
     @ApiOperation(value = "修改投票帖子", httpMethod = "PUT")
     @ApiImplicitParam(name = "cardVote", value = "投票帖子信息", required = true)
-    public R update(@RequestBody InCardVote cardVote) {
-        cardVoteService.updateById(cardVote);
-        //rabbit
-        rabbitTemplate.convertAndSend(Constants.cardExchange,
-                Constants.card_Update_RouteKey, cardVote);
-        return R.ok();
+    public R update(@RequestBody InCardVote cardVote, @ApiIgnore @LoginUser InUser user) {
+        if (2 == user.getuAuthStatus()) {
+            cardVoteService.updateById(cardVote);
+            rabbitTemplate.convertAndSend(Constants.cardExchange,
+                    Constants.card_Update_RouteKey, cardVote);
+            return R.ok();
+        }
+        return R.error("此操作需要认证通过");
     }
 
 
@@ -102,7 +112,7 @@ public class InCardVoteController extends AbstractController {
     @ApiImplicitParam(name = "cId", value = "帖子ID", required = true)
     public R queryCardVote(@PathVariable("cId") Long cId) {
         InCardVote cardArgue = cardVoteService.getById(cId);
-        return R.ok().put("cardArgue",cardArgue);
+        return R.ok().put("cardArgue", cardArgue);
     }
 
 
@@ -114,6 +124,6 @@ public class InCardVoteController extends AbstractController {
     @ApiImplicitParam(name = "map", value = "分页数据", required = true)
     public R list(@RequestParam Map<String, Object> map) {
         PageUtils page = cardVoteService.queryPage(map);
-        return R.ok().put("page",page);
+        return R.ok().put("page", page);
     }
 }

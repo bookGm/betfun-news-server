@@ -6,6 +6,7 @@ import lombok.experimental.Accessors;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 /**
  * <p>
@@ -37,7 +38,8 @@ public class InCardVote implements Serializable {
      * 投票选项信息（逗号分隔）
      */
     private String cvInfo;
-
+    //投票选项信息返回
+    private List cvInfoList;
     /**
      * 结束日期
      */
@@ -375,5 +377,13 @@ public class InCardVote implements Serializable {
 
     public void setCv29(Integer cv29) {
         this.cv29 = cv29;
+    }
+
+    public List getCvInfoList() {
+        return cvInfoList;
+    }
+
+    public void setCvInfoList(List cvInfoList) {
+        this.cvInfoList = cvInfoList;
     }
 }

@@ -182,23 +182,6 @@ public class InMenuServiceImpl extends ServiceImpl<InMenuDao, InMenu> implements
     }
 
 
-    @Override
-    public InMenus queryLikeMenu(String menuName) {
-        InMenus inMenus = new InMenus();
-        QueryWrapper<InMenu> queryWrapper = new QueryWrapper<>();
-        queryWrapper.lambda().like(InMenu::getmName, menuName);
-        List<InMenu> menus = this.list(queryWrapper);
-        menus.forEach(menu -> {
-            InMenuSource menuSource = this.findMenuSource(menu);
-            InSource source = this.findSource(menuSource);
-            inMenus.setMenu(menu);
-            inMenus.setMenuSource(menuSource);
-            inMenus.setSource(source);
-        });
-        return inMenus;
-    }
-
-
     //根据MenuSource获得Source
     private InSource findSource(InMenuSource menuSource) {
         String sourceUrl = menuSource.getsUrl();

@@ -38,28 +38,6 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
     RedisUtils redisUtils;
 
     @Override
-    public PageUtils queryLikeByUser(Map<String, Object> params) {
-        String uNick = (String) params.get("uNick");
-        int totalCount = (int) params.get("totalCount");
-        int pageSize = (int) params.get("pageSize");
-        int currPage = (int) params.get("currPage");
-        if (!uNick.isEmpty()) {
-            QueryWrapper<InUser> queryWrapper = new QueryWrapper<>();
-            //根据昵称查询
-            queryWrapper.lambda().like(InUser::getuNick, uNick);
-            List<InUser> list = this.list(queryWrapper);
-            for (InUser inUser : list) {
-                inUser.setuPhone(null);
-                inUser.setuPwd(null);
-                inUser.setuIdcard(null);
-            }
-
-            return new PageUtils(list, totalCount, pageSize, currPage);
-        }
-        return null;
-    }
-
-    @Override
     public PageUtils queryUsersByArgueIds(Map<String, Object> params) {
         String userIds = null;
         String caFsideUids = (String) params.get("caFsideUids");
@@ -100,6 +78,13 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
     }
 
     @Override
+    public void change(Map<String, Object> map, InUser user) {
+        String dbPwd = user.getuPwd();
+        map.get("输入密码");
+        //TODO
+    }
+
+    @Override
     public InUser findUser(String username, String password) {
         QueryWrapper<InUser> queryWrapper = new QueryWrapper<>();
         queryWrapper.lambda().eq(InUser::getuName, username);
@@ -109,7 +94,6 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
             //用户名错误
             throw new IMException(ExceptionEnum.INVALID_USERNAME_PASSWORD);
         }
-
         //3. 校验密码  解密
         if (!password.equals(user.getuPwd())) {
             //密码错误
@@ -118,6 +102,5 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
 
         return user;
     }
-
 
 }

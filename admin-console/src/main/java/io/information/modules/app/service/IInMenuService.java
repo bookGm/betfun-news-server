@@ -27,8 +27,6 @@ public interface IInMenuService extends IService<InMenu> {
 
     InMenus queryMenuById(Long menuId);
 
-    InMenus queryLikeMenu(String menuName);
-
     PageUtils queryPage(Map<String, Object> params);
 
     void deleteAll(Long mId);

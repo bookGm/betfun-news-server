@@ -1,8 +1,6 @@
 package io.information.modules.app.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.guansuo.common.DateUtils;
@@ -14,12 +12,9 @@ import io.information.modules.app.dao.InArticleDao;
 import io.information.modules.app.entity.InArticle;
 import io.information.modules.app.entity.InUser;
 import io.information.modules.app.service.IInArticleService;
-import org.springframework.beans.factory.annotation.Autowired;
-import io.lettuce.core.dynamic.annotation.Param;
 import io.mq.utils.Constants;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -44,37 +39,13 @@ public class InArticleServiceImpl extends ServiceImpl<InArticleDao, InArticle> i
     @Autowired
     private RabbitTemplate rabbitTemplate;
 
-    @Override
-    @Transactional
-    public void deleteAllArticle(Long userId) {
-        LambdaQueryWrapper<InArticle> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(InArticle::getuId,userId);
-        List<InArticle> articleList = this.list(queryWrapper);
-        List<Long> articleIds = articleList.stream()
-                .map(InArticle::getaId)
-                .collect(Collectors.toList());
-        rabbitTemplate.convertAndSend(Constants.articleExchange,
-                Constants.article_Delete_RouteKey, articleIds);
-        this.removeByIds(articleIds);
-    }
-
-    @Override
-    public PageUtils queryAllArticle(Map<String, Object> params, Long userId) {
-        QueryWrapper<InArticle> queryWrapper = new QueryWrapper<>();
-        queryWrapper.lambda().eq(InArticle::getuId, userId);
-        IPage<InArticle> page = this.page(
-                new Query<InArticle>().getPage(params),
-                queryWrapper
-        );
-        return new PageUtils(page);
-    }
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
-        LambdaQueryWrapper<InArticle> qw=new LambdaQueryWrapper<InArticle>();
-        if(params.containsKey("type")){
-            Object type=params.get("type");
-            switch(Integer.parseInt(String.valueOf(type))){
+        LambdaQueryWrapper<InArticle> qw = new LambdaQueryWrapper<InArticle>();
+        if (params.containsKey("type")) {
+            Object type = params.get("type");
+            switch (Integer.parseInt(String.valueOf(type))) {
                 case 0:
                     qw.orderByDesc(InArticle::getaCreateTime);
                     break;
@@ -82,17 +53,17 @@ public class InArticleServiceImpl extends ServiceImpl<InArticleDao, InArticle> i
                     qw.orderByDesc(InArticle::getaReadNumber);
                     break;
                 case 2:
-                    qw.orderByDesc(InArticle::getaCreateTime,InArticle::getaReadNumber);
+                    qw.orderByDesc(InArticle::getaCreateTime, InArticle::getaReadNumber);
                     break;
             }
         }
         IPage<InArticle> page = this.page(
-                new Query<InArticle>().getPage(params),qw
+                new Query<InArticle>().getPage(params), qw
         );
-        for(InArticle a:page.getRecords()){
-            Object obj=redisUtils.hget(RedisKeys.INUSER,String.valueOf(a.getuId()));
-            if(null!=obj){
-                a.setuName(((InUser)obj).getuName());
+        for (InArticle a : page.getRecords()) {
+            Object obj = redisUtils.hget(RedisKeys.INUSER, String.valueOf(a.getuId()));
+            if (null != obj) {
+                a.setuName(((InUser) obj).getuName());
                 a.setaSimpleTime(DateUtils.getSimpleTime(a.getaCreateTime()));
             }
         }
@@ -100,19 +71,32 @@ public class InArticleServiceImpl extends ServiceImpl<InArticleDao, InArticle> i
     }
 
     @Override
-    public PageUtils uDraft(Map<String, Object> params, Long userId) {
-        QueryWrapper<InArticle> queryWrapper = new QueryWrapper<>();
-        queryWrapper.lambda().eq(InArticle::getuId, userId).eq(InArticle::getaStatus, 0);
+    public void updateReadNumber(Long aReadNumber, Long aId) {
+        this.baseMapper.addReadNumber(aReadNumber, aId);
+    }
+
+    @Override
+    public PageUtils statusOK(Map<String, Object> map) {
+        LambdaQueryWrapper<InArticle> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(InArticle::getaStatus, 2);
         IPage<InArticle> page = this.page(
-                new Query<InArticle>().getPage(params),
+                new Query<InArticle>().getPage(map),
                 queryWrapper
         );
         return new PageUtils(page);
     }
 
     @Override
-    public void updateReadNumber(Long aReadNumber,Long aId) {
-        this.baseMapper.addReadNumber(aReadNumber,aId);
+    public PageUtils statusArticleUser(Map<String, Object> map, Long uId) {
+        int aStatus = (int) map.get("aStatus");
+        //0草稿 1审核 2发布
+        LambdaQueryWrapper<InArticle> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(InArticle::getuId, uId).eq(InArticle::getaStatus, aStatus);
+        IPage<InArticle> page = this.page(
+                new Query<InArticle>().getPage(map),
+                queryWrapper
+        );
+        return new PageUtils(page);
     }
 
     @Override

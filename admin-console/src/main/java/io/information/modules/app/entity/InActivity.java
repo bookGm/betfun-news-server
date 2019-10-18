@@ -1,6 +1,7 @@
 package io.information.modules.app.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import io.swagger.annotations.ApiModel;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.information.modules.app.dao.InCommonReplyDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.information.modules.app.entity.InCommonReply" id="commonReplyMap">
+        <result property="crId" column="cr_id"/>
+        <result property="tId" column="t_id"/>
+        <result property="tType" column="t_type"/>
+        <result property="tName" column="t_name"/>
+        <result property="toCrId" column="to_cr_id"/>
+        <result property="crContent" column="cr_content"/>
+        <result property="crTime" column="cr_time"/>
+    </resultMap>
+
+
+</mapper>

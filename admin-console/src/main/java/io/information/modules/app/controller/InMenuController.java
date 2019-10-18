@@ -6,16 +6,15 @@ import io.information.common.utils.R;
 import io.information.modules.app.entity.InMenu;
 import io.information.modules.app.entity.InMenus;
 import io.information.modules.app.service.IInMenuService;
-import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Map;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -27,7 +26,6 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/app/menu")
-@Api(value = "/app/menu",tags = "APP咨讯菜单接口<关联资源接口>")
 public class InMenuController {
     @Autowired
     private IInMenuService menuService;
@@ -36,7 +34,6 @@ public class InMenuController {
      * 添加
      */
     @PostMapping("/save")
-    @ApiOperation(value = "新增咨询菜单")
     public R save(@RequestBody InMenu menu) {
         menuService.save(menu);
         return R.ok();
@@ -45,8 +42,6 @@ public class InMenuController {
     /**
      * 添加<包含关联表>
      */
-    @ApiOperation(value = "新增咨询菜单、资讯资源", httpMethod = "POST")
-    @ApiImplicitParam(name = "menus", value = "菜单资源信息", required = true)
     @PostMapping("/saveList")
     public R saveList(@RequestBody InMenus menus) {
         menuService.addMenu(menus);
@@ -58,8 +53,6 @@ public class InMenuController {
      * 删除
      */
     @DeleteMapping("/delete/{mId}")
-    @ApiOperation(value = "单个删除咨询菜单", httpMethod = "DELETE")
-    @ApiImplicitParam(name = "mId", value = "菜单ID", required = true)
     public R delete(@PathVariable("mId") Long mId) {
         menuService.deleteMenu(mId);
         return R.ok();
@@ -69,8 +62,6 @@ public class InMenuController {
      * 删除
      */
     @DeleteMapping("/deleteAll/{mId}")
-    @ApiOperation(value = "删除咨询菜单、资讯资源", httpMethod = "DELETE")
-    @ApiImplicitParam(name = "mId", value = "菜单ID", required = true)
     public R deleteAll(@PathVariable("mId") Long mId) {
         menuService.deleteAll(mId);
         return R.ok();
@@ -81,8 +72,6 @@ public class InMenuController {
      * 修改
      */
     @PutMapping("/update")
-    @ApiOperation(value = "修改咨询菜单", httpMethod = "PUT")
-    @ApiImplicitParam(name = "menu", value = "菜单信息", required = true)
     public R update(@RequestBody InMenu menu) {
         menuService.updateById(menu);
         return R.ok();
@@ -92,8 +81,6 @@ public class InMenuController {
      * 修改<包含关联表>
      */
     @PutMapping("/updateList")
-    @ApiOperation(value = "修改咨询菜单、资讯资源", httpMethod = "PUT")
-    @ApiImplicitParam(name = "menus", value = "菜单信息、资源信息", required = true)
     public R updateList(@RequestBody InMenus menus) {
         menuService.updateMenu(menus);
         return R.ok();
@@ -108,17 +95,6 @@ public class InMenuController {
     @ApiImplicitParam(name = "mId", value = "菜单信ID", required = true)
     public R info(@PathVariable("mId") Long mId) {
         InMenus menus = menuService.queryMenuById(mId);
-        return R.ok().put("menus",menus);
-    }
-
-    /**
-     * 名称模糊查询
-     */
-    @GetMapping("/infoName/{mName}")
-    @ApiOperation(value = "名称模糊查询咨询菜单", httpMethod = "GET")
-    @ApiImplicitParam(name = "mName", value = "菜单大致名称", required = true)
-    public R infoName(@PathVariable("mName") String mName) {
-        InMenus menus = menuService.queryLikeMenu(mName);
         return R.ok().put("menus",menus);
     }
 
@@ -162,10 +138,10 @@ public class InMenuController {
      * @return
      */
     @GetMapping("getAllMenu")
-    public ResponseEntity<List<InMenu>> getAllMenu(){
+    public R getAllMenu(){
         InMenu menu =new InMenu();
         menu.setmCode("0");
         getMenuTree(menuService.list(),menu);
-        return ResponseEntity.ok(menu.getChildren());
+        return R.ok().put("",menu.getChildren());
     }
 }
