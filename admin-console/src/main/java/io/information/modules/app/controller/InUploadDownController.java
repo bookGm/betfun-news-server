@@ -1,4 +1,4 @@
-package io.information.modules.news.controller;
+package io.information.modules.app.controller;
 
 import com.google.gson.Gson;
 import com.qiniu.common.QiniuException;
@@ -21,8 +21,10 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 @RestController
-@RequestMapping("news/uploadDown")
-public class UploadDownController {
+@RequestMapping("app/uploadDown")
+public class InUploadDownController {
+
+
     //设置好账号的ACCESS_KEY和SECRET_KEY
     String ACCESS_KEY = "***";
     String SECRET_KEY = "***";
