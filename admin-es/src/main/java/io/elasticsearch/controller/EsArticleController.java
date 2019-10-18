@@ -1,5 +1,6 @@
 package io.elasticsearch.controller;
 
+import io.elasticsearch.entity.EsArticleEntity;
 import io.elasticsearch.service.EsArticleService;
 import io.elasticsearch.utils.PageUtils;
 import io.elasticsearch.utils.SearchRequest;
@@ -8,6 +9,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 /**
  * es文章操作
@@ -23,8 +26,8 @@ public class EsArticleController {
     /**
      * 查询所有已发布文章
      */
-    @GetMapping("/search")
-    public PageUtils search(@RequestBody SearchRequest request) {
+    @GetMapping("/searchOK")
+    public PageUtils searchOK(@RequestBody SearchRequest request) {
         return articleService.articleSearch(request);
     }
 
@@ -34,6 +37,14 @@ public class EsArticleController {
     @GetMapping("/keySearch")
     public PageUtils keySearch(@RequestBody SearchRequest request) {
         return articleService.articleSearchKey(request);
+    }
+
+    /**
+     * 关键字查询[标签，标题，内容]<不分页>
+     */
+    @GetMapping("/search")
+    public List<EsArticleEntity> search(String key) {
+        return articleService.search(key);
     }
 
     /**
