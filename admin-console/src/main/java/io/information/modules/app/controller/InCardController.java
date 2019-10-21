@@ -51,11 +51,15 @@ public class InCardController {
     /**
      * 帖子删除
      */
+    @Login
     @DeleteMapping("/delete")
     @ApiOperation(value = "帖子删除", httpMethod = "DELETE")
     @ApiImplicitParam(name = "cardBase", value = "帖子ID数组", dataType = "Long[ ]", required = true)
-    public R delete(@RequestBody Long[] cIds) {
-        cardService.delete(cIds);
-        return R.ok();
+    public R delete(@RequestBody Long[] cIds, @ApiIgnore @LoginUser InUser user) {
+        if (2 == user.getuAuthStatus()) {
+            cardService.delete(cIds);
+            return R.ok();
+        }
+        return R.error("此操作需要认证通过");
     }
 }

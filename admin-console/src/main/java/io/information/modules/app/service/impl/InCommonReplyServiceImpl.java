@@ -8,18 +8,34 @@ import io.information.modules.app.service.IInCommonReplyService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 
 @Service
-public class InCommonReplyServiceImpl extends ServiceImpl<InCommonReplyDao,InCommonReply> implements IInCommonReplyService {
+public class InCommonReplyServiceImpl extends ServiceImpl<InCommonReplyDao, InCommonReply> implements IInCommonReplyService {
 
 
     @Override
-    public List<InCommonReply> search(Long ToCrId) {
+    public List<InCommonReply> search(Map<String, Object> map) {
+        int tId = (int) map.get("tId");
+        int tType = (int) map.get("tType");
         //查询回复信息
         LambdaQueryWrapper<InCommonReply> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(InCommonReply::getToCrId,ToCrId);
+        queryWrapper.eq(InCommonReply::gettId, tId).eq(InCommonReply::gettType, tType);
         InCommonReply reply = this.getOne(queryWrapper);
-//        reply.get
-        return null;
+        return recursion(reply);
+    }
+
+
+    private List<InCommonReply> comList = null;
+
+    public List<InCommonReply> recursion(InCommonReply commonReply) {
+        if (commonReply.getToCrId() != null) {
+            LambdaQueryWrapper<InCommonReply> queryWrapper = new LambdaQueryWrapper<>();
+            queryWrapper.eq(InCommonReply::getCrId, commonReply.getToCrId());
+            InCommonReply one = this.getOne(queryWrapper);
+            comList.add(one);
+            recursion(one);
+        }
+        return comList;
     }
 }

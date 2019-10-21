@@ -1,11 +1,12 @@
 package io.information.modules.app.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import io.information.common.utils.PageUtils;;
 import io.information.modules.app.entity.InCommonReply;
 
 import java.util.List;
 import java.util.Map;
+
+;
 
 /**
  * 评论回复表
@@ -16,6 +17,6 @@ import java.util.Map;
  */
 public interface IInCommonReplyService extends IService<InCommonReply> {
 
-    List<InCommonReply> search(Long ToCrId);
+    List<InCommonReply> search(Map<String, Object> map);
 }
 

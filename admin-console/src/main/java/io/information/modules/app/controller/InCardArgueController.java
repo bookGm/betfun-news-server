@@ -47,7 +47,6 @@ public class InCardArgueController {
     public R save(@RequestBody InCardArgue cardArgue, @ApiIgnore @LoginUser InUser user) {
         if (2 == user.getuAuthStatus()) {
             cardArgueService.save(cardArgue);
-            //rabbit
             rabbitTemplate.convertAndSend(Constants.cardExchange,
                     Constants.card_Save_RouteKey, cardArgue);
             return R.ok();

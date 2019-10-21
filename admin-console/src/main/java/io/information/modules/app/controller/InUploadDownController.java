@@ -8,7 +8,8 @@ import com.qiniu.storage.UploadManager;
 import com.qiniu.storage.model.DefaultPutRet;
 import com.qiniu.util.Auth;
 import io.information.common.utils.R;
-import org.springframework.beans.factory.annotation.Value;
+import org.apache.commons.io.FileUtils;
+import org.springframework.util.ResourceUtils;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -45,17 +46,21 @@ public class InUploadDownController {
 
     /**
      * 文件上传
-     *
      */
-    @PostMapping("/upload")
-    public R upload(@RequestParam("picture") MultipartFile picture, HttpServletRequest request) {
+    @PostMapping("/uploadPic")
+    public R upload(@RequestParam("picture") MultipartFile picture, HttpServletRequest request) throws FileNotFoundException {
 
-        //获取文件在服务器的储存位置
-        String path = request.getSession().getServletContext().getRealPath("/upload");
-        File filePath = new File(path);
-        if (!filePath.exists() && !filePath.isDirectory()) {
-            filePath.mkdir();
-        }
+        //项目根路径
+        String path = ResourceUtils.getURL("classpath:").getPath() + "static/upload/";
+
+//        //获取文件在服务器的储存位置
+//        String path = request.getSession().getServletContext().getRealPath("");
+//        //判断文件存储位置
+//        File filePath = new File(path);
+//        if (!filePath.exists() && !filePath.isDirectory()) {
+//            filePath.mkdir();
+//        }
+
 
         //获取原始文件名称(包含格式)
         String originalFileName = picture.getOriginalFilename();
@@ -72,21 +77,29 @@ public class InUploadDownController {
         String date = sdf.format(d);
         String fileName = date + name + "." + type;
 
-
         //在指定路径下创建一个文件
         File targetFile = new File(path, fileName);
-
         //将文件保存到服务器指定位置
         try {
             picture.transferTo(targetFile);
-            //将文件在服务器的存储路径返回
-            return R.ok("upload/" + fileName);
+            return R.ok().put("msg", "upload/" + fileName);
         } catch (IOException e) {
             e.printStackTrace();
             return R.error("上传失败");
         }
     }
 
+
+    @PostMapping("/uploadDle")
+    public R delete(String img) throws FileNotFoundException {
+        String path = ResourceUtils.getURL("classpath:").getPath() + "static/upload/";
+        boolean flag = FileUtils.deleteQuietly(new File(path + img));
+        if (flag) {
+            return R.ok();
+        } else {
+            return R.error("删除失败");
+        }
+    }
 
     /**
      * @param FilePath 本地文件路径
