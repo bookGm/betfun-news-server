@@ -36,26 +36,6 @@ public class InUserController extends AbstractController {
     @Autowired
     private RabbitTemplate rabbitTemplate;
 
-    //TODO 微信扫码登录
-    // 用户消息<分页>
-    // 用户关注列表<分页>
-    // 用户消息<分页>
-    // ...
-
-
-    /**
-     * 密码登录
-     */
-    @GetMapping("/upLogin")
-    @ApiOperation(value = "密码登录", httpMethod = "GET", notes = "使用用户名和密码登录状态")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "username", value = "用户名", required = true),
-            @ApiImplicitParam(name = "password", value = "密码", required = true)})
-    public R upLogin(String username, String password) {
-        userService.findUser(username, password);
-        return R.ok();
-    }
-
 
     /**
      * 修改密码
@@ -83,6 +63,8 @@ public class InUserController extends AbstractController {
         return R.ok();
     }
 
+
+    //用户关注<作者，节点，人物>
 
 
 }

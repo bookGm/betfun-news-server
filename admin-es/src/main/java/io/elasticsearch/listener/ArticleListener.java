@@ -2,7 +2,6 @@ package io.elasticsearch.listener;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.guansuo.common.JsonUtil;
 import io.elasticsearch.entity.EsArticleEntity;
 import io.elasticsearch.service.EsArticleService;
 import io.mq.utils.Constants;

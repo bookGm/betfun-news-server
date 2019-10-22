@@ -67,7 +67,7 @@ public class EsArticleEntity implements Serializable {
     private String aLink;   //文章链接
 
     @Field(type = FieldType.Date)
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date aCreateTime;// 创建时间
     @TableField(exist = false)
     private String aSimpleTime;
