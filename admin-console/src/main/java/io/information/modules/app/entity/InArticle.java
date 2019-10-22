@@ -1,6 +1,7 @@
 package io.information.modules.app.entity;
 
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 
@@ -26,6 +27,7 @@ public class InArticle implements Serializable {
     /**
      * 文章id
      */
+    @TableId
     private Long aId;
     /**
      * 用户id

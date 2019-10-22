@@ -1,5 +1,6 @@
 package io.information.modules.app.entity;
 
+import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 
@@ -20,6 +21,7 @@ public class InMenuSource implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    @TableId
     private Long msId;
 
     /**

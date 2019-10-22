@@ -1,5 +1,6 @@
 package io.information.modules.news.entity;
 
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 
 import java.io.Serializable;
@@ -19,6 +20,7 @@ public class TagEntity implements Serializable {
 	/**
 	 * 标签id
 	 */
+	@TableId
 	private Long tId;
 	/**
 	 * 标签名称

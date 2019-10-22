@@ -71,15 +71,15 @@ public class InUserController extends AbstractController {
 
 
     /**
-     * 更新<包含认证>
+     * 更新
      */
     @PutMapping("/update")
     @ApiOperation(value = "修改咨讯用户", httpMethod = "PUT")
     @ApiImplicitParam(name = "user", value = "用户信息", required = true)
     public R update(@RequestBody InUser user) {
         userService.updateById(user);
-        rabbitTemplate.convertAndSend(Constants.userExchange,
-                Constants.card_Update_RouteKey, user);
+//        rabbitTemplate.convertAndSend(Constants.userExchange,
+//                Constants.user_Update_RouteKey, user);
         return R.ok();
     }
 

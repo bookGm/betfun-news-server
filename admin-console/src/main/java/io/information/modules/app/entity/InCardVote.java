@@ -1,5 +1,6 @@
 package io.information.modules.app.entity;
 
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -26,6 +27,7 @@ public class InCardVote implements Serializable {
     /**
      * 帖子id
      */
+    @TableId
     private Long cId;
 
     /**

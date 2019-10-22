@@ -1,5 +1,6 @@
 package io.information.modules.app.entity;
 
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -18,6 +19,7 @@ public class InCommonReply implements Serializable {
     /**
      * 评论或回复id
      */
+    @TableId
     private Long crId;
     /**
      * 目标id（文章、帖子，活动，用户等）

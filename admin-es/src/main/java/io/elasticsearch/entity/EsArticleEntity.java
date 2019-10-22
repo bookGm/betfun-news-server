@@ -1,5 +1,6 @@
 package io.elasticsearch.entity;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.elasticsearch.annotations.Document;
@@ -18,6 +19,9 @@ public class EsArticleEntity implements Serializable {
 
     @Field(type = FieldType.Long)
     private Long uId;   //用户Id
+
+    @Field(type = FieldType.Keyword)
+    private String uName;   //用户
 
     @Field(type = FieldType.Keyword)
     private String aTitle;  //文章标题
@@ -145,5 +149,13 @@ public class EsArticleEntity implements Serializable {
 
     public void setaStatus(Integer aStatus) {
         this.aStatus = aStatus;
+    }
+
+    public String getuName() {
+        return uName;
+    }
+
+    public void setuName(String uName) {
+        this.uName = uName;
     }
 }

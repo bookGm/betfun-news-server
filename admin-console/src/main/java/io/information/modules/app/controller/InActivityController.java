@@ -34,8 +34,6 @@ import java.util.Map;
 public class InActivityController {
     @Autowired
     private IInActivityService activityService;
-    @Autowired
-    private IInUserService userService;
 
 
     /**

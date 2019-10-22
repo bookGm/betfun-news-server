@@ -1,5 +1,6 @@
 package io.information.modules.app.entity;
 
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModel;
 import lombok.EqualsAndHashCode;
@@ -25,6 +26,7 @@ public class InActivity implements Serializable {
     /**
      * 活动id
      */
+    @TableId
     private Long actId;
 
     /**
