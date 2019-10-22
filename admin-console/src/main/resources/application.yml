@@ -8,7 +8,8 @@ server:
   connection-timeout: 5000ms
   servlet:
     context-path: /news
-
+web:
+  upload-path=/usr/local/share/news/upload
 spring:
   # 环境 dev|test|prod
   profiles:
@@ -22,9 +23,6 @@ spring:
       max-file-size: 100MB
       max-request-size: 100MB
       enabled: true
-#  resources:
-#    static-locations: classpath:/upload/
-
   redis:
     open: true  # 是否开启redis缓存  true开启   false关闭
     database: 0
@@ -42,10 +40,7 @@ spring:
     throw-exception-if-no-handler-found: true
     static-path-pattern: /**
   resources:
-    static-locations: classpath:/META-INF/resources/,classpath:/resources/,classpath:/static/,classpath:/upload/,classpath:/test/ #,file:${web:upload-path}
-
-#  resources:
-#    add-mappings: false
+    static-locations: classpath:/META-INF/resources/,classpath:/resources/,classpath:/static/,classpath:/upload/,classpath:/test/,file:${web:upload-path}
 #mybatis
 mybatis-plus:
   mapper-locations: classpath*:/mapper/**/*.xml

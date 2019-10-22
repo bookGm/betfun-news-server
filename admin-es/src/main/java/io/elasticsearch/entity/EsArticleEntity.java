@@ -43,6 +43,22 @@ public class EsArticleEntity implements Serializable {
 
     @Field(type = FieldType.Keyword)
     private String aSource; //文章来源
+    /**
+     * 点赞数
+     */
+    private Long aLike;
+    /**
+     * 收藏数
+     */
+    private Integer aCollect;
+    /**
+     * 评论数
+     */
+    private Long aCritic;
+    /**
+     * 浏览量
+     */
+    private Long aReadNumber;
 
     @Field(type = FieldType.Integer)
     private Integer aStatus;    //文章状态
@@ -53,7 +69,8 @@ public class EsArticleEntity implements Serializable {
     @Field(type = FieldType.Date)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private Date aCreateTime;// 创建时间
-
+    @TableField(exist = false)
+    private String aSimpleTime;
 
     public Long getaId() {
         return aId;

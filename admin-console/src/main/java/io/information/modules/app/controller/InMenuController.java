@@ -142,6 +142,6 @@ public class InMenuController {
         InMenu menu =new InMenu();
         menu.setmCode("0");
         getMenuTree(menuService.list(),menu);
-        return R.ok().put("",menu.getChildren());
+        return R.ok().put("menus",menu.getChildren());
     }
 }

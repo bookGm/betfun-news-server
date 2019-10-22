@@ -10,6 +10,8 @@ import com.qiniu.util.Auth;
 import io.information.common.utils.R;
 import org.apache.commons.io.FileUtils;
 import org.springframework.util.ResourceUtils;
+import io.information.config.ServerConfig;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -18,13 +20,15 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.*;
+import java.net.URLDecoder;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 @RestController
 @RequestMapping("app/uploadDown")
 public class InUploadDownController {
-
+    @Autowired
+    ServerConfig serverConfig;
 
     //设置好账号的ACCESS_KEY和SECRET_KEY
     String ACCESS_KEY = "***";
@@ -48,44 +52,37 @@ public class InUploadDownController {
      * 文件上传
      */
     @PostMapping("/uploadPic")
-    public R upload(@RequestParam("picture") MultipartFile picture, HttpServletRequest request) throws FileNotFoundException {
-
-        //项目根路径
-        String path = ResourceUtils.getURL("classpath:").getPath() + "static/upload/";
-
-//        //获取文件在服务器的储存位置
-//        String path = request.getSession().getServletContext().getRealPath("");
-//        //判断文件存储位置
-//        File filePath = new File(path);
-//        if (!filePath.exists() && !filePath.isDirectory()) {
-//            filePath.mkdir();
-//        }
-
-
+    public R upload(@RequestParam("upload") MultipartFile picture, HttpServletRequest request) throws Exception {
+        String contextPath=request.getContextPath();
+        //获取文件在服务器的储存位置
+        String path=ResourceUtils.getURL("classpath:").getPath()+"static/upload/";
+        path = URLDecoder.decode(path,"utf-8");
+        File filePath = new File(path);
+        if (!filePath.exists() && !filePath.isDirectory()) {
+            filePath.mkdir();
+        }
         //获取原始文件名称(包含格式)
         String originalFileName = picture.getOriginalFilename();
-
         //获取文件类型，以最后一个`.`为标识
         String type = originalFileName.substring(originalFileName.lastIndexOf(".") + 1);
-
         //获取文件名称（不包含格式）
         String name = originalFileName.substring(0, originalFileName.lastIndexOf("."));
-
         //设置文件新名称: 当前时间+文件名称（不包含格式）
         Date d = new Date();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
         String date = sdf.format(d);
         String fileName = date + name + "." + type;
-
         //在指定路径下创建一个文件
         File targetFile = new File(path, fileName);
+
         //将文件保存到服务器指定位置
         try {
             picture.transferTo(targetFile);
-            return R.ok().put("msg", "upload/" + fileName);
+            //将文件在服务器的存储路径返回
+            return R.ok().put("url",serverConfig.getUrl()+"/upload/" + fileName).put("uploaded",1).put("formUrl","/upload/" + fileName);
         } catch (IOException e) {
             e.printStackTrace();
-            return R.error("上传失败");
+            return R.error("上传失败").put("uploaded",0);
         }
     }
 

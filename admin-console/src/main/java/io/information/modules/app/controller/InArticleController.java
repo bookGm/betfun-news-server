@@ -1,6 +1,7 @@
 package io.information.modules.app.controller;
 
 
+import com.alibaba.fastjson.JSON;
 import io.information.common.utils.PageUtils;
 import io.information.common.utils.R;
 import io.information.common.utils.RedisKeys;
@@ -51,14 +52,13 @@ public class InArticleController {
     @Login
     @PostMapping("/save")
     @ApiOperation(value = "新增咨讯文章", httpMethod = "POST")
-    @ApiImplicitParam(name = "article", value = "文章信息", required = true)
     public R save(@RequestBody InArticle article, @ApiIgnore @LoginUser InUser user) {
         if (user.getuAuthStatus() == 2) {
             article.setuId(user.getuId());
             article.setaCreateTime(new Date());
             articleService.save(article);
             rabbitTemplate.convertAndSend(Constants.articleExchange,
-                    Constants.article_Save_RouteKey, article);
+                    Constants.article_Save_RouteKey, JSON.toJSON(article));
             return R.ok();
         }
         return R.error("此操作需要认证通过");
@@ -95,7 +95,7 @@ public class InArticleController {
         if (user.getuAuthStatus() == 2) {
             articleService.updateById(article);
             rabbitTemplate.convertAndSend(Constants.articleExchange,
-                    Constants.article_Update_RouteKey, article);
+                    Constants.article_Update_RouteKey, JSON.toJSON(article));
             return R.ok();
         }
         return R.error("此操作需要认证通过");
