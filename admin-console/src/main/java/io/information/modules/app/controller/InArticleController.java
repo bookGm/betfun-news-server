@@ -2,6 +2,7 @@ package io.information.modules.app.controller;
 
 
 import com.alibaba.fastjson.JSON;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import io.information.common.utils.PageUtils;
 import io.information.common.utils.R;
 import io.information.common.utils.RedisKeys;
@@ -22,9 +23,8 @@ import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -196,5 +196,22 @@ public class InArticleController {
         }
     }
 
-
+    /**
+     * 专栏主页文章统计
+     */
+    @Login
+    @GetMapping("getArticleStatistics")
+    @ApiOperation(value = "获取专栏主页文章统计数据", httpMethod = "GET")
+    public R getArticleStatistics(@ApiIgnore @LoginUser InUser user) {
+        Map<String,Object> rm=new HashMap<>();
+        List<InArticle> list=articleService.list(new LambdaQueryWrapper<InArticle>().eq(InArticle::getuId,user.getuId()));
+        //累计文章数
+        rm.put("aCount",list.size());
+        //累计阅读量
+        LongSummaryStatistics readNumber=list.stream().collect(Collectors.summarizingLong(InArticle::getaReadNumber));
+        rm.put("rCount",readNumber.getSum());
+        //累计粉丝数
+        rm.put("fCount",user.getuFans());
+        return R.ok(rm);
+    }
 }

@@ -16,6 +16,7 @@ import io.information.modules.app.service.IInUserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
@@ -36,6 +37,8 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
     private static final Logger LOG = LoggerFactory.getLogger(InUserServiceImpl.class);
     @Autowired
     RedisUtils redisUtils;
+    @Autowired
+    InUserDao inUserDao;
 
     @Override
     public PageUtils queryUsersByArgueIds(Map<String, Object> params) {
@@ -82,6 +85,14 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
         String dbPwd = user.getuPwd();
         map.get("输入密码");
         //TODO
+    }
+
+    @Override
+    @Cacheable(value=RedisKeys.FOCUS,key = "#uId+'-'+#fId")
+    public Long focus(Long uId, Long fId) {
+        inUserDao.addFans(uId);
+        inUserDao.addFocus(fId);
+        return fId;
     }
 
     @Override

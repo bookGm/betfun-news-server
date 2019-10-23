@@ -80,10 +80,19 @@ public class InTagController {
      * 列表
      */
     @GetMapping("/list")
-    @ApiOperation(value = "获取全部资讯标签", httpMethod = "GET")
+    @ApiOperation(value = "分页获取资讯标签", httpMethod = "GET")
     @ApiImplicitParam(name = "map", value = "分页数据", required = true)
     public R list(@RequestParam Map<String, Object> map) {
         PageUtils page = tagService.queryPage(map);
         return R.ok().put("page", page);
+    }
+
+    /**
+     * 全部资讯标签
+     */
+    @GetMapping("/getAllList")
+    @ApiOperation(value = "获取全部资讯标签", httpMethod = "GET")
+    public R getAllList() {
+        return R.ok().put("tags",tagService.list());
     }
 }
