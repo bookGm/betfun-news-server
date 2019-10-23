@@ -1,28 +1,32 @@
 package io.information.modules.app.entity;
 
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
 import java.io.Serializable;
 
 /**
- *
  * 资讯帖子前台字段
- *
  */
-
+@ApiModel(value = "帖子", description = "帖子对象")
 public class InCard implements Serializable {
     private static final long serialVersionUID = 1L;
 
     /**
      * 基础信息
      */
+    @ApiModelProperty(value = "帖子基础信息", name = "base", required = true)
     private InCardBase base;
     /**
      * 辩论信息
      */
+    @ApiModelProperty(value = "帖子辩论信息", name = "argue", required = false)
     private InCardArgue argue;
     /**
      * 投票信息
      */
+    @ApiModelProperty(value = "帖子投票信息", name = "vote", required = false)
     private InCardVote vote;
 
     public InCardBase getBase() {

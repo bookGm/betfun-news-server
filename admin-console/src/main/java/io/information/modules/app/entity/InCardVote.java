@@ -2,6 +2,8 @@ package io.information.modules.app.entity;
 
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 
@@ -20,10 +22,15 @@ import java.util.List;
 
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
+@ApiModel(value = "帖子投票信息", description = "帖子投票信息对象")
 public class InCardVote implements Serializable {
 
     private static final long serialVersionUID = 1L;
-
+    /**
+     * 帖子基础信息
+     */
+    @ApiModelProperty(value = "帖子基础信息", name = "cardBase", required = true)
+    private InCardBase cardBase;
     /**
      * 帖子id
      */
@@ -34,20 +41,22 @@ public class InCardVote implements Serializable {
      * 帖子类型
      * 0单选 1多选
      */
+    @ApiModelProperty(value = "帖子类型（ 0:单选 1:多选 ）", name = "cvType", required = true)
     private int cvType;
 
     /**
      * 投票选项信息（逗号分隔）
      */
+    @ApiModelProperty(value = "投票选项信息（逗号分隔）", name = "cvInfo", required = true)
     private String cvInfo;
-    //投票选项信息返回
-    private List cvInfoList;
     /**
      * 结束日期
      */
+    @ApiModelProperty(value = "结束日期", name = "cvCloseTime", required = true)
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date cvCloseTime;
 
+    @ApiModelProperty(value = "投票数量信息  cv0~cv29  ", name = "cv0", required = false)
     private Integer cv0;
 
     private Integer cv1;
@@ -76,6 +85,7 @@ public class InCardVote implements Serializable {
 
     private Integer cv13;
 
+    @ApiModelProperty(value = "投票数量信息  cv0~cv29  ", name = "cv14", required = false)
     private Integer cv14;
 
     private Integer cv15;
@@ -106,8 +116,17 @@ public class InCardVote implements Serializable {
 
     private Integer cv28;
 
+    @ApiModelProperty(value = "投票数量信息  cv0~cv29  ", name = "cv29", required = false)
     private Integer cv29;
 
+
+    public InCardBase getCardBase() {
+        return cardBase;
+    }
+
+    public void setCardBase(InCardBase cardBase) {
+        this.cardBase = cardBase;
+    }
 
     public Long getcId() {
         return cId;
@@ -379,13 +398,5 @@ public class InCardVote implements Serializable {
 
     public void setCv29(Integer cv29) {
         this.cv29 = cv29;
-    }
-
-    public List getCvInfoList() {
-        return cvInfoList;
-    }
-
-    public void setCvInfoList(List cvInfoList) {
-        this.cvInfoList = cvInfoList;
     }
 }

@@ -8,8 +8,6 @@ import io.information.modules.app.service.IInCardVoteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
-
 @Service
 public class InCardServiceImpl implements IInCardService {
     @Autowired
@@ -27,11 +25,12 @@ public class InCardServiceImpl implements IInCardService {
         InCardVote vote = card.getVote();
         if (null != base.getcTitle()) {
             Long cId = base.getcId();
-            if (null != argue.getCaRside() && null != argue.getCaFside()) {
+            if (null != argue.getCaRside() && "".equals(argue.getCaRside())
+                    && null != argue.getCaFside() && !"".equals(argue.getCaFside())) {
                 argue.setcId(cId);
                 argueService.save(argue);
             }
-            if (null != vote.getCvInfo()) {
+            if (null != vote.getCvInfo() && !"".equals(vote.getCvInfo())) {
                 vote.setcId(cId);
                 voteService.save(vote);
             }
@@ -59,12 +58,9 @@ public class InCardServiceImpl implements IInCardService {
             if (2 == category) {
                 //投票帖子
                 InCardVote vote = voteService.getById(base.getcId());
-                String[] info = vote.getCvInfo().split(",");
-                vote.setCvInfoList(Arrays.asList(info));
                 card.setVote(vote);
                 return card;
             }
-
         }
         //基础帖子
         return card;

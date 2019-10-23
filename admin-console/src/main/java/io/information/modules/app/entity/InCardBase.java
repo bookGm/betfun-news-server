@@ -1,6 +1,8 @@
 package io.information.modules.app.entity;
 
 import com.baomidou.mybatisplus.annotation.TableId;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 
@@ -17,6 +19,7 @@ import java.io.Serializable;
 
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
+@ApiModel(value = "帖子基础信息", description = "帖子基础信息对象")
 public class InCardBase implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -35,24 +38,29 @@ public class InCardBase implements Serializable {
     /**
      * 帖子分类（字典）
      */
+    @ApiModelProperty(value = "帖子分类", name = "cCategory", required = true,example = "0：普通帖  1：辩论帖  2：投票帖")
     private Integer cCategory;
 
     /**
      * 帖子节点分类（字典）
      */
+    @ApiModelProperty(value = "帖子节点分类", name = "cNodeCategory", required = true,example = "0")
     private Integer cNodeCategory;
     /**
      * 帖子标题
      */
+    @ApiModelProperty(value = "帖子标题", name = "cTitle", required = true)
     private String cTitle;
     /**
      * 帖子正文
      */
+    @ApiModelProperty(value = "帖子正文", name = "cContent", required = true)
     private String cContent;
 
     /**
      * 回帖仅作者可见（0：是  1：否）
      */
+    @ApiModelProperty(value = "回帖仅作者可见（0：是  1：否）", name = "cHide", required = false)
     private Integer cHide;
 
 

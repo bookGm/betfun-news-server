@@ -2,6 +2,8 @@ package io.information.modules.app.entity;
 
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 
@@ -13,6 +15,7 @@ import java.util.Date;
  */
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
+@ApiModel(value = "评论", description = "评论对象")
 public class InCommonReply implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -24,22 +27,27 @@ public class InCommonReply implements Serializable {
     /**
      * 目标id（文章、帖子，活动，用户等）
      */
+    @ApiModelProperty(value = "目标id（文章、帖子，活动，用户等）", name = "tId", required = true)
     private Long tId;
     /**
      * 目标类型（字典 ：文章、帖子，活动，用户等）
      */
+    @ApiModelProperty(value = "目标类型（字典 ：文章、帖子，活动，用户等）", name = "tType", required = true)
     private Integer tType;
     /**
      * 目标名称（文章，帖子，活动，用户）
      */
+    @ApiModelProperty(value = "目标名称（文章，帖子，活动，用户）", name = "tName", required = true)
     private String tName;
     /**
      * 被评论或回复id
      */
+    @ApiModelProperty(value = "被评论或回复id", name = "toCrId", required = true)
     private Long toCrId;
     /**
      * 回复或评论内容
      */
+    @ApiModelProperty(value = "回复或评论内容", name = "crContent", required = true)
     private String crContent;
     /**
      * 评论或回复时间

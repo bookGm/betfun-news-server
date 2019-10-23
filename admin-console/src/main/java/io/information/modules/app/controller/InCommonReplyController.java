@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
+import java.util.Date;
 import java.util.Map;
 
 
@@ -47,6 +48,7 @@ public class InCommonReplyController {
     @ApiOperation(value = "保存评论信息", httpMethod = "POST")
     @ApiImplicitParam(name = "commonReply", value = "评论信息", required = true)
     public R save(@RequestBody InCommonReply commonReply) {
+        commonReply.setCrTime(new Date());
         commonReplyService.save(commonReply);
 
         return R.ok();

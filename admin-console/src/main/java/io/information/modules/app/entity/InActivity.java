@@ -3,6 +3,7 @@ package io.information.modules.app.entity;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 
@@ -19,6 +20,7 @@ import java.util.Date;
  */
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
+@ApiModel(value = "活动", description = "活动对象")
 public class InActivity implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -37,32 +39,38 @@ public class InActivity implements Serializable {
     /**
      * 活动内容
      */
+    @ApiModelProperty(value = "活动内容", name = "actTitle", required = true)
     private String actTitle;
 
     /**
      * 活动时间
      */
+    @ApiModelProperty(value = "活动时间(yyyy-MM-dd HH:mm:ss)", name = "actTime", required = true, example = "0-0-0")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date actTime;
 
     /**
      * 活动分类（字典）
      */
+    @ApiModelProperty(value = "活动分类", name = "actCategory", required = true, example = "0")
     private Integer actCategory;
 
     /**
      * 活动地址（省市县编码横线分隔）
      */
+    @ApiModelProperty(value = "活动地址（省市县编码横线分隔）", name = "actAddr", required = true, example = "0-0-0")
     private String actAddr;
 
     /**
      * 活动地址详情
      */
+    @ApiModelProperty(value = "活动地址详情", name = "actAddrDetail", required = true)
     private String actAddrDetail;
 
     /**
      * 活动人数
      */
+    @ApiModelProperty(value = "活动人数", name = "actNum", required = true)
     private Long actNum;
 
     /**
@@ -73,22 +81,26 @@ public class InActivity implements Serializable {
     /**
      * 活动封面URL
      */
+    @ApiModelProperty(value = "活动封面URL", name = "actCover", required = false)
     private String actCover;
 
     /**
      * 活动详情
      */
+    @ApiModelProperty(value = "活动详情", name = "actDetail", required = true)
     private String actDetail;
 
     /**
      * 活动开始时间
      */
+    @ApiModelProperty(value = "活动开始时间(yyyy-MM-dd HH:mm:ss)", name = "actStartTime", required = true)
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date actStartTime;
 
     /**
      * 活动结束时间
      */
+    @ApiModelProperty(value = "活动结束时间(yyyy-MM-dd HH:mm:ss)", name = "actCloseTime", required = true)
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date actCloseTime;
 

@@ -6,7 +6,6 @@ import io.information.common.utils.PageUtils;
 import io.information.common.utils.R;
 import io.information.modules.app.annotation.Login;
 import io.information.modules.app.annotation.LoginUser;
-import io.information.modules.app.entity.InCard;
 import io.information.modules.app.entity.InCardBase;
 import io.information.modules.app.entity.InUser;
 import io.information.modules.app.service.IInCardBaseService;
@@ -44,7 +43,7 @@ public class InCardBaseController {
 
 
     /**
-     * 添加
+     * 添加基础帖子
      */
     @Login
     @PostMapping("/save")
@@ -52,7 +51,8 @@ public class InCardBaseController {
     @ApiImplicitParam(name = "cardBase", value = "基础帖子信息", required = true)
     public R save(@RequestBody InCardBase cardBase, @ApiIgnore @LoginUser InUser user) {
         if (2 == user.getuAuthStatus()) {
-            cardBase.setcId(IdGenerator.getId());
+            long cId = IdGenerator.getId();
+            cardBase.setcId(cId);
             cardBaseService.save(cardBase);
             rabbitTemplate.convertAndSend(Constants.cardExchange,
                     Constants.card_Save_RouteKey, cardBase);
