@@ -58,7 +58,6 @@ public class InCardArgue implements Serializable {
     /**
      * 辩论结束日期
      */
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date caCloseTime;
 
     public Long getcId() {

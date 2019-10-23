@@ -3,6 +3,7 @@ package io.elasticsearch.entity;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.elasticsearch.annotations.DateFormat;
 import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
 import org.springframework.data.elasticsearch.annotations.FieldType;
@@ -38,27 +39,11 @@ public class EsArticleEntity implements Serializable {
     @Field(type = FieldType.Keyword)
     private String aCover;  //文章封面URL
 
-    @Field(type = FieldType.Keyword)
+    @Field(type = FieldType.Integer)
     private Integer aType;  //文章类型
 
     @Field(type = FieldType.Keyword)
     private String aSource; //文章来源
-    /**
-     * 点赞数
-     */
-    private Long aLike;
-    /**
-     * 收藏数
-     */
-    private Integer aCollect;
-    /**
-     * 评论数
-     */
-    private Long aCritic;
-    /**
-     * 浏览量
-     */
-    private Long aReadNumber;
 
     @Field(type = FieldType.Integer)
     private Integer aStatus;    //文章状态
@@ -66,11 +51,19 @@ public class EsArticleEntity implements Serializable {
     @Field(type = FieldType.Keyword)
     private String aLink;   //文章链接
 
-    @Field(type = FieldType.Date)
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    @Field(type = FieldType.Date,format= DateFormat.custom,pattern = "yyyy-MM-dd HH:mm:ss")
     private Date aCreateTime;// 创建时间
+
+    private Long aLike; //点赞数
+
+    private Integer aCollect; //收藏数
+
+    private Long aCritic; //评论数
+
+    private Long aReadNumber; //浏览量
     @TableField(exist = false)
-    private String aSimpleTime;
+
+    private String aSimpleTime; //简单时间
 
     public Long getaId() {
         return aId;

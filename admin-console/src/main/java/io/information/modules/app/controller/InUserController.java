@@ -33,8 +33,8 @@ import java.util.Map;
 public class InUserController extends AbstractController {
     @Autowired
     private IInUserService userService;
-    @Autowired
-    private RabbitTemplate rabbitTemplate;
+//    @Autowired
+//    private RabbitTemplate rabbitTemplate;
 
 
     /**
