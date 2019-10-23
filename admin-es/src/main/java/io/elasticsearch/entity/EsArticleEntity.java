@@ -52,6 +52,7 @@ public class EsArticleEntity implements Serializable {
     private String aLink;   //文章链接
 
     @Field(type = FieldType.Date,format= DateFormat.custom,pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date aCreateTime;// 创建时间
 
     private Long aLike; //点赞数

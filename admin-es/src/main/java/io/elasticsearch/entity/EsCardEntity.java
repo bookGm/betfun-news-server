@@ -68,6 +68,7 @@ public class EsCardEntity implements Serializable {
      * 辩论结束日期
      */
     @Field(type = FieldType.Date,format= DateFormat.custom,pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date caCloseTime;
     /**
      * 投票选项信息（逗号分隔）
@@ -80,6 +81,7 @@ public class EsCardEntity implements Serializable {
      * 投票结束日期
      */
     @Field(type = FieldType.Date,format= DateFormat.custom,pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date cvCloseTime;
     //用户展示信息
     private EsUserEntity userEs;

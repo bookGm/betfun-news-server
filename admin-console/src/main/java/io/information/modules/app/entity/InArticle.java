@@ -106,6 +106,7 @@ public class InArticle implements Serializable {
     /**
      * 创建时间
      */
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date aCreateTime;
     /**
      * 简单时间

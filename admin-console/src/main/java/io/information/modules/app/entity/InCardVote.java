@@ -45,6 +45,7 @@ public class InCardVote implements Serializable {
     /**
      * 结束日期
      */
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date cvCloseTime;
 
     private Integer cv0;
