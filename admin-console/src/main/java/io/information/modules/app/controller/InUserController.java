@@ -7,10 +7,8 @@ import io.information.modules.app.annotation.LoginUser;
 import io.information.modules.app.entity.InUser;
 import io.information.modules.app.service.IInUserService;
 import io.information.modules.sys.controller.AbstractController;
-import io.mq.utils.Constants;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,8 +61,13 @@ public class InUserController extends AbstractController {
         return R.ok();
     }
 
-
     //用户关注<作者，节点，人物>
-
+    @PostMapping("/focus")
+    @ApiOperation(value = "关注", httpMethod = "POST")
+    @ApiImplicitParam(name = "uId", value = "关注的用户id", required = true)
+    public R focus(Long uId, @ApiIgnore @LoginUser InUser user) {
+        userService.focus(user.getuId(),uId);
+        return R.ok();
+    }
 
 }

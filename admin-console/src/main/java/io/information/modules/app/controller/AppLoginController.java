@@ -107,7 +107,7 @@ public class AppLoginController {
             return R.error("" +
                     "手机号或密码不正确");
         }
-        return resultToken(user.getuId());
+        return resultToken(user.getuId(),user.getuAuthStatus());
     }
     @PostMapping("codeLogin")
     @ApiOperation("验证码登录")
@@ -124,7 +124,7 @@ public class AppLoginController {
         }
         if(redis.get(rkey).equals(form.getCode())){
             redis.delete(rkey);
-            return resultToken(user.getuId());
+            return resultToken(user.getuId(),user.getuAuthStatus());
         }else{
             return R.error("验证码输入错误");
         }
@@ -146,7 +146,7 @@ public class AppLoginController {
         }
         if(redis.get(rkey).equals(form.getCode())){
             Long uid= IdGenerator.getId();
-            R r=resultToken(uid);
+            R r=resultToken(uid,0);
             String salt = RandomStringUtils.randomAlphanumeric(20);
             String phone =form.getPhone();
             user=new InUser();
@@ -165,12 +165,13 @@ public class AppLoginController {
         }
     }
 
-    public R resultToken(Long userid){
+    public R resultToken(Long userid,int authStatus){
         //生成token
         String token = jwtUtils.generateToken(userid);
         Map<String, Object> map = new HashMap<>();
         map.put("token", token);
         map.put("expire", jwtUtils.getExpire());
+        map.put("authStatus", authStatus);
         return R.ok(map);
     }
 

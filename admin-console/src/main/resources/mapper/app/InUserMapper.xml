@@ -2,4 +2,10 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="io.information.modules.app.dao.InUserDao">
 
+    <update id="addFans" parameterType="java.lang.Long">
+         update in_user set u_fans=u_fans+1 where u_id=#{uId}
+    </update>
+    <update id="addFocus" parameterType="java.lang.Long">
+         update in_user set u_focus=u_focus+1 where u_id=#{uId}
+    </update>
 </mapper>

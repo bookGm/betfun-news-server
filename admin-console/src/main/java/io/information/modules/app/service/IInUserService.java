@@ -25,4 +25,12 @@ public interface IInUserService extends IService<InUser> {
     Boolean saveWithCache(InUser inUser);
 
     void change(Map<String, Object> map, InUser user);
+
+    /**
+     * 关注用户
+     * @param uId 用户id
+     * @param fId 被关注的用户id
+     * @return
+     */
+    Long focus(Long uId,Long fId);
 }

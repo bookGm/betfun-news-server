@@ -31,4 +31,6 @@ public class RedisKeys {
     public static final String SUPPORT=BASEKEY+"support";
     //辩论辩手
     public static final String JOIN=BASEKEY+"join";
+    //关注
+    public static final String FOCUS=BASEKEY+"focus";
 }
