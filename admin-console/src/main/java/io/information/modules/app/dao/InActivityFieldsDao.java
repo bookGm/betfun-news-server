@@ -3,6 +3,8 @@ package io.information.modules.app.dao;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import io.information.modules.app.entity.InActivityFields;
 import org.apache.ibatis.annotations.Mapper;
+import org.springframework.context.annotation.Bean;
+import org.springframework.stereotype.Component;
 
 /**
  * 资讯活动动态表单属性

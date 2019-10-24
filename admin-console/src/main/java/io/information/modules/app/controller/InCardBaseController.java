@@ -49,16 +49,13 @@ public class InCardBaseController {
     @PostMapping("/save")
     @ApiOperation(value = "新增基础帖子", httpMethod = "POST")
     @ApiImplicitParam(name = "cardBase", value = "基础帖子信息", required = true)
-    public R save(@RequestBody InCardBase cardBase, @ApiIgnore @LoginUser InUser user) {
-        if (2 == user.getuAuthStatus()) {
+    public R save(@RequestBody InCardBase cardBase) {
             long cId = IdGenerator.getId();
             cardBase.setcId(cId);
             cardBaseService.save(cardBase);
             rabbitTemplate.convertAndSend(Constants.cardExchange,
                     Constants.card_Save_RouteKey, cardBase);
             return R.ok();
-        }
-        return R.error("此操作需要认证通过");
     }
 
 
@@ -69,14 +66,11 @@ public class InCardBaseController {
     @DeleteMapping("/delete")
     @ApiOperation(value = "删除基础帖子", httpMethod = "DELETE", notes = "根据cId[数组]删除基础帖子")
     @ApiImplicitParam(name = "cIds", value = "帖子ID", dataType = "Array", required = true)
-    public R delete(@RequestBody Long[] cIds, @ApiIgnore @LoginUser InUser user) {
-        if (2 == user.getuAuthStatus()) {
+    public R delete(@RequestBody Long[] cIds) {
             cardBaseService.removeByIds(Arrays.asList(cIds));
             rabbitTemplate.convertAndSend(Constants.cardExchange,
                     Constants.card_Delete_RouteKey, cIds);
             return R.ok();
-        }
-        return R.error("此操作需要认证通过");
     }
 
 
@@ -87,14 +81,12 @@ public class InCardBaseController {
     @PutMapping("/update")
     @ApiOperation(value = "修改基础帖子", httpMethod = "PUT")
     @ApiImplicitParam(name = "cardBase", value = "基础帖子信息", required = true)
-    public R update(@RequestBody InCardBase cardBase, @ApiIgnore @LoginUser InUser user) {
-        if (2 == user.getuAuthStatus()) {
+    public R update(@RequestBody InCardBase cardBase) {
             cardBaseService.updateById(cardBase);
             rabbitTemplate.convertAndSend(Constants.cardExchange,
                     Constants.card_Update_RouteKey, cardBase);
             return R.ok();
-        }
-        return R.error("此操作需要认证通过");
+
     }
 
 
@@ -125,8 +117,8 @@ public class InCardBaseController {
      * 根据正反方ids字符串,查询用户信息
      */
     @GetMapping("/idsUser")
-    @ApiOperation(value = "分割查询用户信息", httpMethod = "GET", notes = "根据正反方ids字符串，用 ，分隔")
-    @ApiImplicitParam(name = "map", value = "分页数据、正反方ids字符串", required = true)
+//    @ApiOperation(value = "分割查询用户信息", httpMethod = "GET", notes = "根据正反方ids字符串，用 ，分隔")
+//    @ApiImplicitParam(name = "map", value = "分页数据、正反方ids字符串", required = true)
     public R idsUser(@RequestParam Map<String, Object> map) {
         PageUtils page = iInUserService.queryUsersByArgueIds(map);
         return R.ok().put("page", page);

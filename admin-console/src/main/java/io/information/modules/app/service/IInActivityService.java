@@ -3,7 +3,9 @@ package io.information.modules.app.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import io.information.common.utils.PageUtils;
 import io.information.modules.app.entity.InActivity;
+import io.information.modules.app.entity.InActivityFields;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -16,7 +18,15 @@ import java.util.Map;
  */
 public interface IInActivityService extends IService<InActivity> {
 
-    PageUtils queryActivitiesByUserId(Map<String,Object> params,Long userId);
+    PageUtils queryActByUId(Map<String,Object> params,Long userId);
 
     PageUtils queryPage(Map<String, Object> params);
+
+    void removeActivity(List<Long> actIds);
+
+    void updateActivity(InActivity activity);
+
+    void saveActivity(InActivity activity);
+
+    List<InActivityFields> apply(Long actId);
 }

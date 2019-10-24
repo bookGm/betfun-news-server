@@ -9,6 +9,7 @@ import lombok.experimental.Accessors;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 /**
  * <p>
@@ -22,9 +23,17 @@ import java.util.Date;
 @Accessors(chain = true)
 @ApiModel(value = "活动", description = "活动对象")
 public class InActivity implements Serializable {
-
     private static final long serialVersionUID = 1L;
 
+    /**
+     * 动态表单信息
+     */
+    @ApiModelProperty(value = "动态表单信息集合", name = "fieldsList", dataType = "List", required = false)
+    private List<InActivityFields> fieldsList;
+    @ApiModelProperty(value = "活动票种信息集合", name = "ticketList", dataType = "List", required = false)
+    private List<InActivityTicket> ticketList;
+    @ApiModelProperty(value = "动态表单数据集合", name = "datasList", dataType = "List", required = false)
+    private List<InActivityDatas> datasList;
     /**
      * 活动id
      */
@@ -218,5 +227,29 @@ public class InActivity implements Serializable {
 
     public void setActType(Integer actType) {
         this.actType = actType;
+    }
+
+    public List<InActivityFields> getFieldsList() {
+        return fieldsList;
+    }
+
+    public void setFieldsList(List<InActivityFields> fieldsList) {
+        this.fieldsList = fieldsList;
+    }
+
+    public List<InActivityTicket> getTicketList() {
+        return ticketList;
+    }
+
+    public void setTicketList(List<InActivityTicket> ticketList) {
+        this.ticketList = ticketList;
+    }
+
+    public List<InActivityDatas> getDatasList() {
+        return datasList;
+    }
+
+    public void setDatasList(List<InActivityDatas> datasList) {
+        this.datasList = datasList;
     }
 }

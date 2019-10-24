@@ -5,6 +5,9 @@ import com.baomidou.mybatisplus.annotation.TableName;
 
 import java.io.Serializable;
 import java.util.Date;
+
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 /**
@@ -15,6 +18,7 @@ import lombok.Data;
  * @date 2019-10-24 11:03:00
  */
 @TableName("in_activity_datas")
+@ApiModel(value = "活动动态表单数据", description = "表单数据对象")
 public class InActivityDatas implements Serializable {
 	private static final long serialVersionUID = 1L;
 
@@ -24,16 +28,23 @@ public class InActivityDatas implements Serializable {
 	@TableId
 	private Long dId;
 	/**
+	 * 活动id
+	 */
+	private Long actId;
+	/**
 	 * 属性键
 	 */
+	@ApiModelProperty(value = "属性键", name = "fKey", required = true)
 	private String fKey;
 	/**
 	 * 属性名
 	 */
+	@ApiModelProperty(value = "属性名", name = "fName", required = true)
 	private String fName;
 	/**
 	 * 数据值
 	 */
+	@ApiModelProperty(value = "数据值", name = "dValue", required = true)
 	private String dValue;
 	/**
 	 * 报名用户id
@@ -42,7 +53,8 @@ public class InActivityDatas implements Serializable {
 	/**
 	 * 参加时间
 	 */
-	private Long dTime;
+	@ApiModelProperty(value = "参加时间", name = "dTime", required = true)
+	private Date dTime;
 
 
 	public Long getdId() {
@@ -51,6 +63,14 @@ public class InActivityDatas implements Serializable {
 
 	public void setdId(Long dId) {
 		this.dId = dId;
+	}
+
+	public Long getActId() {
+		return actId;
+	}
+
+	public void setActId(Long actId) {
+		this.actId = actId;
 	}
 
 	public String getfKey() {
@@ -85,11 +105,11 @@ public class InActivityDatas implements Serializable {
 		this.uId = uId;
 	}
 
-	public Long getdTime() {
+	public Date getdTime() {
 		return dTime;
 	}
 
-	public void setdTime(Long dTime) {
+	public void setdTime(Date dTime) {
 		this.dTime = dTime;
 	}
 }

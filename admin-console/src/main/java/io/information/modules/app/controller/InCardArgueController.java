@@ -49,7 +49,7 @@ public class InCardArgueController {
     @PostMapping("/save")
     @ApiOperation(value = "新增辩论帖子", httpMethod = "POST")
     @ApiImplicitParam(name = "cardArgue", value = "基础和辩论帖子信息", required = true)
-    public R save(@RequestBody InCardArgue cardArgue, @ApiIgnore @LoginUser InUser user) {
+    public R save(@RequestBody InCardArgue cardArgue) {
         long cId = IdGenerator.getId();
         InCardBase cardBase = cardArgue.getInCardBase();
         cardBase.setcId(cId);
@@ -69,14 +69,11 @@ public class InCardArgueController {
     @DeleteMapping("/delete")
     @ApiOperation(value = "删除辩论帖子", httpMethod = "DELETE", notes = "根据cId[数组]删除辩论帖子")
     @ApiImplicitParam(name = "cIds", value = "帖子ID", dataType = "Array", required = true)
-    public R delete(@RequestBody Long[] cIds, @ApiIgnore @LoginUser InUser user) {
-        if (2 == user.getuAuthStatus()) {
-            argueService.removeByIds(Arrays.asList(cIds));
-            rabbitTemplate.convertAndSend(Constants.cardExchange,
-                    Constants.card_Delete_RouteKey, cIds);
-            return R.ok();
-        }
-        return R.error("此操作需要认证通过");
+    public R delete(@RequestBody Long[] cIds) {
+        argueService.removeByIds(Arrays.asList(cIds));
+        rabbitTemplate.convertAndSend(Constants.cardExchange,
+                Constants.card_Delete_RouteKey, cIds);
+        return R.ok();
     }
 
 
@@ -87,14 +84,11 @@ public class InCardArgueController {
     @PutMapping("/update")
     @ApiOperation(value = "修改辩论帖子", httpMethod = "PUT")
     @ApiImplicitParam(name = "cardArgue", value = "辩论帖子信息", required = true)
-    public R updateCardArgue(@RequestBody InCardArgue cardArgue, @ApiIgnore @LoginUser InUser user) {
-        if (2 == user.getuAuthStatus()) {
-            argueService.updateById(cardArgue);
-            rabbitTemplate.convertAndSend(Constants.cardExchange,
-                    Constants.card_Update_RouteKey, cardArgue);
-            return R.ok();
-        }
-        return R.error("此操作需要认证通过");
+    public R updateCardArgue(@RequestBody InCardArgue cardArgue) {
+        argueService.updateById(cardArgue);
+        rabbitTemplate.convertAndSend(Constants.cardExchange,
+                Constants.card_Update_RouteKey, cardArgue);
+        return R.ok();
     }
 
 
@@ -124,6 +118,7 @@ public class InCardArgueController {
     /**
      * 辩论支持
      */
+    @Login
     @GetMapping("/support")
     @ApiOperation(value = "支持辩论方", httpMethod = "GET")
     public R support(Long cid, Integer supportSide, @LoginUser InUser user) {
@@ -133,6 +128,7 @@ public class InCardArgueController {
     /**
      * 加入辩论
      */
+    @Login
     @GetMapping("/join")
     @ApiOperation(value = "加入辩论方", httpMethod = "GET")
     public R join(Long cid, Integer joinSide, @ApiIgnore @LoginUser InUser user) {

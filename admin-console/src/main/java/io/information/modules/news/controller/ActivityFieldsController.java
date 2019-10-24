@@ -21,7 +21,7 @@ import java.util.Map;
  * @date 2019-10-24 10:53:16
  */
 @RestController
-@RequestMapping("news/activityfields")
+@RequestMapping("news/activity/datas")
 public class ActivityFieldsController {
     @Autowired
     private ActivityFieldsService activityFieldsService;
@@ -30,7 +30,7 @@ public class ActivityFieldsController {
      * 列表
      */
     @RequestMapping("/list")
-    @RequiresPermissions("news:activityfields:list")
+    @RequiresPermissions("news:actFields:list")
     public R list(@RequestParam Map<String, Object> params){
         PageUtils page = activityFieldsService.queryPage(params);
 
@@ -42,18 +42,18 @@ public class ActivityFieldsController {
      * 信息
      */
     @RequestMapping("/info/{fId}")
-    @RequiresPermissions("news:activityfields:info")
+    @RequiresPermissions("news:actFields:info")
     public R info(@PathVariable("fId") Long fId){
 		ActivityFieldsEntity activityFields = activityFieldsService.getById(fId);
 
-        return R.ok().put("activityFields", activityFields);
+        return R.ok().put("actFields", activityFields);
     }
 
     /**
      * 保存
      */
     @RequestMapping("/save")
-    @RequiresPermissions("news:activityfields:save")
+    @RequiresPermissions("news:actFields:save")
     public R save(@RequestBody ActivityFieldsEntity activityFields){
 		activityFieldsService.save(activityFields);
 
@@ -64,7 +64,7 @@ public class ActivityFieldsController {
      * 修改
      */
     @RequestMapping("/update")
-    @RequiresPermissions("news:activityfields:update")
+    @RequiresPermissions("news:actFields:update")
     public R update(@RequestBody ActivityFieldsEntity activityFields){
 		activityFieldsService.updateById(activityFields);
 
@@ -75,7 +75,7 @@ public class ActivityFieldsController {
      * 删除
      */
     @RequestMapping("/delete")
-    @RequiresPermissions("news:activityfields:delete")
+    @RequiresPermissions("news:actFields:delete")
     public R delete(@RequestBody Long[] fIds){
 		activityFieldsService.removeByIds(Arrays.asList(fIds));
 

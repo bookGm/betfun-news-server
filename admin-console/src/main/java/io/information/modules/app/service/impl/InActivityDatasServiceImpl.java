@@ -1,5 +1,6 @@
 package io.information.modules.app.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -10,6 +11,7 @@ import io.information.modules.app.entity.InActivityDatas;
 import io.information.modules.app.service.IInActivityDatasService;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Map;
 
 
@@ -24,6 +26,15 @@ public class InActivityDatasServiceImpl extends ServiceImpl<InActivityDatasDao, 
         );
 
         return new PageUtils(page);
+    }
+
+
+    @Override
+    public List<InActivityDatas> queryByActId(Long actId) {
+        LambdaQueryWrapper<InActivityDatas> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.in(InActivityDatas::getActId,actId);
+        List<InActivityDatas> datasList = this.list(queryWrapper);
+        return datasList;
     }
 
 }

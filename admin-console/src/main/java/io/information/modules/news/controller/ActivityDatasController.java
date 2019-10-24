@@ -21,7 +21,7 @@ import java.util.Map;
  * @date 2019-10-24 11:03:00
  */
 @RestController
-@RequestMapping("news/activitydatas")
+@RequestMapping("news/activity/datas")
 public class ActivityDatasController {
     @Autowired
     private ActivityDatasService activityDatasService;
@@ -30,7 +30,7 @@ public class ActivityDatasController {
      * 列表
      */
     @RequestMapping("/list")
-    @RequiresPermissions("news:activitydatas:list")
+    @RequiresPermissions("news:actDatas:list")
     public R list(@RequestParam Map<String, Object> params){
         PageUtils page = activityDatasService.queryPage(params);
 
@@ -42,18 +42,18 @@ public class ActivityDatasController {
      * 信息
      */
     @RequestMapping("/info/{dId}")
-    @RequiresPermissions("news:activitydatas:info")
+    @RequiresPermissions("news:actDatas:info")
     public R info(@PathVariable("dId") Long dId){
 		ActivityDatasEntity activityDatas = activityDatasService.getById(dId);
 
-        return R.ok().put("activityDatas", activityDatas);
+        return R.ok().put("actDatas", activityDatas);
     }
 
     /**
      * 保存
      */
     @RequestMapping("/save")
-    @RequiresPermissions("news:activitydatas:save")
+    @RequiresPermissions("news:actDatas:save")
     public R save(@RequestBody ActivityDatasEntity activityDatas){
 		activityDatasService.save(activityDatas);
 
@@ -64,7 +64,7 @@ public class ActivityDatasController {
      * 修改
      */
     @RequestMapping("/update")
-    @RequiresPermissions("news:activitydatas:update")
+    @RequiresPermissions("news:actDatas:update")
     public R update(@RequestBody ActivityDatasEntity activityDatas){
 		activityDatasService.updateById(activityDatas);
 
@@ -75,7 +75,7 @@ public class ActivityDatasController {
      * 删除
      */
     @RequestMapping("/delete")
-    @RequiresPermissions("news:activitydatas:delete")
+    @RequiresPermissions("news:actDatas:delete")
     public R delete(@RequestBody Long[] dIds){
 		activityDatasService.removeByIds(Arrays.asList(dIds));
 

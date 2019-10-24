@@ -2,9 +2,9 @@ package io.information.modules.app.controller;
 
 import io.information.common.utils.PageUtils;
 import io.information.common.utils.R;
+import io.information.modules.app.annotation.Login;
 import io.information.modules.app.entity.InActivityFields;
 import io.information.modules.app.service.IInActivityFieldsService;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,7 +20,7 @@ import java.util.Map;
  * @date 2019-10-24 10:53:16
  */
 @RestController
-@RequestMapping("news/activityfields")
+@RequestMapping("app/activity/fields")
 public class InActivityFieldsController {
     @Autowired
     private IInActivityFieldsService activityFieldsService;
@@ -29,7 +29,6 @@ public class InActivityFieldsController {
      * 列表
      */
     @RequestMapping("/list")
-    @RequiresPermissions("news:activityfields:list")
     public R list(@RequestParam Map<String, Object> params) {
         PageUtils page = activityFieldsService.queryPage(params);
 
@@ -41,18 +40,17 @@ public class InActivityFieldsController {
      * 信息
      */
     @RequestMapping("/info/{fId}")
-    @RequiresPermissions("news:activityfields:info")
     public R info(@PathVariable("fId") Long fId) {
         InActivityFields activityFields = activityFieldsService.getById(fId);
 
-        return R.ok().put("activityFields", activityFields);
+        return R.ok().put("actFields", activityFields);
     }
 
     /**
      * 保存
      */
+    @Login
     @RequestMapping("/save")
-    @RequiresPermissions("news:activityfields:save")
     public R save(@RequestBody InActivityFields activityFields) {
         activityFieldsService.save(activityFields);
 
@@ -62,8 +60,8 @@ public class InActivityFieldsController {
     /**
      * 修改
      */
+    @Login
     @RequestMapping("/update")
-    @RequiresPermissions("news:activityfields:update")
     public R update(@RequestBody InActivityFields activityFields) {
         activityFieldsService.updateById(activityFields);
 
@@ -73,8 +71,8 @@ public class InActivityFieldsController {
     /**
      * 删除
      */
+    @Login
     @RequestMapping("/delete")
-    @RequiresPermissions("news:activityfields:delete")
     public R delete(@RequestBody Long[] fIds) {
         activityFieldsService.removeByIds(Arrays.asList(fIds));
 

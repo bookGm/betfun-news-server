@@ -2,9 +2,9 @@ package io.information.modules.app.controller;
 
 import io.information.common.utils.PageUtils;
 import io.information.common.utils.R;
+import io.information.modules.app.annotation.Login;
 import io.information.modules.app.entity.InActivityDatas;
 import io.information.modules.app.service.IInActivityDatasService;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,7 +20,7 @@ import java.util.Map;
  * @date 2019-10-24 11:03:00
  */
 @RestController
-@RequestMapping("news/activitydatas")
+@RequestMapping("app/activity/datas")
 public class InActivityDatasController {
     @Autowired
     private IInActivityDatasService activityDatasService;
@@ -29,7 +29,6 @@ public class InActivityDatasController {
      * 列表
      */
     @RequestMapping("/list")
-    @RequiresPermissions("news:activitydatas:list")
     public R list(@RequestParam Map<String, Object> params) {
         PageUtils page = activityDatasService.queryPage(params);
 
@@ -41,18 +40,17 @@ public class InActivityDatasController {
      * 信息
      */
     @RequestMapping("/info/{dId}")
-    @RequiresPermissions("news:activitydatas:info")
     public R info(@PathVariable("dId") Long dId) {
         InActivityDatas activityDatas = activityDatasService.getById(dId);
 
-        return R.ok().put("activityDatas", activityDatas);
+        return R.ok().put("actDatas", activityDatas);
     }
 
     /**
      * 保存
      */
+    @Login
     @RequestMapping("/save")
-    @RequiresPermissions("news:activitydatas:save")
     public R save(@RequestBody InActivityDatas activityDatas) {
         activityDatasService.save(activityDatas);
 
@@ -62,8 +60,8 @@ public class InActivityDatasController {
     /**
      * 修改
      */
+    @Login
     @RequestMapping("/update")
-    @RequiresPermissions("news:activitydatas:update")
     public R update(@RequestBody InActivityDatas activityDatas) {
         activityDatasService.updateById(activityDatas);
 
@@ -73,8 +71,8 @@ public class InActivityDatasController {
     /**
      * 删除
      */
+    @Login
     @RequestMapping("/delete")
-    @RequiresPermissions("news:activitydatas:delete")
     public R delete(@RequestBody Long[] dIds) {
         activityDatasService.removeByIds(Arrays.asList(dIds));
 

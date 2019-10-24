@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.information.modules.news.dao.ActivityTicketDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.information.modules.news.entity.ActivityTicketEntity" id="activityTicketMap">
+        <result property="tId" column="t_id"/>
+        <result property="actId" column="act_id"/>
+        <result property="tName" column="t_name"/>
+        <result property="tPrice" column="t_price"/>
+        <result property="tNum" column="t_num"/>
+    </resultMap>
+
+
+</mapper>

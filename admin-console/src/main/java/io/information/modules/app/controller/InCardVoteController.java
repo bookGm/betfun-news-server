@@ -46,10 +46,11 @@ public class InCardVoteController {
     /**
      * 添加
      */
+    @Login
     @PostMapping("/save")
     @ApiOperation(value = "新增投票帖子", httpMethod = "POST")
     @ApiImplicitParam(name = "cardVote", value = "基础和投票帖子信息", required = true)
-    public R save(@RequestBody InCardVote cardVote, @ApiIgnore @LoginUser InUser user) {
+    public R save(@RequestBody InCardVote cardVote) {
         long cId = IdGenerator.getId();
         InCardBase cardBase = cardVote.getInCardBase();
         cardBase.setcId(cId);
@@ -80,34 +81,31 @@ public class InCardVoteController {
     /**
      * 删除
      */
+    @Login
     @DeleteMapping("/delete")
     @ApiOperation(value = "单个或批量删除投票帖子", httpMethod = "DELETE", notes = "根据cIds[数组]删除投票帖子")
     @ApiImplicitParam(name = "cIds", value = "帖子ID", dataType = "Array", required = true)
-    public R delete(@RequestBody Long[] cIds, @ApiIgnore @LoginUser InUser user) {
-        if (2 == user.getuAuthStatus()) {
-            voteService.removeByIds(Arrays.asList(cIds));
-            rabbitTemplate.convertAndSend(Constants.cardExchange,
-                    Constants.card_Save_RouteKey, cIds);
-            return R.ok();
-        }
-        return R.error("此操作需要认证通过");
+    public R delete(@RequestBody Long[] cIds) {
+        voteService.removeByIds(Arrays.asList(cIds));
+        rabbitTemplate.convertAndSend(Constants.cardExchange,
+                Constants.card_Save_RouteKey, cIds);
+        return R.ok();
     }
 
 
     /**
      * 修改
      */
+    @Login
     @PutMapping("/update")
     @ApiOperation(value = "修改投票帖子", httpMethod = "PUT")
     @ApiImplicitParam(name = "cardVote", value = "投票帖子信息", required = true)
-    public R update(@RequestBody InCardVote cardVote, @ApiIgnore @LoginUser InUser user) {
-        if (2 == user.getuAuthStatus()) {
-            voteService.updateById(cardVote);
-            rabbitTemplate.convertAndSend(Constants.cardExchange,
-                    Constants.card_Update_RouteKey, cardVote);
-            return R.ok();
-        }
-        return R.error("此操作需要认证通过");
+    public R update(@RequestBody InCardVote cardVote) {
+        voteService.updateById(cardVote);
+        rabbitTemplate.convertAndSend(Constants.cardExchange,
+                Constants.card_Update_RouteKey, cardVote);
+        return R.ok();
+
     }
 
 

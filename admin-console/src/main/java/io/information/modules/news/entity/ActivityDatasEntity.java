@@ -24,6 +24,10 @@ public class ActivityDatasEntity implements Serializable {
 	@TableId
 	private Long dId;
 	/**
+	 * 活动id
+	 */
+	private Long actId;
+	/**
 	 * 属性键
 	 */
 	private String fKey;
@@ -42,7 +46,7 @@ public class ActivityDatasEntity implements Serializable {
 	/**
 	 * 参加时间
 	 */
-	private Long dTime;
+	private Date dTime;
 
 	public Long getdId() {
 		return dId;
@@ -50,6 +54,14 @@ public class ActivityDatasEntity implements Serializable {
 
 	public void setdId(Long dId) {
 		this.dId = dId;
+	}
+
+	public Long getActId() {
+		return actId;
+	}
+
+	public void setActId(Long actId) {
+		this.actId = actId;
 	}
 
 	public String getfKey() {
@@ -84,11 +96,11 @@ public class ActivityDatasEntity implements Serializable {
 		this.uId = uId;
 	}
 
-	public Long getdTime() {
+	public Date getdTime() {
 		return dTime;
 	}
 
-	public void setdTime(Long dTime) {
+	public void setdTime(Date dTime) {
 		this.dTime = dTime;
 	}
 }

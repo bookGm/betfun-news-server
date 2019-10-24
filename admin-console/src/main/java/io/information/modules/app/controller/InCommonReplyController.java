@@ -1,6 +1,7 @@
 package io.information.modules.app.controller;
 
 import io.information.common.utils.R;
+import io.information.modules.app.annotation.Login;
 import io.information.modules.app.entity.InCommonReply;
 import io.information.modules.app.service.IInCommonReplyService;
 import io.swagger.annotations.Api;
@@ -44,6 +45,7 @@ public class InCommonReplyController {
     /**
      * 保存
      */
+    @Login
     @PostMapping("/save")
     @ApiOperation(value = "保存评论信息", httpMethod = "POST")
     @ApiImplicitParam(name = "commonReply", value = "评论信息", required = true)
@@ -58,6 +60,7 @@ public class InCommonReplyController {
     /**
      * 删除
      */
+    @Login
     @DeleteMapping("/delete")
     @ApiOperation(value = "删除评论信息", httpMethod = "DELETE")
     @ApiImplicitParam(name = "crId", value = "评论ID",dataType = "Long[ ]",required = true)

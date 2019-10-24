@@ -1,14 +1,17 @@
 package io.information.modules.app.controller;
 
 
+import io.information.common.utils.IdGenerator;
 import io.information.common.utils.PageUtils;
 import io.information.common.utils.R;
 import io.information.modules.app.annotation.Login;
 import io.information.modules.app.annotation.LoginUser;
 import io.information.modules.app.entity.InActivity;
+import io.information.modules.app.entity.InActivityDatas;
+import io.information.modules.app.entity.InActivityFields;
 import io.information.modules.app.entity.InUser;
+import io.information.modules.app.service.IInActivityDatasService;
 import io.information.modules.app.service.IInActivityService;
-import io.information.modules.app.service.IInUserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
@@ -18,6 +21,7 @@ import springfox.documentation.annotations.ApiIgnore;
 
 import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -34,6 +38,49 @@ import java.util.Map;
 public class InActivityController {
     @Autowired
     private IInActivityService activityService;
+    @Autowired
+    private IInActivityDatasService datasService;
+
+
+    /**
+     * 活动报名数据
+     */
+    @ApiOperation(value = "活动报名数据", httpMethod = "POST")
+    @ApiImplicitParam(name = "actId", value = "活动ID", required = true)
+    @PostMapping("/apply/{actId}")
+    public R apply(@PathVariable("actId") Long actId) {
+        List<InActivityFields> fieldsList = activityService.apply(actId);
+        return R.ok().put("fieldsList", fieldsList);
+    }
+
+
+    /**
+     * 活动报名
+     */
+    @Login
+    @ApiOperation(value = "活动报名", httpMethod = "POST")
+    @ApiImplicitParam(name = "datasList", value = "活动数据集合", dataType = "List", required = true)
+    @PostMapping("/join")
+    public R join(@RequestBody List<InActivityDatas> datasList, @ApiIgnore @LoginUser InUser user) {
+        InActivityDatas data = datasList.get(0);
+        Long actId = data.getActId();
+        InActivity activity = activityService.getById(actId);
+        Long actNum = activity.getActNum();
+        Long actInNum = activity.getActInNum();
+        if (actInNum >= actNum) {
+            return R.error("报名失败，报名人数已达上限");
+        } else {
+            activity.setActInNum(activity.getActInNum() + 1);
+            activityService.save(activity);
+            for (InActivityDatas datas : datasList) {
+                datas.setdId(IdGenerator.getId());
+                datas.setuId(user.getuId());
+                datas.setdTime(new Date());
+                datasService.save(datas);
+            }
+            return R.ok();
+        }
+    }
 
 
     /**
@@ -44,13 +91,10 @@ public class InActivityController {
     @ApiImplicitParam(name = "activity", value = "活动信息", required = true)
     @PostMapping("/save")
     public R save(@RequestParam InActivity activity, @ApiIgnore @LoginUser InUser user) {
-        if (user.getuAuthStatus() == 2) {
-            activity.setActCreateTime(new Date());
-            activity.setuId(user.getuId());
-            activityService.save(activity);
-            return R.ok();
-        }
-        return R.error("此操作需要认证通过");
+        activity.setActCreateTime(new Date());
+        activity.setuId(user.getuId());
+        activityService.saveActivity(activity);
+        return R.ok();
     }
 
 
@@ -61,12 +105,9 @@ public class InActivityController {
     @ApiOperation(value = "删除咨讯活动", httpMethod = "DELETE", notes = "根据actId[数组]删除活动")
     @ApiImplicitParam(name = "actIds", value = "活动ID", required = true, dataType = "Array")
     @DeleteMapping("/delete")
-    public R delete(@RequestBody Long[] actIds,@ApiIgnore @LoginUser InUser user) {
-        if (user.getuAuthStatus() == 2) {
-            activityService.removeByIds(Arrays.asList(actIds));
-            return R.ok();
-        }
-        return R.error("此操作需要认证通过");
+    public R delete(@RequestBody Long[] actIds) {
+        activityService.removeActivity(Arrays.asList(actIds));
+        return R.ok();
     }
 
 
@@ -77,12 +118,9 @@ public class InActivityController {
     @PutMapping("/update")
     @ApiOperation(value = "修改咨讯活动", httpMethod = "PUT")
     @ApiImplicitParam(name = "activity", value = "活动信息", required = true)
-    public R update(@RequestBody InActivity activity,@ApiIgnore @LoginUser InUser user) {
-        if (user.getuAuthStatus() == 2) {
-            activityService.updateById(activity);
-            return R.ok();
-        }
-        return R.error("此操作需要认证通过");
+    public R update(@RequestBody InActivity activity) {
+        activityService.updateActivity(activity);
+        return R.ok();
     }
 
 
@@ -104,8 +142,8 @@ public class InActivityController {
     @GetMapping("/userActivity")
     @ApiOperation(value = "获取用户发布的活动", httpMethod = "GET", notes = "自动获取用户信息")
     @ApiImplicitParam(name = "map", value = "分页数据", required = true)
-    public R userActivity(@RequestParam Map<String, Object> params,@ApiIgnore @LoginUser InUser user) {
-        PageUtils page = activityService.queryActivitiesByUserId(params, user.getuId());
+    public R userActivity(@RequestParam Map<String, Object> params, @ApiIgnore @LoginUser InUser user) {
+        PageUtils page = activityService.queryActByUId(params, user.getuId());
         return R.ok().put("page", page);
     }
 
@@ -117,6 +155,10 @@ public class InActivityController {
     @ApiImplicitParam(name = "actId", value = "活动ID", required = true)
     public R info(@PathVariable("actId") Long actId) {
         InActivity activity = activityService.getById(actId);
+        List<InActivityDatas> datasList = datasService.queryByActId(actId);
+        if (null != datasList && !datasList.isEmpty()) {
+            activity.setDatasList(datasList);
+        }
         return R.ok().put("activity", activity);
     }
 
