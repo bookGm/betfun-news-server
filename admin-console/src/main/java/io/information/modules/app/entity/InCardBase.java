@@ -19,7 +19,7 @@ import java.io.Serializable;
 
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
-@ApiModel(value = "帖子基础信息", description = "帖子基础信息对象")
+@ApiModel(value = "普通帖", description = "普通帖")
 public class InCardBase implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -28,39 +28,41 @@ public class InCardBase implements Serializable {
      * 帖子id
      */
     @TableId
+    @ApiModelProperty(hidden=true)
     private Long cId;
 
     /**
      * 用户id
      */
+    @ApiModelProperty(hidden=true)
     private Long uId;
 
     /**
      * 帖子分类（字典）
      */
-    @ApiModelProperty(value = "帖子分类", name = "cCategory", required = true,example = "0：普通帖  1：辩论帖  2：投票帖")
+    @ApiModelProperty(value = "帖子分类(0:普通 1:辩论 2:投票帖)", name = "cCategory", required = true)
     private Integer cCategory;
 
     /**
      * 帖子节点分类（字典）
      */
-    @ApiModelProperty(value = "帖子节点分类", name = "cNodeCategory", required = true,example = "0")
+    @ApiModelProperty(value = "节点分类", name = "cNodeCategory", required = true)
     private Integer cNodeCategory;
     /**
      * 帖子标题
      */
-    @ApiModelProperty(value = "帖子标题", name = "cTitle", required = true)
+    @ApiModelProperty(value = "标题", name = "cTitle", required = true)
     private String cTitle;
     /**
      * 帖子正文
      */
-    @ApiModelProperty(value = "帖子正文", name = "cContent", required = true)
+    @ApiModelProperty(value = "正文", name = "cContent", required = true)
     private String cContent;
 
     /**
      * 回帖仅作者可见（0：是  1：否）
      */
-    @ApiModelProperty(value = "回帖仅作者可见（0：是  1：否）", name = "cHide", required = false)
+    @ApiModelProperty(value = "回帖仅作者可见（0：是  1：否）", name = "cHide", required = true)
     private Integer cHide;
 
 

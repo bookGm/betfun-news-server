@@ -112,6 +112,18 @@ public class InArticleController {
         PageUtils page = articleService.queryPage(map);
         return R.ok().put("page", page);
     }
+    /**
+     * 列表
+     */
+    @Login
+    @GetMapping("/loginedList")
+    @ApiOperation(value = "获取本人发布的文章", httpMethod = "GET")
+    @ApiImplicitParam(name = "map", value = "分页数据", required = true)
+    public R loginedList(@RequestParam Map<String, Object> map,@ApiIgnore @LoginUser InUser user) {
+        map.put("uId",user.getuId());
+        PageUtils page = articleService.queryPage(map);
+        return R.ok().put("page", page);
+    }
 
 
     /**
@@ -208,7 +220,7 @@ public class InArticleController {
         //累计文章数
         rm.put("aCount",list.size());
         //累计阅读量
-        LongSummaryStatistics readNumber=list.stream().collect(Collectors.summarizingLong(InArticle::getaReadNumber));
+        LongSummaryStatistics readNumber=list.stream().collect(Collectors.summarizingLong((n)->n.getaReadNumber()==null?0L:n.getaReadNumber()));
         rm.put("rCount",readNumber.getSum());
         //累计粉丝数
         rm.put("fCount",user.getuFans());

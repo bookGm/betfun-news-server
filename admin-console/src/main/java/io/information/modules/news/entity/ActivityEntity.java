@@ -30,14 +30,9 @@ public class ActivityEntity implements Serializable {
 	 */
 	private Long uId;
 	/**
-	 * 活动内容
+	 * 活动标题
 	 */
 	private String actTitle;
-	/**
-	 * 活动时间
-	 */
-	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
-	private Date actTime;
 	/**
 	 * 活动分类（字典）
 	 */
@@ -103,14 +98,6 @@ public class ActivityEntity implements Serializable {
 
 	public void setActTitle(String actTitle) {
 		this.actTitle = actTitle;
-	}
-
-	public Date getActTime() {
-		return actTime;
-	}
-
-	public void setActTime(Date actTime) {
-		this.actTime = actTime;
 	}
 
 	public Integer getActCategory() {

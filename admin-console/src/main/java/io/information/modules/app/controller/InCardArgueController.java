@@ -50,18 +50,15 @@ public class InCardArgueController {
     @ApiOperation(value = "新增辩论帖子", httpMethod = "POST")
     @ApiImplicitParam(name = "cardArgue", value = "基础和辩论帖子信息", required = true)
     public R save(@RequestBody InCardArgue cardArgue, @ApiIgnore @LoginUser InUser user) {
-        if (2 == user.getuAuthStatus()) {
-            long cId = IdGenerator.getId();
-            InCardBase cardBase = cardArgue.getCardBase();
-            cardBase.setcId(cId);
-            cardArgue.setcId(cId);
-            argueService.save(cardArgue);
-            baseService.save(cardBase);
-            rabbitTemplate.convertAndSend(Constants.cardExchange,
-                    Constants.card_Save_RouteKey, cardArgue);
-            return R.ok();
-        }
-        return R.error("此操作需要认证通过");
+        long cId = IdGenerator.getId();
+        InCardBase cardBase = cardArgue.getInCardBase();
+        cardBase.setcId(cId);
+        cardArgue.setcId(cId);
+        argueService.save(cardArgue);
+        baseService.save(cardBase);
+        rabbitTemplate.convertAndSend(Constants.cardExchange,
+                Constants.card_Save_RouteKey, cardArgue);
+        return R.ok();
     }
 
 

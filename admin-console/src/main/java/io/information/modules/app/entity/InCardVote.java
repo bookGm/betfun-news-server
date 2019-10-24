@@ -22,111 +22,98 @@ import java.util.List;
 
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
-@ApiModel(value = "帖子投票信息", description = "帖子投票信息对象")
+@ApiModel(value = "投票帖", description = "投票帖")
 public class InCardVote implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    /**
-     * 帖子基础信息
-     */
-    @ApiModelProperty(value = "帖子基础信息", name = "cardBase", required = true)
-    private InCardBase cardBase;
+    @ApiModelProperty(value = "普通帖", name = "inCardBase", required = true)
+    private InCardBase inCardBase;
     /**
      * 帖子id
      */
     @TableId
+    @ApiModelProperty(hidden=true)
     private Long cId;
 
     /**
      * 帖子类型
      * 0单选 1多选
      */
-    @ApiModelProperty(value = "帖子类型（ 0:单选 1:多选 ）", name = "cvType", required = true)
+    @ApiModelProperty(value = "类型（0单选 1多选）", name = "cvType", required = true)
     private int cvType;
 
     /**
-     * 投票选项信息（逗号分隔）
+     * 投票选项信息（数组）
      */
-    @ApiModelProperty(value = "投票选项信息（逗号分隔）", name = "cvInfo", required = true)
+    @ApiModelProperty(value = "投票选项信息（数组）", name = "cvInfo", required = true)
     private String cvInfo;
     /**
      * 结束日期
      */
-    @ApiModelProperty(value = "结束日期", name = "cvCloseTime", required = true)
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @ApiModelProperty(value = "结束日期", name = "cvCloseTime", required = true)
     private Date cvCloseTime;
-
-    @ApiModelProperty(value = "投票数量信息  cv0~cv29  ", name = "cv0", required = false)
+    @ApiModelProperty(hidden=true)
     private Integer cv0;
-
+    @ApiModelProperty(hidden=true)
     private Integer cv1;
-
+    @ApiModelProperty(hidden=true)
     private Integer cv2;
-
+    @ApiModelProperty(hidden=true)
     private Integer cv3;
-
+    @ApiModelProperty(hidden=true)
     private Integer cv4;
-
+    @ApiModelProperty(hidden=true)
     private Integer cv5;
-
+    @ApiModelProperty(hidden=true)
     private Integer cv6;
-
+    @ApiModelProperty(hidden=true)
     private Integer cv7;
-
+    @ApiModelProperty(hidden=true)
     private Integer cv8;
-
+    @ApiModelProperty(hidden=true)
     private Integer cv9;
-
+    @ApiModelProperty(hidden=true)
     private Integer cv10;
-
+    @ApiModelProperty(hidden=true)
     private Integer cv11;
-
+    @ApiModelProperty(hidden=true)
     private Integer cv12;
-
+    @ApiModelProperty(hidden=true)
     private Integer cv13;
-
-    @ApiModelProperty(value = "投票数量信息  cv0~cv29  ", name = "cv14", required = false)
+    @ApiModelProperty(hidden=true)
     private Integer cv14;
-
+    @ApiModelProperty(hidden=true)
     private Integer cv15;
-
+    @ApiModelProperty(hidden=true)
     private Integer cv16;
-
+    @ApiModelProperty(hidden=true)
     private Integer cv17;
-
+    @ApiModelProperty(hidden=true)
     private Integer cv18;
-
+    @ApiModelProperty(hidden=true)
     private Integer cv19;
-
+    @ApiModelProperty(hidden=true)
     private Integer cv20;
-
+    @ApiModelProperty(hidden=true)
     private Integer cv21;
-
+    @ApiModelProperty(hidden=true)
     private Integer cv22;
-
+    @ApiModelProperty(hidden=true)
     private Integer cv23;
-
+    @ApiModelProperty(hidden=true)
     private Integer cv24;
-
+    @ApiModelProperty(hidden=true)
     private Integer cv25;
-
+    @ApiModelProperty(hidden=true)
     private Integer cv26;
-
+    @ApiModelProperty(hidden=true)
     private Integer cv27;
-
+    @ApiModelProperty(hidden=true)
     private Integer cv28;
-
-    @ApiModelProperty(value = "投票数量信息  cv0~cv29  ", name = "cv29", required = false)
+    @ApiModelProperty(hidden=true)
     private Integer cv29;
 
-
-    public InCardBase getCardBase() {
-        return cardBase;
-    }
-
-    public void setCardBase(InCardBase cardBase) {
-        this.cardBase = cardBase;
-    }
 
     public Long getcId() {
         return cId;
@@ -398,5 +385,13 @@ public class InCardVote implements Serializable {
 
     public void setCv29(Integer cv29) {
         this.cv29 = cv29;
+    }
+
+    public InCardBase getInCardBase() {
+        return inCardBase;
+    }
+
+    public void setInCardBase(InCardBase inCardBase) {
+        this.inCardBase = inCardBase;
     }
 }

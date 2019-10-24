@@ -1,7 +1,7 @@
 package com.guansuo.newsenum;
 
 public enum NewsEnum {
-    帖子分类_普通帖("0","普通帖"),帖子分类_辩论帖("1","辩论帖"),帖子分类_投票帖("1","投票帖");
+    帖子分类_普通帖("0","普通帖"),帖子分类_辩论帖("1","辩论帖"),帖子分类_投票帖("2","投票帖");
 
     NewsEnum(String code, String name) {
         this.code=code;

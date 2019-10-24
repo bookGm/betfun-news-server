@@ -50,18 +50,15 @@ public class InCardVoteController {
     @ApiOperation(value = "新增投票帖子", httpMethod = "POST")
     @ApiImplicitParam(name = "cardVote", value = "基础和投票帖子信息", required = true)
     public R save(@RequestBody InCardVote cardVote, @ApiIgnore @LoginUser InUser user) {
-        if (2 == user.getuAuthStatus()) {
-            long cId = IdGenerator.getId();
-            InCardBase cardBase = cardVote.getCardBase();
-            cardBase.setcId(cId);
-            cardVote.setcId(cId);
-            voteService.save(cardVote);
-            baseService.save(cardBase);
-            rabbitTemplate.convertAndSend(Constants.cardExchange,
-                    Constants.card_Save_RouteKey, cardVote);
-            return R.ok();
-        }
-        return R.error("此操作需要认证通过");
+        long cId = IdGenerator.getId();
+        InCardBase cardBase = cardVote.getInCardBase();
+        cardBase.setcId(cId);
+        cardVote.setcId(cId);
+        voteService.save(cardVote);
+        baseService.save(cardBase);
+        rabbitTemplate.convertAndSend(Constants.cardExchange,
+                Constants.card_Save_RouteKey, cardVote);
+        return R.ok();
     }
 
 

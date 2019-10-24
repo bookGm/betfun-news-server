@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.guansuo.common.DateUtils;
+import com.guansuo.common.StringUtil;
 import io.information.common.utils.PageUtils;
 import io.information.common.utils.Query;
 import io.information.common.utils.RedisKeys;
@@ -43,9 +44,8 @@ public class InArticleServiceImpl extends ServiceImpl<InArticleDao, InArticle> i
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
         LambdaQueryWrapper<InArticle> qw = new LambdaQueryWrapper<InArticle>();
-        if (params.containsKey("type")) {
-            Object type = params.get("type");
-            switch (Integer.parseInt(String.valueOf(type))) {
+        if (params.containsKey("type")&& StringUtil.isNotBlank(params.get("type"))) {
+            switch (Integer.parseInt(String.valueOf(params.get("type")))) {
                 case 0:
                     qw.orderByDesc(InArticle::getaCreateTime);
                     break;
@@ -57,6 +57,12 @@ public class InArticleServiceImpl extends ServiceImpl<InArticleDao, InArticle> i
                     break;
             }
         }
+        if(params.containsKey("uId")&& StringUtil.isNotBlank(params.get("uId"))){
+            qw.eq(InArticle::getuId,params.get("uId"));
+        }
+        if(params.containsKey("aStatus")&& StringUtil.isNotBlank(params.get("aStatus"))){
+            qw.eq(InArticle::getaStatus,params.get("aStatus"));
+        }
         IPage<InArticle> page = this.page(
                 new Query<InArticle>().getPage(params), qw
         );
@@ -64,8 +70,8 @@ public class InArticleServiceImpl extends ServiceImpl<InArticleDao, InArticle> i
             Object obj = redisUtils.hget(RedisKeys.INUSER, String.valueOf(a.getuId()));
             if (null != obj) {
                 a.setuName(((InUser) obj).getuName());
-                a.setaSimpleTime(DateUtils.getSimpleTime(a.getaCreateTime()));
             }
+            a.setaSimpleTime(DateUtils.getSimpleTime(a.getaCreateTime()));
         }
         return new PageUtils(page);
     }

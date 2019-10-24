@@ -26,7 +26,6 @@ public class InCardController {
     @Login
     @PostMapping("/issue")
     @ApiOperation(value = "发布帖子", httpMethod = "POST")
-    @ApiImplicitParam(name = "card", value = "帖子信息", required = true)
     public R issueCard(@RequestBody InCard card, @ApiIgnore @LoginUser InUser user) {
         if (2 == user.getuAuthStatus()) {
             cardService.issueCard(card, user);

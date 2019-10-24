@@ -37,17 +37,10 @@ public class InActivity implements Serializable {
     private Long uId;
 
     /**
-     * 活动内容
+     * 活动标题
      */
-    @ApiModelProperty(value = "活动内容", name = "actTitle", required = true)
+    @ApiModelProperty(value = "活动标题", name = "actTitle", required = true)
     private String actTitle;
-
-    /**
-     * 活动时间
-     */
-    @ApiModelProperty(value = "活动时间(yyyy-MM-dd HH:mm:ss)", name = "actTime", required = true, example = "0-0-0")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
-    private Date actTime;
 
     /**
      * 活动分类（字典）
@@ -132,14 +125,6 @@ public class InActivity implements Serializable {
 
     public void setActTitle(String actTitle) {
         this.actTitle = actTitle;
-    }
-
-    public Date getActTime() {
-        return actTime;
-    }
-
-    public void setActTime(Date actTime) {
-        this.actTime = actTime;
     }
 
     public Integer getActCategory() {
