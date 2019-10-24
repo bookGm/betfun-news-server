@@ -19,5 +19,7 @@ public interface IInActivityDatasService extends IService<InActivityDatas> {
     PageUtils queryPage(Map<String, Object> params);
 
     List<InActivityDatas> queryByActId(Long uId);
+
+    PageUtils pass(Map<String, Object> map);
 }
 

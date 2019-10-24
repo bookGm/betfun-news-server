@@ -43,47 +43,6 @@ public class InActivityController {
 
 
     /**
-     * 活动报名数据
-     */
-    @ApiOperation(value = "活动报名数据", httpMethod = "POST")
-    @ApiImplicitParam(name = "actId", value = "活动ID", required = true)
-    @PostMapping("/apply/{actId}")
-    public R apply(@PathVariable("actId") Long actId) {
-        List<InActivityFields> fieldsList = activityService.apply(actId);
-        return R.ok().put("fieldsList", fieldsList);
-    }
-
-
-    /**
-     * 活动报名
-     */
-    @Login
-    @ApiOperation(value = "活动报名", httpMethod = "POST")
-    @ApiImplicitParam(name = "datasList", value = "活动数据集合", dataType = "List", required = true)
-    @PostMapping("/join")
-    public R join(@RequestBody List<InActivityDatas> datasList, @ApiIgnore @LoginUser InUser user) {
-        InActivityDatas data = datasList.get(0);
-        Long actId = data.getActId();
-        InActivity activity = activityService.getById(actId);
-        Long actNum = activity.getActNum();
-        Long actInNum = activity.getActInNum();
-        if (actInNum >= actNum) {
-            return R.error("报名失败，报名人数已达上限");
-        } else {
-            activity.setActInNum(activity.getActInNum() + 1);
-            activityService.save(activity);
-            for (InActivityDatas datas : datasList) {
-                datas.setdId(IdGenerator.getId());
-                datas.setuId(user.getuId());
-                datas.setdTime(new Date());
-                datasService.save(datas);
-            }
-            return R.ok();
-        }
-    }
-
-
-    /**
      * 添加
      */
     @Login
@@ -155,11 +114,59 @@ public class InActivityController {
     @ApiImplicitParam(name = "actId", value = "活动ID", required = true)
     public R info(@PathVariable("actId") Long actId) {
         InActivity activity = activityService.getById(actId);
-        List<InActivityDatas> datasList = datasService.queryByActId(actId);
-        if (null != datasList && !datasList.isEmpty()) {
-            activity.setDatasList(datasList);
-        }
         return R.ok().put("activity", activity);
+    }
+
+    /**
+     * 获取报名活动的用户
+     */
+    @GetMapping("/pass")
+    @ApiOperation(value = "获取报名活动的用户<分页>", httpMethod = "GET", notes = "根据actId查询报名的用户")
+    @ApiImplicitParam(name = "map", value = "分页数据，活动ID", required = true)
+    public R pass(@RequestParam Map<String,Object> map){
+        PageUtils page = datasService.pass(map);
+        return R.ok().put("page",page);
+    }
+
+
+    /**
+     * 获取活动报名数据
+     */
+    @ApiOperation(value = "活动报名数据", httpMethod = "GET")
+    @ApiImplicitParam(name = "actId", value = "活动ID", required = true)
+    @GetMapping("/apply/{actId}")
+    public R apply(@PathVariable("actId") Long actId) {
+        List<InActivityFields> fieldsList = activityService.apply(actId);
+        return R.ok().put("fieldsList", fieldsList);
+    }
+
+
+    /**
+     * 活动报名
+     */
+    @Login
+    @ApiOperation(value = "活动报名", httpMethod = "POST")
+    @ApiImplicitParam(name = "datasList", value = "活动数据集合", dataType = "List", required = true)
+    @PostMapping("/join")
+    public R join(@RequestBody List<InActivityDatas> datasList, @ApiIgnore @LoginUser InUser user) {
+        InActivityDatas data = datasList.get(0);
+        Long actId = data.getActId();
+        InActivity activity = activityService.getById(actId);
+        Long actNum = activity.getActNum();
+        Long actInNum = activity.getActInNum();
+        if (actInNum >= actNum) {
+            return R.error("报名失败，报名人数已达上限");
+        } else {
+            activity.setActInNum(activity.getActInNum() + 1);
+            activityService.save(activity);
+            for (InActivityDatas datas : datasList) {
+                datas.setdId(IdGenerator.getId());
+                datas.setuId(user.getuId());
+                datas.setdTime(new Date());
+                datasService.save(datas);
+            }
+            return R.ok();
+        }
     }
 
 }

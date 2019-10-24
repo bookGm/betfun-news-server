@@ -37,4 +37,16 @@ public class InActivityDatasServiceImpl extends ServiceImpl<InActivityDatasDao, 
         return datasList;
     }
 
+    @Override
+    public PageUtils pass(Map<String, Object> map) {
+        String actId = (String)map.get("actId");
+        LambdaQueryWrapper<InActivityDatas> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.in(InActivityDatas::getActId,actId);
+        IPage<InActivityDatas> page = this.page(
+                new Query<InActivityDatas>().getPage(map),
+                queryWrapper
+        );
+        return new PageUtils(page);
+    }
+
 }
