@@ -20,8 +20,6 @@ public interface IInActivityService extends IService<InActivity> {
 
     PageUtils queryActByUId(Map<String,Object> params,Long userId);
 
-    PageUtils queryPage(Map<String, Object> params);
-
     void removeActivity(List<Long> actIds);
 
     void updateActivity(InActivity activity);
@@ -29,4 +27,6 @@ public interface IInActivityService extends IService<InActivity> {
     void saveActivity(InActivity activity);
 
     List<InActivityFields> apply(Long actId);
+
+    List<InActivity> listOk();
 }

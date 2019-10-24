@@ -87,11 +87,10 @@ public class InActivityController {
      * 列表
      */
     @GetMapping("/list")
-    @ApiOperation(value = "获取全部咨讯活动", httpMethod = "GET")
-    @ApiImplicitParam(name = "map", value = "分页数据", required = true)
-    public R list(@RequestParam Map<String, Object> map) {
-        PageUtils page = activityService.queryPage(map);
-        return R.ok().put("page", page);
+    @ApiOperation(value = "获取已审核的咨讯活动", httpMethod = "GET")
+    public R listOk() {
+        List<InActivity> activityList = activityService.listOk();
+        return R.ok().put("activityList", activityList);
     }
 
     /**
@@ -123,9 +122,9 @@ public class InActivityController {
     @GetMapping("/pass")
     @ApiOperation(value = "获取报名活动的用户<分页>", httpMethod = "GET", notes = "根据actId查询报名的用户")
     @ApiImplicitParam(name = "map", value = "分页数据，活动ID", required = true)
-    public R pass(@RequestParam Map<String,Object> map){
+    public R pass(@RequestParam Map<String, Object> map) {
         PageUtils page = datasService.pass(map);
-        return R.ok().put("page",page);
+        return R.ok().put("page", page);
     }
 
 

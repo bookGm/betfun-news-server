@@ -8,8 +8,10 @@ import io.information.common.utils.PageUtils;
 import io.information.common.utils.Query;
 import io.information.modules.app.dao.InActivityDao;
 import io.information.modules.app.entity.InActivity;
+import io.information.modules.app.entity.InActivityDatas;
 import io.information.modules.app.entity.InActivityFields;
 import io.information.modules.app.entity.InActivityTicket;
+import io.information.modules.app.service.IInActivityDatasService;
 import io.information.modules.app.service.IInActivityFieldsService;
 import io.information.modules.app.service.IInActivityService;
 import io.information.modules.app.service.IInActivityTicketService;
@@ -36,44 +38,19 @@ public class InActivityServiceImpl extends ServiceImpl<InActivityDao, InActivity
     private IInActivityTicketService ticketService;
     @Autowired
     private IInActivityFieldsService fieldsService;
+    @Autowired
+    private IInActivityDatasService datasService;
+
 
     @Override
-    public PageUtils queryPage(Map<String, Object> params) {
+    public PageUtils queryActByUId(Map<String, Object> params, Long userId) {
+        QueryWrapper<InActivity> queryWrapper = new QueryWrapper<>();
+        queryWrapper.lambda().eq(InActivity::getuId, userId);
         IPage<InActivity> page = this.page(
                 new Query<InActivity>().getPage(params),
-                new QueryWrapper<InActivity>()
+                queryWrapper
         );
         return new PageUtils(page);
-    }
-
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public void removeActivity(List<Long> actIds) {
-        List<InActivityFields> fieldsList = field(actIds);
-        List<InActivityTicket> ticketList = ticket(actIds);
-        if (null != fieldsList && !fieldsList.isEmpty()) {
-            List<Long> fIds = fieldsList.stream().map(InActivityFields::getFId).collect(Collectors.toList());
-            fieldsService.removeByIds(fIds);
-        }
-        if (null != ticketList && !ticketList.isEmpty()) {
-            List<Long> tIds = ticketList.stream().map(InActivityTicket::gettId).collect(Collectors.toList());
-            ticketService.removeByIds(tIds);
-        }
-        this.removeByIds(actIds);
-    }
-
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public void updateActivity(InActivity activity) {
-        List<InActivityTicket> ticketList = activity.getTicketList();
-        List<InActivityFields> fieldsList = activity.getFieldsList();
-        if (null != fieldsList && !fieldsList.isEmpty()) {
-            fieldsService.updateBatchById(fieldsList);
-        }
-        if (null != ticketList && !ticketList.isEmpty()) {
-            ticketService.updateBatchById(ticketList);
-        }
-        this.updateById(activity);
     }
 
     @Override
@@ -102,14 +79,45 @@ public class InActivityServiceImpl extends ServiceImpl<InActivityDao, InActivity
     }
 
     @Override
-    public PageUtils queryActByUId(Map<String, Object> params, Long userId) {
-        QueryWrapper<InActivity> queryWrapper = new QueryWrapper<>();
-        queryWrapper.lambda().eq(InActivity::getuId, userId);
-        IPage<InActivity> page = this.page(
-                new Query<InActivity>().getPage(params),
-                queryWrapper
-        );
-        return new PageUtils(page);
+    public List<InActivity> listOk() {
+        LambdaQueryWrapper<InActivity> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(InActivity::getActType, 2);
+        return this.list(queryWrapper);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void removeActivity(List<Long> actIds) {
+        List<InActivityFields> fieldsList = field(actIds);
+        List<InActivityTicket> ticketList = ticket(actIds);
+        List<InActivityDatas> datasList = datas(actIds);
+        if (null != fieldsList && !fieldsList.isEmpty()) {
+            List<Long> fIds = fieldsList.stream().map(InActivityFields::getFId).collect(Collectors.toList());
+            fieldsService.removeByIds(fIds);
+        }
+        if (null != ticketList && !ticketList.isEmpty()) {
+            List<Long> tIds = ticketList.stream().map(InActivityTicket::gettId).collect(Collectors.toList());
+            ticketService.removeByIds(tIds);
+        }
+        if (null != datasList && !datasList.isEmpty()) {
+            List<Long> dIds = datasList.stream().map(InActivityDatas::getdId).collect(Collectors.toList());
+            datasService.removeByIds(dIds);
+        }
+        this.removeByIds(actIds);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void updateActivity(InActivity activity) {
+        List<InActivityTicket> ticketList = activity.getTicketList();
+        List<InActivityFields> fieldsList = activity.getFieldsList();
+        if (null != fieldsList && !fieldsList.isEmpty()) {
+            fieldsService.updateBatchById(fieldsList);
+        }
+        if (null != ticketList && !ticketList.isEmpty()) {
+            ticketService.updateBatchById(ticketList);
+        }
+        this.updateById(activity);
     }
 
 
@@ -134,5 +142,14 @@ public class InActivityServiceImpl extends ServiceImpl<InActivityDao, InActivity
         return null;
     }
 
+    private List<InActivityDatas> datas(List<Long> ids) {
+        LambdaQueryWrapper<InActivityDatas> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.in(InActivityDatas::getActId, ids);
+        List<InActivityDatas> list = datasService.list(queryWrapper);
+        if (!list.isEmpty()) {
+            return list;
+        }
+        return null;
+    }
 
 }
