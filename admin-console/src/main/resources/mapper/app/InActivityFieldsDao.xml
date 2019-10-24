@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.information.modules.app.dao.InActivityFieldsDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.information.modules.app.entity.InActivityFields" id="activityFieldsMap">
+        <result property="fId" column="f_id"/>
+        <result property="actId" column="act_id"/>
+        <result property="fKey" column="f_key"/>
+        <result property="fName" column="f_name"/>
+        <result property="fPlaceholder" column="f_placeholder"/>
+        <result property="fNotnull" column="f_notnull"/>
+    </resultMap>
+
+
+</mapper>

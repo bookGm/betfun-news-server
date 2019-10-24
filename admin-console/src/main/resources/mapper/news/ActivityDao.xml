@@ -19,6 +19,7 @@
         <result property="actStartTime" column="act_start_time"/>
         <result property="actCloseTime" column="act_close_time"/>
         <result property="actCreateTime" column="act_create_time"/>
+        <result property="actType" column="act_type"/>
     </resultMap>
 
 

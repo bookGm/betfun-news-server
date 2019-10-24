@@ -39,7 +39,7 @@ public class InCardController {
      * 帖子详情
      */
     @GetMapping("/details/{cId}")
-    @ApiOperation(value = "帖子详情", httpMethod = "POST")
+    @ApiOperation(value = "帖子详情", httpMethod = "GET")
     @ApiImplicitParam(name = "cardBase", value = "基础帖子信息", required = true)
     public R details(@PathVariable("cId") Long cId) {
         InCard card = cardService.details(cId);

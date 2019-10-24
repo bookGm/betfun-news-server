@@ -2,7 +2,6 @@
 
 package io.information.modules.sys.controller;
 
-import io.information.modules.app.entity.InUser;
 import io.information.modules.sys.entity.SysUserEntity;
 import org.apache.shiro.SecurityUtils;
 import org.slf4j.Logger;

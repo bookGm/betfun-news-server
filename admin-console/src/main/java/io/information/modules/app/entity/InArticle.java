@@ -22,7 +22,6 @@ import java.util.Date;
 
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
-@ApiModel(value = "文章", description = "文章对象")
 public class InArticle implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -45,42 +44,34 @@ public class InArticle implements Serializable {
     /**
      * 文章标题
      */
-    @ApiModelProperty(value = "文章标题", name = "aTitle", required = true)
     private String aTitle;
     /**
      * 文章内容
      */
-    @ApiModelProperty(value = "文章内容", name = "aContent", required = true)
     private String aContent;
     /**
      * 文章摘要
      */
-    @ApiModelProperty(value = "文章摘要", name = "aBrief", required = true)
     private String aBrief;
     /**
      * 文章关键字（例：1,2,3）
      */
-    @ApiModelProperty(value = "文章关键词（标签）", name = "aKeyword", required = true)
     private String aKeyword;
     /**
      * 文章封面URL
      */
-    @ApiModelProperty(value = "文章封面图", name = "aCover", required = true)
     private String aCover;
     /**
      * 文章类型（字典）
      */
-    @ApiModelProperty(value = "文章类型", name = "aType", required = true, example = "0")
     private Integer aType;
     /**
      * 文章来源（非转载类型，此字段为空）
      */
-    @ApiModelProperty(value = "文章来源（非转载类型，不用传此字段）", name = "aSource", required = false)
     private String aSource;
     /**
      * 文章链接（非转载类型，此字段为空）
      */
-    @ApiModelProperty(value = "文章链接（非转载类型，不用传此字段）", name = "aLink", required = false)
     private String aLink;
     /**
      * 点赞数
@@ -97,7 +88,6 @@ public class InArticle implements Serializable {
     /**
      * 文章状态（0：草稿箱，1：审核中，2：已发布）
      */
-    @ApiModelProperty(value = "文章状态（0：草稿箱，1：审核中，2：已发布）", name = "aStatus", required = true)
     private Integer aStatus;
     /**
      * 浏览量
@@ -106,13 +96,17 @@ public class InArticle implements Serializable {
     /**
      * 创建时间
      */
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date aCreateTime;
     /**
      * 简单时间
      */
     @TableField(exist = false)
     private String aSimpleTime;
+    /**
+     * 活动状态（0:未通过 1:审核中 2:已通过）
+     */
+    private Integer actType;
 
 
     public Long getaId() {
@@ -257,5 +251,13 @@ public class InArticle implements Serializable {
 
     public void setaReadNumber(Long aReadNumber) {
         this.aReadNumber = aReadNumber;
+    }
+
+    public Integer getActType() {
+        return actType;
+    }
+
+    public void setActType(Integer actType) {
+        this.actType = actType;
     }
 }
