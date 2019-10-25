@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 import java.util.Map;
 
 
-@Service("activityFieldsService")
+@Service
 public class InActivityFieldsServiceImpl extends ServiceImpl<InActivityFieldsDao, InActivityFields> implements IInActivityFieldsService {
 
     @Override

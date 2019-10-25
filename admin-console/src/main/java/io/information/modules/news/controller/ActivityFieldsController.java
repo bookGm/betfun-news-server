@@ -21,7 +21,7 @@ import java.util.Map;
  * @date 2019-10-24 10:53:16
  */
 @RestController
-@RequestMapping("news/activity/datas")
+@RequestMapping("news/activity/fields")
 public class ActivityFieldsController {
     @Autowired
     private ActivityFieldsService activityFieldsService;

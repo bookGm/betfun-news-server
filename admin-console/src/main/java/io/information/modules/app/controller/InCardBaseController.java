@@ -103,26 +103,11 @@ public class InCardBaseController {
      * 列表
      */
     @GetMapping("/list")
-    @ApiOperation(value = "获取某一类帖子", httpMethod = "GET")
-    @ApiImplicitParam(name = "map", value = "分页数据，帖子类型<aCategory>", required = true)
+    @ApiOperation(value = "获取全部基础帖子", httpMethod = "GET")
+    @ApiImplicitParam(name = "map", value = "分页数据", required = true)
     public R status(@RequestParam Map<String, Object> map) {
         PageUtils page = cardBaseService.queryPage(map);
         return R.ok().put("page", page);
     }
-
-
-    /**
-     * 列表
-     */
-    @Login
-    @GetMapping("/stateUser")
-    @ApiOperation(value = "获取本人发布的帖子", httpMethod = "GET", notes = "自动获取用户信息")
-    @ApiImplicitParam(name = "map", value = "分页数据，帖子类型<aCategory>", required = true)
-    public R stateUser(@RequestParam Map<String, Object> map, @ApiIgnore @LoginUser InUser user) {
-        map.put("uId", user.getuId());
-        PageUtils page = cardBaseService.queryPage(map);
-        return R.ok().put("page", page);
-    }
-
 
 }

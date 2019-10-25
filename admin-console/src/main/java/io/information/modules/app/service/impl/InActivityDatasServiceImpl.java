@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Map;
 
 
-@Service("activityDatasService")
+@Service
 public class InActivityDatasServiceImpl extends ServiceImpl<InActivityDatasDao, InActivityDatas> implements IInActivityDatasService {
 
     @Override

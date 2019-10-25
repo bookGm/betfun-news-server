@@ -75,7 +75,6 @@ public class InActivityDatasController {
     @RequestMapping("/delete")
     public R delete(@RequestBody Long[] dIds) {
         activityDatasService.removeByIds(Arrays.asList(dIds));
-
         return R.ok();
     }
 

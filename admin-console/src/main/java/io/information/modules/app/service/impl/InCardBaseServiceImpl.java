@@ -1,6 +1,7 @@
 package io.information.modules.app.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.guansuo.common.StringUtil;
@@ -26,16 +27,9 @@ public class InCardBaseServiceImpl extends ServiceImpl<InCardBaseDao, InCardBase
 
     @Override
     public PageUtils queryPage(Map<String, Object> map) {
-        LambdaQueryWrapper<InCardBase> queryWrapper = new LambdaQueryWrapper<>();
-        if (map.containsKey("uId") && StringUtil.isNotBlank(map.get("uId"))) {
-            queryWrapper.eq(InCardBase::getuId, map.get("uId"));
-        }
-        if (map.containsKey("cCategory") && StringUtil.isNotBlank(map.get("cCategory"))) {
-            queryWrapper.eq(InCardBase::getcCategory, map.get("cCategory"));
-        }
         IPage<InCardBase> page = this.page(
                 new Query<InCardBase>().getPage(map),
-                queryWrapper
+                new QueryWrapper<InCardBase>()
         );
         return new PageUtils(page);
     }

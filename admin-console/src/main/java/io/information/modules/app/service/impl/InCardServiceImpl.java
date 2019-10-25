@@ -1,5 +1,10 @@
 package io.information.modules.app.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.guansuo.common.StringUtil;
+import io.information.common.utils.PageUtils;
+import io.information.common.utils.Query;
 import io.information.modules.app.entity.*;
 import io.information.modules.app.service.IInCardArgueService;
 import io.information.modules.app.service.IInCardBaseService;
@@ -7,6 +12,8 @@ import io.information.modules.app.service.IInCardService;
 import io.information.modules.app.service.IInCardVoteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.Map;
 
 @Service
 public class InCardServiceImpl implements IInCardService {
@@ -84,5 +91,21 @@ public class InCardServiceImpl implements IInCardService {
             //基础帖子
             baseService.removeById(cId);
         }
+    }
+
+    @Override
+    public PageUtils queryPage(Map<String, Object> map) {
+        LambdaQueryWrapper<InCardBase> queryWrapper = new LambdaQueryWrapper<>();
+        if (map.containsKey("uId") && StringUtil.isNotBlank(map.get("uId"))) {
+            queryWrapper.eq(InCardBase::getuId, map.get("uId"));
+        }
+        if (map.containsKey("cCategory") && StringUtil.isNotBlank(map.get("cCategory"))) {
+            queryWrapper.eq(InCardBase::getcCategory, map.get("cCategory"));
+        }
+        IPage<InCardBase> page = baseService.page(
+                new Query<InCardBase>().getPage(map),
+                queryWrapper
+        );
+        return new PageUtils(page);
     }
 }

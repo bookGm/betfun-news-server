@@ -20,7 +20,7 @@ import java.util.Map;
  * @date 2019-10-24 13:32:16
  */
 @RestController
-@RequestMapping("news/activity/fields")
+@RequestMapping("news/activity/ticket")
 public class ActivityTicketController {
     @Autowired
     private ActivityTicketService activityTicketService;

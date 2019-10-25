@@ -17,10 +17,12 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -42,6 +44,8 @@ public class InCardVoteController {
     private RabbitTemplate rabbitTemplate;
     @Autowired
     private IInCardBaseService baseService;
+    @Autowired
+    RedisTemplate redisTemplate;
 
     /**
      * 添加
@@ -70,11 +74,9 @@ public class InCardVoteController {
     @PostMapping("/vote")
     @ApiOperation(value = "投票", httpMethod = "POST", notes = "根据帖子ID和选择的投票选项，更新投票选项数量")
     @ApiImplicitParam(name = "cid、optIndexs", value = "帖子ID、投票选项索引", dataType = "Long、List<int>")
-    public R vote(Long cid, List<Integer> optIndexs, @ApiIgnore @LoginUser InUser user) {
-        for (Integer optIndex : optIndexs) {
-            voteService.vote(cid, user.getuId(), optIndex);
-        }
-        return R.ok();
+    public R vote(@RequestParam("cid")Long cid, @RequestParam(value = "optIndexs",required = false) List<Integer> optIndexs, @ApiIgnore @LoginUser InUser user) {
+        List<Integer> vote = voteService.vote(cid, user.getuId(), optIndexs);
+        return R.ok().put("vote",vote);
     }
 
 
@@ -112,12 +114,19 @@ public class InCardVoteController {
     /**
      * 查询
      */
+    @Login
     @GetMapping("/info/{cId}")
     @ApiOperation(value = "查询单个投票帖子", httpMethod = "GET")
     @ApiImplicitParam(name = "cId", value = "帖子ID", required = true)
-    public R queryCardVote(@PathVariable("cId") Long cId) {
-        InCardVote cardArgue = voteService.getById(cId);
-        return R.ok().put("cardArgue", cardArgue);
+    public R queryCardVote(@PathVariable("cId") Long cId, @ApiIgnore @LoginUser InUser user) {
+        Map<String, Object> map = new HashMap<>();
+        //帖子信息
+        InCardVote cardVote = voteService.getById(cId);
+        //投票信息
+        List<Integer> vote = voteService.vote(cId, user.getuId(), null);
+        map.put("cardVote", cardVote);
+        map.put("voteList", vote);
+        return R.ok().put("card", map);
     }
 
 

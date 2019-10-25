@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 import java.util.Map;
 
 
-@Service("activityTicketService")
+@Service
 public class InActivityTicketServiceImpl extends ServiceImpl<InActivityTicketDao, InActivityTicket> implements IInActivityTicketService {
 
     @Override
