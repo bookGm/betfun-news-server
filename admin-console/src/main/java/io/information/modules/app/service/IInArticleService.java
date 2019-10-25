@@ -20,10 +20,6 @@ public interface IInArticleService extends IService<InArticle> {
 
     PageUtils queryPage(Map<String, Object> params);
 
-    PageUtils statusOK(Map<String, Object> map);
-
-    PageUtils statusArticleUser(Map<String, Object> map, Long uId);
-
     /**
      * 点赞
      */

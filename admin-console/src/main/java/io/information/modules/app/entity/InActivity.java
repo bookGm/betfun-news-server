@@ -78,6 +78,7 @@ public class InActivity implements Serializable {
     /**
      * 已参加人数
      */
+    @ApiModelProperty(value = "已参加人数", name = "actInNum", required = false)
     private Long actInNum;
 
     /**
@@ -114,7 +115,8 @@ public class InActivity implements Serializable {
     /**
      * 活动状态（0:未通过 1:审核中 2:已通过）
      */
-    private Integer actType;
+    @ApiModelProperty(value = "活动状态（0:未通过 1:审核中 2:已通过）", name = "actStatus", required = true)
+    private Integer actStatus;
 
 
     public Long getActId() {
@@ -221,12 +223,12 @@ public class InActivity implements Serializable {
         this.actCreateTime = actCreateTime;
     }
 
-    public Integer getActType() {
-        return actType;
+    public Integer getActStatus() {
+        return actStatus;
     }
 
-    public void setActType(Integer actType) {
-        this.actType = actType;
+    public void setActStatus(Integer actStatus) {
+        this.actStatus = actStatus;
     }
 
     public List<InActivityFields> getFieldsList() {

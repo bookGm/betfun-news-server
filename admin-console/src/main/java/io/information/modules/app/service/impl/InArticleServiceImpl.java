@@ -37,14 +37,12 @@ import java.util.stream.Collectors;
 public class InArticleServiceImpl extends ServiceImpl<InArticleDao, InArticle> implements IInArticleService {
     @Autowired
     RedisUtils redisUtils;
-    @Autowired
-    private RabbitTemplate rabbitTemplate;
 
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
         LambdaQueryWrapper<InArticle> qw = new LambdaQueryWrapper<InArticle>();
-        if (params.containsKey("type")&& StringUtil.isNotBlank(params.get("type"))) {
+        if (params.containsKey("type") && StringUtil.isNotBlank(params.get("type"))) {
             switch (Integer.parseInt(String.valueOf(params.get("type")))) {
                 case 0:
                     qw.orderByDesc(InArticle::getaCreateTime);
@@ -57,11 +55,11 @@ public class InArticleServiceImpl extends ServiceImpl<InArticleDao, InArticle> i
                     break;
             }
         }
-        if(params.containsKey("uId")&& StringUtil.isNotBlank(params.get("uId"))){
-            qw.eq(InArticle::getuId,params.get("uId"));
+        if (params.containsKey("uId") && StringUtil.isNotBlank(params.get("uId"))) {
+            qw.eq(InArticle::getuId, params.get("uId"));
         }
-        if(params.containsKey("aStatus")&& StringUtil.isNotBlank(params.get("aStatus"))){
-            qw.eq(InArticle::getaStatus,params.get("aStatus"));
+        if (params.containsKey("aStatus") && StringUtil.isNotBlank(params.get("aStatus"))) {
+            qw.eq(InArticle::getaStatus, params.get("aStatus"));
         }
         IPage<InArticle> page = this.page(
                 new Query<InArticle>().getPage(params), qw
@@ -81,29 +79,6 @@ public class InArticleServiceImpl extends ServiceImpl<InArticleDao, InArticle> i
         this.baseMapper.addReadNumber(aReadNumber, aId);
     }
 
-    @Override
-    public PageUtils statusOK(Map<String, Object> map) {
-        LambdaQueryWrapper<InArticle> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(InArticle::getaStatus, 2);
-        IPage<InArticle> page = this.page(
-                new Query<InArticle>().getPage(map),
-                queryWrapper
-        );
-        return new PageUtils(page);
-    }
-
-    @Override
-    public PageUtils statusArticleUser(Map<String, Object> map, Long uId) {
-        int aStatus = (int) map.get("aStatus");
-        //0草稿 1审核 2发布
-        LambdaQueryWrapper<InArticle> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(InArticle::getuId, uId).eq(InArticle::getaStatus, aStatus);
-        IPage<InArticle> page = this.page(
-                new Query<InArticle>().getPage(map),
-                queryWrapper
-        );
-        return new PageUtils(page);
-    }
 
     @Override
     @CachePut(value = RedisKeys.LIKE, key = "#aid+'-'+#uid")

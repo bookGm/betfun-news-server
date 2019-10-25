@@ -78,7 +78,7 @@ public class ActivityEntity implements Serializable {
 	/**
 	 * 活动状态（0:未通过 1:审核中 2:已通过）
 	 */
-	private Integer actType;
+	private Integer actStatus;
 
 	public Long getActId() {
 		return actId;
@@ -184,11 +184,11 @@ public class ActivityEntity implements Serializable {
 		this.actCreateTime = actCreateTime;
 	}
 
-	public Integer getActType() {
-		return actType;
+	public Integer getActStatus() {
+		return actStatus;
 	}
 
-	public void setActType(Integer actType) {
-		this.actType = actType;
+	public void setActStatus(Integer actStatus) {
+		this.actStatus = actStatus;
 	}
 }

@@ -88,20 +88,21 @@ public class InActivityController {
      */
     @GetMapping("/list")
     @ApiOperation(value = "获取已审核的咨讯活动", httpMethod = "GET")
-    public R listOk() {
-        List<InActivity> activityList = activityService.listOk();
-        return R.ok().put("activityList", activityList);
+    @ApiImplicitParam(name = "map", value = "分页数据", required = true)
+    public R listOk(@RequestParam Map<String, Object> map) {
+        PageUtils page = activityService.queryPage(map);
+        return R.ok().put("page", page);
     }
-
     /**
-     * 用户查询
+     * 列表
      */
     @Login
     @GetMapping("/userActivity")
-    @ApiOperation(value = "获取用户发布的活动", httpMethod = "GET", notes = "自动获取用户信息")
+    @ApiOperation(value = "获取本人发布的活动", httpMethod = "GET", notes = "自动获取用户信息")
     @ApiImplicitParam(name = "map", value = "分页数据", required = true)
-    public R userActivity(@RequestParam Map<String, Object> params, @ApiIgnore @LoginUser InUser user) {
-        PageUtils page = activityService.queryActByUId(params, user.getuId());
+    public R userActivity(@RequestParam Map<String, Object> map, @ApiIgnore @LoginUser InUser user) {
+        map.put("uId",user.getuId());
+        PageUtils page = activityService.queryPage(map);
         return R.ok().put("page", page);
     }
 

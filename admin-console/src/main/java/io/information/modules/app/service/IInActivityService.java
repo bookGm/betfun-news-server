@@ -18,8 +18,6 @@ import java.util.Map;
  */
 public interface IInActivityService extends IService<InActivity> {
 
-    PageUtils queryActByUId(Map<String,Object> params,Long userId);
-
     void removeActivity(List<Long> actIds);
 
     void updateActivity(InActivity activity);
@@ -28,5 +26,5 @@ public interface IInActivityService extends IService<InActivity> {
 
     List<InActivityFields> apply(Long actId);
 
-    List<InActivity> listOk();
+    PageUtils queryPage(Map<String, Object> params);
 }

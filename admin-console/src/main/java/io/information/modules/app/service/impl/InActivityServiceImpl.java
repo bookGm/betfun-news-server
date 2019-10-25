@@ -4,8 +4,11 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.guansuo.common.StringUtil;
 import io.information.common.utils.PageUtils;
 import io.information.common.utils.Query;
+import io.information.common.utils.RedisKeys;
+import io.information.common.utils.RedisUtils;
 import io.information.modules.app.dao.InActivityDao;
 import io.information.modules.app.entity.InActivity;
 import io.information.modules.app.entity.InActivityDatas;
@@ -40,18 +43,9 @@ public class InActivityServiceImpl extends ServiceImpl<InActivityDao, InActivity
     private IInActivityFieldsService fieldsService;
     @Autowired
     private IInActivityDatasService datasService;
+    @Autowired
+    RedisUtils redisUtils;
 
-
-    @Override
-    public PageUtils queryActByUId(Map<String, Object> params, Long userId) {
-        QueryWrapper<InActivity> queryWrapper = new QueryWrapper<>();
-        queryWrapper.lambda().eq(InActivity::getuId, userId);
-        IPage<InActivity> page = this.page(
-                new Query<InActivity>().getPage(params),
-                queryWrapper
-        );
-        return new PageUtils(page);
-    }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -79,10 +73,36 @@ public class InActivityServiceImpl extends ServiceImpl<InActivityDao, InActivity
     }
 
     @Override
-    public List<InActivity> listOk() {
+    public PageUtils queryPage(Map<String, Object> params) {
         LambdaQueryWrapper<InActivity> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(InActivity::getActType, 2);
-        return this.list(queryWrapper);
+        if (params.containsKey("type") && StringUtil.isNotBlank(params.get("type"))) {
+            switch (Integer.parseInt(String.valueOf(params.get("type")))) {
+                case 0: //最新发布
+                    queryWrapper.orderByDesc(InActivity::getActCreateTime);
+                    break;
+                case 1: //全部
+                    queryWrapper.orderByDesc(InActivity::getActStartTime);
+                    break;
+                case 2: //峰会
+                    break;
+                case 3: //线上活动
+                    break;
+                case 4: //其他
+                    queryWrapper.orderByAsc(InActivity::getActCloseTime);
+                    break;
+            }
+        }
+        if (params.containsKey("uId") && StringUtil.isNotBlank(params.get("uId"))) {
+            queryWrapper.eq(InActivity::getuId, params.get("uId"));
+        }
+        if (params.containsKey("actStatus") && StringUtil.isNotBlank(params.get("actStatus"))) {
+            queryWrapper.eq(InActivity::getActStatus, params.get("actStatus"));
+        }
+        IPage<InActivity> page = this.page(
+                new Query<InActivity>().getPage(params),
+                queryWrapper
+        );
+        return new PageUtils(page);
     }
 
     @Override

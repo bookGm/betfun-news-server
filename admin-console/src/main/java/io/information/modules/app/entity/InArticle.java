@@ -36,7 +36,7 @@ public class InArticle implements Serializable {
      */
     private Long uId;
     /**
-     * 用户
+     * 用户名称
      */
     @TableField(exist = false)
     private String uName;

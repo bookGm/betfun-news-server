@@ -103,11 +103,11 @@ public class InArticleController {
 
 
     /**
-     * 列表 esOK
+     * 列表
      */
     @GetMapping("/list")
-    @ApiOperation(value = "获取全部咨讯文章", httpMethod = "GET")
-    @ApiImplicitParam(name = "map", value = "分页数据", required = true)
+    @ApiOperation(value = "获取已发布的文章", httpMethod = "GET")
+    @ApiImplicitParam(name = "map", value = "分页数据，状态码", required = true)
     public R list(@RequestParam Map<String, Object> map) {
         PageUtils page = articleService.queryPage(map);
         return R.ok().put("page", page);
@@ -118,7 +118,7 @@ public class InArticleController {
     @Login
     @GetMapping("/loginedList")
     @ApiOperation(value = "获取本人发布的文章", httpMethod = "GET")
-    @ApiImplicitParam(name = "map", value = "分页数据", required = true)
+    @ApiImplicitParam(name = "map", value = "分页数据，状态码", required = true)
     public R loginedList(@RequestParam Map<String, Object> map,@ApiIgnore @LoginUser InUser user) {
         map.put("uId",user.getuId());
         PageUtils page = articleService.queryPage(map);
@@ -127,7 +127,7 @@ public class InArticleController {
 
 
     /**
-     * 查询 esNot
+     * 查询
      */
     @GetMapping("/info/{aId}")
     @ApiOperation(value = "查询单个咨讯文章", httpMethod = "GET", notes = "根据文章ID查询文章")
@@ -150,30 +150,6 @@ public class InArticleController {
     }
 
 
-    /**
-     * 状态查询 esOK
-     */
-    @Login
-    @GetMapping("/status")
-    @ApiOperation(value = "获取已发布文章", httpMethod = "GET")
-    @ApiImplicitParam(name = "map", value = "分页数据", required = true)
-    public R status(@RequestParam Map<String, Object> map) {
-        PageUtils page = articleService.statusOK(map);
-        return R.ok().put("page", page);
-    }
-
-
-    /**
-     * 状态查询用户 esOK
-     */
-    @Login
-    @GetMapping("/statusUser")
-    @ApiOperation(value = "文章状态获取用户文章", httpMethod = "GET", notes = "自动获取用户信息")
-    @ApiImplicitParam(name = "map", value = "分页数据，文章状态<aStatus>", required = true)
-    public R statusArticleUser(@RequestParam Map<String, Object> map, @ApiIgnore @LoginUser InUser user) {
-        PageUtils page = articleService.statusArticleUser(map, user.getuId());
-        return R.ok().put("page", page);
-    }
 
 
     /**
