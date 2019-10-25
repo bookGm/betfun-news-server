@@ -26,6 +26,7 @@ public class InCardController {
     @Login
     @PostMapping("/issue")
     @ApiOperation(value = "发布帖子", httpMethod = "POST")
+    @ApiImplicitParam(name = "card", value = "帖子信息", required = true)
     public R issueCard(@RequestBody InCard card, @ApiIgnore @LoginUser InUser user) {
         cardService.issueCard(card, user);
         return R.ok();
@@ -38,7 +39,7 @@ public class InCardController {
      */
     @GetMapping("/details/{cId}")
     @ApiOperation(value = "帖子详情", httpMethod = "GET")
-    @ApiImplicitParam(name = "cardBase", value = "基础帖子信息", required = true)
+    @ApiImplicitParam(name = "cId", value = "帖子ID", required = true)
     public R details(@PathVariable("cId") Long cId) {
         InCard card = cardService.details(cId);
         return R.ok().put("card", card);

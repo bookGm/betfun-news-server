@@ -9,7 +9,6 @@ import io.information.modules.app.annotation.LoginUser;
 import io.information.modules.app.entity.InCardBase;
 import io.information.modules.app.entity.InUser;
 import io.information.modules.app.service.IInCardBaseService;
-import io.information.modules.app.service.IInUserService;
 import io.mq.utils.Constants;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -37,8 +36,6 @@ public class InCardBaseController {
     @Autowired
     private IInCardBaseService cardBaseService;
     @Autowired
-    private IInUserService iInUserService;
-    @Autowired
     private RabbitTemplate rabbitTemplate;
 
 
@@ -50,12 +47,12 @@ public class InCardBaseController {
     @ApiOperation(value = "新增基础帖子", httpMethod = "POST")
     @ApiImplicitParam(name = "cardBase", value = "基础帖子信息", required = true)
     public R save(@RequestBody InCardBase cardBase) {
-            long cId = IdGenerator.getId();
-            cardBase.setcId(cId);
-            cardBaseService.save(cardBase);
-            rabbitTemplate.convertAndSend(Constants.cardExchange,
-                    Constants.card_Save_RouteKey, cardBase);
-            return R.ok();
+        long cId = IdGenerator.getId();
+        cardBase.setcId(cId);
+        cardBaseService.save(cardBase);
+        rabbitTemplate.convertAndSend(Constants.cardExchange,
+                Constants.card_Save_RouteKey, cardBase);
+        return R.ok();
     }
 
 
@@ -67,10 +64,10 @@ public class InCardBaseController {
     @ApiOperation(value = "删除基础帖子", httpMethod = "DELETE", notes = "根据cId[数组]删除基础帖子")
     @ApiImplicitParam(name = "cIds", value = "帖子ID", dataType = "Array", required = true)
     public R delete(@RequestBody Long[] cIds) {
-            cardBaseService.removeByIds(Arrays.asList(cIds));
-            rabbitTemplate.convertAndSend(Constants.cardExchange,
-                    Constants.card_Delete_RouteKey, cIds);
-            return R.ok();
+        cardBaseService.removeByIds(Arrays.asList(cIds));
+        rabbitTemplate.convertAndSend(Constants.cardExchange,
+                Constants.card_Delete_RouteKey, cIds);
+        return R.ok();
     }
 
 
@@ -82,24 +79,13 @@ public class InCardBaseController {
     @ApiOperation(value = "修改基础帖子", httpMethod = "PUT")
     @ApiImplicitParam(name = "cardBase", value = "基础帖子信息", required = true)
     public R update(@RequestBody InCardBase cardBase) {
-            cardBaseService.updateById(cardBase);
-            rabbitTemplate.convertAndSend(Constants.cardExchange,
-                    Constants.card_Update_RouteKey, cardBase);
-            return R.ok();
+        cardBaseService.updateById(cardBase);
+        rabbitTemplate.convertAndSend(Constants.cardExchange,
+                Constants.card_Update_RouteKey, cardBase);
+        return R.ok();
 
     }
 
-
-    /**
-     * 列表
-     */
-    @GetMapping("/list")
-    @ApiOperation(value = "全部基础帖子", httpMethod = "GET")
-    @ApiImplicitParam(name = "map", value = "分页数据", required = true)
-    public R list(@RequestParam Map<String, Object> map) {
-        PageUtils page = cardBaseService.queryPage(map);
-        return R.ok().put("page", page);
-    }
 
     /**
      * 查询
@@ -114,38 +100,29 @@ public class InCardBaseController {
 
 
     /**
-     * 根据正反方ids字符串,查询用户信息
+     * 列表
      */
-    @GetMapping("/idsUser")
-//    @ApiOperation(value = "分割查询用户信息", httpMethod = "GET", notes = "根据正反方ids字符串，用 ，分隔")
-//    @ApiImplicitParam(name = "map", value = "分页数据、正反方ids字符串", required = true)
-    public R idsUser(@RequestParam Map<String, Object> map) {
-        PageUtils page = iInUserService.queryUsersByArgueIds(map);
-        return R.ok().put("page", page);
-    }
-
-
-    /**
-     * 帖子查询
-     */
-    @GetMapping("/status")
-    @ApiOperation(value = "查询某一类帖子", httpMethod = "GET")
+    @GetMapping("/list")
+    @ApiOperation(value = "获取某一类帖子", httpMethod = "GET")
     @ApiImplicitParam(name = "map", value = "分页数据，帖子类型<aCategory>", required = true)
     public R status(@RequestParam Map<String, Object> map) {
-        PageUtils page = cardBaseService.status(map);
+        PageUtils page = cardBaseService.queryPage(map);
         return R.ok().put("page", page);
     }
 
 
     /**
-     * 用户帖子查询
+     * 列表
      */
     @Login
     @GetMapping("/stateUser")
-    @ApiOperation(value = "查询用户的某一类帖子", httpMethod = "GET", notes = "自动获取用户信息")
+    @ApiOperation(value = "获取本人发布的帖子", httpMethod = "GET", notes = "自动获取用户信息")
     @ApiImplicitParam(name = "map", value = "分页数据，帖子类型<aCategory>", required = true)
     public R stateUser(@RequestParam Map<String, Object> map, @ApiIgnore @LoginUser InUser user) {
-        PageUtils page = cardBaseService.queryStateCard(map, user.getuId());
+        map.put("uId", user.getuId());
+        PageUtils page = cardBaseService.queryPage(map);
         return R.ok().put("page", page);
     }
+
+
 }

@@ -16,9 +16,5 @@ import java.util.Map;
  */
 public interface IInCardBaseService extends IService<InCardBase> {
 
-    PageUtils queryPage(Map<String, Object> params);
-
-    PageUtils queryStateCard(Map<String, Object> map, Long uId);
-
-    PageUtils status(Map<String, Object> map);
+    PageUtils queryPage(Map<String, Object> map);
 }

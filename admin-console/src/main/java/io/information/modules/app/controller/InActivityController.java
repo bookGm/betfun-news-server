@@ -121,7 +121,7 @@ public class InActivityController {
      * 获取报名活动的用户
      */
     @GetMapping("/pass")
-    @ApiOperation(value = "获取报名活动的用户<分页>", httpMethod = "GET", notes = "根据actId查询报名的用户")
+    @ApiOperation(value = "获取报名活动的用户", httpMethod = "GET", notes = "根据actId查询报名的用户")
     @ApiImplicitParam(name = "map", value = "分页数据，活动ID", required = true)
     public R pass(@RequestParam Map<String, Object> map) {
         PageUtils page = datasService.pass(map);

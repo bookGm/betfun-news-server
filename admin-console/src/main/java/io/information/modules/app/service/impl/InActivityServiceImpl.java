@@ -92,11 +92,11 @@ public class InActivityServiceImpl extends ServiceImpl<InActivityDao, InActivity
                     break;
             }
         }
-        if (params.containsKey("uId") && StringUtil.isNotBlank(params.get("uId"))) {
-            queryWrapper.eq(InActivity::getuId, params.get("uId"));
+        if(params.containsKey("uId") && StringUtil.isNotBlank(params.get("uId"))){
+            queryWrapper.eq(InActivity::getuId,params.get("uId"));
         }
-        if (params.containsKey("actStatus") && StringUtil.isNotBlank(params.get("actStatus"))) {
-            queryWrapper.eq(InActivity::getActStatus, params.get("actStatus"));
+        if(params.containsKey("actStatus") && StringUtil.isNotBlank(params.get("actStatus"))){
+            queryWrapper.eq(InActivity::getActStatus,params.get("actStatus"));
         }
         IPage<InActivity> page = this.page(
                 new Query<InActivity>().getPage(params),
