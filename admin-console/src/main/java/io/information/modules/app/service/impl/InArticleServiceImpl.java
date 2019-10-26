@@ -69,7 +69,9 @@ public class InArticleServiceImpl extends ServiceImpl<InArticleDao, InArticle> i
             if (null != obj) {
                 a.setuName(((InUser) obj).getuName());
             }
-            a.setaSimpleTime(DateUtils.getSimpleTime(a.getaCreateTime()));
+            if(StringUtil.isNotBlank(a.getaCreateTime())){
+                a.setaSimpleTime(DateUtils.getSimpleTime(a.getaCreateTime()));
+            }
         }
         return new PageUtils(page);
     }

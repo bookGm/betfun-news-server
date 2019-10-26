@@ -34,7 +34,6 @@ public class InCardController {
     public R issueCard(@RequestBody InCard card, @ApiIgnore @LoginUser InUser user) {
         cardService.issueCard(card, user);
         return R.ok();
-
     }
 
 

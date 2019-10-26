@@ -63,7 +63,6 @@ public class EsArticleEntity implements Serializable {
 
     private Long aReadNumber; //浏览量
     @TableField(exist = false)
-
     private String aSimpleTime; //简单时间
 
     public Long getaId() {

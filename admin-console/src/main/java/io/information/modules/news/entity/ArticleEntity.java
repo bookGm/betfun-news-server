@@ -1,13 +1,12 @@
 package io.information.modules.news.entity;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 
 import java.io.Serializable;
 import java.util.Date;
-import java.util.List;
-
-import lombok.Data;
 
 /**
  * 资讯文章表
@@ -23,12 +22,16 @@ public class ArticleEntity implements Serializable {
 	/**
 	 * 文章id
 	 */
-	@TableId
+	@TableId(type = IdType.INPUT)
 	private Long aId;
 	/**
 	 * 用户id
 	 */
 	private Long uId;
+	/**
+	 * 用户名称
+	 */
+	private String uName;
 	/**
 	 * 文章标题
 	 */
@@ -85,6 +88,11 @@ public class ArticleEntity implements Serializable {
 	 * 创建时间
 	 */
 	private Date aCreateTime;
+	/**
+	 * 简洁时间
+	 */
+	@TableField(exist = false)
+	private String aSimpleTime;
 
 	public Long getaId() {
 		return aId;
@@ -212,5 +220,21 @@ public class ArticleEntity implements Serializable {
 
 	public void setaReadNumber(Long aReadNumber) {
 		this.aReadNumber = aReadNumber;
+	}
+
+	public String getaSimpleTime() {
+		return aSimpleTime;
+	}
+
+	public void setaSimpleTime(String aSimpleTime) {
+		this.aSimpleTime = aSimpleTime;
+	}
+
+	public String getuName() {
+		return uName;
+	}
+
+	public void setuName(String uName) {
+		this.uName = uName;
 	}
 }

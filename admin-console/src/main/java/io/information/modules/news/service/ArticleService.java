@@ -22,5 +22,11 @@ public interface ArticleService extends IService<ArticleEntity> {
     void deleteAllArticle(Long userId);
 
     PageUtils audit(Map<String, Object> params);
+
+    /**
+     * 抓取文章（全量）
+     * @param page
+     */
+    void catchArticles(int page);
 }
 

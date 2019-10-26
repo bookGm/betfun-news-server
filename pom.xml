@@ -10,7 +10,8 @@
 		<module>admin-es</module>
 		<module>admin-commons</module>
 		<module>admin-mq</module>
-	</modules>
+        <module>admin-hunter</module>
+    </modules>
     <packaging>pom</packaging>
 	<description>bet information platform</description>
 	<parent>

@@ -34,7 +34,6 @@
         <qcloud.cos.version>4.4</qcloud.cos.version>
         <swagger.version>2.7.0</swagger.version>
         <hutool.version>4.1.1</hutool.version>
-        <lombok.version>1.18.4</lombok.version>
     </properties>
 
     <dependencies>
@@ -49,8 +48,18 @@
             <artifactId>admin-commons</artifactId>
         </dependency>
         <dependency>
+            <groupId>me.zhyd.hunter</groupId>
+            <artifactId>admin-hunter</artifactId>
+            <version>3.0.0</version>
+        </dependency>
+        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-openfeign</artifactId>
+            <version>2.0.2.RELEASE</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>

@@ -132,7 +132,7 @@ public class InArticleController {
     @GetMapping("/info/{aId}")
     @ApiOperation(value = "查询单个咨讯文章", httpMethod = "GET", notes = "根据文章ID查询文章")
     @ApiImplicitParam(paramType = "query", name = "aId", value = "文章ID", required = true)
-    public R queryArticle(@PathVariable("aId") Long aId, HttpServletRequest request) {
+    public R queryArticle(@PathVariable("aId") String aId, HttpServletRequest request) {
         String ip = request.getHeader("x-forwarded-for");
         InArticle article = articleService.getById(aId);
         Boolean aBoolean = redisTemplate.hasKey(ip + aId);
