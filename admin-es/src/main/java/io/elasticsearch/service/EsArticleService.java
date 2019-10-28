@@ -4,8 +4,6 @@ import io.elasticsearch.entity.EsArticleEntity;
 import io.elasticsearch.utils.PageUtils;
 import io.elasticsearch.utils.SearchRequest;
 
-import java.util.List;
-
 public interface EsArticleService {
     void saveArticle(EsArticleEntity articleEntity);
 
@@ -13,11 +11,5 @@ public interface EsArticleService {
 
     void updatedArticle(EsArticleEntity articleEntity);
 
-    PageUtils articleSearchKey(SearchRequest request);
-
-    PageUtils articleSearch(SearchRequest request);
-
-    PageUtils articleSearchStatus(SearchRequest request);
-
-    List<EsArticleEntity> search(String key);
+    PageUtils searchInfo(SearchRequest request);
 }

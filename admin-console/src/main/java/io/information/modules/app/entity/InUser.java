@@ -48,6 +48,11 @@ public class InUser implements Serializable {
     private String uNick;
 
     /**
+     * 用户头像
+     */
+    private String uPhoto;
+
+    /**
      * 用户手机
      */
     private String uPhone;
@@ -140,6 +145,14 @@ public class InUser implements Serializable {
 
     public void setuSalt(String uSalt) {
         this.uSalt = uSalt;
+    }
+
+    public String getuPhoto() {
+        return uPhoto;
+    }
+
+    public void setuPhoto(String uPhoto) {
+        this.uPhoto = uPhoto;
     }
 
     public String getuNick() {

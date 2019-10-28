@@ -56,17 +56,6 @@ public class ArticleController extends AbstractController {
 
 
     /**
-     * 用户ID查询
-     */
-    @GetMapping("/infoAll")
-    @RequiresPermissions("news:article:infoAll")
-    public R infoAll(Map<String, Object> params) {
-        PageUtils pageUtils = articleService.queryAllArticle(params, getUserId());
-        return R.ok().put("userArticle", pageUtils);
-    }
-
-
-    /**
      * 保存
      */
     @PostMapping("/save")
@@ -103,17 +92,6 @@ public class ArticleController extends AbstractController {
 
 
     /**
-     * 用户ID删除
-     */
-    @PostMapping("/deleteAll")
-    @RequiresPermissions("news:article:deleteAll")
-    public R deleteAll() {
-        articleService.deleteAllArticle(getUserId());
-        return R.ok();
-    }
-
-
-    /**
      * 获取审核状态文章
      */
     @GetMapping("/draft")
@@ -121,41 +99,5 @@ public class ArticleController extends AbstractController {
         PageUtils page = articleService.audit(params);
         return ResponseEntity.ok(page);
     }
-
-
-
-
-
-
-
-/*    *//**
-     * 点赞
-     * 文章ID
-     * 用户ID
-     *//*
-    @PostMapping("add/like/{aId}")
-    public R addLike(@PathVariable("aId") Long aId) {
-        ArticleEntity article = articleService.getById(aId);
-        //需要在redis中创建一个Set保存信息
-        SetOperations opsForSet = redisTemplate.opsForSet();
-        //添加被点赞的文章
-        Long articleSet = opsForSet.add("article_set", aId);
-        //添加点赞的用户
-        Long articleUserSet = opsForSet.add("article_user_set" + "_" + aId, getUserId());
-        //将用户和文章的对应关系放入Hash
-        HashOperations opsForHash = redisTemplate.opsForHash();
-        String hashStr = "article_user_like" + "_" + aId + "_" + getUserId();
-        //如果有一样的字段，则添加失败
-        Boolean aBoolean = opsForHash.putIfAbsent(hashStr, articleSet, articleUserSet);
-        //判断是否收藏(添加是否成功,true代表收藏成功，false代表收藏过)
-        if (aBoolean) {
-            //同步数据库
-            article.setaLike(article.getaLike() + 1);
-            articleService.updateById(article);
-        } else {
-            R.error();
-        }
-        return R.ok();
-    }*/
 
 }

@@ -71,7 +71,7 @@ public class InArticleController {
     @Login
     @DeleteMapping("/delete")
     @ApiOperation(value = "单个或批量删除咨讯文章", httpMethod = "DELETE", notes = "根据aId[数组]删除活动")
-    @ApiImplicitParam(name = "aIds", value = "文章ID", dataType = "Array", required = true)
+    @ApiImplicitParam(name = "aIds", value = "文章ID", dataType = "Long[ ]", required = true)
     public R delete(@RequestBody Long[] aIds, @ApiIgnore @LoginUser InUser user) {
         if (user.getuAuthStatus() == 2) {
             articleService.removeByIds(Arrays.asList(aIds));

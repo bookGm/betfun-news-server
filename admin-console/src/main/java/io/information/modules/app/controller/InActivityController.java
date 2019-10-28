@@ -62,7 +62,7 @@ public class InActivityController {
      */
     @Login
     @ApiOperation(value = "删除咨讯活动", httpMethod = "DELETE", notes = "根据actId[数组]删除活动")
-    @ApiImplicitParam(name = "actIds", value = "活动ID", required = true, dataType = "Array")
+    @ApiImplicitParam(name = "actIds", value = "活动ID", required = true, dataType = "Long[ ]")
     @DeleteMapping("/delete")
     public R delete(@RequestBody Long[] actIds) {
         activityService.removeActivity(Arrays.asList(actIds));

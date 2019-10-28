@@ -39,6 +39,10 @@ public class UserEntity implements Serializable {
 	 * 用户昵称
 	 */
 	private String uNick;
+    /**
+     * 用户头像
+     */
+    private String uPhoto;
 	/**
 	 * 用户手机
 	 */
@@ -127,6 +131,14 @@ public class UserEntity implements Serializable {
 
     public void setuSalt(String uSalt) {
         this.uSalt = uSalt;
+    }
+
+    public String getuPhoto() {
+        return uPhoto;
+    }
+
+    public void setuPhoto(String uPhoto) {
+        this.uPhoto = uPhoto;
     }
 
     public String getuNick() {

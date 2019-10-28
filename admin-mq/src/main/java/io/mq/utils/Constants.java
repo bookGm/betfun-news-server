@@ -96,4 +96,34 @@ public class Constants {
      * 用户修改
      */
     public static final String user_Update_RouteKey="update_news_user";
+
+
+    /**
+     * 快讯交换机
+     */
+    public static final String flashExchange="exchangeFlash";
+    /**
+     * 快讯新增队列
+     */
+    public static final String flash_Save_Queue="news_flash_save";
+    /**
+     * 快讯删除队列
+     */
+    public static final String flash_Delete_Queue="news_flash_delete";
+    /**
+     * 快讯修改队列
+     */
+    public static final String flash_Update_Queue="news_flash_update";
+    /**
+     * 快讯新增
+     */
+    public static final String flash_Save_RouteKey="save_news_flash";
+    /**
+     * 快讯删除
+     */
+    public static final String flash_Delete_RouteKey="delete_news_flash";
+    /**
+     * 快讯修改
+     */
+    public static final String flash_Update_RouteKey="update_news_flash";
 }

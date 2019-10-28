@@ -168,4 +168,44 @@ public class EsArticleEntity implements Serializable {
     public void setuName(String uName) {
         this.uName = uName;
     }
+
+    public Long getaLike() {
+        return aLike;
+    }
+
+    public void setaLike(Long aLike) {
+        this.aLike = aLike;
+    }
+
+    public Integer getaCollect() {
+        return aCollect;
+    }
+
+    public void setaCollect(Integer aCollect) {
+        this.aCollect = aCollect;
+    }
+
+    public Long getaCritic() {
+        return aCritic;
+    }
+
+    public void setaCritic(Long aCritic) {
+        this.aCritic = aCritic;
+    }
+
+    public Long getaReadNumber() {
+        return aReadNumber;
+    }
+
+    public void setaReadNumber(Long aReadNumber) {
+        this.aReadNumber = aReadNumber;
+    }
+
+    public String getaSimpleTime() {
+        return aSimpleTime;
+    }
+
+    public void setaSimpleTime(String aSimpleTime) {
+        this.aSimpleTime = aSimpleTime;
+    }
 }

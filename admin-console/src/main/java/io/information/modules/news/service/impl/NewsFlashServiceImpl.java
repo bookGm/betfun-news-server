@@ -1,10 +1,15 @@
 package io.information.modules.news.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.guansuo.common.DateUtils;
 import com.guansuo.common.JsonUtil;
+import com.guansuo.common.StringUtil;
 import io.information.common.utils.IdGenerator;
 import io.information.common.utils.JsonUtils;
+import io.information.common.utils.PageUtils;
+import io.information.common.utils.Query;
 import io.information.modules.app.dao.InNewsFlashDao;
 import io.information.modules.app.entity.InNewsFlash;
 import io.information.modules.app.service.IInNewsFlashService;
@@ -19,6 +24,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -54,6 +60,20 @@ public class NewsFlashServiceImpl extends ServiceImpl<NewsFlashDao, NewsFlash> i
                 this.save(n);
             }
         }
+    }
+
+    @Override
+    public PageUtils queryPage(Map<String, Object> params) {
+        LambdaQueryWrapper<NewsFlash> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.orderByDesc(NewsFlash::getnCreateTime);
+        if(null != params.get("aTitle") && StringUtil.isNotBlank(params.get("aTitle"))){
+            queryWrapper.like(NewsFlash::getnTitle,(String)params.get("aTitle"));
+        }
+        IPage<NewsFlash> page = this.page(
+                new Query<NewsFlash>().getPage(params),
+                queryWrapper
+        );
+        return new PageUtils(page);
     }
 
 }

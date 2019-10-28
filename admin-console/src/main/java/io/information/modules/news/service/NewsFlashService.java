@@ -1,7 +1,10 @@
 package io.information.modules.news.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import io.information.common.utils.PageUtils;
 import io.information.modules.news.entity.NewsFlash;
+
+import java.util.Map;
 
 /**
  * <p>
@@ -19,4 +22,6 @@ public interface NewsFlashService extends IService<NewsFlash> {
      * @param pages
      */
     void catchNewsFlash(int start,int pages);
+
+    PageUtils queryPage(Map<String, Object> params);
 }

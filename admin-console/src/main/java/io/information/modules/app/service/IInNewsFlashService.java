@@ -15,5 +15,6 @@ import java.util.Map;
  * @since 2019-10-26
  */
 public interface IInNewsFlashService extends IService<InNewsFlash> {
+
     PageUtils queryPage(Map<String, Object> params);
 }

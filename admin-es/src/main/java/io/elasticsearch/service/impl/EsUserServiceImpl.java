@@ -3,6 +3,8 @@ package io.elasticsearch.service.impl;
 import io.elasticsearch.dao.EsUserDao;
 import io.elasticsearch.entity.EsUserEntity;
 import io.elasticsearch.service.EsUserService;
+import io.elasticsearch.utils.PageUtils;
+import io.elasticsearch.utils.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.common.unit.Fuzziness;
 import org.elasticsearch.index.query.QueryBuilders;
@@ -50,7 +52,8 @@ public class EsUserServiceImpl implements EsUserService {
     }
 
     @Override
-    public List<EsUserEntity> search(String key) {
+    public PageUtils search(SearchRequest request) {
+        String key = request.getKey();
         //根据昵称匹配用户
         NativeSearchQueryBuilder queryBuilder = new NativeSearchQueryBuilder();
         queryBuilder.withQuery(QueryBuilders
@@ -86,7 +89,12 @@ public class EsUserServiceImpl implements EsUserService {
                 return null;
             }
         });
-        return search.getContent();
+        List<EsUserEntity> list = search.getContent();
+        long totalCount = search.getTotalElements();
+        Integer pageSize = request.getPageSize();
+        Integer currPage = request.getCurrPage();
+        //列表数据 总记录数 每页记录数 当前页数
+        return new PageUtils(list, totalCount, pageSize, currPage);
     }
 
     /**

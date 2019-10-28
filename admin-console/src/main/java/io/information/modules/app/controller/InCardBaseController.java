@@ -62,7 +62,7 @@ public class InCardBaseController {
     @Login
     @DeleteMapping("/delete")
     @ApiOperation(value = "删除基础帖子", httpMethod = "DELETE", notes = "根据cId[数组]删除基础帖子")
-    @ApiImplicitParam(name = "cIds", value = "帖子ID", dataType = "Array", required = true)
+    @ApiImplicitParam(name = "cIds", value = "帖子ID", dataType = "Long[ ]", required = true)
     public R delete(@RequestBody Long[] cIds) {
         cardBaseService.removeByIds(Arrays.asList(cIds));
         rabbitTemplate.convertAndSend(Constants.cardExchange,

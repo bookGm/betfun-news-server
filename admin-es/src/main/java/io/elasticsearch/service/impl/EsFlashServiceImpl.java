@@ -1,22 +1,15 @@
 package io.elasticsearch.service.impl;
 
-import com.rabbitmq.client.Channel;
-import io.elasticsearch.dao.EsArticleDao;
-import io.elasticsearch.entity.EsArticleEntity;
-import io.elasticsearch.service.EsArticleService;
+import io.elasticsearch.dao.EsFlashDao;
+import io.elasticsearch.entity.EsFlashEntity;
+import io.elasticsearch.service.EsFlashService;
 import io.elasticsearch.utils.PageUtils;
 import io.elasticsearch.utils.SearchRequest;
-import io.mq.utils.Constants;
-import io.mq.utils.RabbitMQUtils;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.index.query.Operator;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHits;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.amqp.rabbit.annotation.RabbitListener;
-import org.springframework.amqp.support.AmqpHeaders;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -25,7 +18,6 @@ import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
 import org.springframework.data.elasticsearch.core.SearchResultMapper;
 import org.springframework.data.elasticsearch.core.aggregation.AggregatedPage;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
-import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.stereotype.Service;
 
 import java.lang.reflect.Method;
@@ -33,82 +25,73 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class EsArticleServiceImpl implements EsArticleService {
+public class EsFlashServiceImpl implements EsFlashService {
     @Autowired
-    private EsArticleDao articleDao;
+    private EsFlashDao flashDao;
     @Autowired
     private ElasticsearchTemplate elasticsearchTemplate;
 
 
-    private static final Logger LOG = LoggerFactory.getLogger(EsArticleServiceImpl.class);
-
-    @RabbitListener(queues = Constants.queue)
-    public void receive(String payload, Channel channel, @Header(AmqpHeaders.DELIVERY_TAG) long tag) {
-        LOG.info("消费内容为：{}", payload);
-        RabbitMQUtils.askMessage(channel, tag, LOG);
+    @Override
+    public void saveFlash(EsFlashEntity flash) {
+        flashDao.save(flash);
     }
 
     @Override
-    public void saveArticle(EsArticleEntity articleEntity) {
-        articleDao.save(articleEntity);
-    }
-
-    @Override
-    public void removeArticle(Long[] aIds) {
-        for (Long aId : aIds) {
-            articleDao.deleteById(aId);
+    public void removeFlash(Long[] nIds) {
+        for (Long nId : nIds) {
+            flashDao.deleteById(nId);
         }
     }
 
     @Override
-    public void updatedArticle(EsArticleEntity articleEntity) {
-        articleDao.deleteById(articleEntity.getaId());
-        articleDao.save(articleEntity);
+    public void updatedFlash(EsFlashEntity flash) {
+        flashDao.deleteById(flash.getnId());
+        flashDao.save(flash);
     }
 
     @Override
-    public PageUtils searchInfo(SearchRequest request) {
+    public PageUtils searchFlash(SearchRequest request) {
         String key = request.getKey();
         if (null != key && !key.isEmpty()) {
             NativeSearchQueryBuilder queryBuilder = new NativeSearchQueryBuilder();
-            //多字段匹配[关键字，标题，内容，摘要]
+            //多字段匹配[标题，摘要，内容]
             queryBuilder.withQuery(QueryBuilders
-                    .multiMatchQuery(key, "aKeyword", "aTitle", "aContent", "aBrief")
+                    .multiMatchQuery(key, "nTitle", "nBrief", "nContent")
                     .operator(Operator.OR)
                     .minimumShouldMatch("80%"));
-            Page<EsArticleEntity> search = elasticsearchTemplate.queryForPage(queryBuilder.build(), EsArticleEntity.class, new SearchResultMapper() {
+            Page<EsFlashEntity> search = elasticsearchTemplate.queryForPage(queryBuilder.build(), EsFlashEntity.class, new SearchResultMapper() {
                 @Override
                 public <T> AggregatedPage<T> mapResults(SearchResponse response, Class<T> aClass, Pageable pageable) {
-                    List<EsArticleEntity> articles = new ArrayList<>();
+                    List<EsFlashEntity> flashs = new ArrayList<>();
                     SearchHits hits = response.getHits();
                     for (SearchHit searchHit : hits) {
                         if (hits.getHits().length <= 0) {
                             return null;
                         }
-                        EsArticleEntity article = new EsArticleEntity();
+                        EsFlashEntity flash = new EsFlashEntity();
                         String msg = searchHit.getHighlightFields().get(key).fragments()[0].toString();
-                        article.setaKeyword(String.valueOf(searchHit.getFields().get("aKeyword")));
-                        article.setaTitle(String.valueOf(searchHit.getFields().get("aTitle")));
-                        article.setaContent(String.valueOf(searchHit.getFields().get("aContent")));
-                        article.setaBrief(String.valueOf(searchHit.getFields().get("aBrief")));
+                        flash.setnTitle(String.valueOf(searchHit.getFields().get("nTitle")));
+                        flash.setnBrief(String.valueOf(searchHit.getFields().get("nBrief")));
+                        flash.setnContent(String.valueOf(searchHit.getFields().get("nContent")));
                         try {
                             String name = parSetName(key);
-                            Class<? extends EsArticleEntity> articleClass = article.getClass();
-                            Method method = articleClass.getMethod(name, String.class);
-                            method.invoke(article, msg);
+                            Class<? extends EsFlashEntity> flashClass = flash.getClass();
+                            Method method = flashClass.getMethod(name, String.class);
+                            method.invoke(flash, msg);
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
-                        articles.add(article);
+                        flashs.add(flash);
                     }
-                    if (articles.size() > 0) {
-                        return (AggregatedPage<T>) new PageImpl<T>((List<T>) articles);
+                    if (flashs.size() > 0) {
+                        return (AggregatedPage<T>) new PageImpl<T>((List<T>) flashs);
 
                     }
                     return null;
                 }
             });
-            List<EsArticleEntity> list = search.getContent();
+            List<EsFlashEntity> list = search.getContent();
             long totalCount = search.getTotalElements();
             Integer pageSize = request.getPageSize();
             Integer currPage = request.getCurrPage();
@@ -117,7 +100,6 @@ public class EsArticleServiceImpl implements EsArticleService {
         }
         return null;
     }
-
 
     /**
      * 拼接在某属性的 set方法
@@ -132,6 +114,5 @@ public class EsArticleServiceImpl implements EsArticleService {
         return "set" + fieldName.substring(startIndex, startIndex + 1).toUpperCase()
                 + fieldName.substring(startIndex + 1);
     }
-
 
 }

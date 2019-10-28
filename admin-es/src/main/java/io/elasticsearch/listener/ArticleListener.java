@@ -49,7 +49,7 @@ public class ArticleListener {
      */
     @RabbitListener(bindings = @QueueBinding(
             value = @Queue(name = Constants.article_Update_Queue),
-            exchange = @Exchange(name = Constants.defaultExchange),
+            exchange = @Exchange(name = Constants.articleExchange),
             key = Constants.article_Update_RouteKey
     ))
     public void update(JSONObject obj){

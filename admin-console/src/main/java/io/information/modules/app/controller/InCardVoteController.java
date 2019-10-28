@@ -86,7 +86,7 @@ public class InCardVoteController {
     @Login
     @DeleteMapping("/delete")
     @ApiOperation(value = "单个或批量删除投票帖子", httpMethod = "DELETE", notes = "根据cIds[数组]删除投票帖子")
-    @ApiImplicitParam(name = "cIds", value = "帖子ID", dataType = "Array", required = true)
+    @ApiImplicitParam(name = "cIds", value = "帖子ID", dataType = "Long[ ]", required = true)
     public R delete(@RequestBody Long[] cIds) {
         voteService.removeByIds(Arrays.asList(cIds));
         rabbitTemplate.convertAndSend(Constants.cardExchange,
