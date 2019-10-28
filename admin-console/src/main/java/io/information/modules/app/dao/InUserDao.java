@@ -18,11 +18,11 @@ public interface InUserDao extends BaseMapper<InUser> {
      * 粉丝+1
      * @param uId
      */
-     public void addFans(Long uId);
+     void addFans(Long uId);
 
     /**
      * 关注+1
      * @param uId
      */
-     public void addFocus(Long uId);
+     void addFocus(Long uId);
 }

@@ -1,5 +1,6 @@
 package io.information.modules.app.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -11,15 +12,23 @@ import io.information.common.utils.Query;
 import io.information.common.utils.RedisKeys;
 import io.information.common.utils.RedisUtils;
 import io.information.modules.app.dao.InUserDao;
+import io.information.modules.app.entity.InActivity;
+import io.information.modules.app.entity.InArticle;
+import io.information.modules.app.entity.InCommonReply;
 import io.information.modules.app.entity.InUser;
+import io.information.modules.app.service.IInArticleService;
+import io.information.modules.app.service.IInCommonReplyService;
+import io.information.modules.app.service.IInNewsFlashService;
 import io.information.modules.app.service.IInUserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
+import springfox.documentation.annotations.ApiIgnore;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -38,7 +47,9 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
     @Autowired
     RedisUtils redisUtils;
     @Autowired
-    InUserDao inUserDao;
+    private IInArticleService articleService;
+    @Autowired
+    private IInCommonReplyService commonReplyService;
 
     @Override
     public PageUtils queryUsersByArgueIds(Map<String, Object> params) {
@@ -90,9 +101,31 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
     @Override
     @Cacheable(value=RedisKeys.FOCUS,key = "#uId+'-'+#fId")
     public Long focus(Long uId, Long fId) {
-        inUserDao.addFans(uId);
-        inUserDao.addFocus(fId);
+        this.baseMapper.addFans(uId);
+        this.baseMapper.addFocus(fId);
         return fId;
+    }
+
+    @Override
+    public PageUtils comment(Map<String,Object> params) {
+        //根据用户ID查询所有目标ID<根>或被评论ID找到回复用户的评论
+        return commonReplyService.userMsg(params);
+    }
+
+    @Override
+    public Map<String, Object> honor(Long uId) {
+        LambdaQueryWrapper<InArticle> articleQuery = new LambdaQueryWrapper<>();
+        articleQuery.eq(InArticle::getuId,uId);
+        List<InArticle> articleList = articleService.list(articleQuery);
+        long likeSum = articleList.stream().mapToLong(InArticle::getaLike).sum();
+        LambdaQueryWrapper<InCommonReply> replyQuery = new LambdaQueryWrapper<>();
+        replyQuery.eq(InCommonReply::gettId,uId).or().eq(InCommonReply::getToCrId,uId);
+        List<InCommonReply> replyList = commonReplyService.list(replyQuery);
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("artNumber",articleList.size());
+        map.put("artLikeNumber",likeSum);
+        map.put("replyNumber",replyList.size());
+        return map;
     }
 
     @Override

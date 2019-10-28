@@ -1,7 +1,11 @@
 package io.information.modules.app.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.guansuo.common.StringUtil;
+import io.information.common.utils.PageUtils;
+import io.information.common.utils.Query;
 import io.information.modules.app.dao.InCommonReplyDao;
 import io.information.modules.app.entity.InCommonReply;
 import io.information.modules.app.service.IInCommonReplyService;
@@ -15,14 +19,31 @@ public class InCommonReplyServiceImpl extends ServiceImpl<InCommonReplyDao, InCo
 
 
     @Override
-    public List<InCommonReply> search(Map<String, Object> map) {
+    public PageUtils search(Map<String, Object> map) {
         int tId = (int) map.get("tId");
         int tType = (int) map.get("tType");
         //查询回复信息
         LambdaQueryWrapper<InCommonReply> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(InCommonReply::gettId, tId).eq(InCommonReply::gettType, tType);
         InCommonReply reply = this.getOne(queryWrapper);
-        return recursion(reply);
+        recursion(reply);
+        //TODO
+        return null;
+    }
+
+    @Override
+    public PageUtils userMsg(Map<String, Object> params) {
+        if (null != params.get("uId") && StringUtil.isNotBlank(params.get("uId"))) {
+            Long uId = (Long) params.get("uId");
+            LambdaQueryWrapper<InCommonReply> queryWrapper = new LambdaQueryWrapper<>();
+            queryWrapper.eq(InCommonReply::gettId, uId).or().eq(InCommonReply::getToCrId, uId);
+            IPage<InCommonReply> page = this.page(
+                    new Query<InCommonReply>().getPage(params),
+                    queryWrapper
+            );
+            return new PageUtils(page);
+        }
+        return null;
     }
 
 

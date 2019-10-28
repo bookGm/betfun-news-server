@@ -2,9 +2,7 @@ package io.elasticsearch.listener;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import io.elasticsearch.entity.EsArticleEntity;
 import io.elasticsearch.entity.EsFlashEntity;
-import io.elasticsearch.service.EsArticleService;
 import io.elasticsearch.service.EsFlashService;
 import io.mq.utils.Constants;
 import org.springframework.amqp.rabbit.annotation.Exchange;

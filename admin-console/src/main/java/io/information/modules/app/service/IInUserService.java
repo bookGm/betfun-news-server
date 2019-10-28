@@ -33,4 +33,8 @@ public interface IInUserService extends IService<InUser> {
      * @return
      */
     Long focus(Long uId,Long fId);
+
+    PageUtils comment(Map<String,Object> params);
+
+    Map<String, Object> honor(Long uId);
 }

@@ -1,5 +1,6 @@
 package io.information.modules.app.controller;
 
+import io.information.common.utils.PageUtils;
 import io.information.common.utils.R;
 import io.information.modules.app.annotation.Login;
 import io.information.modules.app.entity.InCommonReply;
@@ -79,8 +80,8 @@ public class InCommonReplyController {
     @ApiOperation(value = "查询某个页面的评论列表", httpMethod = "GET")
     @ApiImplicitParam(name = "map", value = "类型和ID信息", required = true)
     public R search(@RequestParam Map<String, Object> map) {
-        commonReplyService.search(map);
-        return R.ok();
+        PageUtils page = commonReplyService.search(map);
+        return R.ok().put("page",page);
     }
 
 }
