@@ -112,10 +112,7 @@ public class InArticle implements Serializable {
      */
     @TableField(exist = false)
     private String aSimpleTime;
-    /**
-     * 活动状态（0:未通过 1:审核中 2:已通过）
-     */
-    private Integer actType;
+
 
     public Long getaId() {
         return aId;
@@ -259,13 +256,5 @@ public class InArticle implements Serializable {
 
     public void setaReadNumber(Long aReadNumber) {
         this.aReadNumber = aReadNumber;
-    }
-
-    public Integer getActType() {
-        return actType;
-    }
-
-    public void setActType(Integer actType) {
-        this.actType = actType;
     }
 }
