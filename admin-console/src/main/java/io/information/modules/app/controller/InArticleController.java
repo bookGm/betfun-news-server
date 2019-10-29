@@ -158,10 +158,8 @@ public class InArticleController {
     @ApiOperation(value = "文章点赞", httpMethod = "POST", notes = "根据文章ID点赞")
     @ApiImplicitParam(name = "aId", value = "文章ID", required = true)
     public R giveALike(@PathVariable("aId") Long aId, @ApiIgnore @LoginUser InUser user) {
-        if (articleService.giveALike(aId, user.getuId())) {
-            return R.ok();
-        }
-        return R.error("网络出错，请稍后重试");
+        Date d=articleService.giveALike(aId, user.getuId());
+        return R.ok().put("time",d);
     }
 
     /**
@@ -172,14 +170,8 @@ public class InArticleController {
     @ApiOperation(value = "文章收藏", httpMethod = "POST", notes = "根据文章ID收藏")
     @ApiImplicitParam(name = "aId", value = "文章ID", required = true)
     public R collect(@PathVariable("aId") Long aId, @ApiIgnore @LoginUser InUser user) {
-        if (user.getuId() == null) {
-            return R.error("请先登录");
-        } else {
-            if (articleService.collect(aId, user.getuId())) {
-                return R.ok();
-            }
-            return R.error("网络出错，请稍后重试");
-        }
+        Date d=articleService.collect(aId, user.getuId());
+        return R.ok().put("time",d);
     }
 
     /**

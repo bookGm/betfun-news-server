@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import io.information.common.utils.PageUtils;
 import io.information.modules.app.entity.InArticle;
 
+import java.util.Date;
 import java.util.Map;
 
 /**
@@ -23,12 +24,12 @@ public interface IInArticleService extends IService<InArticle> {
     /**
      * 点赞
      */
-    boolean giveALike(Long aid, Long uid);
+    Date giveALike(Long aid, Long uid);
 
     /**
      * 收藏
      */
-    boolean collect(Long aid, Long uid);
+    Date collect(Long aid, Long uid);
 
 
 }

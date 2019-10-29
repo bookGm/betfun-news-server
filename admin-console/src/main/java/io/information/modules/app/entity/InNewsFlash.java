@@ -32,32 +32,39 @@ public class InNewsFlash implements Serializable {
      * 快讯id
      */
     @TableId(type = IdType.INPUT)
+    @ApiModelProperty(hidden=true)
     private Long nId;
     /**
      * 快讯标题
      */
+    @ApiModelProperty(value = "快讯标题", name = "nTitle", required = true)
     private String nTitle;
     /**
      * 快讯摘要
      */
+    @ApiModelProperty(value = "快讯摘要", name = "nBrief", required = true)
     private String nBrief;
 
     /**
      * 快讯内容
      */
+    @ApiModelProperty(value = "快讯内容", name = "nContent", required = true)
     private String nContent;
     /**
      * 利好
      */
+    @ApiModelProperty(value = "利好", name = "nBull", required = true)
     private Integer nBull;
     /**
      * 利空
      */
+    @ApiModelProperty(value = "利空", name = "nBad", required = true)
     private Integer nBad;
     /**
      * 创建时间
      */
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @ApiModelProperty(value = "创建时间", name = "nCreateTime", required = false)
     private Date nCreateTime;
 
     public Long getnId() {

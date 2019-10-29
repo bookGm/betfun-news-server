@@ -5,7 +5,6 @@ import io.information.common.utils.R;
 import io.information.modules.app.config.IdWorker;
 import io.information.modules.news.entity.ArticleEntity;
 import io.information.modules.news.service.ArticleService;
-import io.information.modules.news.service.NewsFlashService;
 import io.information.modules.sys.controller.AbstractController;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,8 +28,6 @@ import java.util.Map;
 public class ArticleController extends AbstractController {
     @Autowired
     private ArticleService articleService;
-    @Autowired
-    private NewsFlashService newsFlashService;
 
     /**
      * 列表
@@ -39,7 +36,6 @@ public class ArticleController extends AbstractController {
     @RequiresPermissions("news:article:list")
     public R list(@RequestParam Map<String, Object> params) {
         PageUtils page = articleService.queryPage(params);
-        newsFlashService.catchNewsFlash(127077,10);
         return R.ok().put("page", page);
     }
 

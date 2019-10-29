@@ -9,7 +9,8 @@ server:
   servlet:
     context-path: /news
 web:
-  upload-path=/usr/local/share/news/upload
+  #upload-path=/usr/local/share/news/upload
+  upload-path=static/
 spring:
   # 环境 dev|test|prod
   profiles:

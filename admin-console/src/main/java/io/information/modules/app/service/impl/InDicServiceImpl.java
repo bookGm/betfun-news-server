@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import io.information.common.exception.ExceptionEnum;
 import io.information.common.exception.IMException;
+import io.information.common.utils.RedisKeys;
 import io.information.modules.app.dao.InDicDao;
 import io.information.modules.app.entity.InDic;
 import io.information.modules.app.service.IInDicService;
@@ -50,8 +51,8 @@ public class InDicServiceImpl extends ServiceImpl<InDicDao, InDic> implements II
     }
 
     @Override
-    @Cacheable(value= "dics",key = "#key")
-    public Map<String,List<InDic>> getListAll(String key) {
+    @Cacheable(value= RedisKeys.CONSTANT ,key = "dics")
+    public Map<String,List<InDic>> getListAll() {
         HashMap<String, List<InDic>> map = new HashMap<>();
         QueryWrapper<InDic> queryWrapper = new QueryWrapper<>();
         List<InDic> dicts = this.list(queryWrapper);

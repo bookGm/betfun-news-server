@@ -35,4 +35,10 @@ public class RedisKeys {
     public static final String JOIN=BASEKEY+"join";
     //关注
     public static final String FOCUS=BASEKEY+"focus";
+    //文章id
+    public static final String ARTICLE=BASEKEY+"article:";
+    //快讯id
+    public static final String NEWSFLASH=BASEKEY+"newsflash:";
+    //标签名
+    public static final String TAGNAME=BASEKEY+"tagname:";
 }

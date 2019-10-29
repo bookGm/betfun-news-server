@@ -10,6 +10,8 @@ import io.information.common.utils.IdGenerator;
 import io.information.common.utils.JsonUtils;
 import io.information.common.utils.PageUtils;
 import io.information.common.utils.Query;
+import io.information.common.utils.RedisKeys;
+import io.information.common.utils.RedisUtils;
 import io.information.modules.app.dao.InNewsFlashDao;
 import io.information.modules.app.entity.InNewsFlash;
 import io.information.modules.app.service.IInNewsFlashService;
@@ -39,6 +41,8 @@ import java.util.Map;
 public class NewsFlashServiceImpl extends ServiceImpl<NewsFlashDao, NewsFlash> implements NewsFlashService {
     @Autowired
     JinSeService jinSeService;
+    @Autowired
+    RedisUtils redisUtils;
     @Override
     public void catchNewsFlash(int start,int pages) {
         for(int i=0;i<pages;i++){
@@ -60,6 +64,31 @@ public class NewsFlashServiceImpl extends ServiceImpl<NewsFlashDao, NewsFlash> i
                 this.save(n);
             }
         }
+    }
+    @Override
+    public void catchIncrementsFlash() {
+            int s=0;
+            FeignResJinSe jinse=jinSeService.getPageList(20,s,null,null,null);
+            List<JinSeLivesVo> jinseList=JsonUtil.parseList(jinse.getList().getJSONObject(0).getString("lives"),JinSeLivesVo.class);
+            for(JinSeLivesVo se:jinseList){
+                Long id=se.getId();
+                if(redisUtils.exists(RedisKeys.NEWSFLASH+id)){
+                    continue;
+                }
+                redisUtils.set(RedisKeys.NEWSFLASH+id,id,60*20);
+                NewsFlash n=new NewsFlash();
+                String c=se.getContent();
+                String title=c.substring(c.indexOf("【")+1,c.indexOf("】"));
+                String content=c.substring(c.indexOf("】")+1);
+                n.setnId(IdGenerator.getId());
+                n.setnTitle(title);
+                n.setnBrief(content);
+                n.setnContent(content);
+                n.setnBull(se.getUp_counts());
+                n.setnBad(se.getDown_counts());
+                n.setnCreateTime(new Date(se.getCreated_at()*1000));
+                this.save(n);
+            }
     }
 
     @Override

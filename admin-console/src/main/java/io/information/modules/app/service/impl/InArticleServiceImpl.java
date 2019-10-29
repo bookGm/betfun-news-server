@@ -21,6 +21,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -83,27 +84,17 @@ public class InArticleServiceImpl extends ServiceImpl<InArticleDao, InArticle> i
 
 
     @Override
-    @CachePut(value = RedisKeys.LIKE, key = "#aid+'-'+#uid")
-    public boolean giveALike(Long aid, Long uid) {
-        try {
-            this.baseMapper.addALike(aid);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
-        }
-        return true;
+    @Cacheable(value = RedisKeys.LIKE, key = "#aid+'-'+#uid")
+    public Date giveALike(Long aid, Long uid) {
+        this.baseMapper.addALike(aid);
+        return new Date();
     }
 
     @Override
     @Cacheable(value = RedisKeys.COLLECT, key = "#aid+'-'+#uid")
-    public boolean collect(Long aid, Long uid) {
-        try {
-            this.baseMapper.addACollect(aid);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
-        }
-        return true;
+    public Date collect(Long aid, Long uid) {
+        this.baseMapper.addACollect(aid);
+        return new Date();
     }
 
 }

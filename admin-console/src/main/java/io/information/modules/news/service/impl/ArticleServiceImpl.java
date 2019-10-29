@@ -8,10 +8,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.guansuo.common.DateUtils;
 import com.guansuo.common.JsonUtil;
 import com.guansuo.newsenum.NewsEnum;
-import io.information.common.utils.IdGenerator;
-import io.information.common.utils.JsonUtils;
-import io.information.common.utils.PageUtils;
-import io.information.common.utils.Query;
+import io.information.common.utils.*;
 import io.information.modules.news.entity.TagEntity;
 import io.information.modules.news.service.TagService;
 import io.information.modules.news.service.feign.common.FeignRes;
@@ -45,6 +42,8 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleDao, ArticleEntity> i
     BbtcService bbtcService;
     @Autowired
     TagService tagService;
+    @Autowired
+    RedisUtils redisUtils;
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
         IPage<ArticleEntity> page = this.page(
@@ -66,31 +65,21 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleDao, ArticleEntity> i
         return new PageUtils(page);
     }
 
+
     @Override
     public void catchArticles(int page) {
-//        HunterConfig config = HunterConfigContext.getHunterConfig(Platform.BBTC);
-//        // 设置程序退出的方式
-//        config.setExitWay(ExitWayEnum.URL_COUNT)
-//                // 设定抓取120秒， 如果所有文章都被抓取过了，则会提前停止
-//                .setCount(1)
-//                // 每次抓取间隔的时间
-//                .setSleepTime(100)
-//                // 失败重试次数
-//                .setRetryTimes(3)
-//                // 针对抓取失败的链接 循环重试次数
-//                .setCycleRetryTimes(3)
-//                // 开启的线程数
-//                .setThreadCount(1)
-//                // 开启图片转存
-//                .setConvertImg(true);
         HashSet<String> hashSet = new HashSet<String>();
-
         for(int i=1;i<=page;i++){
             FeignRes res=bbtcService.getPageList(20,i);
             JSONObject obj=JsonUtil.parseJSONObject(JsonUtil.toJSONString(res.get("data")));
             List<BbtcListVo> blist=JsonUtil.parseList(obj.getString("list"), BbtcListVo.class);
             for(BbtcListVo b:blist){
-                String url = "https://www.8btc.com/article/"+b.getId();
+                Long bid=b.getId();
+                if(redisUtils.exists(RedisKeys.ARTICLE+bid)){
+                    continue;
+                }
+                redisUtils.set(RedisKeys.ARTICLE+bid,bid,60*60*2);
+                String url = "https://www.8btc.com/article/"+bid;
                 HunterProcessor hunter = new BlogHunterProcessor(url, true);
                 CopyOnWriteArrayList<VirtualArticle> list = hunter.execute();
                 VirtualArticle v=null;
@@ -129,15 +118,29 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleDao, ArticleEntity> i
                 list=null;
               }
             }
+        if(redisUtils.isFuzzyEmpty(RedisKeys.TAGNAME)){
+            for(TagEntity t:tagService.list()){
+                redisUtils.set(RedisKeys.TAGNAME+t.gettName(),t.gettName());
+            }
+        }
         for (String str : hashSet) {
+            String s=str.trim();
+            if(redisUtils.exists(RedisKeys.TAGNAME+s)){
+                continue;
+            }
+            redisUtils.set(RedisKeys.ARTICLE+s,s);
             TagEntity tag=new TagEntity();
             tag.settCreateTime(new Date());
             tag.settFrom(Integer.parseInt(NewsEnum.标签来源_爬虫抓取.getCode()));
-            tag.settName(str);
+            tag.settName(s);
             tagService.save(tag);
         }
 
     }
 
+    @Override
+    public void catchIncrementArticles() {
+        catchArticles(1);
+    }
 
 }

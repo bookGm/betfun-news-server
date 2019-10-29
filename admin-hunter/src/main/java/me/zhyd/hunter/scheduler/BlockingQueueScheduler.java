@@ -6,6 +6,7 @@ import us.codecraft.webmagic.Request;
 import us.codecraft.webmagic.Task;
 import us.codecraft.webmagic.scheduler.DuplicateRemovedScheduler;
 import us.codecraft.webmagic.scheduler.MonitorableScheduler;
+import us.codecraft.webmagic.scheduler.component.DuplicateRemover;
 
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -16,7 +17,7 @@ import java.util.concurrent.LinkedBlockingQueue;
  * @author yadong.zhang (yadong.zhang0415(a)gmail.com)
  * @version 1.0
  */
-public class BlockingQueueScheduler extends DuplicateRemovedScheduler implements MonitorableScheduler {
+public class BlockingQueueScheduler extends DuplicateRemovedScheduler implements MonitorableScheduler, DuplicateRemover {
     private BlockingQueue<Request> queue = new LinkedBlockingQueue<>();
     private int realUrlCount = -1;
 
@@ -55,5 +56,26 @@ public class BlockingQueueScheduler extends DuplicateRemovedScheduler implements
     @Override
     public int getTotalRequestsCount(Task task) {
         return this.getDuplicateRemover().getTotalRequestsCount(task);
+    }
+
+    /**
+     * 是否重复
+     * @param request
+     * @param task
+     * @return
+     */
+    @Override
+    public boolean isDuplicate(Request request, Task task) {
+
+        return false;
+    }
+
+    /**
+     * 重置重复检查
+     * @param task
+     */
+    @Override
+    public void resetDuplicateCheck(Task task) {
+
     }
 }

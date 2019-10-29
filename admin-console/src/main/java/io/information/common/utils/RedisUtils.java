@@ -54,6 +54,15 @@ public class RedisUtils {
         return value == null ? null : fromJson(value, clazz);
     }
 
+    public boolean isFuzzyEmpty(String key){
+        return getAllFuzzyKeys(key).isEmpty();
+    }
+
+    public Set<String> getAllFuzzyKeys(String key){
+        Set<String> keys = redisTemplate.keys(key + "*");
+        return keys;
+    }
+
     public <T> T get(String key, Class<T> clazz) {
         return get(key, clazz, NOT_EXPIRE);
     }

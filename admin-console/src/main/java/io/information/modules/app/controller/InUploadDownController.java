@@ -55,11 +55,14 @@ public class InUploadDownController {
     public R upload(@RequestParam("upload") MultipartFile picture, HttpServletRequest request) throws Exception {
         String contextPath=request.getContextPath();
         //获取文件在服务器的储存位置
-        String path=ResourceUtils.getURL("classpath:").getPath()+"static/upload/";
-        path = URLDecoder.decode(path,"utf-8");
-        File filePath = new File(path);
+        File path = new File(URLDecoder.decode(ResourceUtils.getURL("classpath:").getPath(),"utf-8"));
+        if(!path.exists()) {
+            path = new File("");
+        }
+//        String path=ResourceUtils.getURL("classpath:").getPath()+"static/upload/";
+        File filePath = new File(path.getAbsolutePath()+"/static/upload/");
         if (!filePath.exists() && !filePath.isDirectory()) {
-            filePath.mkdir();
+            filePath.mkdirs();
         }
         //获取原始文件名称(包含格式)
         String originalFileName = picture.getOriginalFilename();
@@ -73,7 +76,7 @@ public class InUploadDownController {
         String date = sdf.format(d);
         String fileName = date + name + "." + type;
         //在指定路径下创建一个文件
-        File targetFile = new File(path, fileName);
+        File targetFile = new File(filePath, fileName);
 
         //将文件保存到服务器指定位置
         try {

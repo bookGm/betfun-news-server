@@ -24,5 +24,9 @@ public interface ArticleService extends IService<ArticleEntity> {
      * @param page
      */
     void catchArticles(int page);
+    /**
+     * 抓取文章（增量）
+     */
+    void catchIncrementArticles();
 }
 

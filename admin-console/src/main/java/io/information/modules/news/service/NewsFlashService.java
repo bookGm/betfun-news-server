@@ -24,4 +24,8 @@ public interface NewsFlashService extends IService<NewsFlash> {
     void catchNewsFlash(int start,int pages);
 
     PageUtils queryPage(Map<String, Object> params);
+    /**
+     * 抓取快讯（增量）
+     */
+    public void catchIncrementsFlash();
 }

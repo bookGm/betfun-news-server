@@ -20,6 +20,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.StringHttpMessageConverter;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import java.io.IOException;
@@ -32,6 +33,7 @@ import java.util.Objects;
 @SpringBootApplication(scanBasePackages = {"io.information","io.elasticsearch","io.mq"})
 @EnableTransactionManagement
 @EnableCaching
+@EnableScheduling
 @EnableFeignClients
 public class BetApplication extends SpringBootServletInitializer {
 
