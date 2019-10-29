@@ -37,4 +37,9 @@ public interface IInUserService extends IService<InUser> {
     PageUtils comment(Map<String,Object> params);
 
     Map<String, Object> honor(Long uId);
+
+    PageUtils card(Map<String, Object> map);
+
+    PageUtils reply(Map<String, Object> map);
+
 }

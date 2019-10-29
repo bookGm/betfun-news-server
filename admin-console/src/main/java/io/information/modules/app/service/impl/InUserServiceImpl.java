@@ -16,10 +16,7 @@ import io.information.modules.app.entity.InActivity;
 import io.information.modules.app.entity.InArticle;
 import io.information.modules.app.entity.InCommonReply;
 import io.information.modules.app.entity.InUser;
-import io.information.modules.app.service.IInArticleService;
-import io.information.modules.app.service.IInCommonReplyService;
-import io.information.modules.app.service.IInNewsFlashService;
-import io.information.modules.app.service.IInUserService;
+import io.information.modules.app.service.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,6 +43,8 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
     private static final Logger LOG = LoggerFactory.getLogger(InUserServiceImpl.class);
     @Autowired
     RedisUtils redisUtils;
+    @Autowired
+    private IInCardService cardService;
     @Autowired
     private IInArticleService articleService;
     @Autowired
@@ -126,6 +125,19 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
         map.put("artLikeNumber",likeSum);
         map.put("replyNumber",replyList.size());
         return map;
+    }
+
+    @Override
+    public PageUtils card(Map<String, Object> map) {
+        return cardService.queryPage(map);
+    }
+
+    @Override
+    public PageUtils reply(Map<String, Object> map) {
+        //根据用户ID查询所有目标ID<根>或被评论ID找到回复用户的评论
+        LambdaQueryWrapper<InCommonReply> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.in(InCommonReply::gettId);
+        return null;
     }
 
     @Override

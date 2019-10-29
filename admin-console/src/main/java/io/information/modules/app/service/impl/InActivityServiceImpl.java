@@ -43,8 +43,6 @@ public class InActivityServiceImpl extends ServiceImpl<InActivityDao, InActivity
     private IInActivityFieldsService fieldsService;
     @Autowired
     private IInActivityDatasService datasService;
-    @Autowired
-    RedisUtils redisUtils;
 
 
     @Override

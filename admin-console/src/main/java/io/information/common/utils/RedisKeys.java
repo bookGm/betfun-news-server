@@ -27,6 +27,8 @@ public class RedisKeys {
     public static final String VOTE=BASEKEY+"vote";
     //浏览量
     public static final String BROWSE=BASEKEY+"browse:";
+    //IP地址
+    public static final String BROWSEIP=BASEKEY+"browseip:";
     //辩论支持
     public static final String SUPPORT=BASEKEY+"support";
     //辩论辩手

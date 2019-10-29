@@ -79,7 +79,7 @@ public class InCardController {
      */
     @Login
     @GetMapping("/listUser")
-    @ApiOperation(value = "获取本人发布的帖子", httpMethod = "GET", notes = "自动获取用户信息")
+    @ApiOperation(value = "获取本人发布的某类帖子", httpMethod = "GET", notes = "自动获取用户信息")
     @ApiImplicitParam(name = "map", value = "分页数据，帖子类型<aCategory>", required = true)
     public R stateUser(@RequestParam Map<String, Object> map, @ApiIgnore @LoginUser InUser user) {
         map.put("uId", user.getuId());

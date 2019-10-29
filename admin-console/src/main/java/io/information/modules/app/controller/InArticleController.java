@@ -3,6 +3,7 @@ package io.information.modules.app.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import io.information.common.utils.IPUtils;
 import io.information.common.utils.PageUtils;
 import io.information.common.utils.R;
 import io.information.common.utils.RedisKeys;
@@ -17,8 +18,7 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.serializer.GenericToStringSerializer;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
@@ -43,7 +43,7 @@ public class InArticleController {
     @Autowired
     private RabbitTemplate rabbitTemplate;
     @Autowired
-    private RedisTemplate redisTemplate;
+    private StringRedisTemplate redisTemplate;
 
 
     /**
@@ -83,7 +83,6 @@ public class InArticleController {
     }
 
 
-
     /**
      * 修改 esOK
      */
@@ -112,6 +111,7 @@ public class InArticleController {
         PageUtils page = articleService.queryPage(map);
         return R.ok().put("page", page);
     }
+
     /**
      * 列表
      */
@@ -119,8 +119,8 @@ public class InArticleController {
     @GetMapping("/loginedList")
     @ApiOperation(value = "获取本人发布的文章", httpMethod = "GET")
     @ApiImplicitParam(name = "map", value = "分页数据，状态码", required = true)
-    public R loginedList(@RequestParam Map<String, Object> map,@ApiIgnore @LoginUser InUser user) {
-        map.put("uId",user.getuId());
+    public R loginedList(@RequestParam Map<String, Object> map, @ApiIgnore @LoginUser InUser user) {
+        map.put("uId", user.getuId());
         PageUtils page = articleService.queryPage(map);
         return R.ok().put("page", page);
     }
@@ -133,12 +133,12 @@ public class InArticleController {
     @ApiOperation(value = "查询单个咨讯文章", httpMethod = "GET", notes = "根据文章ID查询文章")
     @ApiImplicitParam(paramType = "query", name = "aId", value = "文章ID", required = true)
     public R queryArticle(@PathVariable("aId") String aId, HttpServletRequest request) {
-        String ip = request.getHeader("x-forwarded-for");
+        String ip = IPUtils.getIpAddr(request);
         InArticle article = articleService.getById(aId);
-        Boolean aBoolean = redisTemplate.hasKey(ip + aId);
+        Boolean aBoolean = redisTemplate.hasKey(RedisKeys.BROWSEIP + ip + aId);
         if (!aBoolean) {
-            redisTemplate.opsForValue().set(ip + aId, aId, 60 * 60 * 2);
-            redisTemplate.setValueSerializer(new GenericToStringSerializer<Long>(Long.class));
+            redisTemplate.opsForValue().set(RedisKeys.BROWSEIP + ip + aId, aId, 60 * 60 * 2);
+//            redisTemplate.setValueSerializer(new GenericToStringSerializer<Long>(Long.class));
             Long aLong = redisTemplate.opsForValue().increment(RedisKeys.BROWSE + aId, 1);//如果通过自增1
             if (aLong % 100 == 0) {
                 redisTemplate.delete(ip + aId);
@@ -148,8 +148,6 @@ public class InArticleController {
         }
         return R.ok().put("article", article);
     }
-
-
 
 
     /**
@@ -191,15 +189,15 @@ public class InArticleController {
     @GetMapping("getArticleStatistics")
     @ApiOperation(value = "获取专栏主页文章统计数据", httpMethod = "GET")
     public R getArticleStatistics(@ApiIgnore @LoginUser InUser user) {
-        Map<String,Object> rm=new HashMap<>();
-        List<InArticle> list=articleService.list(new LambdaQueryWrapper<InArticle>().eq(InArticle::getuId,user.getuId()));
+        Map<String, Object> rm = new HashMap<>();
+        List<InArticle> list = articleService.list(new LambdaQueryWrapper<InArticle>().eq(InArticle::getuId, user.getuId()));
         //累计文章数
-        rm.put("aCount",list.size());
+        rm.put("aCount", list.size());
         //累计阅读量
-        LongSummaryStatistics readNumber=list.stream().collect(Collectors.summarizingLong((n)->n.getaReadNumber()==null?0L:n.getaReadNumber()));
-        rm.put("rCount",readNumber.getSum());
+        LongSummaryStatistics readNumber = list.stream().collect(Collectors.summarizingLong((n) -> n.getaReadNumber() == null ? 0L : n.getaReadNumber()));
+        rm.put("rCount", readNumber.getSum());
         //累计粉丝数
-        rm.put("fCount",user.getuFans());
+        rm.put("fCount", user.getuFans());
         return R.ok(rm);
     }
 }

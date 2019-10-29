@@ -15,6 +15,7 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
@@ -36,6 +37,8 @@ public class InUserController extends AbstractController {
     private IInUserService userService;
     @Autowired
     private RabbitTemplate rabbitTemplate;
+    @Autowired
+    private RedisTemplate redisTemplate;
 
 
     /**
@@ -85,9 +88,9 @@ public class InUserController extends AbstractController {
     @Login
     @GetMapping("/honor")
     @ApiOperation(value = "个人成就", httpMethod = "GET")
-    public R honor(@ApiIgnore @LoginUser InUser user){
-        Map<String,Object> params = userService.honor(user.getuId());
-        return R.ok().put("map",params);
+    public R honor(@ApiIgnore @LoginUser InUser user) {
+        Map<String, Object> params = userService.honor(user.getuId());
+        return R.ok().put("map", params);
     }
 
     /**
@@ -108,16 +111,50 @@ public class InUserController extends AbstractController {
      */
     @Login
     @GetMapping("/like")
-    public R like(@RequestParam Map<String, Object> params, @ApiIgnore @LoginUser InUser user){
+    @ApiOperation(value = "个人消息 -- 系统", httpMethod = "GET")
+    @ApiImplicitParam(name = "map", value = "分页数据", required = true)
+    public R like(@RequestParam Map<String, Object> params, @ApiIgnore @LoginUser InUser user) {
+        params.put("uId", user.getuId());
+//        PageUtils page = userService.like(params);
+//        Object obj = redisUtils.hget(RedisKeys., String.valueOf(uId);
+        return R.ok()/*.put("page",page)*/;
+    }
+
+    /**
+     * 个人消息 -- 系统
+     */
+    @Login
+    @GetMapping("/system")
+    @ApiOperation(value = "个人消息 -- 系统", httpMethod = "GET")
+    @ApiImplicitParam(name = "map", value = "分页数据", required = true)
+    public R system(@RequestParam Map<String, Object> params, @ApiIgnore @LoginUser InUser user) {
+        params.put("uId", user.getuId());
         return R.ok();
     }
 
     /**
-     * 个人消息 -- 点赞
+     * 个人消息 -- 帖子
      */
     @Login
-    @GetMapping("/system")
-    public R system(@RequestParam Map<String, Object> params, @ApiIgnore @LoginUser InUser user){
-        return R.ok();
+    @GetMapping("/card")
+    @ApiOperation(value = "获取本人发布的帖子", httpMethod = "GET")
+    @ApiImplicitParam(name = "map", value = "分页数据", required = true)
+    public R card(@RequestParam Map<String, Object> map, @ApiIgnore @LoginUser InUser user) {
+        map.put("uId", user.getuId());
+        PageUtils page = userService.card(map);
+        return R.ok().put("page", page);
+    }
+
+    /**
+     * 个人消息 -- 回帖
+     */
+    @Login
+    @GetMapping("/reply")
+    @ApiOperation(value = "个人消息 -- 回帖", httpMethod = "GET")
+    @ApiImplicitParam(name = "map", value = "分页数据", required = true)
+    public R reply(@RequestParam Map<String, Object> map, @ApiIgnore @LoginUser InUser user) {
+        map.put("uId", user.getuId());
+        PageUtils page = userService.reply(map);
+        return R.ok().put("page", page);
     }
 }

@@ -36,7 +36,7 @@ public class InCommonReplyServiceImpl extends ServiceImpl<InCommonReplyDao, InCo
         if (null != params.get("uId") && StringUtil.isNotBlank(params.get("uId"))) {
             Long uId = (Long) params.get("uId");
             LambdaQueryWrapper<InCommonReply> queryWrapper = new LambdaQueryWrapper<>();
-            queryWrapper.eq(InCommonReply::gettId, uId).or().eq(InCommonReply::getToCrId, uId);
+            queryWrapper.eq(InCommonReply::getToCrId, uId);
             IPage<InCommonReply> page = this.page(
                     new Query<InCommonReply>().getPage(params),
                     queryWrapper
@@ -50,7 +50,7 @@ public class InCommonReplyServiceImpl extends ServiceImpl<InCommonReplyDao, InCo
     private List<InCommonReply> comList = null;
 
     public List<InCommonReply> recursion(InCommonReply commonReply) {
-        if (commonReply.getToCrId() != null) {
+        if (null != commonReply.getToCrId() && !String.valueOf(commonReply.getToCrId()).isEmpty()) {
             LambdaQueryWrapper<InCommonReply> queryWrapper = new LambdaQueryWrapper<>();
             queryWrapper.eq(InCommonReply::getCrId, commonReply.getToCrId());
             InCommonReply one = this.getOne(queryWrapper);
