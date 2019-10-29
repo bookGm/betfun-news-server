@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.guansuo.common.JsonUtil;
 import com.guansuo.common.StringUtil;
+import com.guansuo.newsenum.NewsEnum;
 import io.information.common.exception.ExceptionEnum;
 import io.information.common.exception.IMException;
 import io.information.common.utils.PageUtils;
@@ -19,9 +20,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.redis.core.Cursor;
+import org.springframework.data.redis.core.ScanOptions;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -149,77 +153,117 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
         return null;
     }
 
+    void getTitle(Long id,String type,InLikeVo likeVo){
+        if(NewsEnum.点赞_文章.getCode().equals(type)){
+            likeVo.setData(articleService.getById(id).getaTitle());
+            likeVo.setType(NewsEnum.点赞_文章.getName());
+        }
+        if(NewsEnum.点赞_帖子.getCode().equals(type)){
+            likeVo.setData(baseService.getById(id).getcTitle());
+            likeVo.setType(NewsEnum.点赞_帖子.getName());
+        }
+        if(NewsEnum.点赞_活动.getCode().equals(type)){
+            likeVo.setData(activityService.getById(id).getActTitle());
+            likeVo.setType(NewsEnum.点赞_活动.getName());
+        }
+    }
+
     @Override
-    public PageUtils like(Map<String, Object> map) {
-        if (null != map.get("Type") && StringUtil.isNotBlank(map.get("Type"))) {
-            Long uId = (Long) map.get("uId");
-            int type = (int) map.get("Type");
-            Integer pageSize = (Integer) map.get("pageSize");
-            Integer currPage = (Integer) map.get("currPage");
-            //模糊查询出某类的key
-            Set<String> keys = redisTemplate.keys("*_" + uId + type);
-            //点赞目标信息，点赞用户信息，点赞时间，点赞类型
-            List<InLikeVo> list = new ArrayList<>();
-            switch (type) {
-                case 0:  //文章
-                    for (String key : keys) {
-                        InLikeVo likeVo = new InLikeVo();
-                        String[] str = key.split("_");
-                        Long aId = Long.valueOf(str[0]);
-                        InArticle article = articleService.getById(aId);
-                        InUser user = this.getById(article.getuId());  //点赞用户
-                        Date date = (Date) redisUtils.hget(RedisKeys.LIKE, key);  //点赞时间
-                        likeVo.setNick(user.getuNick());
-                        likeVo.setType("文章");
-                        likeVo.setPhoto(user.getuPhoto());
-                        likeVo.setData(article.getaTitle());
-                        likeVo.setTime(date);
-                        list.add(likeVo);
-                    }
-                    break;
-                case 1:  //帖子
-                    for (String key : keys) {
-                        InLikeVo likeVo = new InLikeVo();
-                        String[] str = key.split("_");
-                        Long aId = Long.valueOf(str[0]);
-                        InCardBase base = baseService.getById(aId);
-                        InUser user = this.getById(base.getuId());  //点赞用户
-                        Date date = (Date) redisUtils.hget(RedisKeys.LIKE, key);  //点赞时间
-                        likeVo.setNick(user.getuNick());
-                        likeVo.setType("帖子");
-                        likeVo.setPhoto(user.getuPhoto());
-                        likeVo.setData(base.getcTitle());
-                        likeVo.setTime(date);
-                        list.add(likeVo);
-                    }
-                    break;
-                case 2:  //活动
-                    for (String key : keys) {
-                        InLikeVo likeVo = new InLikeVo();
-                        String[] str = key.split("_");
-                        Long aId = Long.valueOf(str[0]);
-                        InActivity activity = activityService.getById(aId);
-                        InUser user = this.getById(activity.getuId());  //点赞用户
-                        Date date = (Date) redisUtils.hget(RedisKeys.LIKE, key);  //点赞时间
-                        likeVo.setNick(user.getuNick());
-                        likeVo.setType("活动");
-                        likeVo.setPhoto(user.getuPhoto());
-                        likeVo.setData(activity.getActTitle());
-                        likeVo.setTime(date);
-                        list.add(likeVo);
-                    }
-                    break;
+    public PageUtils like(Map<String, Object> map,InUser user) {
+            Integer size = (Integer) map.get("pageSize");
+            Integer page = (Integer) map.get("currPage");
+            Integer bindex=page * size;
+        //模糊查询出某类的key
+        Cursor<Map.Entry<Object, Object>> cursor= redisTemplate.opsForHash().scan(RedisKeys.LIKE,ScanOptions.scanOptions().match("*_"+user.getuId()+"_*").build());
+        List<Map.Entry<Object,Object>> cmap=new ArrayList<>();
+        try {
+            while (cursor.hasNext()){
+                Map.Entry<Object,Object> entry = cursor.next();
+                cmap.add(entry);
             }
-            int totalCount = list.size();
-            ArrayList<InLikeVo> newsLike = new ArrayList<>();
-            for (int i = currPage * pageSize; i < currPage * pageSize + pageSize; i++) {
-                InLikeVo likeVo = list.get(i);
+            cursor.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        ArrayList<InLikeVo> newsLike = new ArrayList<>();
+        //点赞目标信息，点赞用户信息，点赞时间，点赞类型
+        if(bindex+size<cmap.size()){
+            for(Map.Entry<Object,Object> obj:cmap.subList(bindex,bindex+size)){
+                InLikeVo likeVo = new InLikeVo();
+                String key=String.valueOf(obj.getKey());
+                String[] str = key.split("_");
+                Long id = Long.valueOf(str[0]);
+                Object d=obj.getValue();
+                if(null!=d&&d instanceof Date){
+                    likeVo.setTime((Date) obj.getValue());  //点赞时间
+                }
+                likeVo.setNick(user.getuNick());
+                likeVo.setPhoto(user.getuPhoto());
+                getTitle(id,str[2],likeVo);
                 newsLike.add(likeVo);
             }
-
-            return new PageUtils(newsLike,totalCount,pageSize,currPage);
         }
-        return null;
+
+
+
+//            switch (type) {
+//                case 0:  //文章
+//                    for (String key : keys) {
+//                        InLikeVo likeVo = new InLikeVo();
+//                        String[] str = key.split("_");
+//                        Long aId = Long.valueOf(str[0]);
+//                        InArticle article = articleService.getById(aId);
+//                        InUser user = this.getById(article.getuId());  //点赞用户
+//                        Date date = (Date) redisUtils.hget(RedisKeys.LIKE, key);  //点赞时间
+//                        likeVo.setNick(user.getuNick());
+//                        likeVo.setType("文章");
+//                        likeVo.setPhoto(user.getuPhoto());
+//                        likeVo.setData(article.getaTitle());
+//                        likeVo.setTime(date);
+//                        list.add(likeVo);
+//                    }
+//                    break;
+//                case 1:  //帖子
+//                    for (String key : keys) {
+//                        InLikeVo likeVo = new InLikeVo();
+//                        String[] str = key.split("_");
+//                        Long aId = Long.valueOf(str[0]);
+//                        InCardBase base = baseService.getById(aId);
+//                        InUser user = this.getById(base.getuId());  //点赞用户
+//                        Date date = (Date) redisUtils.hget(RedisKeys.LIKE, key);  //点赞时间
+//                        likeVo.setNick(user.getuNick());
+//                        likeVo.setType("帖子");
+//                        likeVo.setPhoto(user.getuPhoto());
+//                        likeVo.setData(base.getcTitle());
+//                        likeVo.setTime(date);
+//                        list.add(likeVo);
+//                    }
+//                    break;
+//                case 2:  //活动
+//                    for (String key : keys) {
+//                        InLikeVo likeVo = new InLikeVo();
+//                        String[] str = key.split("_");
+//                        Long aId = Long.valueOf(str[0]);
+//                        InActivity activity = ;
+//                        InUser user = this.getById(activity.getuId());  //点赞用户
+//                        Date date = (Date) redisUtils.hget(RedisKeys.LIKE, key);  //点赞时间
+//                        likeVo.setNick(user.getuNick());
+//                        likeVo.setType("活动");
+//                        likeVo.setPhoto(user.getuPhoto());
+//                        likeVo.setData(activity.getActTitle());
+//                        likeVo.setTime(date);
+//                        list.add(likeVo);
+//                    }
+//                    break;
+//            }
+//            int totalCount = list.size();
+//            ArrayList<InLikeVo> newsLike = new ArrayList<>();
+//            for (int i = currPage * pageSize; i < currPage * pageSize + pageSize; i++) {
+//                InLikeVo likeVo = list.get(i);
+//                newsLike.add(likeVo);
+//            }
+
+            return new PageUtils(newsLike,cmap.size(),size,page);
     }
 
     @Override

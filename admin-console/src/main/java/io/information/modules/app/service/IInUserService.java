@@ -5,6 +5,7 @@ import io.information.common.utils.PageUtils;
 import io.information.modules.app.entity.InUser;
 import org.apache.ibatis.annotations.Mapper;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -42,7 +43,7 @@ public interface IInUserService extends IService<InUser> {
 
     PageUtils reply(Map<String, Object> map);
 
-    PageUtils like(Map<String, Object> params);
+    PageUtils like(Map<String, Object> params,InUser user) throws IOException;
 
     PageUtils active(Map<String, Object> map);
 

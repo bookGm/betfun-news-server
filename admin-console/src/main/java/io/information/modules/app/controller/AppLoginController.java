@@ -160,6 +160,7 @@ public class AppLoginController {
             String phone = form.getPhone();
             user = new InUser();
             user.setuId(uid);
+            user.setuAccount(phone);
             user.setuSalt(salt);
             user.setuPhone(phone);
             user.setuSalt(new Sha256Hash(phone.substring(phone.length() - 6), salt).toHex());

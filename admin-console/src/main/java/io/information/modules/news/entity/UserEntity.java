@@ -23,6 +23,10 @@ public class UserEntity implements Serializable {
 	 */
 	@TableId
 	private Long uId;
+    /**
+     * 账号
+     */
+	private String uAccount;
 	/**
 	 * 用户姓名
 	 */
@@ -107,6 +111,14 @@ public class UserEntity implements Serializable {
 
     public void setuId(Long uId) {
         this.uId = uId;
+    }
+
+    public String getuAccount() {
+        return uAccount;
+    }
+
+    public void setuAccount(String uAccount) {
+        this.uAccount = uAccount;
     }
 
     public String getuName() {

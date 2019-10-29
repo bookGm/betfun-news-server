@@ -27,6 +27,10 @@ public class InUser implements Serializable {
      */
     @TableId(value = "u_id", type = IdType.INPUT)
     private Long uId;
+    /**
+     * 账号
+     */
+    private String uAccount;
 
     /**
      * 用户姓名
@@ -121,6 +125,14 @@ public class InUser implements Serializable {
 
     public void setuId(Long uId) {
         this.uId = uId;
+    }
+
+    public String getuAccount() {
+        return uAccount;
+    }
+
+    public void setuAccount(String uAccount) {
+        this.uAccount = uAccount;
     }
 
     public String getuName() {
