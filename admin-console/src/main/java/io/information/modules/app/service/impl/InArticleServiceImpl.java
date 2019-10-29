@@ -6,11 +6,14 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.google.gson.internal.$Gson$Types;
 import com.guansuo.common.DateUtils;
 import com.guansuo.common.StringUtil;
+import com.guansuo.newsenum.NewsEnum;
 import io.information.common.utils.PageUtils;
 import io.information.common.utils.Query;
 import io.information.common.utils.RedisKeys;
 import io.information.common.utils.RedisUtils;
+import io.information.modules.app.dao.InActivityDao;
 import io.information.modules.app.dao.InArticleDao;
+import io.information.modules.app.dao.InCardBaseDao;
 import io.information.modules.app.entity.InArticle;
 import io.information.modules.app.entity.InUser;
 import io.information.modules.app.service.IInArticleService;
@@ -39,7 +42,10 @@ import java.util.stream.Collectors;
 public class InArticleServiceImpl extends ServiceImpl<InArticleDao, InArticle> implements IInArticleService {
     @Autowired
     RedisUtils redisUtils;
-
+    @Autowired
+    InActivityDao inActivityDao;
+    @Autowired
+    InCardBaseDao inCardBaseDao;
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
@@ -86,16 +92,31 @@ public class InArticleServiceImpl extends ServiceImpl<InArticleDao, InArticle> i
 
     @Override
     @Cacheable(value = RedisKeys.LIKE, key = "#aid+'-'+#uid+'-'+#type")
-    public Date giveALike(Long aid,int type, Long uid) {
-        this.baseMapper.addALike(aid);
+    public Date giveALike(Long id,int type, Long uid) {
+        if(NewsEnum.点赞_文章.getCode().equals(type)){
+            this.baseMapper.addALike(id);
+        }
+        if(NewsEnum.点赞_帖子.getCode().equals(type)){
+            this.inCardBaseDao.addALike(id);
+        }
+        if(NewsEnum.点赞_活动.getCode().equals(type)){
+            this.inActivityDao.addALike(id);
+        }
         return new Date();
     }
 
     @Override
     @Cacheable(value = RedisKeys.COLLECT, key = "#aid+'-'+#uid +'-'+#type")
-    public Date collect(Long aid,int type, Long uid) {
-        this.baseMapper.addACollect(aid);
+    public Date collect(Long id,int type, Long uid) {
+        if(NewsEnum.收藏_文章.getCode().equals(type)){
+            this.baseMapper.addACollect(id);
+        }
+        if(NewsEnum.收藏_帖子.getCode().equals(type)){
+            this.inCardBaseDao.addACollect(id);
+        }
+        if(NewsEnum.收藏_活动.getCode().equals(type)){
+            this.inActivityDao.addACollect(id);
+        }
         return new Date();
     }
-
 }

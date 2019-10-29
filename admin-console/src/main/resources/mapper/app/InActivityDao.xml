@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="io.information.modules.app.dao.InActivityDao">
-
+    <update id="addALike" parameterType="java.lang.Long">
+         update in_activity set act_like=act_like+1 where act_id=#{actid}
+    </update>
+    <update id="addACollect" parameterType="java.lang.Long">
+         update in_activity set act_collect=act_collect+1 where act_id=#{actid}
+    </update>
 </mapper>

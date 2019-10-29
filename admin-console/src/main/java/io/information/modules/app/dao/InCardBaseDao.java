@@ -14,5 +14,14 @@ import org.apache.ibatis.annotations.Mapper;
  */
 @Mapper
 public interface InCardBaseDao extends BaseMapper<InCardBase> {
-
+    /**
+     * 增加点赞数
+     * @param cid
+     */
+    void addALike (Long cid);
+    /**
+     * 增加收藏数
+     * @param cid
+     */
+    void addACollect (Long cid);
 }

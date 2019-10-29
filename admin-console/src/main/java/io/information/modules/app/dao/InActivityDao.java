@@ -15,5 +15,14 @@ import org.springframework.stereotype.Component;
  */
 @Mapper
 public interface InActivityDao extends BaseMapper<InActivity> {
-
+    /**
+     * 增加点赞数
+     * @param actid
+     */
+    void addALike (Long actid);
+    /**
+     * 增加收藏数
+     * @param actid
+     */
+    void addACollect (Long actid);
 }
