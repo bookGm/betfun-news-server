@@ -15,6 +15,7 @@ import io.information.modules.app.service.IInArticleService;
 import io.mq.utils.Constants;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -156,9 +157,12 @@ public class InArticleController {
     @Login
     @PostMapping("/giveALike/{aId}")
     @ApiOperation(value = "文章点赞", httpMethod = "POST", notes = "根据文章ID点赞")
-    @ApiImplicitParam(name = "aId", value = "文章ID", required = true)
-    public R giveALike(@PathVariable("aId") Long aId, @ApiIgnore @LoginUser InUser user) {
-        Date d=articleService.giveALike(aId, user.getuId());
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "id", value = "id", required = true),
+            @ApiImplicitParam(name = "type", value = "(0：文章 1：帖子 2：活动)", required = true)
+    })
+    public R giveALike(@RequestParam("id") Long id,@RequestParam("type") int type, @ApiIgnore @LoginUser InUser user) {
+        Date d=articleService.giveALike(id,type,user.getuId());
         return R.ok().put("time",d);
     }
 
@@ -168,9 +172,12 @@ public class InArticleController {
     @Login
     @PostMapping("/collect")
     @ApiOperation(value = "文章收藏", httpMethod = "POST", notes = "根据文章ID收藏")
-    @ApiImplicitParam(name = "aId", value = "文章ID", required = true)
-    public R collect(@PathVariable("aId") Long aId, @ApiIgnore @LoginUser InUser user) {
-        Date d=articleService.collect(aId, user.getuId());
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "id", value = "id", required = true),
+            @ApiImplicitParam(name = "type", value = "(0：文章 1：帖子 2：活动)", required = true)
+    })
+    public R collect(@RequestParam("id") Long id,@RequestParam("type") int type, @ApiIgnore @LoginUser InUser user) {
+        Date d=articleService.collect(id,type, user.getuId());
         return R.ok().put("time",d);
     }
 

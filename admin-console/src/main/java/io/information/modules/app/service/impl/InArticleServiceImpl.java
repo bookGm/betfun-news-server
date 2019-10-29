@@ -3,6 +3,7 @@ package io.information.modules.app.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.google.gson.internal.$Gson$Types;
 import com.guansuo.common.DateUtils;
 import com.guansuo.common.StringUtil;
 import io.information.common.utils.PageUtils;
@@ -84,15 +85,15 @@ public class InArticleServiceImpl extends ServiceImpl<InArticleDao, InArticle> i
 
 
     @Override
-    @Cacheable(value = RedisKeys.LIKE, key = "#aid+'-'+#uid")
-    public Date giveALike(Long aid, Long uid) {
+    @Cacheable(value = RedisKeys.LIKE, key = "#aid+'-'+#uid+'-'+#type")
+    public Date giveALike(Long aid,int type, Long uid) {
         this.baseMapper.addALike(aid);
         return new Date();
     }
 
     @Override
-    @Cacheable(value = RedisKeys.COLLECT, key = "#aid+'-'+#uid")
-    public Date collect(Long aid, Long uid) {
+    @Cacheable(value = RedisKeys.COLLECT, key = "#aid+'-'+#uid +'-'+#type")
+    public Date collect(Long aid,int type, Long uid) {
         this.baseMapper.addACollect(aid);
         return new Date();
     }

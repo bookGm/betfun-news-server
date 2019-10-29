@@ -23,13 +23,15 @@ public interface IInArticleService extends IService<InArticle> {
 
     /**
      * 点赞
+     * type(0：文章 1：帖子 2：活动)
      */
-    Date giveALike(Long aid, Long uid);
+    Date giveALike(Long id,int type, Long uid);
 
     /**
      * 收藏
+     * type(0：文章 1：帖子 2：活动)
      */
-    Date collect(Long aid, Long uid);
+    Date collect(Long id,int type, Long uid);
 
 
 }
