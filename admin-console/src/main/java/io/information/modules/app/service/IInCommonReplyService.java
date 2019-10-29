@@ -21,5 +21,7 @@ public interface IInCommonReplyService extends IService<InCommonReply> {
     PageUtils search(Map<String, Object> map);
 
     PageUtils userMsg(Map<String,Object> params);
+
+    PageUtils reply(Map<String, Object> map, List<Long> cIds);
 }
 

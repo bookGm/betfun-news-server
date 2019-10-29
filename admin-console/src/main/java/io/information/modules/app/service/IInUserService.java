@@ -42,4 +42,8 @@ public interface IInUserService extends IService<InUser> {
 
     PageUtils reply(Map<String, Object> map);
 
+    PageUtils like(Map<String, Object> params);
+
+    PageUtils active(Map<String, Object> map);
+
 }

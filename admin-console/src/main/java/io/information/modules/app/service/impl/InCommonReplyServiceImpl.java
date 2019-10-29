@@ -36,7 +36,7 @@ public class InCommonReplyServiceImpl extends ServiceImpl<InCommonReplyDao, InCo
         if (null != params.get("uId") && StringUtil.isNotBlank(params.get("uId"))) {
             Long uId = (Long) params.get("uId");
             LambdaQueryWrapper<InCommonReply> queryWrapper = new LambdaQueryWrapper<>();
-            queryWrapper.eq(InCommonReply::getToCrId, uId);
+            queryWrapper.eq(InCommonReply::gettId, uId).or().eq(InCommonReply::getToCrId, uId);
             IPage<InCommonReply> page = this.page(
                     new Query<InCommonReply>().getPage(params),
                     queryWrapper
@@ -44,6 +44,15 @@ public class InCommonReplyServiceImpl extends ServiceImpl<InCommonReplyDao, InCo
             return new PageUtils(page);
         }
         return null;
+    }
+
+    @Override
+    public PageUtils reply(Map<String, Object> map, List<Long> cIds) {
+        IPage<InCommonReply> page = this.page(
+                new Query<InCommonReply>().getPage(map),
+                new LambdaQueryWrapper<InCommonReply>().in(InCommonReply::gettId, cIds)
+        );
+        return new PageUtils(page);
     }
 
 

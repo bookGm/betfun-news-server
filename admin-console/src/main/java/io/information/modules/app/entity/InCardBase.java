@@ -28,13 +28,13 @@ public class InCardBase implements Serializable {
      * 帖子id
      */
     @TableId
-    @ApiModelProperty(hidden=true)
+    @ApiModelProperty(hidden = true)
     private Long cId;
 
     /**
      * 用户id
      */
-    @ApiModelProperty(hidden=true)
+    @ApiModelProperty(hidden = true)
     private Long uId;
 
     /**
@@ -64,6 +64,21 @@ public class InCardBase implements Serializable {
      */
     @ApiModelProperty(value = "回帖仅作者可见（0：是  1：否）", name = "cHide", required = true)
     private Integer cHide;
+
+    /**
+     * 点赞数
+     */
+    private Long cLike;
+
+    /**
+     * 收藏数
+     */
+    private Integer cCollect;
+
+    /**
+     * 评论数
+     */
+    private Long cCritic;
 
 
     public Long getcId() {
@@ -120,5 +135,29 @@ public class InCardBase implements Serializable {
 
     public void setcTitle(String cTitle) {
         this.cTitle = cTitle;
+    }
+
+    public Long getcLike() {
+        return cLike;
+    }
+
+    public void setcLike(Long cLike) {
+        this.cLike = cLike;
+    }
+
+    public Integer getcCollect() {
+        return cCollect;
+    }
+
+    public void setcCollect(Integer cCollect) {
+        this.cCollect = cCollect;
+    }
+
+    public Long getcCritic() {
+        return cCritic;
+    }
+
+    public void setcCritic(Long cCritic) {
+        this.cCritic = cCritic;
     }
 }

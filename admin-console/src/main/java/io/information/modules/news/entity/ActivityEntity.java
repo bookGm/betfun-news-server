@@ -79,6 +79,18 @@ public class ActivityEntity implements Serializable {
 	 * 活动状态（0:未通过 1:审核中 2:已通过）
 	 */
 	private Integer actStatus;
+	/**
+	 * 点赞数
+	 */
+	private Long actLike;
+	/**
+	 * 收藏数
+	 */
+	private Integer aCollect;
+	/**
+	 * 评论数
+	 */
+	private Long aCritic;
 
 	public Long getActId() {
 		return actId;
@@ -190,5 +202,29 @@ public class ActivityEntity implements Serializable {
 
 	public void setActStatus(Integer actStatus) {
 		this.actStatus = actStatus;
+	}
+
+	public Long getActLike() {
+		return actLike;
+	}
+
+	public void setActLike(Long actLike) {
+		this.actLike = actLike;
+	}
+
+	public Integer getaCollect() {
+		return aCollect;
+	}
+
+	public void setaCollect(Integer aCollect) {
+		this.aCollect = aCollect;
+	}
+
+	public Long getaCritic() {
+		return aCritic;
+	}
+
+	public void setaCritic(Long aCritic) {
+		this.aCritic = aCritic;
 	}
 }

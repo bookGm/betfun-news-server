@@ -1,8 +1,6 @@
 package io.information.modules.news.controller;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import io.information.common.utils.R;
-import io.information.common.utils.RedisKeys;
 import io.information.modules.app.config.IdWorker;
 import io.information.modules.news.entity.DicEntity;
 import io.information.modules.news.service.DicService;
@@ -10,7 +8,6 @@ import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 

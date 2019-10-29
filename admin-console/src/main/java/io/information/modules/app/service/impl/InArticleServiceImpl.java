@@ -1,6 +1,7 @@
 package io.information.modules.app.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.google.gson.internal.$Gson$Types;
@@ -14,9 +15,12 @@ import io.information.common.utils.RedisUtils;
 import io.information.modules.app.dao.InActivityDao;
 import io.information.modules.app.dao.InArticleDao;
 import io.information.modules.app.dao.InCardBaseDao;
+import io.information.modules.app.entity.InActivity;
 import io.information.modules.app.entity.InArticle;
 import io.information.modules.app.entity.InUser;
+import io.information.modules.app.service.IInActivityService;
 import io.information.modules.app.service.IInArticleService;
+import io.information.modules.app.service.IInCardBaseService;
 import io.mq.utils.Constants;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;

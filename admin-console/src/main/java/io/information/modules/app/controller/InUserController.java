@@ -15,7 +15,6 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
@@ -37,8 +36,6 @@ public class InUserController extends AbstractController {
     private IInUserService userService;
     @Autowired
     private RabbitTemplate rabbitTemplate;
-    @Autowired
-    private RedisTemplate redisTemplate;
 
 
     /**
@@ -111,12 +108,11 @@ public class InUserController extends AbstractController {
      */
     @Login
     @GetMapping("/like")
-    @ApiOperation(value = "个人消息 -- 系统", httpMethod = "GET")
-    @ApiImplicitParam(name = "map", value = "分页数据", required = true)
+    @ApiOperation(value = "个人消息 -- 点赞", httpMethod = "GET",notes = "根据类型查询点赞信息 0：文章 1：帖子 2：活动")
+    @ApiImplicitParam(name = "map", value = "分页数据，类型type",dataType = "Map",required = true)
     public R like(@RequestParam Map<String, Object> params, @ApiIgnore @LoginUser InUser user) {
         params.put("uId", user.getuId());
-//        PageUtils page = userService.like(params);
-//        Object obj = redisUtils.hget(RedisKeys., String.valueOf(uId);
+        PageUtils page = userService.like(params);
         return R.ok()/*.put("page",page)*/;
     }
 
@@ -137,7 +133,7 @@ public class InUserController extends AbstractController {
      */
     @Login
     @GetMapping("/card")
-    @ApiOperation(value = "获取本人发布的帖子", httpMethod = "GET")
+    @ApiOperation(value = "个人消息 -- 帖子", httpMethod = "GET")
     @ApiImplicitParam(name = "map", value = "分页数据", required = true)
     public R card(@RequestParam Map<String, Object> map, @ApiIgnore @LoginUser InUser user) {
         map.put("uId", user.getuId());
@@ -151,10 +147,25 @@ public class InUserController extends AbstractController {
     @Login
     @GetMapping("/reply")
     @ApiOperation(value = "个人消息 -- 回帖", httpMethod = "GET")
-    @ApiImplicitParam(name = "map", value = "分页数据", required = true)
+    @ApiImplicitParam(name = "map", value = "分页数据，", required = true)
     public R reply(@RequestParam Map<String, Object> map, @ApiIgnore @LoginUser InUser user) {
         map.put("uId", user.getuId());
         PageUtils page = userService.reply(map);
         return R.ok().put("page", page);
     }
+
+    /**
+     * 个人消息 -- 活动
+     */
+    @Login
+    @GetMapping("/active")
+    @ApiOperation(value = "个人消息 -- 活动", httpMethod = "GET",notes = "根据类型[Type]查询 0:未开始 1:已开始 2:已结束")
+    @ApiImplicitParam(name = "map", value = "分页数据，类型Type",dataType = "Map",required = true)
+    public R active(@RequestParam Map<String,Object> map,@ApiIgnore @LoginUser InUser user){
+        map.put("uId",user.getuId());
+        PageUtils page = userService.active(map);
+        return R.ok().put("page", page);
+    }
+
+    
 }

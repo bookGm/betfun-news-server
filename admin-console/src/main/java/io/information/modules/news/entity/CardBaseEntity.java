@@ -48,6 +48,18 @@ public class CardBaseEntity implements Serializable {
 	 * 回帖仅作者可见（0：是  1：否）
 	 */
 	private Integer cHide;
+	/**
+	 * 点赞数
+	 */
+	private Long cLike;
+	/**
+	 * 收藏数
+	 */
+	private Integer cCollect;
+	/**
+	 * 评论数
+	 */
+	private Long cCritic;
 
 	public Long getcId() {
 		return cId;
@@ -105,5 +117,27 @@ public class CardBaseEntity implements Serializable {
 		this.uName = uName;
 	}
 
+	public Long getcLike() {
+		return cLike;
+	}
 
+	public void setcLike(Long cLike) {
+		this.cLike = cLike;
+	}
+
+	public Integer getcCollect() {
+		return cCollect;
+	}
+
+	public void setcCollect(Integer cCollect) {
+		this.cCollect = cCollect;
+	}
+
+	public Long getcCritic() {
+		return cCritic;
+	}
+
+	public void setcCritic(Long cCritic) {
+		this.cCritic = cCritic;
+	}
 }
