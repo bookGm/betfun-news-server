@@ -36,7 +36,7 @@ public class InDicController {
      */
     @GetMapping("/listAll")
     public R listAll() {
-        Map<String, List<InDic>> listAll = dicService.getListAll();
+        Map<String, List<InDic>> listAll = dicService.getListAll("dics");
         return R.ok().put("dict", listAll);
     }
 

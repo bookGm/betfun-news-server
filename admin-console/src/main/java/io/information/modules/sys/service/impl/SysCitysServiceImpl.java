@@ -40,8 +40,8 @@ public class SysCitysServiceImpl extends ServiceImpl<SysCitysDao, SysCitysEntity
     }
 
     @Override
-    @Cacheable(value= RedisKeys.CONSTANT,key = "citys")
-    public Map<String, List<SysCitysEntity>> getListAll() {
+    @Cacheable(value= RedisKeys.CONSTANT,key = "#citys")
+    public Map<String, List<SysCitysEntity>> getListAll(String key) {
         List<SysCitysEntity> citys = this.list();
         Map<String, List<SysCitysEntity>> cs = citys.stream().collect(Collectors.groupingBy(n -> {
             switch (n.getLevel()) {

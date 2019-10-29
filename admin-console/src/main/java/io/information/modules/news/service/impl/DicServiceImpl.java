@@ -31,7 +31,7 @@ public class DicServiceImpl extends ServiceImpl<DicDao, DicEntity> implements Di
     }
 
     @Override
-    @Cacheable(value= "dics",key = "#key")
+    @Cacheable(value= RedisKeys.CONSTANT,key = "#key")
     public Map<String,List<DicEntity>> getListAll(String key) {
         HashMap<String, List<DicEntity>> map = new HashMap<>();
         QueryWrapper<DicEntity> queryWrapper = new QueryWrapper<>();

@@ -24,6 +24,6 @@ public interface SysCitysService extends IService<SysCitysEntity> {
      * 获取所有城市
      * @return
      */
-    Map<String, List<SysCitysEntity>> getListAll();
+    Map<String, List<SysCitysEntity>> getListAll(String key);
 
 }

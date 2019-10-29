@@ -43,7 +43,7 @@ public class SysCitysController extends AbstractController {
 	 */
 	@GetMapping("/listAll")
 	public R list(String key){
-		Map<String, List<SysCitysEntity>> listAll = sysCitysService.getListAll();
+		Map<String, List<SysCitysEntity>> listAll = sysCitysService.getListAll("citys");
 		return R.ok().put("citys",listAll );
 	}
 

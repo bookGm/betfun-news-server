@@ -51,8 +51,8 @@ public class InDicServiceImpl extends ServiceImpl<InDicDao, InDic> implements II
     }
 
     @Override
-    @Cacheable(value= RedisKeys.CONSTANT ,key = "dics")
-    public Map<String,List<InDic>> getListAll() {
+    @Cacheable(value= RedisKeys.CONSTANT ,key = "#key")
+    public Map<String,List<InDic>> getListAll(String key) {
         HashMap<String, List<InDic>> map = new HashMap<>();
         QueryWrapper<InDic> queryWrapper = new QueryWrapper<>();
         List<InDic> dicts = this.list(queryWrapper);

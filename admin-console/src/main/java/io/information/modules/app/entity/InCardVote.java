@@ -1,5 +1,6 @@
 package io.information.modules.app.entity;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModel;
@@ -27,6 +28,7 @@ public class InCardVote implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @ApiModelProperty(value = "普通帖", name = "inCardBase", required = true)
+    @TableField(exist = false)
     private InCardBase inCardBase;
     /**
      * 帖子id

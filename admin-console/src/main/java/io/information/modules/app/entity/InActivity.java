@@ -1,5 +1,6 @@
 package io.information.modules.app.entity;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModel;
@@ -29,10 +30,13 @@ public class InActivity implements Serializable {
      * 动态表单信息
      */
     @ApiModelProperty(value = "动态表单信息集合", name = "fieldsList", dataType = "List", required = false)
+    @TableField(exist = false)
     private List<InActivityFields> fieldsList;
     @ApiModelProperty(value = "活动票种信息集合", name = "ticketList", dataType = "List", required = false)
+    @TableField(exist = false)
     private List<InActivityTicket> ticketList;
     @ApiModelProperty(value = "动态表单数据集合", name = "datasList", dataType = "List", required = false)
+    @TableField(exist = false)
     private List<InActivityDatas> datasList;
     /**
      * 活动id

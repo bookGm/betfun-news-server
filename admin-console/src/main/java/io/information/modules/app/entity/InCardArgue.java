@@ -25,6 +25,7 @@ public class InCardArgue implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @ApiModelProperty(value = "普通帖", name = "inCardBase", required = true)
+    @TableField(exist = false)
     private InCardBase inCardBase;
     /**
      * 帖子id

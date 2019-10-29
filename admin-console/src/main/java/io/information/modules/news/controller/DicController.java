@@ -34,7 +34,7 @@ public class DicController {
      */
     @GetMapping("/listAll")
     public R listAll(){
-        Map<String, List<DicEntity>> listAll = dicService.getListAll(RedisKeys.CONSTANT);
+        Map<String, List<DicEntity>> listAll = dicService.getListAll("dics");
         return R.ok().put("dict", listAll);
     }
 

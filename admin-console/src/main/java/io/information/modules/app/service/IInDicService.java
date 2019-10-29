@@ -22,7 +22,7 @@ public interface IInDicService extends IService<InDic> {
 
     void updateDic(InDic dic);
 
-    Map<String, List<InDic>> getListAll();
+    Map<String, List<InDic>> getListAll(String key);
 
     List<InDic> queryDicById(Long dicId);
 }
