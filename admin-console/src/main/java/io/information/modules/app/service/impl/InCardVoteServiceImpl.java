@@ -3,6 +3,7 @@ package io.information.modules.app.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import io.information.common.annotation.HashCacheable;
 import io.information.common.utils.PageUtils;
 import io.information.common.utils.Query;
 import io.information.common.utils.RedisKeys;
@@ -27,7 +28,7 @@ import java.util.Map;
 public class InCardVoteServiceImpl extends ServiceImpl<InCardVoteDao, InCardVote> implements IInCardVoteService {
 
     @Override
-    @Cacheable(value = RedisKeys.VOTE, key = "#cid+'-'+#uid")
+    @HashCacheable(key = RedisKeys.VOTE, keyField = "#cid-#uid")
     public List<Integer> vote(Long cid, Long uid, List<Integer> optIndex) {
         for (int index : optIndex) {
             this.baseMapper.addVote(cid, index);

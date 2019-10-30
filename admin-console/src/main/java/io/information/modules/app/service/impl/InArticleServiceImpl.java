@@ -1,13 +1,12 @@
 package io.information.modules.app.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.google.gson.internal.$Gson$Types;
 import com.guansuo.common.DateUtils;
 import com.guansuo.common.StringUtil;
 import com.guansuo.newsenum.NewsEnum;
+import io.information.common.annotation.HashCacheable;
 import io.information.common.utils.PageUtils;
 import io.information.common.utils.Query;
 import io.information.common.utils.RedisKeys;
@@ -95,7 +94,7 @@ public class InArticleServiceImpl extends ServiceImpl<InArticleDao, InArticle> i
 
 
     @Override
-    @Cacheable(value = RedisKeys.LIKE, key = "#id+'-'+#uid+'-'+#type")
+    @HashCacheable(key = RedisKeys.LIKE, keyField = "#id-#uid-#type")
     public Date giveALike(Long id,int type, Long uid) {
         if(NewsEnum.点赞_文章.getCode().equals(type)){
             this.baseMapper.addALike(id);
@@ -110,7 +109,7 @@ public class InArticleServiceImpl extends ServiceImpl<InArticleDao, InArticle> i
     }
 
     @Override
-    @Cacheable(value = RedisKeys.COLLECT, key = "#id+'-'+#uid +'-'+#type")
+    @HashCacheable(key = RedisKeys.COLLECT, keyField = "#id-#uid-#type")
     public Date collect(Long id,int type, Long uid) {
         if(NewsEnum.收藏_文章.getCode().equals(type)){
             this.baseMapper.addACollect(id);

@@ -1,5 +1,6 @@
 package io.information;
 
+import com.guansuo.common.JsonUtil;
 import io.information.common.utils.RedisUtils;
 import io.information.modules.sys.entity.SysUserEntity;
 import org.apache.commons.lang.builder.ToStringBuilder;
@@ -19,9 +20,8 @@ public class RedisTest {
 	public void contextLoads() {
 		SysUserEntity user = new SysUserEntity();
 		user.setEmail("qqq@qq.com");
-		redisUtils.set("user", user);
-
-		System.out.println(ToStringBuilder.reflectionToString(redisUtils.get("user", SysUserEntity.class)));
+		redisUtils.set("user", JsonUtil.toJSONString(user));
+		System.out.println(ToStringBuilder.reflectionToString(JsonUtil.parseObject(JsonUtil.toJSONString(redisUtils.get("user")),SysUserEntity.class)));
 	}
 
 }

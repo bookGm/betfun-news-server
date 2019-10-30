@@ -28,10 +28,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
 
@@ -73,69 +70,78 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleDao, ArticleEntity> i
             FeignRes res=bbtcService.getPageList(20,i);
             JSONObject obj=JsonUtil.parseJSONObject(JsonUtil.toJSONString(res.get("data")));
             List<BbtcListVo> blist=JsonUtil.parseList(obj.getString("list"), BbtcListVo.class);
-            for(BbtcListVo b:blist){
-                Long bid=b.getId();
-                if(redisUtils.exists(RedisKeys.ARTICLE+bid)){
-                    continue;
-                }
-                redisUtils.set(RedisKeys.ARTICLE+bid,bid,60*60*2);
-                String url = "https://www.8btc.com/article/"+bid;
-                HunterProcessor hunter = new BlogHunterProcessor(url, true);
-                CopyOnWriteArrayList<VirtualArticle> list = hunter.execute();
-                VirtualArticle v=null;
-                try {
-                    if(null!=list&&list.size()>0){
-                        v=list.get(0);
-                        ArticleEntity a=new ArticleEntity();
-                        a.setaId(IdGenerator.getId());
-                        a.setuName(v.getAuthor());
-                        a.setaTitle(b.getTitle());
-                        a.setaBrief(b.getDesc());
-                        a.setaContent(v.getContent());
-                        a.setaSource("巴比特");
-                        a.setaLink(v.getSource());
-                        a.setaCover(b.getImage());
-                        Date date=DateUtils.stringToDate(b.getPost_date_format(),"yyyy-MM-dd HH:mm:ss");
-                        a.setaCreateTime(date);
-                        a.setaSimpleTime(DateUtils.getSimpleTime(date));
-                        a.setaReadNumber(Long.parseLong(b.getViews()));
-                        a.setaType(Integer.parseInt(NewsEnum.文章类型_转载.getCode()));
-                        StringBuffer ts=new StringBuffer();
-                        for(Object t:b.getTags()){
-                            String tName=JsonUtil.parseJSONObject(JsonUtil.toJSONString(t)).getString("name");
-                            ts.append(tName).append(",");
-                            hashSet.add(tName);
-                        }
-                        if(ts.indexOf(",")>0){
-                            a.setaKeyword(ts.substring(0,ts.length()-1));
-                        }
-                        this.save(a);
+                for(BbtcListVo b:blist){
+                    Long bid=b.getId();
+                    if(redisUtils.hasKey(RedisKeys.ARTICLE+bid)){
+                        continue;
                     }
-                } catch (Exception e) {
-                    continue;
-                }
-                hunter=null;
-                list=null;
-              }
+                    redisUtils.set(RedisKeys.ARTICLE+bid,String.valueOf(bid),60*60*2);
+                    String url = "https://www.8btc.com/article/"+bid;
+                    HunterProcessor hunter = new BlogHunterProcessor(url, true);
+                    CopyOnWriteArrayList<VirtualArticle> list = hunter.execute();
+                    VirtualArticle v=null;
+                    try {
+                        if(null!=list&&list.size()>0){
+                            v=list.get(0);
+                            ArticleEntity a=new ArticleEntity();
+                            a.setaId(IdGenerator.getId());
+                            a.setuName(v.getAuthor());
+                            a.setaTitle(b.getTitle());
+                            a.setaBrief(b.getDesc());
+                            a.setaContent(v.getContent());
+                            a.setaSource("巴比特");
+                            a.setaLink(v.getSource());
+                            a.setaCover(b.getImage());
+                            Date date=DateUtils.stringToDate(b.getPost_date_format(),"yyyy-MM-dd HH:mm:ss");
+                            a.setaCreateTime(date);
+                            a.setaSimpleTime(DateUtils.getSimpleTime(date));
+                            a.setaReadNumber(Long.parseLong(b.getViews()));
+                            a.setaType(Integer.parseInt(NewsEnum.文章类型_转载.getCode()));
+                            StringBuffer ts=new StringBuffer();
+                            for(Object t:b.getTags()){
+                                String tName=JsonUtil.parseJSONObject(JsonUtil.toJSONString(t)).getString("name");
+                                ts.append(tName).append(",");
+                                hashSet.add(tName);
+                            }
+                            if(ts.indexOf(",")>0){
+                                a.setaKeyword(ts.substring(0,ts.length()-1));
+                            }
+                            this.save(a);
+                        }
+                    } catch (Exception e) {
+                        continue;
+                    }
+                    hunter=null;
+                    list=null;
+                  }
+                 res=null;
+                 obj=null;
+                 blist=null;
             }
         if(redisUtils.isFuzzyEmpty(RedisKeys.TAGNAME)){
+            Map<String,String> mtl=new HashMap<>();
             for(TagEntity t:tagService.list()){
-                redisUtils.set(RedisKeys.TAGNAME+t.gettName(),t.gettName());
+                mtl.put(RedisKeys.TAGNAME+t.gettName(),t.gettName());
             }
+            redisUtils.batchSet(mtl);
+            mtl=null;
         }
+        Map<String,String> mt=new HashMap<>();
         for (String str : hashSet) {
             String s=str.trim();
-            if(redisUtils.exists(RedisKeys.TAGNAME+s)){
+            if(redisUtils.hasKey(RedisKeys.TAGNAME+s)){
                 continue;
             }
-            redisUtils.set(RedisKeys.ARTICLE+s,s);
+            mt.put(RedisKeys.ARTICLE+s,s);
             TagEntity tag=new TagEntity();
             tag.settCreateTime(new Date());
             tag.settFrom(Integer.parseInt(NewsEnum.标签来源_爬虫抓取.getCode()));
             tag.settName(s);
             tagService.save(tag);
+            tag=null;
         }
-
+        redisUtils.batchSet(mt);
+        mt=null;
     }
 
     @Override

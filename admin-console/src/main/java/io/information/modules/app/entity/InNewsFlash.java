@@ -67,6 +67,9 @@ public class InNewsFlash implements Serializable {
     @ApiModelProperty(value = "创建时间", name = "nCreateTime", required = false)
     private Date nCreateTime;
 
+    @TableField(exist = false)
+    private String nSimpleTime;
+
     public Long getnId() {
         return nId;
     }
@@ -121,5 +124,13 @@ public class InNewsFlash implements Serializable {
 
     public void setnCreateTime(Date nCreateTime) {
         this.nCreateTime = nCreateTime;
+    }
+
+    public String getnSimpleTime() {
+        return nSimpleTime;
+    }
+
+    public void setnSimpleTime(String nSimpleTime) {
+        this.nSimpleTime = nSimpleTime;
     }
 }

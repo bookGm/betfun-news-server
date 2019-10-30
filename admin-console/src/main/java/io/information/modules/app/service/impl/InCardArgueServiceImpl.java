@@ -3,6 +3,7 @@ package io.information.modules.app.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import io.information.common.annotation.HashCacheable;
 import io.information.common.utils.PageUtils;
 import io.information.common.utils.Query;
 import io.information.common.utils.RedisKeys;
@@ -35,13 +36,13 @@ public class InCardArgueServiceImpl extends ServiceImpl<InCardArgueDao, InCardAr
     }
 
     @Override
-    @Cacheable(value = RedisKeys.SUPPORT, key = "#cid+'-'+#uid")
+    @HashCacheable(key = RedisKeys.SUPPORT, keyField = "#cid-#uid")
     public Integer support(Long cid,Long uid,Integer sIndex) {
         return sIndex;
     }
 
     @Override
-    @Cacheable(value = RedisKeys.JOIN, key = "#cid+'-'+#uid")
+    @HashCacheable(key = RedisKeys.JOIN, keyField = "#cid-#uid")
     public Integer join(Long cid,Long uid,Integer jIndex) {
         return jIndex;
     }

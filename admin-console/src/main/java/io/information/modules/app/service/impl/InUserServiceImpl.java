@@ -4,9 +4,11 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.guansuo.common.DateUtils;
 import com.guansuo.common.JsonUtil;
 import com.guansuo.common.StringUtil;
 import com.guansuo.newsenum.NewsEnum;
+import io.information.common.annotation.HashCacheable;
 import io.information.common.exception.ExceptionEnum;
 import io.information.common.exception.IMException;
 import io.information.common.utils.PageUtils;
@@ -20,9 +22,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.redis.connection.SortParameters;
 import org.springframework.data.redis.core.Cursor;
 import org.springframework.data.redis.core.ScanOptions;
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.core.query.SortQueryBuilder;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -104,7 +108,7 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
     }
 
     @Override
-    @Cacheable(value = RedisKeys.FOCUS, key = "#uId+'-'+#fId")
+    @HashCacheable(key = RedisKeys.FOCUS, keyField = "#uId-#fId")
     public Long focus(Long uId, Long fId) {
         this.baseMapper.addFans(uId);
         this.baseMapper.addFocus(fId);
@@ -170,46 +174,36 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
     }
 
     @Override
-    public PageUtils like(Map<String, Object> map, InUser user) {
-        int size = Integer.valueOf(String.valueOf(map.get("pageSize")));
-        int page = Integer.valueOf(String.valueOf(map.get("currPage")));
-        int bindex = page * size;
-        String p=".*(-"+user.getuId()+"-).*";
+    public PageUtils like(Map<String, Object> map,InUser user) {
+        Integer size = StringUtil.isBlank(map.get("pageSize"))?10:Integer.parseInt(String.valueOf(map.get("pageSize")));
+        Integer page =  StringUtil.isBlank(map.get("currPage"))?0:Integer.parseInt(String.valueOf(map.get("currPage")));
+        Integer bindex=page * size;
         //模糊查询出某类的key
-        Cursor<Map.Entry<Object, Object>> cursor = redisTemplate.opsForHash().scan(RedisKeys.LIKE, ScanOptions.scanOptions().match(p).count(5).build());
-        List<Map.Entry<Object, Object>> cmap = new ArrayList<>();
-        try {
-            while (cursor.hasNext()) {
-                Map.Entry<Object, Object> entry = cursor.next();
-                cmap.add(entry);
-            }
-            cursor.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        ArrayList<InLikeVo> newsLike = new ArrayList<>();
+        List<Map.Entry<Object,Object>> cmap=redisUtils.hfget(RedisKeys.LIKE,"*-"+user.getuId()+"-*");
+        ArrayList<InLikeVo> newsLike = null;
         //点赞目标信息，点赞用户信息，点赞时间，点赞类型
-        List<Map.Entry<Object, Object>> list = null;
-        if (bindex + size < cmap.size()) {
-            list = cmap.subList(bindex, bindex + size);
-        } else {
-            list = cmap;
+        List<Map.Entry<Object,Object>> slist=null;
+        if(bindex+size<cmap.size()){
+            slist=cmap.subList(bindex,bindex+size);
+        }else{
+            slist=cmap;
         }
-        for (Map.Entry<Object, Object> obj : list) {
+        if(slist.size()>0){
+            newsLike = new ArrayList<>();
+        }
+        for(Map.Entry<Object,Object> obj:slist){
             InLikeVo likeVo = new InLikeVo();
-            String key = String.valueOf(obj.getKey());
-            String[] str = key.split("_");
+            String key=String.valueOf(obj.getKey());
+            String[] str = key.split("-");
             Long id = Long.valueOf(str[0]);
-            Object d = obj.getValue();
-            if (null != d && d instanceof Date) {
-                likeVo.setTime((Date) obj.getValue());  //点赞时间
-            }
+            Object d=obj.getValue();
+            likeVo.setTime(DateUtils.stringToDate(String.valueOf(obj.getValue()),"yyyy-MM-dd HH:mm:ss"));
             likeVo.setNick(user.getuNick());
             likeVo.setPhoto(user.getuPhoto());
-            getTitle(id, str[2], likeVo);
+            getTitle(id,str[2],likeVo);
             newsLike.add(likeVo);
         }
-        return new PageUtils(newsLike, cmap.size(), size, page);
+        return new PageUtils(newsLike,cmap.size(),size,page);
     }
 
     @Override

@@ -3,6 +3,8 @@ package io.information.modules.app.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.guansuo.common.DateUtils;
+import com.guansuo.common.StringUtil;
 import io.information.common.utils.PageUtils;
 import io.information.common.utils.Query;
 import io.information.modules.app.dao.InNewsFlashDao;
@@ -31,6 +33,11 @@ public class InNewsFlashServiceImpl extends ServiceImpl<InNewsFlashDao, InNewsFl
         IPage<InNewsFlash> page = this.page(
                 new Query<InNewsFlash>().getPage(params), qw
         );
+        for (InNewsFlash a : page.getRecords()) {
+            if(StringUtil.isNotBlank(a.getnCreateTime())){
+                a.setnSimpleTime(DateUtils.getSimpleTime(a.getnCreateTime()));
+            }
+        }
         return new PageUtils(page);
     }
 }

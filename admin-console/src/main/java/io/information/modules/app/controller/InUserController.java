@@ -164,8 +164,8 @@ public class InUserController extends AbstractController {
     @ApiOperation(value = "个人消息 -- 点赞", httpMethod = "GET")
     @ApiImplicitParam(name = "map", value = "分页数据", dataType = "Map", required = true)
     public R like(@RequestParam Map<String, Object> params, @ApiIgnore @LoginUser InUser user) {
-        PageUtils page = userService.like(params, user);
-        return R.ok().put("page", page);
+        PageUtils page = userService.like(params,user);
+        return R.ok().put("page",page);
     }
 
     /**

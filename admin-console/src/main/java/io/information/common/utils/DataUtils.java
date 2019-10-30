@@ -2,11 +2,10 @@ package io.information.common.utils;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.text.DecimalFormat;
+import java.util.*;
 
+import com.guansuo.common.DateUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
@@ -126,6 +125,47 @@ public class DataUtils {
 		        String[] result = new String[emptyNames.size()];
 		        return emptyNames.toArray(result);
 		}
-		
-		
+
+		/**
+		 * Object 转String
+		 * @param param
+		 * @return
+		 */
+		public static String objToString(Object param) {
+			String result = "";
+			BigDecimal re = new BigDecimal(0);
+			DecimalFormat df = new DecimalFormat("#.00");
+			if (param instanceof Integer) {
+				int value = ((Integer) param).intValue();
+				result = String.valueOf(value);
+			} else if (param instanceof String) {
+				result = (String) param;
+			} else if (param instanceof Double) {
+				double d = ((Double) param).doubleValue();
+				result = String.valueOf(d);
+			} else if (param instanceof Float) {
+				float f = ((Float) param).floatValue();
+				result = String.valueOf(f);
+			} else if (param instanceof Long) {
+				long l = ((Long) param).longValue();
+				result = String.valueOf(l);
+			} else if (param instanceof Boolean) {
+				boolean b = ((Boolean) param).booleanValue();
+				result = String.valueOf(b);
+			} else if (param instanceof Date) {
+				Date d = (Date) param;
+				result = DateUtils.format(d);
+			} else if( param instanceof BigDecimal ) {
+				re = (BigDecimal) param;
+				result= df.format(re);
+			} else if( param instanceof BigInteger ) {
+				re = new BigDecimal( (BigInteger) param );
+				result= df.format(re);
+			} else if( param instanceof Number ) {
+				re = new BigDecimal( ((Number)param).doubleValue() );
+				result= df.format(re);
+			}
+			return result;
+		}
+
 }

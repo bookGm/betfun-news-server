@@ -72,10 +72,10 @@ public class NewsFlashServiceImpl extends ServiceImpl<NewsFlashDao, NewsFlash> i
             List<JinSeLivesVo> jinseList=JsonUtil.parseList(jinse.getList().getJSONObject(0).getString("lives"),JinSeLivesVo.class);
             for(JinSeLivesVo se:jinseList){
                 Long id=se.getId();
-                if(redisUtils.exists(RedisKeys.NEWSFLASH+id)){
+                if(redisUtils.hasKey(RedisKeys.NEWSFLASH+id)){
                     continue;
                 }
-                redisUtils.set(RedisKeys.NEWSFLASH+id,id,60*20);
+                redisUtils.set(RedisKeys.NEWSFLASH+id,String.valueOf(id),60*20);
                 NewsFlash n=new NewsFlash();
                 String c=se.getContent();
                 String title=c.substring(c.indexOf("【")+1,c.indexOf("】"));
@@ -89,6 +89,8 @@ public class NewsFlashServiceImpl extends ServiceImpl<NewsFlashDao, NewsFlash> i
                 n.setnCreateTime(new Date(se.getCreated_at()*1000));
                 this.save(n);
             }
+        jinse=null;
+        jinseList=null;
     }
 
     @Override
