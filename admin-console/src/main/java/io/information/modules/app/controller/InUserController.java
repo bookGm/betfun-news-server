@@ -9,6 +9,7 @@ import io.information.modules.app.annotation.Login;
 import io.information.modules.app.annotation.LoginUser;
 import io.information.modules.app.dto.IdentifyCompanyDTO;
 import io.information.modules.app.dto.IdentifyPersonalDTO;
+import io.information.modules.app.dto.RedactDataDTO;
 import io.information.modules.app.entity.InUser;
 import io.information.modules.app.service.IInUserService;
 import io.information.modules.sys.controller.AbstractController;
@@ -54,34 +55,21 @@ public class InUserController extends AbstractController {
     }
 
 
-//    /**
-//     * 更新
-//     */
-//    @Login
-//    @PutMapping("/update")
-//    @ApiOperation(value = "修改咨讯用户", httpMethod = "PUT")
-//    @ApiImplicitParam(name = "user", value = "用户信息", required = true)
-//    public R update(@RequestBody InUser user) {
-//        userService.updateById(user);
-//        rabbitTemplate.convertAndSend(Constants.userExchange,
-//                Constants.user_Update_RouteKey, JSON.toJSON(user));
-//        return R.ok();
-//    }
-
     /**
      * 个人认证
      */
     @Login
     @PostMapping("/identifyPersonal")
     @ApiOperation(value = "个人认证", httpMethod = "POST")
-    public R identifyPersonal(@RequestBody IdentifyPersonalDTO identifyPersonalDTO,@ApiIgnore @LoginUser InUser user) {
-        InUser u=DataUtils.copyData(identifyPersonalDTO,InUser.class);
+    public R identifyPersonal(@RequestBody IdentifyPersonalDTO identifyPersonalDTO, @ApiIgnore @LoginUser InUser user) {
+        InUser u = DataUtils.copyData(identifyPersonalDTO, InUser.class);
         u.setuId(user.getuId());
         userService.updateById(u);
         rabbitTemplate.convertAndSend(Constants.userExchange,
                 Constants.user_Update_RouteKey, JSON.toJSON(u));
         return R.ok();
     }
+
 
     /**
      * 企业认证
@@ -89,14 +77,16 @@ public class InUserController extends AbstractController {
     @Login
     @PostMapping("/identifyCompany")
     @ApiOperation(value = "企业认证", httpMethod = "POST")
-    public R identifyCompany(@RequestBody IdentifyCompanyDTO identifyCompanyDTO,@ApiIgnore @LoginUser InUser user) {
-        InUser u=DataUtils.copyData(identifyCompanyDTO,InUser.class);
+    public R identifyCompany(@RequestBody IdentifyCompanyDTO identifyCompanyDTO, @ApiIgnore @LoginUser InUser user) {
+        InUser u = DataUtils.copyData(identifyCompanyDTO, InUser.class);
         u.setuId(user.getuId());
         userService.updateById(u);
         rabbitTemplate.convertAndSend(Constants.userExchange,
                 Constants.user_Update_RouteKey, JSON.toJSON(u));
         return R.ok();
     }
+
+
     /**
      * 媒体认证
      */
@@ -104,7 +94,23 @@ public class InUserController extends AbstractController {
     @PostMapping("/identifyMedia")
     @ApiOperation(value = "媒体认证", httpMethod = "POST")
     public R identifyMedia(@RequestBody IdentifyCompanyDTO identifyCompanyDTO, @ApiIgnore @LoginUser InUser user) {
-        InUser u=DataUtils.copyData(identifyCompanyDTO,InUser.class);
+        InUser u = DataUtils.copyData(identifyCompanyDTO, InUser.class);
+        u.setuId(user.getuId());
+        userService.updateById(u);
+        rabbitTemplate.convertAndSend(Constants.userExchange,
+                Constants.user_Update_RouteKey, JSON.toJSON(u));
+        return R.ok();
+    }
+
+
+    /**
+     * 编辑资料
+     */
+    @Login
+    @PostMapping("/redactData")
+    @ApiOperation(value = "编辑资料", httpMethod = "POST")
+    public R redactData(@RequestBody RedactDataDTO redactDataDTO, @ApiIgnore @LoginUser InUser user) {
+        InUser u = DataUtils.copyData(redactDataDTO, InUser.class);
         u.setuId(user.getuId());
         userService.updateById(u);
         rabbitTemplate.convertAndSend(Constants.userExchange,
@@ -155,11 +161,11 @@ public class InUserController extends AbstractController {
      */
     @Login
     @GetMapping("/like")
-    @ApiOperation(value = "个人消息 -- 点赞", httpMethod = "GET",notes = "根据类型查询点赞信息 0：文章 1：帖子 2：活动")
-    @ApiImplicitParam(name = "map", value = "分页数据，类型type",dataType = "Map",required = true)
+    @ApiOperation(value = "个人消息 -- 点赞", httpMethod = "GET")
+    @ApiImplicitParam(name = "map", value = "分页数据", dataType = "Map", required = true)
     public R like(@RequestParam Map<String, Object> params, @ApiIgnore @LoginUser InUser user) {
-        PageUtils page = userService.like(params,user);
-        return R.ok()/*.put("page",page)*/;
+        PageUtils page = userService.like(params, user);
+        return R.ok().put("page", page);
     }
 
     /**
@@ -205,13 +211,26 @@ public class InUserController extends AbstractController {
      */
     @Login
     @GetMapping("/active")
-    @ApiOperation(value = "个人消息 -- 活动", httpMethod = "GET",notes = "根据类型[Type]查询 0:未开始 1:已开始 2:已结束")
-    @ApiImplicitParam(name = "map", value = "分页数据，类型Type",dataType = "Map",required = true)
-    public R active(@RequestParam Map<String,Object> map,@ApiIgnore @LoginUser InUser user){
-        map.put("uId",user.getuId());
+    @ApiOperation(value = "个人消息 -- 活动", httpMethod = "GET", notes = "状态码[type] 0：未开始 1：已开始 2：已结束")
+    @ApiImplicitParam(name = "map", value = "分页数据，状态码", required = true)
+    public R active(@RequestParam Map<String, Object> map, @ApiIgnore @LoginUser InUser user) {
+        map.put("uId", user.getuId());
         PageUtils page = userService.active(map);
         return R.ok().put("page", page);
     }
 
-    
+
+    /**
+     * 个人中心 -- 粉丝
+     */
+    @Login
+    @GetMapping("/fans")
+    @ApiOperation(value = "个人消息 -- 粉丝", httpMethod = "GET")
+    @ApiImplicitParam(name = "map", value = "分页数据", required = true)
+    public R fans(@RequestParam Map<String, Object> map, @ApiIgnore @LoginUser InUser user) {
+        map.put("uId", user.getuId());
+        PageUtils page = userService.fans(map);
+        return R.ok().put("page", page);
+    }
+
 }

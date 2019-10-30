@@ -31,7 +31,6 @@ public interface IInUserService extends IService<InUser> {
      * 关注用户
      * @param uId 用户id
      * @param fId 被关注的用户id
-     * @return
      */
     Long focus(Long uId,Long fId);
 
@@ -43,8 +42,9 @@ public interface IInUserService extends IService<InUser> {
 
     PageUtils reply(Map<String, Object> map);
 
-    PageUtils like(Map<String, Object> params,InUser user) throws IOException;
+    PageUtils like(Map<String, Object> params,InUser user);
 
     PageUtils active(Map<String, Object> map);
 
+    PageUtils fans(Map<String, Object> map);
 }

@@ -106,7 +106,7 @@ public class InArticleController {
      * 列表
      */
     @GetMapping("/list")
-    @ApiOperation(value = "获取已发布的文章", httpMethod = "GET")
+    @ApiOperation(value = "获取已发布的文章", httpMethod = "GET", notes = "状态码[type] 0：草稿箱 1：待审核 2：已发布")
     @ApiImplicitParam(name = "map", value = "分页数据，状态码", required = true)
     public R list(@RequestParam Map<String, Object> map) {
         PageUtils page = articleService.queryPage(map);
@@ -118,7 +118,7 @@ public class InArticleController {
      */
     @Login
     @GetMapping("/loginedList")
-    @ApiOperation(value = "获取本人发布的文章", httpMethod = "GET")
+    @ApiOperation(value = "获取本人发布的文章", httpMethod = "GET", notes = "状态码[type] 0：草稿箱 1：待审核 2：已发布")
     @ApiImplicitParam(name = "map", value = "分页数据，状态码", required = true)
     public R loginedList(@RequestParam Map<String, Object> map, @ApiIgnore @LoginUser InUser user) {
         map.put("uId", user.getuId());
@@ -155,15 +155,15 @@ public class InArticleController {
      * 点赞
      */
     @Login
-    @PostMapping("/giveALike/{aId}")
+    @PostMapping("/giveALike")
     @ApiOperation(value = "文章点赞", httpMethod = "POST", notes = "根据文章ID点赞")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "id", value = "id", required = true),
             @ApiImplicitParam(name = "type", value = "(0：文章 1：帖子 2：活动)", required = true)
     })
-    public R giveALike(@RequestParam("id") Long id,@RequestParam("type") int type, @ApiIgnore @LoginUser InUser user) {
-        Date d=articleService.giveALike(id,type,user.getuId());
-        return R.ok().put("time",d);
+    public R giveALike(@RequestParam("id") Long id, @RequestParam("type") int type, @ApiIgnore @LoginUser InUser user) {
+        Date d = articleService.giveALike(id, type, user.getuId());
+        return R.ok().put("time", d);
     }
 
     /**
@@ -176,9 +176,9 @@ public class InArticleController {
             @ApiImplicitParam(name = "id", value = "id", required = true),
             @ApiImplicitParam(name = "type", value = "(0：文章 1：帖子 2：活动)", required = true)
     })
-    public R collect(@RequestParam("id") Long id,@RequestParam("type") int type, @ApiIgnore @LoginUser InUser user) {
-        Date d=articleService.collect(id,type, user.getuId());
-        return R.ok().put("time",d);
+    public R collect(@RequestParam("id") Long id, @RequestParam("type") int type, @ApiIgnore @LoginUser InUser user) {
+        Date d = articleService.collect(id, type, user.getuId());
+        return R.ok().put("time", d);
     }
 
     /**
