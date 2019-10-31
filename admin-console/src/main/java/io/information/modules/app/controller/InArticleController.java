@@ -3,7 +3,7 @@ package io.information.modules.app.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.guansuo.common.StringUtil;
+import com.guansuo.newsenum.NewsEnum;
 import io.information.common.utils.IPUtils;
 import io.information.common.utils.PageUtils;
 import io.information.common.utils.R;
@@ -12,7 +12,9 @@ import io.information.modules.app.annotation.Login;
 import io.information.modules.app.annotation.LoginUser;
 import io.information.modules.app.entity.InArticle;
 import io.information.modules.app.entity.InUser;
+import io.information.modules.app.service.IInActivityService;
 import io.information.modules.app.service.IInArticleService;
+import io.information.modules.app.service.IInCardBaseService;
 import io.mq.utils.Constants;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -42,6 +44,10 @@ import java.util.stream.Collectors;
 public class InArticleController {
     @Autowired
     private IInArticleService articleService;
+    @Autowired
+    private IInActivityService activityService;
+    @Autowired
+    private IInCardBaseService baseService;
     @Autowired
     private RabbitTemplate rabbitTemplate;
     @Autowired
@@ -157,15 +163,14 @@ public class InArticleController {
      */
     @Login
     @PostMapping("/giveALike")
-    @ApiOperation(value = "点赞", httpMethod = "POST", notes = "根据ID点赞")
+    @ApiOperation(value = "文章点赞", httpMethod = "POST", notes = "根据文章ID点赞")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "id", value = "文章id", required = true),
-            @ApiImplicitParam(name = "uId", value = "文章作者id", required = true),
+            @ApiImplicitParam(name = "id", value = "id", required = true),
             @ApiImplicitParam(name = "type", value = "(0：文章 1：帖子 2：活动)", required = true)
     })
-    public R giveALike(@RequestParam("id") Long id, @RequestParam("uId") Long uId, @RequestParam("type") int type, @ApiIgnore @LoginUser InUser user) {
-        uId= StringUtil.isBlank(uId)?0L:uId;
-        Date d = articleService.giveALike(id, uId, type, user.getuId());
+    public R giveALike(@RequestParam("id") Long id, @RequestParam("type") int type, @ApiIgnore @LoginUser InUser user) {
+        Long tid = filterId(id, type);
+        Date d = articleService.giveALike(id, user.getuId(), type, tid);
         return R.ok().put("time", d);
     }
 
@@ -174,14 +179,14 @@ public class InArticleController {
      */
     @Login
     @PostMapping("/collect")
-    @ApiOperation(value = "收藏", httpMethod = "POST", notes = "根据ID收藏")
+    @ApiOperation(value = "文章收藏", httpMethod = "POST", notes = "根据文章ID收藏")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "id", value = "id", required = true),
-            @ApiImplicitParam(name = "uId", value = "作者id", required = true),
             @ApiImplicitParam(name = "type", value = "(0：文章 1：帖子 2：活动)", required = true)
     })
-    public R collect(@RequestParam("id") Long id,@RequestParam("uId") Long uId, @RequestParam("type") int type, @ApiIgnore @LoginUser InUser user) {
-        Date d = articleService.collect(id, uId, type, user.getuId());
+    public R collect(@RequestParam("id") Long id, @RequestParam("type") int type, @ApiIgnore @LoginUser InUser user) {
+        Long tid = filterId(id, type);
+        Date d = articleService.collect(id, user.getuId(), type, tid);
         return R.ok().put("time", d);
     }
 
@@ -202,5 +207,20 @@ public class InArticleController {
         //累计粉丝数
         rm.put("fCount", user.getuFans());
         return R.ok(rm);
+    }
+
+
+    private Long filterId(Long id, Integer type) {
+        Long tid = null;
+        if (NewsEnum.点赞_文章.getCode().equals(type)) {
+            tid = articleService.getById(id).getuId();
+        }
+        if (NewsEnum.点赞_帖子.getCode().equals(type)) {
+            tid = baseService.getById(id).getuId();
+        }
+        if (NewsEnum.点赞_活动.getCode().equals(type)) {
+            tid = activityService.getById(id).getuId();
+        }
+        return tid;
     }
 }

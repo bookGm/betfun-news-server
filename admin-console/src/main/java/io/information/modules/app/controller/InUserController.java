@@ -47,10 +47,10 @@ public class InUserController extends AbstractController {
      */
     @Login
     @PutMapping("/change")
-    @ApiOperation(value = "修改密码", httpMethod = "PUT", notes = "已登录状态，修改用户密码")
+    @ApiOperation(value = "修改密码", httpMethod = "PUT")
     @ApiImplicitParam(name = "map", value = "新旧密码", required = true)
-    public R change(@RequestParam Map<String, Object> map, @ApiIgnore @LoginUser InUser user) {
-        userService.change(map, user);
+    public R change(@RequestParam String uPwd, @RequestParam String newPwd, @ApiIgnore @LoginUser InUser user) {
+        userService.change(uPwd, newPwd, user);
         return R.ok();
     }
 
@@ -125,9 +125,9 @@ public class InUserController extends AbstractController {
     @Login
     @PostMapping("/focus")
     @ApiOperation(value = "关注", httpMethod = "POST")
-    @ApiImplicitParam(name = "uId", value = "关注的用户id", required = true)
-    public R focus(Long uId, @ApiIgnore @LoginUser InUser user) {
-        userService.focus(user.getuId(), uId);
+    @ApiImplicitParam(name = "uId", value = "被关注的用户id", required = true)
+    public R focus(@RequestParam Long uId, @ApiIgnore @LoginUser InUser user) {
+        userService.focus(user.getuId(), uId, user.getuAuthStatus());
         return R.ok();
     }
 
@@ -163,13 +163,14 @@ public class InUserController extends AbstractController {
     @GetMapping("/like")
     @ApiOperation(value = "个人消息 -- 点赞", httpMethod = "GET")
     @ApiImplicitParam(name = "map", value = "分页数据", dataType = "Map", required = true)
-    public R like(@RequestParam Map<String, Object> params, @ApiIgnore @LoginUser InUser user) {
-        PageUtils page = userService.like(params,user);
-        return R.ok().put("page",page);
+    public R like(@RequestParam Map<String, Object> map, @ApiIgnore @LoginUser InUser user) {
+        PageUtils page = userService.like(map, user.getuId());
+        return R.ok().put("page", page);
     }
 
     /**
      * 个人消息 -- 系统
+     * TODO
      */
     @Login
     @GetMapping("/system")
@@ -221,16 +222,56 @@ public class InUserController extends AbstractController {
 
 
     /**
-     * 个人中心 -- 粉丝
+     * 个人粉丝 -- 作者
      */
     @Login
-    @GetMapping("/fans")
-    @ApiOperation(value = "个人消息 -- 粉丝", httpMethod = "GET")
+    @GetMapping("/writer")
+    @ApiOperation(value = "个人消息 -- 粉丝 -- 作者", httpMethod = "GET")
     @ApiImplicitParam(name = "map", value = "分页数据", required = true)
-    public R fans(@RequestParam Map<String, Object> map, @ApiIgnore @LoginUser InUser user) {
+    public R fansWriter(@RequestParam Map<String, Object> map, @ApiIgnore @LoginUser InUser user) {
         map.put("uId", user.getuId());
-        PageUtils page = userService.fans(map);
+        PageUtils page = userService.fansWriter(map);
         return R.ok().put("page", page);
     }
 
+
+    /**
+     * 个人粉丝 -- 人物
+     */
+    @Login
+    @GetMapping("/person")
+    @ApiOperation(value = "个人消息 -- 粉丝 -- 人物", httpMethod = "GET")
+    @ApiImplicitParam(name = "map", value = "分页数据", required = true)
+    public R fansPerson(@RequestParam Map<String, Object> map, @ApiIgnore @LoginUser InUser user) {
+        map.put("uId", user.getuId());
+        PageUtils page = userService.fansPerson(map);
+        return R.ok().put("page", page);
+    }
+
+    /**
+     * 个人中心 -- 关注者
+     */
+    @Login
+    @GetMapping("/follower")
+    @ApiOperation(value = "个人消息 -- 粉丝 -- 作者", httpMethod = "GET")
+    @ApiImplicitParam(name = "map", value = "分页数据", required = true)
+    public R follower(@RequestParam Map<String, Object> map, @ApiIgnore @LoginUser InUser user) {
+        map.put("uId", user.getuId());
+        PageUtils page = userService.follower(map);
+        return R.ok().put("page", page);
+    }
+
+
+    /**
+     * 个人中心 -- 收藏
+     */
+    @Login
+    @GetMapping("/favorite")
+    @ApiOperation(value = "个人消息 -- 粉丝 -- 作者", httpMethod = "GET", notes = "状态码[type] 0：文章 1：帖子 2：活动")
+    @ApiImplicitParam(name = "map", value = "分页数据，状态码", required = true)
+    public R favorite(@RequestParam Map<String, Object> map, @ApiIgnore @LoginUser InUser user) {
+        map.put("uId", user.getuId());
+        PageUtils page = userService.favorite(map);
+        return R.ok().put("page", page);
+    }
 }

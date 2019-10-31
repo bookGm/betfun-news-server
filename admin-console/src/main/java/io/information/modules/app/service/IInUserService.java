@@ -21,20 +21,17 @@ public interface IInUserService extends IService<InUser> {
 
     InUser findUser(String username, String password);
 
-    PageUtils queryUsersByArgueIds(Map<String,Object> params);
-
     Boolean saveWithCache(InUser inUser);
-
-    void change(Map<String, Object> map, InUser user);
 
     /**
      * 关注用户
+     *
      * @param uId 用户id
      * @param fId 被关注的用户id
      */
-    Long focus(Long uId,Long fId);
+    Long focus(Long uId, Long fId, Integer status);
 
-    PageUtils comment(Map<String,Object> params);
+    PageUtils comment(Map<String, Object> params);
 
     Map<String, Object> honor(Long uId);
 
@@ -42,9 +39,17 @@ public interface IInUserService extends IService<InUser> {
 
     PageUtils reply(Map<String, Object> map);
 
-    PageUtils like(Map<String, Object> params,InUser user);
+    PageUtils like(Map<String, Object> params, Long uId);
 
     PageUtils active(Map<String, Object> map);
 
-    PageUtils fans(Map<String, Object> map);
+    PageUtils fansWriter(Map<String, Object> map);
+
+    PageUtils fansPerson(Map<String, Object> map);
+
+    PageUtils follower(Map<String, Object> map);
+
+    PageUtils favorite(Map<String, Object> map);
+
+    void change(String uPwd, String newPwd, InUser user);
 }

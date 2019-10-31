@@ -16,22 +16,17 @@ import io.information.common.utils.Query;
 import io.information.common.utils.RedisKeys;
 import io.information.common.utils.RedisUtils;
 import io.information.modules.app.dao.InUserDao;
+import io.information.modules.app.dto.CollectDTO;
+import io.information.modules.app.dto.InUserDTO;
 import io.information.modules.app.entity.*;
 import io.information.modules.app.service.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.data.redis.connection.SortParameters;
-import org.springframework.data.redis.core.Cursor;
-import org.springframework.data.redis.core.ScanOptions;
 import org.springframework.data.redis.core.StringRedisTemplate;
-import org.springframework.data.redis.core.query.SortQueryBuilder;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
 import java.util.*;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
@@ -60,31 +55,17 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
     @Autowired
     private IInActivityService activityService;
 
+
     @Override
-    public PageUtils queryUsersByArgueIds(Map<String, Object> params) {
-        String userIds = null;
-        String caFsideUids = (String) params.get("caFsideUids");
-        String caRsideUids = (String) params.get("caRsideUids");
-        if (!"".equals(caFsideUids) && !caFsideUids.isEmpty()) {
-            userIds = (String) params.get("caFsideUids");
+    public void change(String uPwd, String newPwd, InUser user) {
+        //3. 校验密码  解密
+        if (!user.getuPwd().equals(uPwd)) {
+            //密码错误
+            throw new IMException(ExceptionEnum.INVALID_USERNAME_PASSWORD);
+        } else {
+            user.setuPwd(newPwd);
+            this.updateById(user);
         }
-        if (!"".equals(caRsideUids) && !caRsideUids.isEmpty()) {
-            userIds = (String) params.get("caRsideUids");
-        }
-
-        if (!userIds.isEmpty()) {
-            String[] ids = caFsideUids.split(",");
-            List<Long> idList = Arrays.stream(ids).map(Long::valueOf).collect(Collectors.toList());
-
-            QueryWrapper<InUser> queryWrapper = new QueryWrapper<>();
-            queryWrapper.lambda().in(InUser::getuId, idList);
-            IPage<InUser> page = this.page(
-                    new Query<InUser>().getPage(params),
-                    queryWrapper
-            );
-            return new PageUtils(page);
-        }
-        return null;
     }
 
     @Override
@@ -101,15 +82,8 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
     }
 
     @Override
-    public void change(Map<String, Object> map, InUser user) {
-        String dbPwd = user.getuPwd();
-        map.get("输入密码");
-        //TODO
-    }
-
-    @Override
-    @HashCacheable(key = RedisKeys.FOCUS, keyField = "#uId-#fId")
-    public Long focus(Long uId, Long fId) {
+    @HashCacheable(key = RedisKeys.FOCUS, keyField = "#uId-#status-#fId")
+    public Long focus(Long uId, Long fId, Integer status) {
         this.baseMapper.addFans(uId);
         this.baseMapper.addFocus(fId);
         return fId;
@@ -158,7 +132,7 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
         return null;
     }
 
-    void getTitle(Long id, String type, InLikeVo likeVo) {
+    private void getTitle(Long id, String type, InLikeVo likeVo) {
         if (NewsEnum.点赞_文章.getCode().equals(type)) {
             likeVo.setData(articleService.getById(id).getaTitle());
             likeVo.setType(NewsEnum.点赞_文章.getName());
@@ -174,34 +148,37 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
     }
 
     @Override
-    public PageUtils like(Map<String, Object> map,InUser user) {
-        Integer size = StringUtil.isBlank(map.get("pageSize"))?10:Integer.parseInt(String.valueOf(map.get("pageSize")));
-        Integer page =  StringUtil.isBlank(map.get("currPage"))?0:Integer.parseInt(String.valueOf(map.get("currPage")));
-        Integer bindex=page * size;
-        //模糊查询出某类的key
-        List<Map.Entry<Object,Object>> cmap=redisUtils.hfget(RedisKeys.LIKE,"*-*-"+user.getuId()+"-*");
+    public PageUtils like(Map<String, Object> map, Long uId) {
+        Integer size = StringUtil.isBlank(map.get("pageSize")) ? 10 : Integer.parseInt(String.valueOf(map.get("pageSize")));
+        Integer page = StringUtil.isBlank(map.get("currPage")) ? 0 : Integer.parseInt(String.valueOf(map.get("currPage")));
+        Integer bindex = page * size;
+        //模糊查询出某类的key  #id-#uid-#tId-#type
+        List<Map.Entry<Object, Object>> cmap = redisUtils.hfget(RedisKeys.LIKE, "*-*-" + uId + "-*");
         ArrayList<InLikeVo> newsLike = null;
-        if(null!=cmap&&cmap.size()>0){
+        if (null != cmap && cmap.size() > 0) {
             newsLike = new ArrayList<>();
-            if(bindex+size<cmap.size()){
-                cmap=cmap.subList(bindex,bindex+size);
+            if (bindex + size < cmap.size()) {
+                cmap = cmap.subList(bindex, bindex + size);
             }
-        }else{
-            return new PageUtils(newsLike,0,size,page);
+        } else {
+            return new PageUtils(newsLike, 0, size, page);
         }
-        for(Map.Entry<Object,Object> obj:cmap){
+        for (Map.Entry<Object, Object> obj : cmap) {
             InLikeVo likeVo = new InLikeVo();
-            String key=String.valueOf(obj.getKey());
+            String key = String.valueOf(obj.getKey());
             String[] str = key.split("-");
-            Long id = Long.valueOf(str[0]);
-            Object d=obj.getValue();
-            likeVo.setTime(DateUtils.stringToDate(String.valueOf(obj.getValue()),"yyyy-MM-dd HH:mm:ss"));
-            likeVo.setNick(user.getuNick());
-            likeVo.setPhoto(user.getuPhoto());
-            getTitle(id,str[3],likeVo);
-            newsLike.add(likeVo);
+            Long id = Long.valueOf(str[1]);
+            likeVo.setTime(DateUtils.stringToDate(String.valueOf(obj.getValue()), "yyyy-MM-dd HH:mm:ss"));
+            Object oUser = redisTemplate.opsForHash().get(RedisKeys.INUSER, id);
+            InUser user = (InUser) oUser;
+            if (null != user) {
+                likeVo.setNick(user.getuNick());
+                likeVo.setPhoto(user.getuPhoto());
+                getTitle(id, str[3], likeVo);
+                newsLike.add(likeVo);
+            }
         }
-        return new PageUtils(newsLike,cmap.size(),size,page);
+        return new PageUtils(newsLike, cmap.size(), size, page);
     }
 
     @Override
@@ -233,9 +210,169 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
     }
 
     @Override
-    public PageUtils fans(Map<String, Object> map) {
+    public PageUtils fansWriter(Map<String, Object> map) {
+        //作者需要认证通过  #uId-#status-#fId
+        Long uId = Long.valueOf((String) map.get("uId"));
+        Integer size = StringUtil.isBlank(map.get("pageSize")) ? 10 : Integer.parseInt(String.valueOf(map.get("pageSize")));
+        Integer page = StringUtil.isBlank(map.get("currPage")) ? 0 : Integer.parseInt(String.valueOf(map.get("currPage")));
+        Integer bindex = page * size;
+        //根据uId查询用户关注的目标
+        List<Map.Entry<Object, Object>> cmap = redisUtils.hfget(RedisKeys.FOCUS, uId + "-2-*");
+        ArrayList<InUserDTO> newsFocus = null;
+        //关注目标信息
+        if (null != cmap && cmap.size() > 0) {
+            newsFocus = new ArrayList<>();
+            if (bindex + size < cmap.size()) {
+                cmap = cmap.subList(bindex, bindex + size);
+            }
+        } else {
+            return new PageUtils(newsFocus, 0, size, page);
+        }
+        for (Map.Entry<Object, Object> obj : cmap) {
+            InUserDTO userDTO = new InUserDTO();
+            String[] str = String.valueOf(obj.getKey()).split("-");
+            Long id = Long.valueOf(str[2]);
+            Object oUser = redisTemplate.opsForHash().get(RedisKeys.INUSER, id);
+            InUser user = (InUser) oUser;
+            if (null != user) {
+                userDTO.setuNick(user.getuNick());
+                userDTO.setuPhoto(user.getuPhoto());
+                userDTO.setuIntro(user.getuIntro());
+                newsFocus.add(userDTO);
+            }
+        }
+        return new PageUtils(newsFocus, cmap.size(), size, page);
+    }
+
+    @Override
+    public PageUtils fansPerson(Map<String, Object> map) {
+        Integer page = StringUtil.isBlank(map.get("currPage")) ? 0 : Integer.parseInt(String.valueOf(map.get("currPage")));
+        Integer size = StringUtil.isBlank(map.get("pageSize")) ? 10 : Integer.parseInt(String.valueOf(map.get("pageSize")));
+        Integer bindex = page * size;
+        Long uId = Long.valueOf((String) map.get("uId"));
+        //根据uId查询用户关注的目标  #uId-#type-#fId
+        ArrayList<InUserDTO> newsFocus = null;
+        List<Map.Entry<Object, Object>> cmap = redisUtils.hfget(RedisKeys.FOCUS, uId + "-*-*");
+        //关注目标信息
+        List<Map.Entry<Object, Object>> slist = null;
+        if (bindex + size < cmap.size()) {
+            slist = cmap.subList(bindex, bindex + size);
+        } else {
+            slist = cmap;
+        }
+        if (slist.size() > 0) {
+            newsFocus = new ArrayList<>();
+        }
+        for (Map.Entry<Object, Object> obj : slist) {
+            InUserDTO userDTO = new InUserDTO();
+            String[] str = String.valueOf(obj.getKey()).split("-");
+            Long id = Long.valueOf(str[2]);
+            Object oUser = redisTemplate.opsForHash().get(RedisKeys.INUSER, id);
+            InUser user = (InUser) oUser;
+            if (null != user) {
+                userDTO.setuPhoto(user.getuPhoto());
+                userDTO.setuIntro(user.getuIntro());
+                userDTO.setuNick(user.getuNick());
+                newsFocus.add(userDTO);
+            }
+        }
+        return new PageUtils(newsFocus, cmap.size(), size, page);
+    }
+
+    @Override
+    public PageUtils follower(Map<String, Object> map) {
+        Long uId = Long.valueOf((String) map.get("uId"));
+        Integer page = StringUtil.isBlank(map.get("currPage")) ? 0 : Integer.parseInt(String.valueOf(map.get("currPage")));
+        Integer size = StringUtil.isBlank(map.get("pageSize")) ? 10 : Integer.parseInt(String.valueOf(map.get("pageSize")));
+        Integer bindex = page * size;
+        //以uId为目标查询粉丝  #id-#uid-#tId-#type
+        ArrayList<InUserDTO> newsFans = null;
+        List<Map.Entry<Object, Object>> cmap = redisUtils.hfget(RedisKeys.FOCUS, "*-*-" + uId);
+        //关注目标信息
+        List<Map.Entry<Object, Object>> slist = null;
+        if (bindex + size < cmap.size()) {
+            slist = cmap.subList(bindex, bindex + size);
+        } else {
+            slist = cmap;
+        }
+        if (slist.size() > 0) {
+            newsFans = new ArrayList<>();
+        }
+        for (Map.Entry<Object, Object> obj : slist) {
+            InUserDTO userDTO = new InUserDTO();
+            String[] str = String.valueOf(obj.getKey()).split("-");
+            Long id = Long.valueOf(str[0]);
+            Object oUser = redisTemplate.opsForHash().get(RedisKeys.INUSER, id);
+            InUser user = (InUser) oUser;
+            if (null != user) {
+                userDTO.setuPhoto(user.getuPhoto());
+                userDTO.setuIntro(user.getuIntro());
+                userDTO.setuNick(user.getuNick());
+                userDTO.setuFans(user.getuFans());
+            }
+            //TODO  是否互相关注
+            newsFans.add(userDTO);
+        }
+        return new PageUtils(newsFans, cmap.size(), size, page);
+    }
+
+    @Override
+    public PageUtils favorite(Map<String, Object> map) {
+        if (null != map.get("type") && StringUtil.isNotBlank(map.get("type"))) {
+            Integer type = (Integer) map.get("type");
+            Long uId = Long.valueOf((String) map.get("uId"));
+            Integer page = StringUtil.isBlank(map.get("currPage")) ? 0 : Integer.parseInt(String.valueOf(map.get("currPage")));
+            Integer size = StringUtil.isBlank(map.get("pageSize")) ? 10 : Integer.parseInt(String.valueOf(map.get("pageSize")));
+            Integer bindex = page * size;
+            //查询用户的收藏   #id-#tid-#type-#uid
+            ArrayList<CollectDTO> collects = null;
+            List<Map.Entry<Object, Object>> cmap = redisUtils.hfget(RedisKeys.COLLECT, "*-*-" + type + "-" + uId);
+            List<Map.Entry<Object, Object>> slist = null;
+            if (bindex + size < cmap.size()) {
+                slist = cmap.subList(bindex, bindex + size);
+            } else {
+                slist = cmap;
+            }
+            if (slist.size() > 0) {
+                collects = new ArrayList<>();
+            }
+            switch (type) {
+                case 0:     //文章
+                    for (Map.Entry<Object, Object> obj : slist) {
+                        CollectDTO dto = new CollectDTO();
+                        String[] str = String.valueOf(obj.getKey()).split("-");
+                        Long id = Long.valueOf(str[0]);
+                        InActivity activity = activityService.getById(id);//目标信息
+                        dto.setActivity(activity);
+                        collects.add(dto);
+                    }
+                    break;
+                case 1:     //帖子
+                    for (Map.Entry<Object, Object> obj : slist) {
+                        CollectDTO dto = new CollectDTO();
+                        String[] str = String.valueOf(obj.getKey()).split("-");
+                        Long id = Long.valueOf(str[0]);
+                        InCardBase cardBase = baseService.getById(id);//目标信息
+                        dto.setCardBase(cardBase);
+                        collects.add(dto);
+                    }
+                    break;
+                case 2:     //活动
+                    for (Map.Entry<Object, Object> obj : slist) {
+                        CollectDTO dto = new CollectDTO();
+                        String[] str = String.valueOf(obj.getKey()).split("-");
+                        Long id = Long.valueOf(str[0]);
+                        InArticle article = articleService.getById(id);//目标信息
+                        dto.setArticle(article);
+                        collects.add(dto);
+                    }
+                    break;
+            }
+            return new PageUtils(collects, cmap.size(), size, page);
+        }
         return null;
     }
+
 
     @Override
     public InUser findUser(String username, String password) {

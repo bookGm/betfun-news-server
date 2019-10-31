@@ -1,6 +1,5 @@
 package io.information.modules.news.service.impl;
 
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -9,28 +8,22 @@ import com.guansuo.common.DateUtils;
 import com.guansuo.common.JsonUtil;
 import com.guansuo.newsenum.NewsEnum;
 import io.information.common.utils.*;
+import io.information.modules.news.dao.ArticleDao;
+import io.information.modules.news.entity.ArticleEntity;
 import io.information.modules.news.entity.TagEntity;
+import io.information.modules.news.service.ArticleService;
 import io.information.modules.news.service.TagService;
 import io.information.modules.news.service.feign.common.FeignRes;
 import io.information.modules.news.service.feign.service.BbtcService;
-import io.information.modules.news.dao.ArticleDao;
-import io.information.modules.news.entity.ArticleEntity;
-import io.information.modules.news.service.ArticleService;
 import io.information.modules.news.service.feign.vo.BbtcListVo;
-import me.zhyd.hunter.config.HunterConfig;
-import me.zhyd.hunter.config.HunterConfigContext;
-import me.zhyd.hunter.config.platform.Platform;
 import me.zhyd.hunter.entity.VirtualArticle;
-import me.zhyd.hunter.enums.ExitWayEnum;
 import me.zhyd.hunter.processor.BlogHunterProcessor;
 import me.zhyd.hunter.processor.HunterProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.stream.Collectors;
 
 
 @Service("articleService")

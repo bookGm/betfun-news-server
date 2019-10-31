@@ -2,7 +2,6 @@
 
 package io.information.common.aspect;
 
-import com.guansuo.common.DateUtils;
 import com.guansuo.common.StringUtil;
 import io.information.common.annotation.HashCacheable;
 import io.information.common.utils.DataUtils;
@@ -17,7 +16,6 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Method;
-import java.util.Date;
 
 
 /**
