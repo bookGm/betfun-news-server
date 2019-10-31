@@ -285,7 +285,7 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
         Integer page = StringUtil.isBlank(map.get("currPage")) ? 0 : Integer.parseInt(String.valueOf(map.get("currPage")));
         Integer size = StringUtil.isBlank(map.get("pageSize")) ? 10 : Integer.parseInt(String.valueOf(map.get("pageSize")));
         Integer bindex = page * size;
-        //以uId为目标查询粉丝  #id-#uid-#tId-#type
+        //以uId为目标查询粉丝  #uId-#type-#fId
         ArrayList<InUserDTO> newsFans = null;
         List<Map.Entry<Object, Object>> cmap = redisUtils.hfget(RedisKeys.FOCUS, "*-*-" + uId);
         //关注目标信息
@@ -310,7 +310,16 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
                 userDTO.setuNick(user.getuNick());
                 userDTO.setuFans(user.getuFans());
             }
-            //TODO  是否互相关注
+            //TODO  是否互相关注    #uId-#type-#fId
+            //根据用户ID找到用户所有关注的用户   匹配关注者的ID  是否关注
+            ArrayList<Long> fIds = new ArrayList<>();
+            List<Map.Entry<Object, Object>> fmap = redisUtils.hfget(RedisKeys.FOCUS, uId + "-*-*");
+            for (Map.Entry<Object, Object> entry : fmap) {
+                String[] strings = String.valueOf(entry.getKey()).split("-");
+                Long fId = Long.valueOf(strings[2]);
+                fIds.add(fId);
+            }
+            userDTO.setuFIds(fIds);
             newsFans.add(userDTO);
         }
         return new PageUtils(newsFans, cmap.size(), size, page);

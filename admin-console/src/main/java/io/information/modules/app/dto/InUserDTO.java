@@ -5,6 +5,7 @@ import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 
 import java.io.Serializable;
+import java.util.List;
 
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
@@ -33,9 +34,9 @@ public class InUserDTO  implements Serializable {
     private Long uFans;
 
     /**
-     * 是否关注（0：未关注 1：已关注）
+     * 用户关注的ID
      */
-    private Integer uFocus;
+    private List<Long> uFIds;
 
     public String getuNick() {
         return uNick;
@@ -69,11 +70,11 @@ public class InUserDTO  implements Serializable {
         this.uFans = uFans;
     }
 
-    public Integer getuFocus() {
-        return uFocus;
+    public List<Long> getuFIds() {
+        return uFIds;
     }
 
-    public void setuFocus(Integer uFocus) {
-        this.uFocus = uFocus;
+    public void setuFIds(List<Long> uFIds) {
+        this.uFIds = uFIds;
     }
 }
