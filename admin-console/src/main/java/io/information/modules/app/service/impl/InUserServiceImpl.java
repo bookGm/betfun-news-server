@@ -179,19 +179,17 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
         Integer page =  StringUtil.isBlank(map.get("currPage"))?0:Integer.parseInt(String.valueOf(map.get("currPage")));
         Integer bindex=page * size;
         //模糊查询出某类的key
-        List<Map.Entry<Object,Object>> cmap=redisUtils.hfget(RedisKeys.LIKE,"*-"+user.getuId()+"-*");
+        List<Map.Entry<Object,Object>> cmap=redisUtils.hfget(RedisKeys.LIKE,"*-*-"+user.getuId()+"-*");
         ArrayList<InLikeVo> newsLike = null;
-        //点赞目标信息，点赞用户信息，点赞时间，点赞类型
-        List<Map.Entry<Object,Object>> slist=null;
-        if(bindex+size<cmap.size()){
-            slist=cmap.subList(bindex,bindex+size);
-        }else{
-            slist=cmap;
-        }
-        if(slist.size()>0){
+        if(null!=cmap&&cmap.size()>0){
             newsLike = new ArrayList<>();
+            if(bindex+size<cmap.size()){
+                cmap=cmap.subList(bindex,bindex+size);
+            }
+        }else{
+            return new PageUtils(newsLike,0,size,page);
         }
-        for(Map.Entry<Object,Object> obj:slist){
+        for(Map.Entry<Object,Object> obj:cmap){
             InLikeVo likeVo = new InLikeVo();
             String key=String.valueOf(obj.getKey());
             String[] str = key.split("-");
@@ -200,7 +198,7 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
             likeVo.setTime(DateUtils.stringToDate(String.valueOf(obj.getValue()),"yyyy-MM-dd HH:mm:ss"));
             likeVo.setNick(user.getuNick());
             likeVo.setPhoto(user.getuPhoto());
-            getTitle(id,str[2],likeVo);
+            getTitle(id,str[3],likeVo);
             newsLike.add(likeVo);
         }
         return new PageUtils(newsLike,cmap.size(),size,page);

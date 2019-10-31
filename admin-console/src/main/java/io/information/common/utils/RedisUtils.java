@@ -247,8 +247,18 @@ public class RedisUtils {
      * @param destKey 元素对象
      * @return
      */
-    public boolean move(String key, String value, String destKey) {
+    public boolean smove(String key, String value, String destKey) {
         return redisTemplate.opsForSet().move(key, value, destKey);
+    }
+
+    /**
+     * 移除key
+     *
+     * @param key    键
+     * @return
+     */
+    public void remove(String key) {
+        redisTemplate.delete(key);
     }
 
     /**
@@ -258,7 +268,7 @@ public class RedisUtils {
      * @param values 值
      * @return
      */
-    public void remove(String key, Object... values) {
+    public void sremove(String key, Object... values) {
         redisTemplate.opsForSet().remove(key, values);
     }
 

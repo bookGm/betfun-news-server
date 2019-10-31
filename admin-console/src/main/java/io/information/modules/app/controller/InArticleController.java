@@ -3,6 +3,7 @@ package io.information.modules.app.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.guansuo.common.StringUtil;
 import io.information.common.utils.IPUtils;
 import io.information.common.utils.PageUtils;
 import io.information.common.utils.R;
@@ -156,13 +157,15 @@ public class InArticleController {
      */
     @Login
     @PostMapping("/giveALike")
-    @ApiOperation(value = "文章点赞", httpMethod = "POST", notes = "根据文章ID点赞")
+    @ApiOperation(value = "点赞", httpMethod = "POST", notes = "根据ID点赞")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "id", value = "id", required = true),
+            @ApiImplicitParam(name = "id", value = "文章id", required = true),
+            @ApiImplicitParam(name = "uId", value = "文章作者id", required = true),
             @ApiImplicitParam(name = "type", value = "(0：文章 1：帖子 2：活动)", required = true)
     })
-    public R giveALike(@RequestParam("id") Long id, @RequestParam("type") int type, @ApiIgnore @LoginUser InUser user) {
-        Date d = articleService.giveALike(id, type, user.getuId());
+    public R giveALike(@RequestParam("id") Long id, @RequestParam("uId") Long uId, @RequestParam("type") int type, @ApiIgnore @LoginUser InUser user) {
+        uId= StringUtil.isBlank(uId)?0L:uId;
+        Date d = articleService.giveALike(id, uId, type, user.getuId());
         return R.ok().put("time", d);
     }
 
@@ -171,13 +174,14 @@ public class InArticleController {
      */
     @Login
     @PostMapping("/collect")
-    @ApiOperation(value = "文章收藏", httpMethod = "POST", notes = "根据文章ID收藏")
+    @ApiOperation(value = "收藏", httpMethod = "POST", notes = "根据ID收藏")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "id", value = "id", required = true),
+            @ApiImplicitParam(name = "uId", value = "作者id", required = true),
             @ApiImplicitParam(name = "type", value = "(0：文章 1：帖子 2：活动)", required = true)
     })
-    public R collect(@RequestParam("id") Long id, @RequestParam("type") int type, @ApiIgnore @LoginUser InUser user) {
-        Date d = articleService.collect(id, type, user.getuId());
+    public R collect(@RequestParam("id") Long id,@RequestParam("uId") Long uId, @RequestParam("type") int type, @ApiIgnore @LoginUser InUser user) {
+        Date d = articleService.collect(id, uId, type, user.getuId());
         return R.ok().put("time", d);
     }
 

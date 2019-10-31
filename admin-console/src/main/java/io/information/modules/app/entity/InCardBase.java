@@ -34,7 +34,6 @@ public class InCardBase implements Serializable {
     /**
      * 用户id
      */
-    @ApiModelProperty(hidden = true)
     private Long uId;
 
     /**
