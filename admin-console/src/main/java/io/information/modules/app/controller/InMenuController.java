@@ -1,6 +1,7 @@
 package io.information.modules.app.controller;
 
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import io.information.common.utils.PageUtils;
 import io.information.common.utils.R;
 import io.information.modules.app.entity.InMenu;
@@ -141,7 +142,7 @@ public class InMenuController {
     public R getAllMenu(){
         InMenu menu =new InMenu();
         menu.setmCode("0");
-        getMenuTree(menuService.list(),menu);
+        getMenuTree(menuService.list(new LambdaQueryWrapper<InMenu>().eq(InMenu::getmStatus,0)),menu);
         return R.ok().put("menus",menu.getChildren());
     }
 }

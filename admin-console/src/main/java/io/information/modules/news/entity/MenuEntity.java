@@ -48,10 +48,15 @@ public class MenuEntity implements Serializable {
      * 菜单路径（资源表）
      */
     private String mUrl;
+
     /**
-     * 是否禁用（0：否  1：是）
+     * 权限（0：路人  1：需登录  2：需验证）
      */
-    private Integer mDisable;
+    private Integer mAuth;
+    /**
+     * 状态（0：启用 1：禁用）
+     */
+    private Integer mStatus;
 
     /**
      * ztree属性
@@ -110,14 +115,6 @@ public class MenuEntity implements Serializable {
         this.mUrl = mUrl;
     }
 
-    public Integer getmDisable() {
-        return mDisable;
-    }
-
-    public void setmDisable(Integer mDisable) {
-        this.mDisable = mDisable;
-    }
-
     public String getmPname() {
         return mPname;
     }
@@ -140,5 +137,21 @@ public class MenuEntity implements Serializable {
 
     public void setList(List<?> list) {
         this.list = list;
+    }
+
+    public Integer getmAuth() {
+        return mAuth;
+    }
+
+    public void setmAuth(Integer mAuth) {
+        this.mAuth = mAuth;
+    }
+
+    public Integer getmStatus() {
+        return mStatus;
+    }
+
+    public void setmStatus(Integer mStatus) {
+        this.mStatus = mStatus;
     }
 }
