@@ -1,7 +1,9 @@
 package io.information.modules.app.entity;
 
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -20,8 +22,8 @@ import java.util.List;
  * @author ZXS
  * @since 2019-09-24
  */
-@EqualsAndHashCode(callSuper = false)
-@Accessors(chain = true)
+
+@TableName("in_activity")
 @ApiModel(value = "活动", description = "活动对象")
 public class InActivity implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -41,7 +43,7 @@ public class InActivity implements Serializable {
     /**
      * 活动id
      */
-    @TableId
+    @TableId(type = IdType.INPUT)
     private Long actId;
 
     /**

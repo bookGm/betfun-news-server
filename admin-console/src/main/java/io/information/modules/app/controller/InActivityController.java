@@ -47,7 +47,6 @@ public class InActivityController {
      */
     @Login
     @ApiOperation(value = "新增咨讯活动", httpMethod = "POST")
-    @ApiImplicitParam(name = "activity", value = "活动信息", required = true)
     @PostMapping("/save")
     public R save(@RequestParam InActivity activity, @ApiIgnore @LoginUser InUser user) {
         activity.setActCreateTime(new Date());
@@ -62,9 +61,8 @@ public class InActivityController {
      */
     @Login
     @ApiOperation(value = "删除咨讯活动", httpMethod = "DELETE", notes = "根据actId[数组]删除活动")
-    @ApiImplicitParam(name = "actIds", value = "活动ID", required = true, dataType = "Long[ ]")
     @DeleteMapping("/delete")
-    public R delete(@RequestBody Long[] actIds) {
+    public R delete(@RequestParam Long[] actIds) {
         activityService.removeActivity(Arrays.asList(actIds));
         return R.ok();
     }
@@ -76,7 +74,6 @@ public class InActivityController {
     @Login
     @PutMapping("/update")
     @ApiOperation(value = "修改咨讯活动", httpMethod = "PUT")
-    @ApiImplicitParam(name = "activity", value = "活动信息", required = true)
     public R update(@RequestBody InActivity activity) {
         activityService.updateActivity(activity);
         return R.ok();
@@ -87,21 +84,20 @@ public class InActivityController {
      * 列表
      */
     @GetMapping("/list")
-    @ApiOperation(value = "获取已审核的咨讯活动", httpMethod = "GET")
-    @ApiImplicitParam(name = "map", value = "分页数据", required = true)
+    @ApiOperation(value = "获取已审核的咨讯活动", httpMethod = "GET", notes = "分页数据")
     public R listOk(@RequestParam Map<String, Object> map) {
         PageUtils page = activityService.queryPage(map);
         return R.ok().put("page", page);
     }
+
     /**
      * 列表
      */
     @Login
     @GetMapping("/userActivity")
-    @ApiOperation(value = "获取本人发布的活动", httpMethod = "GET", notes = "自动获取用户信息")
-    @ApiImplicitParam(name = "map", value = "分页数据", required = true)
+    @ApiOperation(value = "获取本人发布的活动", httpMethod = "GET", notes = "分页数据")
     public R userActivity(@RequestParam Map<String, Object> map, @ApiIgnore @LoginUser InUser user) {
-        map.put("uId",user.getuId());
+        map.put("uId", user.getuId());
         PageUtils page = activityService.queryPage(map);
         return R.ok().put("page", page);
     }
@@ -111,7 +107,6 @@ public class InActivityController {
      */
     @GetMapping("/info/{actId}")
     @ApiOperation(value = "查询单个活动信息", httpMethod = "GET", notes = "根据actId查询活动信息")
-    @ApiImplicitParam(name = "actId", value = "活动ID", required = true)
     public R info(@PathVariable("actId") Long actId) {
         InActivity activity = activityService.getById(actId);
         return R.ok().put("activity", activity);
@@ -121,8 +116,7 @@ public class InActivityController {
      * 获取报名活动的用户
      */
     @GetMapping("/pass")
-    @ApiOperation(value = "获取报名活动的用户", httpMethod = "GET", notes = "根据actId查询报名的用户")
-    @ApiImplicitParam(name = "map", value = "分页数据，活动ID", required = true)
+    @ApiOperation(value = "获取报名活动的用户", httpMethod = "GET", notes = "分页数据，活动ID")
     public R pass(@RequestParam Map<String, Object> map) {
         PageUtils page = datasService.pass(map);
         return R.ok().put("page", page);
@@ -132,8 +126,7 @@ public class InActivityController {
     /**
      * 获取活动报名数据
      */
-    @ApiOperation(value = "活动报名数据", httpMethod = "GET")
-    @ApiImplicitParam(name = "actId", value = "活动ID", required = true)
+    @ApiOperation(value = "活动报名数据", httpMethod = "GET", notes = "活动ID")
     @GetMapping("/apply/{actId}")
     public R apply(@PathVariable("actId") Long actId) {
         List<InActivityFields> fieldsList = activityService.apply(actId);
@@ -145,8 +138,7 @@ public class InActivityController {
      * 活动报名
      */
     @Login
-    @ApiOperation(value = "活动报名", httpMethod = "POST")
-    @ApiImplicitParam(name = "datasList", value = "活动数据集合", dataType = "List", required = true)
+    @ApiOperation(value = "活动报名", httpMethod = "POST", notes = "活动数据集合[datasList]")
     @PostMapping("/join")
     public R join(@RequestBody List<InActivityDatas> datasList, @ApiIgnore @LoginUser InUser user) {
         InActivityDatas data = datasList.get(0);
@@ -158,7 +150,7 @@ public class InActivityController {
             return R.error("报名失败，报名人数已达上限");
         } else {
             activity.setActInNum(activity.getActInNum() + 1);
-            activityService.save(activity);
+            activityService.updateById(activity);
             for (InActivityDatas datas : datasList) {
                 datas.setdId(IdGenerator.getId());
                 datas.setuId(user.getuId());

@@ -5,6 +5,7 @@ import java.io.Serializable;
 /**
  * 菜单资源前端字段
  */
+
 public class InMenus implements Serializable {
     private static final long serialVersionUID = 1L;
 

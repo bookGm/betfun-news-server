@@ -56,7 +56,6 @@ public class InDicController {
      * 选择字典(添加、修改字典)
      */
     @GetMapping("/select")
-
     public R select() {
         //查询列表数据
         List<InDic> dicList = dicService.queryDidAscList();

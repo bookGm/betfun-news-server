@@ -40,8 +40,7 @@ public class InNewsFlashController {
      * 列表 esOK
      */
     @GetMapping("/list")
-    @ApiOperation(value = "分页获取快讯", httpMethod = "GET")
-    @ApiImplicitParam(name = "map", value = "分页数据", required = true)
+    @ApiOperation(value = "分页获取快讯", httpMethod = "GET", notes = "分页数据")
     public R list(@RequestParam Map<String, Object> map) {
         PageUtils page = newsFlashService.queryPage(map);
         return R.ok().put("page", page);
@@ -51,11 +50,10 @@ public class InNewsFlashController {
      * 查询
      */
     @GetMapping("/info/{nId}")
-    @ApiOperation(value = "查询单个快讯", httpMethod = "GET")
-    @ApiImplicitParam(name = "nId", value = "快讯ID", required = true)
-    public R info(@PathVariable("nId") Long nId){
+    @ApiOperation(value = "查询单个快讯", httpMethod = "GET", notes = "快讯ID")
+    public R info(@PathVariable("nId") Long nId) {
         InNewsFlash newsFlash = newsFlashService.getById(nId);
-        return R.ok().put("newsFlash",newsFlash);
+        return R.ok().put("newsFlash", newsFlash);
     }
 
     /**
@@ -63,7 +61,6 @@ public class InNewsFlashController {
      */
     @PostMapping("/save")
     @ApiOperation(value = "新增快讯", httpMethod = "POST")
-    @ApiImplicitParam(name = "flash", value = "快讯对象", required = true)
     public R save(@RequestBody InNewsFlash flash) {
         flash.setnId(IdGenerator.getId());
         flash.setnCreateTime(new Date());
@@ -78,7 +75,6 @@ public class InNewsFlashController {
      */
     @PutMapping("/update")
     @ApiOperation(value = "修改快讯", httpMethod = "PUT")
-    @ApiImplicitParam(name = "flash", value = "快讯对象", required = true)
     public R update(@RequestBody InNewsFlash flash) {
         newsFlashService.updateById(flash);
         rabbitTemplate.convertAndSend(Constants.flashExchange,
@@ -90,8 +86,7 @@ public class InNewsFlashController {
      * 删除
      */
     @DeleteMapping("/delete")
-    @ApiOperation(value = "删除单个或多个快讯", httpMethod = "DELETE")
-    @ApiImplicitParam(name = "nIds", value = "快讯ID",dataType = "Long[ ]",required = true)
+    @ApiOperation(value = "删除单个或多个快讯", httpMethod = "DELETE", notes = "快讯ID数组")
     public R delete(@RequestBody Long[] nIds) {
         newsFlashService.removeByIds(Arrays.asList(nIds));
         rabbitTemplate.convertAndSend(Constants.flashExchange,

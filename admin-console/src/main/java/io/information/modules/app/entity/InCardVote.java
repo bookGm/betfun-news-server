@@ -1,7 +1,9 @@
 package io.information.modules.app.entity;
 
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -21,8 +23,7 @@ import java.util.List;
  * @since 2019-09-24
  */
 
-@EqualsAndHashCode(callSuper = false)
-@Accessors(chain = true)
+@TableName("in_card_vote")
 @ApiModel(value = "投票帖", description = "投票帖")
 public class InCardVote implements Serializable {
 
@@ -33,7 +34,7 @@ public class InCardVote implements Serializable {
     /**
      * 帖子id
      */
-    @TableId
+    @TableId(type = IdType.INPUT)
     @ApiModelProperty(hidden=true)
     private Long cId;
 

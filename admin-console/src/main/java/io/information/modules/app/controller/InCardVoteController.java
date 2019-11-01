@@ -53,7 +53,6 @@ public class InCardVoteController {
     @Login
     @PostMapping("/save")
     @ApiOperation(value = "新增投票帖子", httpMethod = "POST")
-    @ApiImplicitParam(name = "cardVote", value = "基础和投票帖子信息", required = true)
     public R save(@RequestBody InCardVote cardVote) {
         long cId = IdGenerator.getId();
         InCardBase cardBase = cardVote.getInCardBase();
@@ -74,9 +73,9 @@ public class InCardVoteController {
     @PostMapping("/vote")
     @ApiOperation(value = "投票", httpMethod = "POST", notes = "根据帖子ID和选择的投票选项，更新投票选项数量")
     @ApiImplicitParam(name = "cid、optIndexs", value = "帖子ID、投票选项索引", dataType = "Long、List<int>")
-    public R vote(@RequestParam("cid")Long cid, @RequestParam(value = "optIndexs",required = false) List<Integer> optIndexs, @ApiIgnore @LoginUser InUser user) {
+    public R vote(@RequestParam("cid") Long cid, @RequestParam(value = "optIndexs", required = false) List<Integer> optIndexs, @ApiIgnore @LoginUser InUser user) {
         List<Integer> vote = voteService.vote(cid, user.getuId(), optIndexs);
-        return R.ok().put("vote",vote);
+        return R.ok().put("vote", vote);
     }
 
 
@@ -86,8 +85,7 @@ public class InCardVoteController {
     @Login
     @DeleteMapping("/delete")
     @ApiOperation(value = "单个或批量删除投票帖子", httpMethod = "DELETE", notes = "根据cIds[数组]删除投票帖子")
-    @ApiImplicitParam(name = "cIds", value = "帖子ID", dataType = "Long[ ]", required = true)
-    public R delete(@RequestBody Long[] cIds) {
+    public R delete(@RequestParam Long[] cIds) {
         voteService.removeByIds(Arrays.asList(cIds));
         rabbitTemplate.convertAndSend(Constants.cardExchange,
                 Constants.card_Save_RouteKey, cIds);
@@ -101,7 +99,6 @@ public class InCardVoteController {
     @Login
     @PutMapping("/update")
     @ApiOperation(value = "修改投票帖子", httpMethod = "PUT")
-    @ApiImplicitParam(name = "cardVote", value = "投票帖子信息", required = true)
     public R update(@RequestBody InCardVote cardVote) {
         voteService.updateById(cardVote);
         rabbitTemplate.convertAndSend(Constants.cardExchange,
@@ -116,8 +113,7 @@ public class InCardVoteController {
      */
     @Login
     @GetMapping("/info/{cId}")
-    @ApiOperation(value = "查询单个投票帖子", httpMethod = "GET")
-    @ApiImplicitParam(name = "cId", value = "帖子ID", required = true)
+    @ApiOperation(value = "查询单个投票帖子", httpMethod = "GET", notes = "帖子ID")
     public R queryCardVote(@PathVariable("cId") Long cId, @ApiIgnore @LoginUser InUser user) {
         Map<String, Object> map = new HashMap<>();
         //帖子信息
@@ -134,8 +130,7 @@ public class InCardVoteController {
      * 列表
      */
     @GetMapping("/list")
-    @ApiOperation(value = "获取全部投票帖子", httpMethod = "GET")
-    @ApiImplicitParam(name = "map", value = "分页数据", required = true)
+    @ApiOperation(value = "获取全部投票帖子", httpMethod = "GET", notes = "分页数据")
     public R list(@RequestParam Map<String, Object> map) {
         PageUtils page = voteService.queryPage(map);
         return R.ok().put("page", page);

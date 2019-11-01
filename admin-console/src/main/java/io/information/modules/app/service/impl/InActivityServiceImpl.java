@@ -1,14 +1,11 @@
 package io.information.modules.app.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.guansuo.common.StringUtil;
 import io.information.common.utils.PageUtils;
 import io.information.common.utils.Query;
-import io.information.common.utils.RedisKeys;
-import io.information.common.utils.RedisUtils;
 import io.information.modules.app.dao.InActivityDao;
 import io.information.modules.app.entity.InActivity;
 import io.information.modules.app.entity.InActivityDatas;
@@ -48,15 +45,15 @@ public class InActivityServiceImpl extends ServiceImpl<InActivityDao, InActivity
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void saveActivity(InActivity activity) {
-        List<InActivityTicket> ticketList = activity.getTicketList();
-        List<InActivityFields> fieldsList = activity.getFieldsList();
-        if (null != fieldsList && !fieldsList.isEmpty()) {
+        if (null != activity.getFieldsList() && !activity.getFieldsList().isEmpty()) {
+            List<InActivityFields> fieldsList = activity.getFieldsList();
             for (InActivityFields fields : fieldsList) {
                 fields.setActId(activity.getActId());
                 fieldsService.save(fields);
             }
         }
-        if (null != ticketList && !ticketList.isEmpty()) {
+        if (null != activity.getTicketList() && !activity.getTicketList().isEmpty()) {
+            List<InActivityTicket> ticketList = activity.getTicketList();
             for (InActivityTicket ticket : ticketList) {
                 ticket.setActId(activity.getActId());
                 ticketService.save(ticket);
@@ -90,11 +87,11 @@ public class InActivityServiceImpl extends ServiceImpl<InActivityDao, InActivity
                     break;
             }
         }
-        if(params.containsKey("uId") && StringUtil.isNotBlank(params.get("uId"))){
-            queryWrapper.eq(InActivity::getuId,params.get("uId"));
+        if (params.containsKey("uId") && StringUtil.isNotBlank(params.get("uId"))) {
+            queryWrapper.eq(InActivity::getuId, params.get("uId"));
         }
-        if(params.containsKey("actStatus") && StringUtil.isNotBlank(params.get("actStatus"))){
-            queryWrapper.eq(InActivity::getActStatus,params.get("actStatus"));
+        if (params.containsKey("actStatus") && StringUtil.isNotBlank(params.get("actStatus"))) {
+            queryWrapper.eq(InActivity::getActStatus, params.get("actStatus"));
         }
         IPage<InActivity> page = this.page(
                 new Query<InActivity>().getPage(params),
@@ -110,7 +107,7 @@ public class InActivityServiceImpl extends ServiceImpl<InActivityDao, InActivity
         List<InActivityTicket> ticketList = ticket(actIds);
         List<InActivityDatas> datasList = datas(actIds);
         if (null != fieldsList && !fieldsList.isEmpty()) {
-            List<Long> fIds = fieldsList.stream().map(InActivityFields::getFId).collect(Collectors.toList());
+            List<Long> fIds = fieldsList.stream().map(InActivityFields::getfId).collect(Collectors.toList());
             fieldsService.removeByIds(fIds);
         }
         if (null != ticketList && !ticketList.isEmpty()) {
@@ -127,12 +124,12 @@ public class InActivityServiceImpl extends ServiceImpl<InActivityDao, InActivity
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void updateActivity(InActivity activity) {
-        List<InActivityTicket> ticketList = activity.getTicketList();
-        List<InActivityFields> fieldsList = activity.getFieldsList();
-        if (null != fieldsList && !fieldsList.isEmpty()) {
+        if (null != activity.getFieldsList() && !activity.getFieldsList().isEmpty()) {
+            List<InActivityFields> fieldsList = activity.getFieldsList();
             fieldsService.updateBatchById(fieldsList);
         }
-        if (null != ticketList && !ticketList.isEmpty()) {
+        if (null != activity.getTicketList() && !activity.getTicketList().isEmpty()) {
+            List<InActivityTicket> ticketList = activity.getTicketList();
             ticketService.updateBatchById(ticketList);
         }
         this.updateById(activity);

@@ -1,10 +1,10 @@
 package io.information.modules.app.entity;
 
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.EqualsAndHashCode;
-import lombok.experimental.Accessors;
 
 import java.io.Serializable;
 
@@ -17,8 +17,7 @@ import java.io.Serializable;
  * @since 2019-09-24
  */
 
-@EqualsAndHashCode(callSuper = false)
-@Accessors(chain = true)
+@TableName("in_card_base")
 @ApiModel(value = "普通帖", description = "普通帖")
 public class InCardBase implements Serializable {
 
@@ -27,8 +26,8 @@ public class InCardBase implements Serializable {
     /**
      * 帖子id
      */
-    @TableId
-    @ApiModelProperty(hidden = true)
+    @TableId(type = IdType.INPUT)
+//    @ApiModelProperty(hidden = true)
     private Long cId;
 
     /**

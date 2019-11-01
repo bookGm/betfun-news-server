@@ -4,10 +4,7 @@ package io.information.modules.app.controller;
 import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.guansuo.newsenum.NewsEnum;
-import io.information.common.utils.IPUtils;
-import io.information.common.utils.PageUtils;
-import io.information.common.utils.R;
-import io.information.common.utils.RedisKeys;
+import io.information.common.utils.*;
 import io.information.modules.app.annotation.Login;
 import io.information.modules.app.annotation.LoginUser;
 import io.information.modules.app.entity.InArticle;
@@ -62,6 +59,7 @@ public class InArticleController {
     @ApiOperation(value = "新增咨讯文章", httpMethod = "POST")
     public R save(@RequestBody InArticle article, @ApiIgnore @LoginUser InUser user) {
         if (user.getuAuthStatus() == 2) {
+            article.setaId(IdGenerator.getId());
             article.setuId(user.getuId());
             article.setaCreateTime(new Date());
             articleService.save(article);
@@ -79,8 +77,7 @@ public class InArticleController {
     @Login
     @DeleteMapping("/delete")
     @ApiOperation(value = "单个或批量删除咨讯文章", httpMethod = "DELETE", notes = "根据aId[数组]删除活动")
-    @ApiImplicitParam(name = "aIds", value = "文章ID", dataType = "Long[ ]", required = true)
-    public R delete(@RequestBody Long[] aIds, @ApiIgnore @LoginUser InUser user) {
+    public R delete(@RequestParam Long[] aIds, @ApiIgnore @LoginUser InUser user) {
         if (user.getuAuthStatus() == 2) {
             articleService.removeByIds(Arrays.asList(aIds));
             rabbitTemplate.convertAndSend(Constants.articleExchange,
@@ -97,7 +94,6 @@ public class InArticleController {
     @Login
     @PutMapping("/update")
     @ApiOperation(value = "修改咨讯文章", httpMethod = "PUT")
-    @ApiImplicitParam(name = "article", value = "文章信息", required = true)
     public R update(@RequestBody InArticle article, @ApiIgnore @LoginUser InUser user) {
         if (user.getuAuthStatus() == 2) {
             articleService.updateById(article);
@@ -113,8 +109,7 @@ public class InArticleController {
      * 列表
      */
     @GetMapping("/list")
-    @ApiOperation(value = "获取已发布的文章", httpMethod = "GET", notes = "状态码[type] 0：草稿箱 1：待审核 2：已发布")
-    @ApiImplicitParam(name = "map", value = "分页数据，状态码", required = true)
+    @ApiOperation(value = "获取已发布的文章", httpMethod = "GET", notes = "分页数据，状态码[type] 0：草稿箱 1：待审核 2：已发布")
     public R list(@RequestParam Map<String, Object> map) {
         PageUtils page = articleService.queryPage(map);
         return R.ok().put("page", page);
@@ -125,8 +120,7 @@ public class InArticleController {
      */
     @Login
     @GetMapping("/loginedList")
-    @ApiOperation(value = "获取本人发布的文章", httpMethod = "GET", notes = "状态码[type] 0：草稿箱 1：待审核 2：已发布")
-    @ApiImplicitParam(name = "map", value = "分页数据，状态码", required = true)
+    @ApiOperation(value = "获取本人发布的文章", httpMethod = "GET", notes = "分页数据，状态码[type] 0：草稿箱 1：待审核 2：已发布")
     public R loginedList(@RequestParam Map<String, Object> map, @ApiIgnore @LoginUser InUser user) {
         map.put("uId", user.getuId());
         PageUtils page = articleService.queryPage(map);
@@ -139,7 +133,6 @@ public class InArticleController {
      */
     @GetMapping("/info/{aId}")
     @ApiOperation(value = "查询单个咨讯文章", httpMethod = "GET", notes = "根据文章ID查询文章")
-    @ApiImplicitParam(paramType = "query", name = "aId", value = "文章ID", required = true)
     public R queryArticle(@PathVariable("aId") String aId, HttpServletRequest request) {
         String ip = IPUtils.getIpAddr(request);
         InArticle article = articleService.getById(aId);

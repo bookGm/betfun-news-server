@@ -84,10 +84,10 @@ public class InUploadDownController {
             //将文件在服务器的存储路径返回
             return R.ok().put("url",serverConfig.getUrl()+"/upload/" + fileName).put("uploaded",1).put("formUrl","/upload/" + fileName);
         } catch (IOException e) {
-            e.printStackTrace();
-            return R.error("上传失败").put("uploaded",0);
+        e.printStackTrace();
+        return R.error("上传失败").put("uploaded",0);
         }
-    }
+        }
 
 
     @PostMapping("/uploadDle")

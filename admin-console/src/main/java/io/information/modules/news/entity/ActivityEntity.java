@@ -1,5 +1,6 @@
 package io.information.modules.news.entity;
 
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 
@@ -23,7 +24,7 @@ public class ActivityEntity implements Serializable {
 	/**
 	 * 活动id
 	 */
-	@TableId
+	@TableId(type = IdType.INPUT)
 	private Long actId;
 	/**
 	 * 用户id

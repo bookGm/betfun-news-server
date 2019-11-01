@@ -3,6 +3,7 @@ package io.information.modules.app.entity;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -21,8 +22,7 @@ import java.util.Date;
  * @since 2019-10-26
  */
 
-@EqualsAndHashCode(callSuper = false)
-@Accessors(chain = true)
+@TableName("in_news_flash")
 @ApiModel(value = "资讯", description = "资讯实体")
 public class InNewsFlash implements Serializable {
 

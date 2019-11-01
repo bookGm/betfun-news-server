@@ -51,7 +51,6 @@ public class InCardArgueController {
     @Login
     @PostMapping("/save")
     @ApiOperation(value = "新增辩论帖子", httpMethod = "POST")
-    @ApiImplicitParam(name = "cardArgue", value = "基础和辩论帖子信息", required = true)
     public R save(@RequestBody InCardArgue cardArgue) {
         long cId = IdGenerator.getId();
         InCardBase cardBase = cardArgue.getInCardBase();
@@ -71,8 +70,7 @@ public class InCardArgueController {
     @Login
     @DeleteMapping("/delete")
     @ApiOperation(value = "删除辩论帖子", httpMethod = "DELETE", notes = "根据cId[数组]删除辩论帖子")
-    @ApiImplicitParam(name = "cIds", value = "帖子ID", dataType = "Long[ ]", required = true)
-    public R delete(@RequestBody Long[] cIds) {
+    public R delete(@RequestParam Long[] cIds) {
         argueService.removeByIds(Arrays.asList(cIds));
         rabbitTemplate.convertAndSend(Constants.cardExchange,
                 Constants.card_Delete_RouteKey, cIds);
@@ -86,7 +84,6 @@ public class InCardArgueController {
     @Login
     @PutMapping("/update")
     @ApiOperation(value = "修改辩论帖子", httpMethod = "PUT")
-    @ApiImplicitParam(name = "cardArgue", value = "辩论帖子信息", required = true)
     public R updateCardArgue(@RequestBody InCardArgue cardArgue) {
         argueService.updateById(cardArgue);
         rabbitTemplate.convertAndSend(Constants.cardExchange,
@@ -100,7 +97,6 @@ public class InCardArgueController {
      */
     @GetMapping("/info/{cId}")
     @ApiOperation(value = "单个辩论帖子", httpMethod = "GET", notes = "根据帖子ID查询辩论帖子信息")
-    @ApiImplicitParam(name = "cId", value = "帖子ID", required = true)
     public R queryCardArgue(@PathVariable("cId") Long cId) {
         InCardArgue cardArgue = argueService.getById(cId);
         return R.ok().put("cardArgue", cardArgue);
@@ -111,8 +107,7 @@ public class InCardArgueController {
      * 列表 esOK
      */
     @GetMapping("/list")
-    @ApiOperation(value = "全部辩论帖子", httpMethod = "GET")
-    @ApiImplicitParam(name = "map", value = "分页数据", required = true)
+    @ApiOperation(value = "全部辩论帖子", httpMethod = "GET", notes = "分页数据")
     public R list(@RequestParam Map<String, Object> map) {
         PageUtils page = argueService.queryPage(map);
         return R.ok().put("page", page);

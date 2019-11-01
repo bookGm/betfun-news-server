@@ -20,10 +20,8 @@ import java.util.Date;
  * @since 2019-10-26
  */
 
-@EqualsAndHashCode(callSuper = false)
-@Accessors(chain = true)
-@ApiModel(value = "资讯", description = "资讯实体")
 @TableName("in_news_flash")
+@ApiModel(value = "资讯", description = "资讯实体")
 public class NewsFlash implements Serializable {
 
     private static final long serialVersionUID = 1L;

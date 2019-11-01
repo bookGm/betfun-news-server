@@ -1,5 +1,6 @@
 package io.information.modules.app.entity;
 
+import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 
@@ -15,8 +16,7 @@ import java.util.Date;
  * @since 2019-09-24
  */
 
-@EqualsAndHashCode(callSuper = false)
-@Accessors(chain = true)
+@TableName("in_source")
 public class InSource implements Serializable {
 
     private static final long serialVersionUID = 1L;

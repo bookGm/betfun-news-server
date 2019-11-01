@@ -45,7 +45,6 @@ public class InCardBaseController {
     @Login
     @PostMapping("/save")
     @ApiOperation(value = "新增基础帖子", httpMethod = "POST")
-    @ApiImplicitParam(name = "cardBase", value = "基础帖子信息", required = true)
     public R save(@RequestBody InCardBase cardBase) {
         long cId = IdGenerator.getId();
         cardBase.setcId(cId);
@@ -62,8 +61,7 @@ public class InCardBaseController {
     @Login
     @DeleteMapping("/delete")
     @ApiOperation(value = "删除基础帖子", httpMethod = "DELETE", notes = "根据cId[数组]删除基础帖子")
-    @ApiImplicitParam(name = "cIds", value = "帖子ID", dataType = "Long[ ]", required = true)
-    public R delete(@RequestBody Long[] cIds) {
+    public R delete(@RequestParam Long[] cIds) {
         cardBaseService.removeByIds(Arrays.asList(cIds));
         rabbitTemplate.convertAndSend(Constants.cardExchange,
                 Constants.card_Delete_RouteKey, cIds);
@@ -77,7 +75,6 @@ public class InCardBaseController {
     @Login
     @PutMapping("/update")
     @ApiOperation(value = "修改基础帖子", httpMethod = "PUT")
-    @ApiImplicitParam(name = "cardBase", value = "基础帖子信息", required = true)
     public R update(@RequestBody InCardBase cardBase) {
         cardBaseService.updateById(cardBase);
         rabbitTemplate.convertAndSend(Constants.cardExchange,
@@ -92,7 +89,6 @@ public class InCardBaseController {
      */
     @GetMapping("/info/{cId}")
     @ApiOperation(value = "单个基础帖子", httpMethod = "GET")
-    @ApiImplicitParam(name = "cId", value = "帖子ID", required = true)
     public R info(@PathVariable("cId") Long cId) {
         InCardBase cardBase = cardBaseService.getById(cId);
         return R.ok().put("cardBase", cardBase);
@@ -103,8 +99,7 @@ public class InCardBaseController {
      * 列表
      */
     @GetMapping("/list")
-    @ApiOperation(value = "获取全部基础帖子", httpMethod = "GET")
-    @ApiImplicitParam(name = "map", value = "分页数据", required = true)
+    @ApiOperation(value = "获取全部基础帖子", httpMethod = "GET",notes = "分页数据")
     public R status(@RequestParam Map<String, Object> map) {
         PageUtils page = cardBaseService.queryPage(map);
         return R.ok().put("page", page);

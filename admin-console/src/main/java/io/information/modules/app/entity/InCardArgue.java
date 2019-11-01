@@ -1,7 +1,9 @@
 package io.information.modules.app.entity;
 
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -18,8 +20,7 @@ import java.util.Date;
  * @author ZXS
  * @since 2019-09-24
  */
-@EqualsAndHashCode(callSuper = false)
-@Accessors(chain = true)
+@TableName("in_card_argue")
 @ApiModel(value = "辩论贴", description = "辩论贴")
 public class InCardArgue implements Serializable {
 
@@ -30,7 +31,7 @@ public class InCardArgue implements Serializable {
     /**
      * 帖子id
      */
-    @TableId
+    @TableId(type = IdType.INPUT)
     @ApiModelProperty(hidden=true)
     private Long cId;
 

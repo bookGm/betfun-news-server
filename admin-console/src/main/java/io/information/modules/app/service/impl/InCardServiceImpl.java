@@ -3,6 +3,7 @@ package io.information.modules.app.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.guansuo.common.StringUtil;
+import io.information.common.utils.IdGenerator;
 import io.information.common.utils.PageUtils;
 import io.information.common.utils.Query;
 import io.information.modules.app.entity.*;
@@ -27,11 +28,12 @@ public class InCardServiceImpl implements IInCardService {
 
     @Override
     public void issueCard(InCard card, InUser user) {
+        long cId = IdGenerator.getId();
         InCardArgue argue = card.getArgue();
         InCardBase base = card.getBase();
         InCardVote vote = card.getVote();
+        base.setcId(cId);
         if (null != base.getcTitle()) {
-            Long cId = base.getcId();
             if (null != argue.getCaRside() && "".equals(argue.getCaRside())
                     && null != argue.getCaFside() && !"".equals(argue.getCaFside())) {
                 argue.setcId(cId);

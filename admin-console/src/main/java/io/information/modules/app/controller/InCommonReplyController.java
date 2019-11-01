@@ -1,5 +1,6 @@
 package io.information.modules.app.controller;
 
+import io.information.common.utils.IdGenerator;
 import io.information.common.utils.PageUtils;
 import io.information.common.utils.R;
 import io.information.modules.app.annotation.Login;
@@ -35,8 +36,7 @@ public class InCommonReplyController {
      * 信息
      */
     @GetMapping("/info/{crId}")
-    @ApiOperation(value = "单个评论信息", httpMethod = "GET")
-    @ApiImplicitParam(name = "crId", value = "评论ID", required = true)
+    @ApiOperation(value = "单个评论信息", httpMethod = "GET", notes = "评论ID")
     public R info(@PathVariable("crId") Long crId) {
         InCommonReply commonReply = commonReplyService.getById(crId);
 
@@ -49,8 +49,8 @@ public class InCommonReplyController {
     @Login
     @PostMapping("/save")
     @ApiOperation(value = "保存评论信息", httpMethod = "POST")
-    @ApiImplicitParam(name = "commonReply", value = "评论信息", required = true)
     public R save(@RequestBody InCommonReply commonReply) {
+        commonReply.setCrId(IdGenerator.getId());
         commonReply.setCrTime(new Date());
         commonReplyService.save(commonReply);
 
@@ -63,9 +63,8 @@ public class InCommonReplyController {
      */
     @Login
     @DeleteMapping("/delete")
-    @ApiOperation(value = "删除评论信息", httpMethod = "DELETE")
-    @ApiImplicitParam(name = "crId", value = "评论ID", dataType = "Long[ ]", required = true)
-    public R delete(Long[] crIds) {
+    @ApiOperation(value = "删除评论信息", httpMethod = "DELETE", notes = "评论ID数组")
+    public R delete(@RequestParam Long[] crIds) {
         commonReplyService.removeByIds(Arrays.asList(crIds));
         return R.ok();
     }
@@ -75,8 +74,7 @@ public class InCommonReplyController {
      * 评论列表 <根据 类型和ID信息 查询评论>
      */
     @GetMapping("/discuss")
-    @ApiOperation(value = "查询某个页面的评论列表", httpMethod = "GET", notes = "类型[tType] ID[id]")
-    @ApiImplicitParam(name = "map", value = "分页数据，目标类型和ID", required = true)
+    @ApiOperation(value = "查询某个页面的评论列表", httpMethod = "GET", notes = "分页数据，类型[tType]，ID[id]")
     public R discuss(@RequestParam Map<String, Object> map) {
         PageUtils discuss = commonReplyService.discuss(map);
         return R.ok().put("discuss", discuss);
@@ -87,8 +85,7 @@ public class InCommonReplyController {
      * 回复列表 <根据 评论ID信息 查询回复>
      */
     @GetMapping("/revert")
-    @ApiOperation(value = "查询某个评论的回复信息", httpMethod = "GET", notes = "ID[id]")
-    @ApiImplicitParam(name = "map", value = "分页数据，评论ID", required = true)
+    @ApiOperation(value = "查询某个评论的回复信息", httpMethod = "GET", notes = "分页数据，评论ID[id]")
     public R revert(@RequestParam Map<String, Object> map) {
         PageUtils revert = commonReplyService.revert(map);
         return R.ok().put("revert", revert);

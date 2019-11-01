@@ -1,5 +1,6 @@
 package io.information.modules.app.controller;
 
+import io.information.common.utils.IdGenerator;
 import io.information.common.utils.PageUtils;
 import io.information.common.utils.R;
 import io.information.modules.app.annotation.Login;
@@ -9,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
+import java.util.Date;
 import java.util.Map;
 
 
@@ -52,6 +54,8 @@ public class InActivityDatasController {
     @Login
     @RequestMapping("/save")
     public R save(@RequestBody InActivityDatas activityDatas) {
+        activityDatas.setdId(IdGenerator.getId());
+        activityDatas.setdTime(new Date());
         activityDatasService.save(activityDatas);
 
         return R.ok();
@@ -73,7 +77,7 @@ public class InActivityDatasController {
      */
     @Login
     @RequestMapping("/delete")
-    public R delete(@RequestBody Long[] dIds) {
+    public R delete(@RequestParam Long[] dIds) {
         activityDatasService.removeByIds(Arrays.asList(dIds));
         return R.ok();
     }

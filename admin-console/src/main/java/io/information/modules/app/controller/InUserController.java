@@ -48,7 +48,6 @@ public class InUserController extends AbstractController {
     @Login
     @PutMapping("/change")
     @ApiOperation(value = "修改密码", httpMethod = "PUT",notes = "旧密码[uPwd]  新密码[newPwd]")
-    @ApiImplicitParam(name = "map", value = "新旧密码", required = true)
     public R change(@RequestParam String uPwd, @RequestParam String newPwd, @ApiIgnore @LoginUser InUser user) {
         boolean flag = userService.change(uPwd, newPwd, user);
         if (flag) {
@@ -128,8 +127,7 @@ public class InUserController extends AbstractController {
      */
     @Login
     @PostMapping("/focus")
-    @ApiOperation(value = "关注", httpMethod = "POST")
-    @ApiImplicitParam(name = "uId", value = "被关注的用户id", required = true)
+    @ApiOperation(value = "关注", httpMethod = "POST", notes = "被关注的用户id")
     public R focus(@RequestParam Long uId, @ApiIgnore @LoginUser InUser user) {
         userService.focus(user.getuId(), uId, user.getuAuthStatus());
         return R.ok();
@@ -152,8 +150,7 @@ public class InUserController extends AbstractController {
      */
     @Login
     @GetMapping("/comment")
-    @ApiOperation(value = "个人消息 -- 评论", httpMethod = "GET")
-    @ApiImplicitParam(name = "map", value = "分页数据", required = true)
+    @ApiOperation(value = "个人消息 -- 评论", httpMethod = "GET", notes = "分页数据")
     public R comment(@RequestParam Map<String, Object> map, @ApiIgnore @LoginUser InUser user) {
         map.put("uId", user.getuId());
         PageUtils page = userService.comment(map);
@@ -165,8 +162,7 @@ public class InUserController extends AbstractController {
      */
     @Login
     @GetMapping("/like")
-    @ApiOperation(value = "个人消息 -- 点赞", httpMethod = "GET")
-    @ApiImplicitParam(name = "map", value = "分页数据", dataType = "Map", required = true)
+    @ApiOperation(value = "个人消息 -- 点赞", httpMethod = "GET", notes = "分页数据")
     public R like(@RequestParam Map<String, Object> map, @ApiIgnore @LoginUser InUser user) {
         PageUtils page = userService.like(map, user.getuId());
         return R.ok().put("page", page);
@@ -178,8 +174,8 @@ public class InUserController extends AbstractController {
      */
     @Login
     @GetMapping("/system")
-    @ApiOperation(value = "个人消息 -- 系统", httpMethod = "GET")
-    @ApiImplicitParam(name = "map", value = "分页数据", required = true)
+//    @ApiOperation(value = "个人消息 -- 系统", httpMethod = "GET")
+//    @ApiImplicitParam(name = "map", value = "分页数据", required = true)
     public R system(@RequestParam Map<String, Object> params, @ApiIgnore @LoginUser InUser user) {
         params.put("uId", user.getuId());
         return R.ok();
@@ -190,8 +186,7 @@ public class InUserController extends AbstractController {
      */
     @Login
     @GetMapping("/card")
-    @ApiOperation(value = "个人消息 -- 帖子", httpMethod = "GET")
-    @ApiImplicitParam(name = "map", value = "分页数据", required = true)
+    @ApiOperation(value = "个人消息 -- 帖子", httpMethod = "GET", notes = "分页数据")
     public R card(@RequestParam Map<String, Object> map, @ApiIgnore @LoginUser InUser user) {
         map.put("uId", user.getuId());
         PageUtils page = userService.card(map);
@@ -203,8 +198,7 @@ public class InUserController extends AbstractController {
      */
     @Login
     @GetMapping("/reply")
-    @ApiOperation(value = "个人消息 -- 回帖", httpMethod = "GET")
-    @ApiImplicitParam(name = "map", value = "分页数据，", required = true)
+    @ApiOperation(value = "个人消息 -- 回帖", httpMethod = "GET", notes = "分页数据")
     public R reply(@RequestParam Map<String, Object> map, @ApiIgnore @LoginUser InUser user) {
         map.put("uId", user.getuId());
         PageUtils page = userService.reply(map);
@@ -216,8 +210,7 @@ public class InUserController extends AbstractController {
      */
     @Login
     @GetMapping("/active")
-    @ApiOperation(value = "个人消息 -- 活动", httpMethod = "GET", notes = "状态码[type] 0：未开始 1：已开始 2：已结束")
-    @ApiImplicitParam(name = "map", value = "分页数据，状态码", required = true)
+    @ApiOperation(value = "个人消息 -- 活动", httpMethod = "GET", notes = "分页数据，状态码[type] 0：未开始 1：已开始 2：已结束")
     public R active(@RequestParam Map<String, Object> map, @ApiIgnore @LoginUser InUser user) {
         map.put("uId", user.getuId());
         PageUtils page = userService.active(map);
@@ -230,8 +223,7 @@ public class InUserController extends AbstractController {
      */
     @Login
     @GetMapping("/writer")
-    @ApiOperation(value = "个人消息 -- 粉丝 -- 作者", httpMethod = "GET")
-    @ApiImplicitParam(name = "map", value = "分页数据", required = true)
+    @ApiOperation(value = "个人消息 -- 粉丝 -- 作者", httpMethod = "GET", notes = "分页数据")
     public R fansWriter(@RequestParam Map<String, Object> map, @ApiIgnore @LoginUser InUser user) {
         map.put("uId", user.getuId());
         PageUtils page = userService.fansWriter(map);
@@ -244,8 +236,7 @@ public class InUserController extends AbstractController {
      */
     @Login
     @GetMapping("/person")
-    @ApiOperation(value = "个人消息 -- 粉丝 -- 人物", httpMethod = "GET")
-    @ApiImplicitParam(name = "map", value = "分页数据", required = true)
+    @ApiOperation(value = "个人消息 -- 粉丝 -- 人物", httpMethod = "GET", notes = "分页数据")
     public R fansPerson(@RequestParam Map<String, Object> map, @ApiIgnore @LoginUser InUser user) {
         map.put("uId", user.getuId());
         PageUtils page = userService.fansPerson(map);
@@ -257,8 +248,7 @@ public class InUserController extends AbstractController {
      */
     @Login
     @GetMapping("/follower")
-    @ApiOperation(value = "个人消息 -- 粉丝 -- 作者", httpMethod = "GET")
-    @ApiImplicitParam(name = "map", value = "分页数据", required = true)
+    @ApiOperation(value = "个人消息 -- 粉丝 -- 作者", httpMethod = "GET", notes = "分页数据")
     public R follower(@RequestParam Map<String, Object> map, @ApiIgnore @LoginUser InUser user) {
         map.put("uId", user.getuId());
         PageUtils page = userService.follower(map);
@@ -271,8 +261,7 @@ public class InUserController extends AbstractController {
      */
     @Login
     @GetMapping("/favorite")
-    @ApiOperation(value = "个人消息 -- 粉丝 -- 作者", httpMethod = "GET", notes = "状态码[type] 0：文章 1：帖子 2：活动")
-    @ApiImplicitParam(name = "map", value = "分页数据，状态码", required = true)
+    @ApiOperation(value = "个人消息 -- 粉丝 -- 作者", httpMethod = "GET", notes = "分页数据，状态码[type] 0：文章 1：帖子 2：活动")
     public R favorite(@RequestParam Map<String, Object> map, @ApiIgnore @LoginUser InUser user) {
         map.put("uId", user.getuId());
         PageUtils page = userService.favorite(map);

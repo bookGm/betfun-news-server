@@ -1,5 +1,6 @@
 package io.information.modules.app.controller;
 
+import io.information.common.utils.IdGenerator;
 import io.information.common.utils.PageUtils;
 import io.information.common.utils.R;
 import io.information.modules.app.annotation.Login;
@@ -52,6 +53,7 @@ public class InActivityTicketController {
     @Login
     @RequestMapping("/save")
     public R save(@RequestBody InActivityTicket ticket) {
+        ticket.settId(IdGenerator.getId());
         ticketService.save(ticket);
 
         return R.ok();
@@ -73,7 +75,7 @@ public class InActivityTicketController {
      */
     @Login
     @RequestMapping("/delete")
-    public R delete(@RequestBody Long[] tIds) {
+    public R delete(@RequestParam Long[] tIds) {
         ticketService.removeByIds(Arrays.asList(tIds));
 
         return R.ok();

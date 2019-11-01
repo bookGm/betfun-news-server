@@ -9,10 +9,7 @@ import io.information.modules.sys.controller.AbstractController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * <p>
@@ -68,6 +65,7 @@ public class InSourceController extends AbstractController {
     @PostMapping("/save")
     public R save(@RequestBody InSource source) {
         source.setsOperationUserid(getUserId());
+        source.setsCreateTime(new Date());
         sourceService.save(source);
         return R.ok();
     }

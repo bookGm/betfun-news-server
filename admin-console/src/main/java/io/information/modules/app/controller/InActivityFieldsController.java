@@ -1,5 +1,6 @@
 package io.information.modules.app.controller;
 
+import io.information.common.utils.IdGenerator;
 import io.information.common.utils.PageUtils;
 import io.information.common.utils.R;
 import io.information.modules.app.annotation.Login;
@@ -52,6 +53,7 @@ public class InActivityFieldsController {
     @Login
     @RequestMapping("/save")
     public R save(@RequestBody InActivityFields activityFields) {
+        activityFields.setfId(IdGenerator.getId());
         activityFieldsService.save(activityFields);
 
         return R.ok();
@@ -73,7 +75,7 @@ public class InActivityFieldsController {
      */
     @Login
     @RequestMapping("/delete")
-    public R delete(@RequestBody Long[] fIds) {
+    public R delete(@RequestParam Long[] fIds) {
         activityFieldsService.removeByIds(Arrays.asList(fIds));
 
         return R.ok();
