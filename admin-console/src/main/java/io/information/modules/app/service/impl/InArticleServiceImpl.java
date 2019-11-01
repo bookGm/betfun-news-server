@@ -28,6 +28,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -80,12 +81,13 @@ public class InArticleServiceImpl extends ServiceImpl<InArticleDao, InArticle> i
             if (null != obj) {
                 a.setuName(((InUser) obj).getuName());
             }
-            if(StringUtil.isNotBlank(a.getaCreateTime())){
+            if (StringUtil.isNotBlank(a.getaCreateTime())) {
                 a.setaSimpleTime(DateUtils.getSimpleTime(a.getaCreateTime()));
             }
         }
         return new PageUtils(page);
     }
+
 
     @Override
     public void updateReadNumber(Long aReadNumber, Long aId) {
@@ -94,15 +96,22 @@ public class InArticleServiceImpl extends ServiceImpl<InArticleDao, InArticle> i
 
 
     @Override
+    public List<InArticle> hotTopic() {
+        LambdaQueryWrapper<InArticle> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.orderByDesc(InArticle::getaCritic).orderByDesc(InArticle::getaLike);
+        return new ArrayList<>(this.list(queryWrapper).subList(0, 10));
+    }
+
+    @Override
     @HashCacheable(key = RedisKeys.LIKE, keyField = "#id-#uid-#tId-#type")
-    public Date giveALike(Long id,Long tId,int type, Long uid) {
-        if(NewsEnum.点赞_文章.getCode().equals(type)){
+    public Date giveALike(Long id, Long tId, int type, Long uid) {
+        if (NewsEnum.点赞_文章.getCode().equals(type)) {
             this.baseMapper.addALike(id);
         }
-        if(NewsEnum.点赞_帖子.getCode().equals(type)){
+        if (NewsEnum.点赞_帖子.getCode().equals(type)) {
             this.inCardBaseDao.addALike(id);
         }
-        if(NewsEnum.点赞_活动.getCode().equals(type)){
+        if (NewsEnum.点赞_活动.getCode().equals(type)) {
             this.inActivityDao.addALike(id);
         }
         return new Date();
@@ -110,14 +119,14 @@ public class InArticleServiceImpl extends ServiceImpl<InArticleDao, InArticle> i
 
     @Override
     @HashCacheable(key = RedisKeys.COLLECT, keyField = "#id-#uid-#tId-#type")
-    public Date collect(Long id,Long tId,int type, Long uid) {
-        if(NewsEnum.收藏_文章.getCode().equals(type)){
+    public Date collect(Long id, Long tId, int type, Long uid) {
+        if (NewsEnum.收藏_文章.getCode().equals(type)) {
             this.baseMapper.addACollect(id);
         }
-        if(NewsEnum.收藏_帖子.getCode().equals(type)){
+        if (NewsEnum.收藏_帖子.getCode().equals(type)) {
             this.inCardBaseDao.addACollect(id);
         }
-        if(NewsEnum.收藏_活动.getCode().equals(type)){
+        if (NewsEnum.收藏_活动.getCode().equals(type)) {
             this.inActivityDao.addACollect(id);
         }
         return new Date();

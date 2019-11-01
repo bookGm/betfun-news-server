@@ -18,7 +18,7 @@ import java.util.Map;
  */
 public interface IInCommonReplyService extends IService<InCommonReply> {
 
-    PageUtils search(Map<String, Object> map);
+    List<InCommonReply> search(Map<String, Object> map);
 
     PageUtils userMsg(Map<String,Object> params);
 

@@ -19,16 +19,12 @@ public class InCommonReplyServiceImpl extends ServiceImpl<InCommonReplyDao, InCo
 
 
     @Override
-    public PageUtils search(Map<String, Object> map) {
-        int tId = (int) map.get("tId");
-        int tType = (int) map.get("tType");
-        //查询回复信息
+    public List<InCommonReply> search(Map<String, Object> map) {
+        int tId = (int) map.get("id");
+        int tType = (int) map.get("type");
         LambdaQueryWrapper<InCommonReply> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(InCommonReply::gettId, tId).eq(InCommonReply::gettType, tType);
-        InCommonReply reply = this.getOne(queryWrapper);
-        recursion(reply);
-        //TODO
-        return null;
+        return this.list(queryWrapper);
     }
 
     @Override

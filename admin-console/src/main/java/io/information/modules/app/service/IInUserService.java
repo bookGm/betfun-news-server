@@ -18,11 +18,6 @@ import java.util.Map;
  * @since 2019-09-24
  */
 public interface IInUserService extends IService<InUser> {
-
-    InUser findUser(String username, String password);
-
-    Boolean saveWithCache(InUser inUser);
-
     /**
      * 关注用户
      *
@@ -30,6 +25,8 @@ public interface IInUserService extends IService<InUser> {
      * @param fId 被关注的用户id
      */
     Long focus(Long uId, Long fId, Integer status);
+
+    Boolean saveWithCache(InUser inUser);
 
     PageUtils comment(Map<String, Object> params);
 
@@ -51,5 +48,5 @@ public interface IInUserService extends IService<InUser> {
 
     PageUtils favorite(Map<String, Object> map);
 
-    void change(String uPwd, String newPwd, InUser user);
+    boolean change(String uPwd, String newPwd, InUser user);
 }

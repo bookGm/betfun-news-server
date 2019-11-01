@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 
@@ -77,11 +78,11 @@ public class InCommonReplyController {
      *  前端应在显示某一个页面 ex:帖子 文章 时，将其信息传入？
      */
     @GetMapping("/search")
-    @ApiOperation(value = "查询某个页面的评论列表", httpMethod = "GET")
+    @ApiOperation(value = "查询某个页面的评论列表", httpMethod = "GET",notes ="类型[type] ID[id]" )
     @ApiImplicitParam(name = "map", value = "类型和ID信息", required = true)
     public R search(@RequestParam Map<String, Object> map) {
-        PageUtils page = commonReplyService.search(map);
-        return R.ok().put("page",page);
+        List<InCommonReply> commonReplyList = commonReplyService.search(map);
+        return R.ok().put("list",commonReplyList);
     }
 
 }

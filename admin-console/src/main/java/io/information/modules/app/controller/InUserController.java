@@ -47,11 +47,15 @@ public class InUserController extends AbstractController {
      */
     @Login
     @PutMapping("/change")
-    @ApiOperation(value = "修改密码", httpMethod = "PUT")
+    @ApiOperation(value = "修改密码", httpMethod = "PUT",notes = "旧密码[uPwd]  新密码[newPwd]")
     @ApiImplicitParam(name = "map", value = "新旧密码", required = true)
     public R change(@RequestParam String uPwd, @RequestParam String newPwd, @ApiIgnore @LoginUser InUser user) {
-        userService.change(uPwd, newPwd, user);
-        return R.ok();
+        boolean flag = userService.change(uPwd, newPwd, user);
+        if (flag) {
+            return R.ok();
+        } else {
+            return R.error("输入的旧密码有误");
+        }
     }
 
 

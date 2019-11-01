@@ -194,7 +194,7 @@ public class InArticleController {
      * 专栏主页文章统计
      */
     @Login
-    @GetMapping("getArticleStatistics")
+    @GetMapping("/getArticleStatistics")
     @ApiOperation(value = "获取专栏主页文章统计数据", httpMethod = "GET")
     public R getArticleStatistics(@ApiIgnore @LoginUser InUser user) {
         Map<String, Object> rm = new HashMap<>();
@@ -207,6 +207,17 @@ public class InArticleController {
         //累计粉丝数
         rm.put("fCount", user.getuFans());
         return R.ok(rm);
+    }
+
+
+    /**
+     * 热门资讯
+     */
+    @GetMapping("/hotTopic")
+    @ApiOperation(value = "热门资讯", httpMethod = "GET", notes = "返回10条数据")
+    public R hotTopic() {
+        List<InArticle> articles = articleService.hotTopic();
+        return R.ok().put("list", articles);
     }
 
 

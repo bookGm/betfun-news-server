@@ -5,6 +5,7 @@ import io.information.common.utils.PageUtils;
 import io.information.modules.app.entity.InArticle;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -34,4 +35,5 @@ public interface IInArticleService extends IService<InArticle> {
     Date collect(Long id,Long tId,int type, Long uid);
 
 
+    List<InArticle> hotTopic();
 }

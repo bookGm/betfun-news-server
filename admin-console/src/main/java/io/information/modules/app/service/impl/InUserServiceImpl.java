@@ -11,15 +11,13 @@ import com.guansuo.newsenum.NewsEnum;
 import io.information.common.annotation.HashCacheable;
 import io.information.common.exception.ExceptionEnum;
 import io.information.common.exception.IMException;
-import io.information.common.utils.PageUtils;
-import io.information.common.utils.Query;
-import io.information.common.utils.RedisKeys;
-import io.information.common.utils.RedisUtils;
+import io.information.common.utils.*;
 import io.information.modules.app.dao.InUserDao;
 import io.information.modules.app.dto.CollectDTO;
 import io.information.modules.app.dto.InUserDTO;
 import io.information.modules.app.entity.*;
 import io.information.modules.app.service.*;
+import org.apache.shiro.crypto.hash.Sha256Hash;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,14 +55,13 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
 
 
     @Override
-    public void change(String uPwd, String newPwd, InUser user) {
-        //3. 校验密码  解密
-        if (!user.getuPwd().equals(uPwd)) {
-            //密码错误
-            throw new IMException(ExceptionEnum.INVALID_USERNAME_PASSWORD);
+    public boolean change(String uPwd, String newPwd, InUser user) {
+        if (!uPwd.equals(new Sha256Hash(user.getuPwd(), user.getuSalt()).toHex())) {
+            return false;
         } else {
             user.setuPwd(newPwd);
             this.updateById(user);
+            return true;
         }
     }
 
@@ -310,7 +307,6 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
                 userDTO.setuNick(user.getuNick());
                 userDTO.setuFans(user.getuFans());
             }
-            //TODO  是否互相关注    #uId-#type-#fId
             //根据用户ID找到用户所有关注的用户   匹配关注者的ID  是否关注
             ArrayList<Long> fIds = new ArrayList<>();
             List<Map.Entry<Object, Object>> fmap = redisUtils.hfget(RedisKeys.FOCUS, uId + "-*-*");
@@ -380,26 +376,6 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
             return new PageUtils(collects, cmap.size(), size, page);
         }
         return null;
-    }
-
-
-    @Override
-    public InUser findUser(String username, String password) {
-        QueryWrapper<InUser> queryWrapper = new QueryWrapper<>();
-        queryWrapper.lambda().eq(InUser::getuName, username);
-        InUser user = this.getOne(queryWrapper);
-        //2. 判断是否存在
-        if (user == null) {
-            //用户名错误
-            throw new IMException(ExceptionEnum.INVALID_USERNAME_PASSWORD);
-        }
-        //3. 校验密码  解密
-        if (!password.equals(user.getuPwd())) {
-            //密码错误
-            throw new IMException(ExceptionEnum.INVALID_USERNAME_PASSWORD);
-        }
-
-        return user;
     }
 
 }
