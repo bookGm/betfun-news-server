@@ -24,8 +24,8 @@ public class InCommonReplyServiceImpl extends ServiceImpl<InCommonReplyDao, InCo
         if (null != map.get("id") && StringUtil.isNotBlank(map.get("id"))) {
             int tId = (int) map.get("id");
             queryWrapper.eq(InCommonReply::gettId, tId);
-            if (null != map.get("type") && StringUtil.isNotBlank(map.get("type"))) {
-                int tType = (int) map.get("type");
+            if (null != map.get("tType") && StringUtil.isNotBlank(map.get("tType"))) {
+                int tType = (int) map.get("tType");
                 queryWrapper.eq(InCommonReply::gettType, tType);
             }
             IPage<InCommonReply> page = this.page(
