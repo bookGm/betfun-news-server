@@ -5,6 +5,7 @@ import io.information.common.utils.R;
 import io.information.common.utils.RedisKeys;
 import io.information.modules.app.entity.InDic;
 import io.information.modules.app.service.IInDicService;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +27,7 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("/app/dic")
+@Api(value = "/app/dic", tags = "APP字典表")
 public class InDicController {
     @Autowired
     private IInDicService dicService;

@@ -34,12 +34,12 @@ public class InCardServiceImpl implements IInCardService {
         InCardVote vote = card.getVote();
         base.setcId(cId);
         if (null != base.getcTitle()) {
-            if (null != argue.getCaRside() && "".equals(argue.getCaRside())
-                    && null != argue.getCaFside() && !"".equals(argue.getCaFside())) {
+            if (null != argue.getCaRside() && StringUtil.isNotBlank(argue.getCaRside())
+                    && null != argue.getCaFside() && StringUtil.isNotBlank(argue.getCaFside())) {
                 argue.setcId(cId);
                 argueService.save(argue);
             }
-            if (null != vote.getCvInfo() && !"".equals(vote.getCvInfo())) {
+            if (null != vote.getCvInfo() && StringUtil.isNotBlank(vote.getCvInfo())) {
                 vote.setcId(cId);
                 voteService.save(vote);
             }
@@ -57,10 +57,14 @@ public class InCardServiceImpl implements IInCardService {
             if (1 == category) {
                 //辩论帖子
                 InCardArgue argue = argueService.getById(base.getcId());
-                String[] rNumber = argue.getCaRsideUids().split(",");
-                String[] fNumber = argue.getCaFsideUids().split(",");
-                argue.setCaRsideNumber(rNumber.length);
-                argue.setCaFsideNumber(fNumber.length);
+                if (null != argue.getCaRsideUids() && StringUtil.isNotBlank(argue.getCaRsideUids())) {
+                    String[] rNumber = argue.getCaRsideUids().split(",");
+                    argue.setCaRsideNumber(rNumber.length);
+                }
+                if (null != argue.getCaFsideUids() && StringUtil.isNotBlank(argue.getCaFsideUids())) {
+                    String[] fNumber = argue.getCaFsideUids().split(",");
+                    argue.setCaFsideNumber(fNumber.length);
+                }
                 card.setArgue(argue);
                 return card;
             }
@@ -98,11 +102,11 @@ public class InCardServiceImpl implements IInCardService {
     @Override
     public PageUtils queryPage(Map<String, Object> map) {
         LambdaQueryWrapper<InCardBase> queryWrapper = new LambdaQueryWrapper<>();
-        if (map.containsKey("uId") && StringUtil.isNotBlank(map.get("uId"))) {
-            queryWrapper.eq(InCardBase::getuId, map.get("uId"));
+        if (null != map.get("uId")) {
+            queryWrapper.eq(InCardBase::getuId, Long.valueOf(String.valueOf(map.get("type"))));
         }
-        if (map.containsKey("cCategory") && StringUtil.isNotBlank(map.get("cCategory"))) {
-            queryWrapper.eq(InCardBase::getcCategory, map.get("cCategory"));
+        if (null != map.get("type")) {
+            queryWrapper.eq(InCardBase::getcCategory, Integer.valueOf(String.valueOf(map.get("type"))));
         }
         IPage<InCardBase> page = baseService.page(
                 new Query<InCardBase>().getPage(map),

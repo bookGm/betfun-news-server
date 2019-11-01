@@ -40,7 +40,7 @@ public class InCardController {
      * 帖子详情
      */
     @GetMapping("/details/{cId}")
-    @ApiOperation(value = "帖子详情", httpMethod = "GET", notes = "帖子ID")
+    @ApiOperation(value = "帖子详情", httpMethod = "GET", notes = "帖子ID,状态码(0：普通帖  1：辩论帖  2：投票帖)")
     public R details(@PathVariable("cId") Long cId) {
         InCard card = cardService.details(cId);
         return R.ok().put("card", card);
@@ -53,7 +53,6 @@ public class InCardController {
     @Login
     @DeleteMapping("/delete")
     @ApiOperation(value = "帖子删除", httpMethod = "DELETE", notes = "帖子ID数组")
-    @ApiImplicitParam(name = "cardBase", value = "帖子ID数组", dataType = "Long[ ]", required = true)
     public R delete(@RequestParam Long[] cIds) {
         cardService.delete(cIds);
         return R.ok();
@@ -64,7 +63,7 @@ public class InCardController {
      * 列表
      */
     @GetMapping("/list")
-    @ApiOperation(value = "获取某一类帖子", httpMethod = "GET", notes = "分页数据，帖子分类[aCategory]（0：普通帖  1：辩论帖  2：投票帖）")
+    @ApiOperation(value = "获取某一类帖子", httpMethod = "GET", notes = "分页数据，帖子分类[type]（0：普通帖  1：辩论帖  2：投票帖）")
     public R status(@RequestParam Map<String, Object> map) {
         PageUtils page = cardService.queryPage(map);
         return R.ok().put("page", page);
@@ -76,10 +75,14 @@ public class InCardController {
      */
     @Login
     @GetMapping("/listUser")
-    @ApiOperation(value = "获取本人发布的某类帖子", httpMethod = "GET", notes = "分页数据，帖子分类[aCategory]（0：普通帖  1：辩论帖  2：投票帖）")
+    @ApiOperation(value = "获取本人发布的某类帖子", httpMethod = "GET", notes = "分页数据，帖子分类[type]（0：普通帖  1：辩论帖  2：投票帖）")
     public R stateUser(@RequestParam Map<String, Object> map, @ApiIgnore @LoginUser InUser user) {
         map.put("uId", user.getuId());
         PageUtils page = cardService.queryPage(map);
         return R.ok().put("page", page);
     }
+
+
+    //节点社区列表
+
 }

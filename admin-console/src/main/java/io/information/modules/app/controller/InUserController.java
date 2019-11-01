@@ -174,8 +174,7 @@ public class InUserController extends AbstractController {
      */
     @Login
     @GetMapping("/system")
-//    @ApiOperation(value = "个人消息 -- 系统", httpMethod = "GET")
-//    @ApiImplicitParam(name = "map", value = "分页数据", required = true)
+//    @ApiOperation(value = "个人消息 -- 系统", httpMethod = "GET", notes = "分页数据")
     public R system(@RequestParam Map<String, Object> params, @ApiIgnore @LoginUser InUser user) {
         params.put("uId", user.getuId());
         return R.ok();
@@ -219,11 +218,11 @@ public class InUserController extends AbstractController {
 
 
     /**
-     * 个人粉丝 -- 作者
+     * 个人关注 -- 作者
      */
     @Login
     @GetMapping("/writer")
-    @ApiOperation(value = "个人消息 -- 粉丝 -- 作者", httpMethod = "GET", notes = "分页数据")
+    @ApiOperation(value = "个人消息 -- 关注 -- 作者", httpMethod = "GET", notes = "分页数据")
     public R fansWriter(@RequestParam Map<String, Object> map, @ApiIgnore @LoginUser InUser user) {
         map.put("uId", user.getuId());
         PageUtils page = userService.fansWriter(map);
@@ -232,11 +231,23 @@ public class InUserController extends AbstractController {
 
 
     /**
-     * 个人粉丝 -- 人物
+     * 个人关注 -- 节点
+     */
+    @Login
+    @GetMapping("/node")
+//    @ApiOperation(value = "个人消息 -- 关注 -- 节点", httpMethod = "GET", notes = "分页数据")
+    public R fansNode(@RequestParam Map<String, Object> map, @ApiIgnore @LoginUser InUser user) {
+        map.put("uId", user.getuId());
+        PageUtils page = userService.fansWriter(map);
+        return R.ok().put("page", page);
+    }
+
+    /**
+     * 个人关注 -- 人物
      */
     @Login
     @GetMapping("/person")
-    @ApiOperation(value = "个人消息 -- 粉丝 -- 人物", httpMethod = "GET", notes = "分页数据")
+    @ApiOperation(value = "个人消息 -- 关注 -- 人物", httpMethod = "GET", notes = "分页数据")
     public R fansPerson(@RequestParam Map<String, Object> map, @ApiIgnore @LoginUser InUser user) {
         map.put("uId", user.getuId());
         PageUtils page = userService.fansPerson(map);
@@ -248,7 +259,7 @@ public class InUserController extends AbstractController {
      */
     @Login
     @GetMapping("/follower")
-    @ApiOperation(value = "个人消息 -- 粉丝 -- 作者", httpMethod = "GET", notes = "分页数据")
+    @ApiOperation(value = "个人中心 -- 粉丝 -- 关注者", httpMethod = "GET", notes = "分页数据")
     public R follower(@RequestParam Map<String, Object> map, @ApiIgnore @LoginUser InUser user) {
         map.put("uId", user.getuId());
         PageUtils page = userService.follower(map);
@@ -261,7 +272,7 @@ public class InUserController extends AbstractController {
      */
     @Login
     @GetMapping("/favorite")
-    @ApiOperation(value = "个人消息 -- 粉丝 -- 作者", httpMethod = "GET", notes = "分页数据，状态码[type] 0：文章 1：帖子 2：活动")
+    @ApiOperation(value = "个人中心 -- 收藏", httpMethod = "GET", notes = "分页数据，状态码[type] 0：文章 1：帖子 2：活动")
     public R favorite(@RequestParam Map<String, Object> map, @ApiIgnore @LoginUser InUser user) {
         map.put("uId", user.getuId());
         PageUtils page = userService.favorite(map);

@@ -7,6 +7,7 @@ import io.information.common.utils.R;
 import io.information.modules.app.entity.InMenu;
 import io.information.modules.app.entity.InMenus;
 import io.information.modules.app.service.IInMenuService;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +28,7 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("/app/menu")
+@Api(value = "/app/menu", tags = "APP菜单表")
 public class InMenuController {
     @Autowired
     private IInMenuService menuService;
