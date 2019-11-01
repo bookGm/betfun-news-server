@@ -17,11 +17,12 @@ import java.util.Map;
  * @date 2019-10-08 15:11:28
  */
 public interface IInCommonReplyService extends IService<InCommonReply> {
-
-    List<InCommonReply> search(Map<String, Object> map);
-
     PageUtils userMsg(Map<String,Object> params);
 
     PageUtils reply(Map<String, Object> map, List<Long> cIds);
+
+    PageUtils discuss(Map<String, Object> map);
+
+    PageUtils revert(Map<String, Object> map);
 }
 

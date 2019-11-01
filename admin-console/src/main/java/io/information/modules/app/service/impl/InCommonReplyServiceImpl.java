@@ -19,12 +19,37 @@ public class InCommonReplyServiceImpl extends ServiceImpl<InCommonReplyDao, InCo
 
 
     @Override
-    public List<InCommonReply> search(Map<String, Object> map) {
-        int tId = (int) map.get("id");
-        int tType = (int) map.get("type");
+    public PageUtils discuss(Map<String, Object> map) {
         LambdaQueryWrapper<InCommonReply> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(InCommonReply::gettId, tId).eq(InCommonReply::gettType, tType);
-        return this.list(queryWrapper);
+        if (null != map.get("id") && StringUtil.isNotBlank(map.get("id"))) {
+            int tId = (int) map.get("id");
+            queryWrapper.eq(InCommonReply::gettId, tId);
+            if (null != map.get("type") && StringUtil.isNotBlank(map.get("type"))) {
+                int tType = (int) map.get("type");
+                queryWrapper.eq(InCommonReply::gettType, tType);
+            }
+            IPage<InCommonReply> page = this.page(
+                    new Query<InCommonReply>().getPage(map),
+                    queryWrapper
+            );
+            return new PageUtils(page);
+        }
+        return null;
+    }
+
+    @Override
+    public PageUtils revert(Map<String, Object> map) {
+        LambdaQueryWrapper<InCommonReply> queryWrapper = new LambdaQueryWrapper<>();
+        if (null != map.get("id") && StringUtil.isNotBlank(map.get("id"))) {
+            int id = (int) map.get("id");
+            queryWrapper.eq(InCommonReply::getToCrId, id);
+            IPage<InCommonReply> page = this.page(
+                    new Query<InCommonReply>().getPage(map),
+                    queryWrapper
+            );
+            return new PageUtils(page);
+        }
+        return null;
     }
 
     @Override
