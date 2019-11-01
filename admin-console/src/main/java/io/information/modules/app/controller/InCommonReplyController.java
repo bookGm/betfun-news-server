@@ -84,7 +84,7 @@ public class InCommonReplyController {
 
 
     /**
-     * 回复列表 <根据 类型和ID信息 查询回复>
+     * 回复列表 <根据 评论ID信息 查询回复>
      */
     @GetMapping("/revert")
     @ApiOperation(value = "查询某个评论的回复信息", httpMethod = "GET", notes = "ID[id]")
