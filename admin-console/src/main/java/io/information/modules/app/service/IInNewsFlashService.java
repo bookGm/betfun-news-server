@@ -17,4 +17,13 @@ import java.util.Map;
 public interface IInNewsFlashService extends IService<InNewsFlash> {
 
     PageUtils queryPage(Map<String, Object> params);
+
+    /**
+     * 利好利空
+     * @param nId 快讯id
+     * @param uId 用户id
+     * @param bId 0：利空 1：利好
+     * @return
+     */
+    Integer attitude(Long nId,Long uId,int bId);
 }

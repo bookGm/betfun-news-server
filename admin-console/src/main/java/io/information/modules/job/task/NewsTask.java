@@ -11,7 +11,6 @@ import io.information.modules.news.service.NewsFlashService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -48,7 +47,7 @@ public class NewsTask{
 	/**
 	 * 增量抓取文章(30分钟一次)
 	 */
-	@Scheduled(cron = "0 0/30 * * * ?")
+	@Scheduled(cron = "0 */30 * * * ?")
 	public void incrementCatchArticle(){
 		articleService.catchIncrementArticles();
 	}
@@ -56,7 +55,7 @@ public class NewsTask{
 	/**
 	 * 增量抓取快讯(10分钟一次)
 	 */
-	@Scheduled(cron = "0 0/10 * * * ?")
+	@Scheduled(cron = "0 */10 * * * ?")
 	public void catchIncrementsFlash(){
 		newsFlashService.catchIncrementsFlash();
 	}

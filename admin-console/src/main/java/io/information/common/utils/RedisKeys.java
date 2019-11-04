@@ -41,4 +41,6 @@ public class RedisKeys {
     public static final String NEWSFLASH=BASEKEY+"newsflash:";
     //标签名
     public static final String TAGNAME=BASEKEY+"tagname:";
+    //快讯利好利空
+    public static final String NATTITUDE=BASEKEY+"nattitude:";
 }

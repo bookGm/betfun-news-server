@@ -19,6 +19,8 @@ import io.information.modules.news.service.feign.vo.BbtcListVo;
 import me.zhyd.hunter.entity.VirtualArticle;
 import me.zhyd.hunter.processor.BlogHunterProcessor;
 import me.zhyd.hunter.processor.HunterProcessor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -28,6 +30,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 @Service("articleService")
 public class ArticleServiceImpl extends ServiceImpl<ArticleDao, ArticleEntity> implements ArticleService {
+    private static final Logger LOG = LoggerFactory.getLogger(ArticleServiceImpl.class);
     @Autowired
     BbtcService bbtcService;
     @Autowired
@@ -59,16 +62,16 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleDao, ArticleEntity> i
     @Override
     public void catchArticles(int page) {
         HashSet<String> hashSet = new HashSet<String>();
-        for(int i=1;i<=page;i++){
-            FeignRes res=bbtcService.getPageList(20,i);
+            FeignRes res=bbtcService.getPageList(20,1);
             JSONObject obj=JsonUtil.parseJSONObject(JsonUtil.toJSONString(res.get("data")));
             List<BbtcListVo> blist=JsonUtil.parseList(obj.getString("list"), BbtcListVo.class);
                 for(BbtcListVo b:blist){
                     Long bid=b.getId();
-                    if(redisUtils.hasKey(RedisKeys.ARTICLE+bid)){
+                    if(redisUtils.hasKey(RedisKeys.ARTICLE+b.getTitle())){
+                        LOG.error("文章title---------------------已存在continue当前循环:",RedisKeys.ARTICLE+b.getTitle());
                         continue;
                     }
-                    redisUtils.set(RedisKeys.ARTICLE+bid,String.valueOf(bid),60*60*2);
+                    redisUtils.set(RedisKeys.ARTICLE+b.getTitle(),String.valueOf(bid),60*60*24*3);
                     String url = "https://www.8btc.com/article/"+bid;
                     HunterProcessor hunter = new BlogHunterProcessor(url, true);
                     CopyOnWriteArrayList<VirtualArticle> list = hunter.execute();
@@ -88,6 +91,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleDao, ArticleEntity> i
                             Date date=DateUtils.stringToDate(b.getPost_date_format(),"yyyy-MM-dd HH:mm:ss");
                             a.setaCreateTime(date);
                             a.setaSimpleTime(DateUtils.getSimpleTime(date));
+                            a.setaStatus(Integer.parseInt(NewsEnum.文章状态_已发布.getCode()));
                             a.setaReadNumber(Long.parseLong(b.getViews()));
                             a.setaType(Integer.parseInt(NewsEnum.文章类型_转载.getCode()));
                             StringBuffer ts=new StringBuffer();
@@ -102,7 +106,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleDao, ArticleEntity> i
                             this.save(a);
                         }
                     } catch (Exception e) {
-                        continue;
+                        LOG.error("同步文章异常：---------------------",e.getMessage());
                     }
                     hunter=null;
                     list=null;
@@ -110,7 +114,6 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleDao, ArticleEntity> i
                  res=null;
                  obj=null;
                  blist=null;
-            }
         if(redisUtils.isFuzzyEmpty(RedisKeys.TAGNAME)){
             Map<String,String> mtl=new HashMap<>();
             for(TagEntity t:tagService.list()){
@@ -125,7 +128,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleDao, ArticleEntity> i
             if(redisUtils.hasKey(RedisKeys.TAGNAME+s)){
                 continue;
             }
-            mt.put(RedisKeys.ARTICLE+s,s);
+            mt.put(RedisKeys.TAGNAME+s,s);
             TagEntity tag=new TagEntity();
             tag.settCreateTime(new Date());
             tag.settFrom(Integer.parseInt(NewsEnum.标签来源_爬虫抓取.getCode()));

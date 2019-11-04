@@ -58,9 +58,9 @@ public class InMenu implements Serializable {
      */
     private Integer mAuth;
     /**
-     * 状态（0：启用 1：禁用）
+     * 是否禁用（0：否  1：是）
      */
-    private Integer mStatus;
+    private Integer mDisable;
     /**
      * 子节点
      */
@@ -132,11 +132,11 @@ public class InMenu implements Serializable {
         this.mAuth = mAuth;
     }
 
-    public Integer getmStatus() {
-        return mStatus;
+    public Integer getmDisable() {
+        return mDisable;
     }
 
-    public void setmStatus(Integer mStatus) {
-        this.mStatus = mStatus;
+    public void setmDisable(Integer mDisable) {
+        this.mDisable = mDisable;
     }
 }
