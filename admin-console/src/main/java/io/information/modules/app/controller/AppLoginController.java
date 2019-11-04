@@ -31,6 +31,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.text.MessageFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -163,6 +164,7 @@ public class AppLoginController {
             user.setuAccount(phone);
             user.setuSalt(salt);
             user.setuPhone(phone);
+            user.setuCreateTime(new Date());
             user.setuSalt(new Sha256Hash(phone.substring(phone.length() - 6), salt).toHex());
             user.setuToken(r.get("token").toString());
             if (iInUserService.saveWithCache(user)) {

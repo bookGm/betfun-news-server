@@ -25,6 +25,11 @@ public class EsCardEntity implements Serializable {
     @Field(type = FieldType.Long)
     private Long uId;
     /**
+     * 节点id
+     */
+    @Field(type = FieldType.Long)
+    private Long noId;
+    /**
      * 帖子分类（字典）
      */
     @Field(type = FieldType.Integer)
@@ -39,6 +44,12 @@ public class EsCardEntity implements Serializable {
      */
     @Field(type = FieldType.Keyword)
     private String cContent;
+    /**
+     * 创建时间
+     */
+    @Field(type = FieldType.Date,format= DateFormat.custom,pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private Date cCreateTime;
     /**
      * 回帖仅作者可见（0：是  1：否）
      */
@@ -102,6 +113,14 @@ public class EsCardEntity implements Serializable {
 
     public void setuId(Long uId) {
         this.uId = uId;
+    }
+
+    public Long getNoId() {
+        return noId;
+    }
+
+    public void setNoId(Long noId) {
+        this.noId = noId;
     }
 
     public Integer getcCategory() {
@@ -206,5 +225,13 @@ public class EsCardEntity implements Serializable {
 
     public void setUserEs(EsUserEntity userEs) {
         this.userEs = userEs;
+    }
+
+    public Date getcCreateTime() {
+        return cCreateTime;
+    }
+
+    public void setcCreateTime(Date cCreateTime) {
+        this.cCreateTime = cCreateTime;
     }
 }

@@ -103,6 +103,10 @@ public class UserEntity implements Serializable {
      * 营业执照扫描件
      */
     private String uBrPicture;
+    /**
+     * 创建时间
+     */
+    private Date uCreateTime;
 
 
     public Long getuId() {
@@ -271,5 +275,13 @@ public class UserEntity implements Serializable {
 
     public void setuBrPicture(String uBrPicture) {
         this.uBrPicture = uBrPicture;
+    }
+
+    public Date getuCreateTime() {
+        return uCreateTime;
+    }
+
+    public void setuCreateTime(Date uCreateTime) {
+        this.uCreateTime = uCreateTime;
     }
 }

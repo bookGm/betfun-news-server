@@ -92,15 +92,4 @@ public class InCardController {
         PageUtils page = cardService.queryPage(map);
         return R.ok().put("page", page);
     }
-
-
-    /**
-     * 节点社区列表
-     */
-    @Login
-    @GetMapping("/node")
-    public R node() {
-        return R.ok();
-    }
-
 }

@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 
 import java.io.Serializable;
+import java.util.Date;
 
 /**
  * 资讯帖子基础表
@@ -64,6 +65,10 @@ public class CardBaseEntity implements Serializable {
      * 评论数
      */
     private Long cCritic;
+    /**
+     * 创建时间
+     */
+    private Date cCreateTime;
 
     public Long getcId() {
         return cId;
@@ -151,5 +156,13 @@ public class CardBaseEntity implements Serializable {
 
     public void setcCritic(Long cCritic) {
         this.cCritic = cCritic;
+    }
+
+    public Date getcCreateTime() {
+        return cCreateTime;
+    }
+
+    public void setcCreateTime(Date cCreateTime) {
+        this.cCreateTime = cCreateTime;
     }
 }

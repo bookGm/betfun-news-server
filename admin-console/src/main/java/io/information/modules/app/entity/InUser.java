@@ -7,6 +7,7 @@ import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 
 import java.io.Serializable;
+import java.util.Date;
 
 /**
  * <p>
@@ -116,6 +117,10 @@ public class InUser implements Serializable {
      * 营业执照扫描件
      */
     private String uBrPicture;
+    /**
+     * 注册时间
+     */
+    private Date uCreateTime;
 
 
 
@@ -285,5 +290,13 @@ public class InUser implements Serializable {
 
     public void setuBrPicture(String uBrPicture) {
         this.uBrPicture = uBrPicture;
+    }
+
+    public Date getuCreateTime() {
+        return uCreateTime;
+    }
+
+    public void setuCreateTime(Date uCreateTime) {
+        this.uCreateTime = uCreateTime;
     }
 }

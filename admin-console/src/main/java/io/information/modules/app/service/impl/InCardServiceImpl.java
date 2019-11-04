@@ -11,9 +11,12 @@ import io.information.modules.app.service.IInCardArgueService;
 import io.information.modules.app.service.IInCardBaseService;
 import io.information.modules.app.service.IInCardService;
 import io.information.modules.app.service.IInCardVoteService;
+import io.mq.utils.Constants;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.Map;
 
 @Service
@@ -24,6 +27,8 @@ public class InCardServiceImpl implements IInCardService {
     private IInCardArgueService argueService;
     @Autowired
     private IInCardVoteService voteService;
+    @Autowired
+    private RabbitTemplate rabbitTemplate;
 
 
     @Override
@@ -38,12 +43,19 @@ public class InCardServiceImpl implements IInCardService {
                     && null != argue.getCaFside() && StringUtil.isNotBlank(argue.getCaFside())) {
                 argue.setcId(cId);
                 argueService.save(argue);
+                rabbitTemplate.convertAndSend(Constants.cardExchange,
+                        Constants.card_Save_RouteKey, argue);
             }
             if (null != vote.getCvInfo() && StringUtil.isNotBlank(vote.getCvInfo())) {
                 vote.setcId(cId);
                 voteService.save(vote);
+                rabbitTemplate.convertAndSend(Constants.cardExchange,
+                        Constants.card_Save_RouteKey, vote);
             }
+            base.setcCreateTime(new Date());
             baseService.save(base);
+            rabbitTemplate.convertAndSend(Constants.cardExchange,
+                    Constants.card_Save_RouteKey, base);
         }
     }
 
@@ -97,6 +109,8 @@ public class InCardServiceImpl implements IInCardService {
             //基础帖子
             baseService.removeById(cId);
         }
+        rabbitTemplate.convertAndSend(Constants.cardExchange,
+                Constants.card_Delete_RouteKey, cIds);
     }
 
     @Override

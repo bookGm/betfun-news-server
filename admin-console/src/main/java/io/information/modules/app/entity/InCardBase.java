@@ -7,6 +7,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 import java.io.Serializable;
+import java.util.Date;
 
 /**
  * <p>
@@ -82,6 +83,11 @@ public class InCardBase implements Serializable {
      * 评论数
      */
     private Long cCritic;
+
+    /**
+     * 创建时间
+     */
+    private Date cCreateTime;
 
 
     public Long getcId() {
@@ -170,5 +176,13 @@ public class InCardBase implements Serializable {
 
     public void setcCritic(Long cCritic) {
         this.cCritic = cCritic;
+    }
+
+    public Date getcCreateTime() {
+        return cCreateTime;
+    }
+
+    public void setcCreateTime(Date cCreateTime) {
+        this.cCreateTime = cCreateTime;
     }
 }
