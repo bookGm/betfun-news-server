@@ -36,6 +36,11 @@ public class InCardBase implements Serializable {
     private Long uId;
 
     /**
+     * 节点id
+     */
+    private Long noId;
+
+    /**
      * 帖子分类（字典）
      */
     @ApiModelProperty(value = "帖子分类(0:普通 1:辩论 2:投票帖)", name = "cCategory", required = true)
@@ -93,6 +98,14 @@ public class InCardBase implements Serializable {
 
     public void setuId(Long uId) {
         this.uId = uId;
+    }
+
+    public Long getNoId() {
+        return noId;
+    }
+
+    public void setNoId(Long noId) {
+        this.noId = noId;
     }
 
     public Integer getcCategory() {

@@ -16,6 +16,7 @@ import io.information.modules.sys.controller.AbstractController;
 import io.mq.utils.Constants;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,7 +48,11 @@ public class InUserController extends AbstractController {
      */
     @Login
     @PutMapping("/change")
-    @ApiOperation(value = "修改密码", httpMethod = "PUT",notes = "旧密码[uPwd]  新密码[newPwd]")
+    @ApiOperation(value = "修改密码", httpMethod = "PUT", notes = "旧密码[uPwd]  新密码[newPwd]")
+    @ApiImplicitParams({
+            @ApiImplicitParam(value = "旧密码", name = "uPwd", required = true),
+            @ApiImplicitParam(value = "新密码", name = "newPwd", required = true)
+    })
     public R change(@RequestParam String uPwd, @RequestParam String newPwd, @ApiIgnore @LoginUser InUser user) {
         boolean flag = userService.change(uPwd, newPwd, user);
         if (flag) {
@@ -128,6 +133,7 @@ public class InUserController extends AbstractController {
     @Login
     @PostMapping("/focus")
     @ApiOperation(value = "关注", httpMethod = "POST", notes = "被关注的用户id")
+    @ApiImplicitParam(value = "用户id", name = "uId", required = true)
     public R focus(@RequestParam Long uId, @ApiIgnore @LoginUser InUser user) {
         userService.focus(user.getuId(), uId, user.getuAuthStatus());
         return R.ok();
@@ -151,6 +157,10 @@ public class InUserController extends AbstractController {
     @Login
     @GetMapping("/comment")
     @ApiOperation(value = "个人消息 -- 评论", httpMethod = "GET", notes = "分页数据")
+    @ApiImplicitParams({
+            @ApiImplicitParam(value = "每页显示条数", name = "pageSize", required = true),
+            @ApiImplicitParam(value = "当前页数", name = "currPage", required = true)
+    })
     public R comment(@RequestParam Map<String, Object> map, @ApiIgnore @LoginUser InUser user) {
         map.put("uId", user.getuId());
         PageUtils page = userService.comment(map);
@@ -163,6 +173,10 @@ public class InUserController extends AbstractController {
     @Login
     @GetMapping("/like")
     @ApiOperation(value = "个人消息 -- 点赞", httpMethod = "GET", notes = "分页数据")
+    @ApiImplicitParams({
+            @ApiImplicitParam(value = "每页显示条数", name = "pageSize", required = true),
+            @ApiImplicitParam(value = "当前页数", name = "currPage", required = true)
+    })
     public R like(@RequestParam Map<String, Object> map, @ApiIgnore @LoginUser InUser user) {
         PageUtils page = userService.like(map, user.getuId());
         return R.ok().put("page", page);
@@ -186,6 +200,10 @@ public class InUserController extends AbstractController {
     @Login
     @GetMapping("/card")
     @ApiOperation(value = "个人消息 -- 帖子", httpMethod = "GET", notes = "分页数据")
+    @ApiImplicitParams({
+            @ApiImplicitParam(value = "每页显示条数", name = "pageSize", required = true),
+            @ApiImplicitParam(value = "当前页数", name = "currPage", required = true)
+    })
     public R card(@RequestParam Map<String, Object> map, @ApiIgnore @LoginUser InUser user) {
         map.put("uId", user.getuId());
         PageUtils page = userService.card(map);
@@ -198,6 +216,10 @@ public class InUserController extends AbstractController {
     @Login
     @GetMapping("/reply")
     @ApiOperation(value = "个人消息 -- 回帖", httpMethod = "GET", notes = "分页数据")
+    @ApiImplicitParams({
+            @ApiImplicitParam(value = "每页显示条数", name = "pageSize", required = true),
+            @ApiImplicitParam(value = "当前页数", name = "currPage", required = true)
+    })
     public R reply(@RequestParam Map<String, Object> map, @ApiIgnore @LoginUser InUser user) {
         map.put("uId", user.getuId());
         PageUtils page = userService.reply(map);
@@ -209,7 +231,12 @@ public class InUserController extends AbstractController {
      */
     @Login
     @GetMapping("/active")
-    @ApiOperation(value = "个人消息 -- 活动", httpMethod = "GET", notes = "分页数据，状态码[type] 0：未开始 1：已开始 2：已结束")
+    @ApiOperation(value = "个人消息 -- 活动", httpMethod = "GET", notes = "分页数据，状态码")
+    @ApiImplicitParams({
+            @ApiImplicitParam(value = "每页显示条数", name = "pageSize", required = true),
+            @ApiImplicitParam(value = "当前页数", name = "currPage", required = true),
+            @ApiImplicitParam(value = "0：未开始 1：已开始 2：已结束", name = "type", required = true)
+    })
     public R active(@RequestParam Map<String, Object> map, @ApiIgnore @LoginUser InUser user) {
         map.put("uId", user.getuId());
         PageUtils page = userService.active(map);
@@ -223,6 +250,10 @@ public class InUserController extends AbstractController {
     @Login
     @GetMapping("/writer")
     @ApiOperation(value = "个人消息 -- 关注 -- 作者", httpMethod = "GET", notes = "分页数据")
+    @ApiImplicitParams({
+            @ApiImplicitParam(value = "每页显示条数", name = "pageSize", required = true),
+            @ApiImplicitParam(value = "当前页数", name = "currPage", required = true)
+    })
     public R fansWriter(@RequestParam Map<String, Object> map, @ApiIgnore @LoginUser InUser user) {
         map.put("uId", user.getuId());
         PageUtils page = userService.fansWriter(map);
@@ -248,6 +279,10 @@ public class InUserController extends AbstractController {
     @Login
     @GetMapping("/person")
     @ApiOperation(value = "个人消息 -- 关注 -- 人物", httpMethod = "GET", notes = "分页数据")
+    @ApiImplicitParams({
+            @ApiImplicitParam(value = "每页显示条数", name = "pageSize", required = true),
+            @ApiImplicitParam(value = "当前页数", name = "currPage", required = true)
+    })
     public R fansPerson(@RequestParam Map<String, Object> map, @ApiIgnore @LoginUser InUser user) {
         map.put("uId", user.getuId());
         PageUtils page = userService.fansPerson(map);
@@ -260,6 +295,10 @@ public class InUserController extends AbstractController {
     @Login
     @GetMapping("/follower")
     @ApiOperation(value = "个人中心 -- 粉丝 -- 关注者", httpMethod = "GET", notes = "分页数据")
+    @ApiImplicitParams({
+            @ApiImplicitParam(value = "每页显示条数", name = "pageSize", required = true),
+            @ApiImplicitParam(value = "当前页数", name = "currPage", required = true)
+    })
     public R follower(@RequestParam Map<String, Object> map, @ApiIgnore @LoginUser InUser user) {
         map.put("uId", user.getuId());
         PageUtils page = userService.follower(map);
@@ -272,7 +311,12 @@ public class InUserController extends AbstractController {
      */
     @Login
     @GetMapping("/favorite")
-    @ApiOperation(value = "个人中心 -- 收藏", httpMethod = "GET", notes = "分页数据，状态码[type] 0：文章 1：帖子 2：活动")
+    @ApiOperation(value = "个人中心 -- 收藏", httpMethod = "GET", notes = "分页数据，状态码")
+    @ApiImplicitParams({
+            @ApiImplicitParam(value = "每页显示条数", name = "pageSize", required = true),
+            @ApiImplicitParam(value = "当前页数", name = "currPage", required = true),
+            @ApiImplicitParam(value = "0：文章 1：帖子 2：活动", name = "type", required = true)
+    })
     public R favorite(@RequestParam Map<String, Object> map, @ApiIgnore @LoginUser InUser user) {
         map.put("uId", user.getuId());
         PageUtils page = userService.favorite(map);

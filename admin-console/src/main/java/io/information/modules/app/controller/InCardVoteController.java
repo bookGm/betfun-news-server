@@ -14,6 +14,7 @@ import io.information.modules.app.service.IInCardVoteService;
 import io.mq.utils.Constants;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -72,7 +73,10 @@ public class InCardVoteController {
     @Login
     @PostMapping("/vote")
     @ApiOperation(value = "投票", httpMethod = "POST", notes = "根据帖子ID和选择的投票选项，更新投票选项数量")
-    @ApiImplicitParam(name = "cid、optIndexs", value = "帖子ID、投票选项索引", dataType = "Long、List<int>")
+    @ApiImplicitParams({
+            @ApiImplicitParam(value = "帖子ID", name = "cId", required = true),
+            @ApiImplicitParam(value = "投票选项索引", name = "optIndexs", dataType = "List<int>", required = true)
+    })
     public R vote(@RequestParam("cid") Long cid, @RequestParam(value = "optIndexs", required = false) List<Integer> optIndexs, @ApiIgnore @LoginUser InUser user) {
         List<Integer> vote = voteService.vote(cid, user.getuId(), optIndexs);
         return R.ok().put("vote", vote);
@@ -84,7 +88,8 @@ public class InCardVoteController {
      */
     @Login
     @DeleteMapping("/delete")
-    @ApiOperation(value = "单个或批量删除投票帖子", httpMethod = "DELETE", notes = "根据cIds[数组]删除投票帖子")
+    @ApiOperation(value = "单个或批量删除投票帖子", httpMethod = "DELETE", notes = "删除投票帖子")
+    @ApiImplicitParam(value = "帖子ID[数组]", name = "cIds", required = true)
     public R delete(@RequestParam Long[] cIds) {
         voteService.removeByIds(Arrays.asList(cIds));
         rabbitTemplate.convertAndSend(Constants.cardExchange,
@@ -113,7 +118,7 @@ public class InCardVoteController {
      */
     @Login
     @GetMapping("/info/{cId}")
-    @ApiOperation(value = "查询单个投票帖子", httpMethod = "GET", notes = "帖子ID")
+    @ApiOperation(value = "查询单个投票帖子", httpMethod = "GET", notes = "帖子ID[cId]")
     public R queryCardVote(@PathVariable("cId") Long cId, @ApiIgnore @LoginUser InUser user) {
         Map<String, Object> map = new HashMap<>();
         //帖子信息
@@ -131,6 +136,10 @@ public class InCardVoteController {
      */
     @GetMapping("/list")
     @ApiOperation(value = "获取全部投票帖子", httpMethod = "GET", notes = "分页数据")
+    @ApiImplicitParams({
+            @ApiImplicitParam(value = "每页显示条数", name = "pageSize", required = true),
+            @ApiImplicitParam(value = "当前页数", name = "currPage", required = true)
+    })
     public R list(@RequestParam Map<String, Object> map) {
         PageUtils page = voteService.queryPage(map);
         return R.ok().put("page", page);

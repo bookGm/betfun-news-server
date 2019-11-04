@@ -4,7 +4,6 @@ package io.information.modules.app.controller;
 import io.information.common.utils.IdGenerator;
 import io.information.common.utils.PageUtils;
 import io.information.common.utils.R;
-import io.information.common.utils.RedisKeys;
 import io.information.modules.app.annotation.Login;
 import io.information.modules.app.annotation.LoginUser;
 import io.information.modules.app.entity.InCardArgue;
@@ -15,16 +14,15 @@ import io.information.modules.app.service.IInCardBaseService;
 import io.mq.utils.Constants;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
 import java.util.Arrays;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * <p>
@@ -93,21 +91,14 @@ public class InCardArgueController {
 
 
     /**
-     * 查询 esOK
-     */
-    @GetMapping("/info/{cId}")
-    @ApiOperation(value = "单个辩论帖子", httpMethod = "GET", notes = "根据帖子ID查询辩论帖子信息")
-    public R queryCardArgue(@PathVariable("cId") Long cId) {
-        InCardArgue cardArgue = argueService.getById(cId);
-        return R.ok().put("cardArgue", cardArgue);
-    }
-
-
-    /**
      * 列表 esOK
      */
     @GetMapping("/list")
     @ApiOperation(value = "全部辩论帖子", httpMethod = "GET", notes = "分页数据")
+    @ApiImplicitParams({
+            @ApiImplicitParam(value = "每页显示条数", name = "pageSize", required = true),
+            @ApiImplicitParam(value = "当前页数", name = "currPage", required = true)
+    })
     public R list(@RequestParam Map<String, Object> map) {
         PageUtils page = argueService.queryPage(map);
         return R.ok().put("page", page);

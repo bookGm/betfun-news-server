@@ -12,6 +12,7 @@ import io.information.modules.app.service.IInCardBaseService;
 import io.mq.utils.Constants;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,7 +61,8 @@ public class InCardBaseController {
      */
     @Login
     @DeleteMapping("/delete")
-    @ApiOperation(value = "删除基础帖子", httpMethod = "DELETE", notes = "根据cId[数组]删除基础帖子")
+    @ApiOperation(value = "删除基础帖子", httpMethod = "DELETE", notes = "删除基础帖子")
+    @ApiImplicitParam(value = "帖子ID[数组]", name = "cIds", required = true)
     public R delete(@RequestParam Long[] cIds) {
         cardBaseService.removeByIds(Arrays.asList(cIds));
         rabbitTemplate.convertAndSend(Constants.cardExchange,
@@ -88,7 +90,7 @@ public class InCardBaseController {
      * 查询
      */
     @GetMapping("/info/{cId}")
-    @ApiOperation(value = "单个基础帖子", httpMethod = "GET")
+    @ApiOperation(value = "单个基础帖子", httpMethod = "GET", notes = "帖子ID[cId]")
     public R info(@PathVariable("cId") Long cId) {
         InCardBase cardBase = cardBaseService.getById(cId);
         return R.ok().put("cardBase", cardBase);
@@ -99,7 +101,11 @@ public class InCardBaseController {
      * 列表
      */
     @GetMapping("/list")
-    @ApiOperation(value = "获取全部基础帖子", httpMethod = "GET",notes = "分页数据")
+    @ApiOperation(value = "获取全部基础帖子", httpMethod = "GET", notes = "分页数据")
+    @ApiImplicitParams({
+            @ApiImplicitParam(value = "每页显示条数", name = "pageSize", required = true),
+            @ApiImplicitParam(value = "当前页数", name = "currPage", required = true)
+    })
     public R status(@RequestParam Map<String, Object> map) {
         PageUtils page = cardBaseService.queryPage(map);
         return R.ok().put("page", page);

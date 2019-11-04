@@ -9,135 +9,147 @@ import java.io.Serializable;
 
 /**
  * 资讯帖子基础表
- * 
+ *
  * @author zxs
  * @email zhangxiaos@163.com
  * @date 2019-09-26 12:06:25
  */
 @TableName("in_card_base")
 public class CardBaseEntity implements Serializable {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	/**
-	 * 帖子id
-	 */
-	@TableId(type = IdType.INPUT)
-	private Long cId;
-	/**
-	 * 用户id
-	 */
-	private Long uId;
-	/**
-	 * 用户名称
-	 */
-	@TableField(exist = false)
-	private String uName;
-	/**
-	 * 帖子分类（字典）
-	 */
-	private Integer cCategory;
-	/**
-	 * 帖子节点分类（字典）
-	 */
-	private Integer cNodeCategory;
-	/**
-	 * 帖子正文
-	 */
-	private String cContent;
-	/**
-	 * 回帖仅作者可见（0：是  1：否）
-	 */
-	private Integer cHide;
-	/**
-	 * 点赞数
-	 */
-	private Long cLike;
-	/**
-	 * 收藏数
-	 */
-	private Integer cCollect;
-	/**
-	 * 评论数
-	 */
-	private Long cCritic;
+    /**
+     * 帖子id
+     */
+    @TableId(type = IdType.INPUT)
+    private Long cId;
+    /**
+     * 用户id
+     */
+    private Long uId;
+    /**
+     * 节点id
+     */
+    private Long noId;
+    /**
+     * 用户名称
+     */
+    @TableField(exist = false)
+    private String uName;
+    /**
+     * 帖子分类（字典）
+     */
+    private Integer cCategory;
+    /**
+     * 帖子节点分类（字典）
+     */
+    private Integer cNodeCategory;
+    /**
+     * 帖子正文
+     */
+    private String cContent;
+    /**
+     * 回帖仅作者可见（0：是  1：否）
+     */
+    private Integer cHide;
+    /**
+     * 点赞数
+     */
+    private Long cLike;
+    /**
+     * 收藏数
+     */
+    private Integer cCollect;
+    /**
+     * 评论数
+     */
+    private Long cCritic;
 
-	public Long getcId() {
-		return cId;
-	}
+    public Long getcId() {
+        return cId;
+    }
 
-	public void setcId(Long cId) {
-		this.cId = cId;
-	}
+    public void setcId(Long cId) {
+        this.cId = cId;
+    }
 
-	public Long getuId() {
-		return uId;
-	}
+    public Long getuId() {
+        return uId;
+    }
 
-	public void setuId(Long uId) {
-		this.uId = uId;
-	}
+    public void setuId(Long uId) {
+        this.uId = uId;
+    }
 
-	public Integer getcCategory() {
-		return cCategory;
-	}
+    public Long getNoId() {
+        return noId;
+    }
 
-	public void setcCategory(Integer cCategory) {
-		this.cCategory = cCategory;
-	}
+    public void setNoId(Long noId) {
+        this.noId = noId;
+    }
 
-	public Integer getcNodeCategory() {
-		return cNodeCategory;
-	}
+    public Integer getcCategory() {
+        return cCategory;
+    }
 
-	public void setcNodeCategory(Integer cNodeCategory) {
-		this.cNodeCategory = cNodeCategory;
-	}
+    public void setcCategory(Integer cCategory) {
+        this.cCategory = cCategory;
+    }
 
-	public String getcContent() {
-		return cContent;
-	}
+    public Integer getcNodeCategory() {
+        return cNodeCategory;
+    }
 
-	public void setcContent(String cContent) {
-		this.cContent = cContent;
-	}
+    public void setcNodeCategory(Integer cNodeCategory) {
+        this.cNodeCategory = cNodeCategory;
+    }
 
-	public Integer getcHide() {
-		return cHide;
-	}
+    public String getcContent() {
+        return cContent;
+    }
 
-	public void setcHide(Integer cHide) {
-		this.cHide = cHide;
-	}
+    public void setcContent(String cContent) {
+        this.cContent = cContent;
+    }
 
-	public String getuName() {
-		return uName;
-	}
+    public Integer getcHide() {
+        return cHide;
+    }
 
-	public void setuName(String uName) {
-		this.uName = uName;
-	}
+    public void setcHide(Integer cHide) {
+        this.cHide = cHide;
+    }
 
-	public Long getcLike() {
-		return cLike;
-	}
+    public String getuName() {
+        return uName;
+    }
 
-	public void setcLike(Long cLike) {
-		this.cLike = cLike;
-	}
+    public void setuName(String uName) {
+        this.uName = uName;
+    }
 
-	public Integer getcCollect() {
-		return cCollect;
-	}
+    public Long getcLike() {
+        return cLike;
+    }
 
-	public void setcCollect(Integer cCollect) {
-		this.cCollect = cCollect;
-	}
+    public void setcLike(Long cLike) {
+        this.cLike = cLike;
+    }
 
-	public Long getcCritic() {
-		return cCritic;
-	}
+    public Integer getcCollect() {
+        return cCollect;
+    }
 
-	public void setcCritic(Long cCritic) {
-		this.cCritic = cCritic;
-	}
+    public void setcCollect(Integer cCollect) {
+        this.cCollect = cCollect;
+    }
+
+    public Long getcCritic() {
+        return cCritic;
+    }
+
+    public void setcCritic(Long cCritic) {
+        this.cCritic = cCritic;
+    }
 }

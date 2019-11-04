@@ -14,6 +14,7 @@ import io.information.modules.app.service.IInActivityDatasService;
 import io.information.modules.app.service.IInActivityService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -61,6 +62,7 @@ public class InActivityController {
      */
     @Login
     @ApiOperation(value = "删除咨讯活动", httpMethod = "DELETE", notes = "根据actId[数组]删除活动")
+    @ApiImplicitParam(value = "活动ID[数组]", name = "actIds", required = true)
     @DeleteMapping("/delete")
     public R delete(@RequestParam Long[] actIds) {
         activityService.removeActivity(Arrays.asList(actIds));
@@ -85,6 +87,10 @@ public class InActivityController {
      */
     @GetMapping("/list")
     @ApiOperation(value = "获取已审核的咨讯活动", httpMethod = "GET", notes = "分页数据")
+    @ApiImplicitParams({
+            @ApiImplicitParam(value = "每页显示条数", name = "pageSize", required = true),
+            @ApiImplicitParam(value = "当前页数", name = "currPage", required = true)
+    })
     public R listOk(@RequestParam Map<String, Object> map) {
         PageUtils page = activityService.queryPage(map);
         return R.ok().put("page", page);
@@ -96,6 +102,10 @@ public class InActivityController {
     @Login
     @GetMapping("/userActivity")
     @ApiOperation(value = "获取本人发布的活动", httpMethod = "GET", notes = "分页数据")
+    @ApiImplicitParams({
+            @ApiImplicitParam(value = "每页显示条数", name = "pageSize", required = true),
+            @ApiImplicitParam(value = "当前页数", name = "currPage", required = true)
+    })
     public R userActivity(@RequestParam Map<String, Object> map, @ApiIgnore @LoginUser InUser user) {
         map.put("uId", user.getuId());
         PageUtils page = activityService.queryPage(map);
@@ -106,7 +116,7 @@ public class InActivityController {
      * 查询
      */
     @GetMapping("/info/{actId}")
-    @ApiOperation(value = "查询单个活动信息", httpMethod = "GET", notes = "根据actId查询活动信息")
+    @ApiOperation(value = "查询单个活动信息", httpMethod = "GET", notes = "活动ID[actId]")
     public R info(@PathVariable("actId") Long actId) {
         InActivity activity = activityService.getById(actId);
         return R.ok().put("activity", activity);
@@ -117,6 +127,11 @@ public class InActivityController {
      */
     @GetMapping("/pass")
     @ApiOperation(value = "获取报名活动的用户", httpMethod = "GET", notes = "分页数据，活动ID")
+    @ApiImplicitParams({
+            @ApiImplicitParam(value = "每页显示条数", name = "pageSize", required = true),
+            @ApiImplicitParam(value = "当前页数", name = "currPage", required = true),
+            @ApiImplicitParam(value = "活动ID", name = "actId", required = true)
+    })
     public R pass(@RequestParam Map<String, Object> map) {
         PageUtils page = datasService.pass(map);
         return R.ok().put("page", page);
@@ -126,7 +141,7 @@ public class InActivityController {
     /**
      * 获取活动报名数据
      */
-    @ApiOperation(value = "活动报名数据", httpMethod = "GET", notes = "活动ID")
+    @ApiOperation(value = "活动报名数据", httpMethod = "GET", notes = "活动ID[actId]")
     @GetMapping("/apply/{actId}")
     public R apply(@PathVariable("actId") Long actId) {
         List<InActivityFields> fieldsList = activityService.apply(actId);

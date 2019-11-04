@@ -9,6 +9,7 @@ import io.information.modules.app.entity.InUser;
 import io.information.modules.app.service.IInCardService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -40,7 +41,7 @@ public class InCardController {
      * 帖子详情
      */
     @GetMapping("/details/{cId}")
-    @ApiOperation(value = "帖子详情", httpMethod = "GET", notes = "帖子ID,状态码(0：普通帖  1：辩论帖  2：投票帖)")
+    @ApiOperation(value = "帖子详情", httpMethod = "GET", notes = "帖子ID")
     public R details(@PathVariable("cId") Long cId) {
         InCard card = cardService.details(cId);
         return R.ok().put("card", card);
@@ -64,6 +65,11 @@ public class InCardController {
      */
     @GetMapping("/list")
     @ApiOperation(value = "获取某一类帖子", httpMethod = "GET", notes = "分页数据，帖子分类[type]（0：普通帖  1：辩论帖  2：投票帖）")
+    @ApiImplicitParams({
+            @ApiImplicitParam(value = "每页显示条数", name = "pageSize", required = true),
+            @ApiImplicitParam(value = "当前页数", name = "currPage", required = true),
+            @ApiImplicitParam(value = "0：普通帖  1：辩论帖  2：投票帖", name = "type", required = true)
+    })
     public R status(@RequestParam Map<String, Object> map) {
         PageUtils page = cardService.queryPage(map);
         return R.ok().put("page", page);
@@ -76,6 +82,11 @@ public class InCardController {
     @Login
     @GetMapping("/listUser")
     @ApiOperation(value = "获取本人发布的某类帖子", httpMethod = "GET", notes = "分页数据，帖子分类[type]（0：普通帖  1：辩论帖  2：投票帖）")
+    @ApiImplicitParams({
+            @ApiImplicitParam(value = "每页显示条数", name = "pageSize", required = true),
+            @ApiImplicitParam(value = "当前页数", name = "currPage", required = true),
+            @ApiImplicitParam(value = "0：普通帖  1：辩论帖  2：投票帖", name = "type", required = true)
+    })
     public R stateUser(@RequestParam Map<String, Object> map, @ApiIgnore @LoginUser InUser user) {
         map.put("uId", user.getuId());
         PageUtils page = cardService.queryPage(map);
@@ -83,6 +94,13 @@ public class InCardController {
     }
 
 
-    //节点社区列表
+    /**
+     * 节点社区列表
+     */
+    @Login
+    @GetMapping("/node")
+    public R node() {
+        return R.ok();
+    }
 
 }

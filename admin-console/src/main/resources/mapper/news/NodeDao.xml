@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.information.modules.news.dao.NodeDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.information.modules.news.entity.NodeEntity" id="nodeMap">
+        <result property="noId" column="no_id"/>
+        <result property="noName" column="no_name"/>
+        <result property="noPhoto" column="no_photo"/>
+        <result property="noBrief" column="no_brief"/>
+        <result property="noType" column="no_type"/>
+        <result property="noFocus" column="no_focus"/>
+        <result property="noCreateTime" column="no_create_time"/>
+    </resultMap>
+
+
+</mapper>
