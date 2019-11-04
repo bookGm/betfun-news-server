@@ -35,6 +35,8 @@ public class RedisKeys {
     public static final String JOIN=BASEKEY+"join";
     //关注
     public static final String FOCUS=BASEKEY+"focus";
+    //节点关注
+    public static final String NODES=BASEKEY+"nodes";
     //文章id
     public static final String ARTICLE=BASEKEY+"article:";
     //快讯id

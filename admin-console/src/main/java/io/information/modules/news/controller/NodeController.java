@@ -9,13 +9,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
+import java.util.Date;
 import java.util.Map;
 
 
-
 /**
- * 
- *
  * @author zxs
  * @email zhangxiaos@163.com
  * @date 2019-11-04 09:11:01
@@ -31,7 +29,7 @@ public class NodeController {
      */
     @RequestMapping("/list")
     @RequiresPermissions("news:node:list")
-    public R list(@RequestParam Map<String, Object> params){
+    public R list(@RequestParam Map<String, Object> params) {
         PageUtils page = nodeService.queryPage(params);
 
         return R.ok().put("page", page);
@@ -43,8 +41,8 @@ public class NodeController {
      */
     @RequestMapping("/info/{noId}")
     @RequiresPermissions("news:node:info")
-    public R info(@PathVariable("noId") Long noId){
-		NodeEntity node = nodeService.getById(noId);
+    public R info(@PathVariable("noId") Long noId) {
+        NodeEntity node = nodeService.getById(noId);
 
         return R.ok().put("node", node);
     }
@@ -54,8 +52,9 @@ public class NodeController {
      */
     @RequestMapping("/save")
     @RequiresPermissions("news:node:save")
-    public R save(@RequestBody NodeEntity node){
-		nodeService.save(node);
+    public R save(@RequestBody NodeEntity node) {
+        node.setNoCreateTime(new Date());
+        nodeService.save(node);
 
         return R.ok();
     }
@@ -65,8 +64,8 @@ public class NodeController {
      */
     @RequestMapping("/update")
     @RequiresPermissions("news:node:update")
-    public R update(@RequestBody NodeEntity node){
-		nodeService.updateById(node);
+    public R update(@RequestBody NodeEntity node) {
+        nodeService.updateById(node);
 
         return R.ok();
     }
@@ -76,8 +75,8 @@ public class NodeController {
      */
     @RequestMapping("/delete")
     @RequiresPermissions("news:node:delete")
-    public R delete(@RequestBody Long[] noIds){
-		nodeService.removeByIds(Arrays.asList(noIds));
+    public R delete(@RequestBody Long[] noIds) {
+        nodeService.removeByIds(Arrays.asList(noIds));
 
         return R.ok();
     }

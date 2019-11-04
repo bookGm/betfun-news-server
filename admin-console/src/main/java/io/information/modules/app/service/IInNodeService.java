@@ -26,5 +26,7 @@ public interface IInNodeService extends IService<InNode> {
     PageUtils cardList(Map<String, Object> map);
 
     PageUtils star(Map<String, Object> map);
+
+    Long focus(Long uId, Long noId, Long type);
 }
 

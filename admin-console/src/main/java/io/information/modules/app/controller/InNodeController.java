@@ -2,7 +2,10 @@ package io.information.modules.app.controller;
 
 import io.information.common.utils.PageUtils;
 import io.information.common.utils.R;
+import io.information.modules.app.annotation.Login;
+import io.information.modules.app.annotation.LoginUser;
 import io.information.modules.app.entity.InNode;
+import io.information.modules.app.entity.InUser;
 import io.information.modules.app.service.IInNodeService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -10,6 +13,7 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import springfox.documentation.annotations.ApiIgnore;
 
 import java.util.Map;
 
@@ -50,6 +54,20 @@ public class InNodeController {
     public R info(@PathVariable("noId") Long noId) {
         InNode node = nodeService.getById(noId);
         return R.ok().put("node", node);
+    }
+
+
+    /**
+     * 关注节点 <作者，节点，人物>
+     */
+    @Login
+    @PostMapping("/focus")
+    @ApiOperation(value = "关注节点", httpMethod = "POST", notes = "被关注的节点id")
+    @ApiImplicitParam(value = "节点id", name = "noId", required = true)
+    public R focus(@RequestParam Long noId, @ApiIgnore @LoginUser InUser user) {
+        InNode node = nodeService.getById(noId);
+        nodeService.focus(user.getuId(), noId, node.getNoType());
+        return R.ok();
     }
 
 

@@ -1,7 +1,6 @@
 package io.information.modules.app.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.guansuo.common.DateUtils;
@@ -9,11 +8,10 @@ import com.guansuo.common.JsonUtil;
 import com.guansuo.common.StringUtil;
 import com.guansuo.newsenum.NewsEnum;
 import io.information.common.annotation.HashCacheable;
-import io.information.common.exception.ExceptionEnum;
-import io.information.common.exception.IMException;
 import io.information.common.utils.*;
 import io.information.modules.app.dao.InUserDao;
 import io.information.modules.app.dto.CollectDTO;
+import io.information.modules.app.dto.InNodeDTO;
 import io.information.modules.app.dto.InUserDTO;
 import io.information.modules.app.entity.*;
 import io.information.modules.app.service.*;
@@ -52,6 +50,8 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
     private IInCommonReplyService commonReplyService;
     @Autowired
     private IInActivityService activityService;
+    @Autowired
+    private IInNodeService nodeService;
 
 
     @Override
@@ -87,6 +87,52 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
     }
 
     @Override
+    public List<Long> searchFocusId(Long uId) {
+        ArrayList<Long> list = new ArrayList<>();
+        List<Map.Entry<Object, Object>> cmap = redisUtils.hfget(RedisKeys.FOCUS, uId + "-*-*");
+        if (!cmap.isEmpty()) {
+            for (Map.Entry<Object, Object> entry : cmap) {
+                String key = String.valueOf(entry.getKey());
+                String[] split = key.split("-");
+                Long value = Long.valueOf(split[2]);
+                list.add(value);
+            }
+        }
+        return list;
+    }
+
+    @Override
+    public PageUtils fansNode(Map<String, Object> map) {
+        Integer size = StringUtil.isBlank(map.get("pageSize")) ? 10 : Integer.parseInt(String.valueOf(map.get("pageSize")));
+        Integer page = StringUtil.isBlank(map.get("currPage")) ? 0 : Integer.parseInt(String.valueOf(map.get("currPage")));
+        Integer bindex = page * size;
+        //模糊查询出某类的key  #uId-#type-#noId
+        Long uId = Long.valueOf((String) map.get("uId"));
+        List<Map.Entry<Object, Object>> nmap = redisUtils.hfget(RedisKeys.NODES, uId + "-*-*");
+        ArrayList<InNodeDTO> nodeFocus = null;
+        //关注目标信息
+        if (null != nmap && nmap.size() > 0) {
+            nodeFocus = new ArrayList<>();
+            if (bindex + size < nmap.size()) {
+                nmap = nmap.subList(bindex, bindex + size);
+            }
+        } else {
+            return new PageUtils(nodeFocus, 0, size, page);
+        }
+        for (Map.Entry<Object, Object> obj : nmap) {
+            String[] str = String.valueOf(obj.getKey()).split("-");
+            Long id = Long.valueOf(str[2]);  //节点ID
+            InNode node = nodeService.getById(id);
+            if (null != node) {
+                InNodeDTO dto = BeanHelper.copyProperties(node, InNodeDTO.class);
+                nodeFocus.add(dto);
+            }
+        }
+        return new PageUtils(nodeFocus, nmap.size(), size, page);
+
+    }
+
+    @Override
     public PageUtils comment(Map<String, Object> params) {
         //根据用户ID查询所有目标ID<根>或被评论ID找到回复用户的评论
         return commonReplyService.userMsg(params);
@@ -116,7 +162,7 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
     @Override
     public PageUtils reply(Map<String, Object> map) {
         if (null != map.get("uId") && StringUtil.isNotBlank(map.get("uId"))) {
-            Long uId = (Long) map.get("uId");
+            Long uId = Long.valueOf((String) map.get("uId"));
             //根据用户ID查询所有目标ID<根>或被评论ID找到回复用户的评论
             LambdaQueryWrapper<InCardBase> cardQuery = new LambdaQueryWrapper<>();
             cardQuery.eq(InCardBase::getuId, uId);
@@ -182,7 +228,7 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
     public PageUtils active(Map<String, Object> map) {
         LambdaQueryWrapper<InActivity> queryWrapper = new LambdaQueryWrapper<>();
         if (null != map.get("type") && StringUtil.isNotBlank(map.get("type"))) {
-            Integer type = (Integer) map.get("type");
+            Integer type = Integer.valueOf((String) map.get("type"));
             switch (type) {
                 case 0:  //获取未开始活动    开始时间 gt> 当前时间
                     queryWrapper.gt(InActivity::getActStartTime, new Date());
@@ -307,16 +353,16 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
                 userDTO.setuNick(user.getuNick());
                 userDTO.setuFans(user.getuFans());
             }
-            //根据用户ID找到用户所有关注的用户   匹配关注者的ID  是否关注
-            ArrayList<Long> fIds = new ArrayList<>();
-            List<Map.Entry<Object, Object>> fmap = redisUtils.hfget(RedisKeys.FOCUS, uId + "-*-*");
-            for (Map.Entry<Object, Object> entry : fmap) {
-                String[] strings = String.valueOf(entry.getKey()).split("-");
-                Long fId = Long.valueOf(strings[2]);
-                fIds.add(fId);
-            }
-            userDTO.setuFIds(fIds);
-            newsFans.add(userDTO);
+//            //根据用户ID找到用户所有关注的用户   匹配关注者的ID  是否关注
+//            ArrayList<Long> fIds = new ArrayList<>();
+//            List<Map.Entry<Object, Object>> fmap = redisUtils.hfget(RedisKeys.FOCUS, uId + "-*-*");
+//            for (Map.Entry<Object, Object> entry : fmap) {
+//                String[] strings = String.valueOf(entry.getKey()).split("-");
+//                Long fId = Long.valueOf(strings[2]);
+//                fIds.add(fId);
+//            }
+//            userDTO.setuFIds(fIds);
+//            newsFans.add(userDTO);
         }
         return new PageUtils(newsFans, cmap.size(), size, page);
     }
@@ -324,7 +370,7 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
     @Override
     public PageUtils favorite(Map<String, Object> map) {
         if (null != map.get("type") && StringUtil.isNotBlank(map.get("type"))) {
-            Integer type = (Integer) map.get("type");
+            Integer type = Integer.valueOf((String) map.get("type"));
             Long uId = Long.valueOf((String) map.get("uId"));
             Integer page = StringUtil.isBlank(map.get("currPage")) ? 0 : Integer.parseInt(String.valueOf(map.get("currPage")));
             Integer size = StringUtil.isBlank(map.get("pageSize")) ? 10 : Integer.parseInt(String.valueOf(map.get("pageSize")));

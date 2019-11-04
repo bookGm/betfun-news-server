@@ -13,5 +13,9 @@ import org.apache.ibatis.annotations.Mapper;
  */
 @Mapper
 public interface InNodeDao extends BaseMapper<InNode> {
-	
+    /**
+     * 关注+1
+     * @param noId
+     */
+    void increaseFocus(Long noId);
 }

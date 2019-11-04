@@ -5,12 +5,11 @@ import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 
 import java.io.Serializable;
-import java.util.List;
 
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
 @ApiModel(value = "用户信息", description = "用户信息")
-public class InUserDTO  implements Serializable {
+public class InUserDTO implements Serializable {
     private static final long serialVersionUID = 1L;
 
     /**
@@ -36,8 +35,7 @@ public class InUserDTO  implements Serializable {
     /**
      * 用户关注的ID
      */
-    private List<Long> uFIds;
-
+//    private List<Long> uFIds;
     public String getuNick() {
         return uNick;
     }
@@ -70,11 +68,11 @@ public class InUserDTO  implements Serializable {
         this.uFans = uFans;
     }
 
-    public List<Long> getuFIds() {
-        return uFIds;
-    }
+//    public List<Long> getuFIds() {
+//        return uFIds;
+//    }
 
-    public void setuFIds(List<Long> uFIds) {
-        this.uFIds = uFIds;
-    }
+//    public void setuFIds(List<Long> uFIds) {
+//        this.uFIds = uFIds;
+//    }
 }

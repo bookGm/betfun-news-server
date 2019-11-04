@@ -3,7 +3,7 @@
 
 <mapper namespace="io.information.modules.app.dao.InNodeDao">
 
-	<!-- 可根据自己的需求，是否要使用 -->
+    <!-- 可根据自己的需求，是否要使用 -->
     <resultMap type="io.information.modules.app.entity.InNode" id="nodeMap">
         <result property="noId" column="no_id"/>
         <result property="noName" column="no_name"/>
@@ -14,5 +14,8 @@
         <result property="noCreateTime" column="no_create_time"/>
     </resultMap>
 
+    <update id="increaseFocus" parameterType="java.lang.Long">
+         update in_node set no_focus=no_focus+1 where no_id=#{noId}
+    </update>
 
 </mapper>

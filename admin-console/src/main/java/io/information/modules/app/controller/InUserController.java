@@ -23,6 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -132,7 +133,7 @@ public class InUserController extends AbstractController {
      */
     @Login
     @PostMapping("/focus")
-    @ApiOperation(value = "关注", httpMethod = "POST", notes = "被关注的用户id")
+    @ApiOperation(value = "关注用户", httpMethod = "POST", notes = "被关注的用户id")
     @ApiImplicitParam(value = "用户id", name = "uId", required = true)
     public R focus(@RequestParam Long uId, @ApiIgnore @LoginUser InUser user) {
         userService.focus(user.getuId(), uId, user.getuAuthStatus());
@@ -266,10 +267,14 @@ public class InUserController extends AbstractController {
      */
     @Login
     @GetMapping("/node")
-//    @ApiOperation(value = "个人消息 -- 关注 -- 节点", httpMethod = "GET", notes = "分页数据")
+    @ApiOperation(value = "个人消息 -- 关注 -- 节点", httpMethod = "GET", notes = "分页数据")
+    @ApiImplicitParams({
+            @ApiImplicitParam(value = "每页显示条数", name = "pageSize", required = true),
+            @ApiImplicitParam(value = "当前页数", name = "currPage", required = true)
+    })
     public R fansNode(@RequestParam Map<String, Object> map, @ApiIgnore @LoginUser InUser user) {
         map.put("uId", user.getuId());
-        PageUtils page = userService.fansWriter(map);
+        PageUtils page = userService.fansNode(map);
         return R.ok().put("page", page);
     }
 
@@ -321,5 +326,17 @@ public class InUserController extends AbstractController {
         map.put("uId", user.getuId());
         PageUtils page = userService.favorite(map);
         return R.ok().put("page", page);
+    }
+
+
+
+    /**
+     * 查询用户的所有关注ID<用户ID>
+     */
+    @Login
+    @GetMapping("/focusIds")
+    @ApiOperation(value = "查询当前用户的关注ID集合", httpMethod = "GET")
+    public List<Long> searchFocusId(@ApiIgnore @LoginUser InUser user) {
+        return userService.searchFocusId(user.getuId());
     }
 }

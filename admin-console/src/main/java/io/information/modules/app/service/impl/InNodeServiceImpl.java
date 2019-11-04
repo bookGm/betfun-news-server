@@ -5,8 +5,10 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.guansuo.common.StringUtil;
+import io.information.common.annotation.HashCacheable;
 import io.information.common.utils.PageUtils;
 import io.information.common.utils.Query;
+import io.information.common.utils.RedisKeys;
 import io.information.modules.app.dao.InNodeDao;
 import io.information.modules.app.entity.InArticle;
 import io.information.modules.app.entity.InCardBase;
@@ -98,6 +100,11 @@ public class InNodeServiceImpl extends ServiceImpl<InNodeDao, InNode> implements
             rm.put("fCount", user.getuFans());
             //用户信息
             rm.put("user", user);
+            //分页数据
+            rm.put("pageSize", page.getSize());    //显示条数
+            rm.put("currPage", page.getCurrent());    //当前页数
+            rm.put("totalCount", page.getTotal());   //总条数
+            rm.put("totalPage", page.getPages());  //总页数
         }
         return rm;
     }
@@ -160,5 +167,13 @@ public class InNodeServiceImpl extends ServiceImpl<InNodeDao, InNode> implements
                 queryWrapper
         );
         return new PageUtils(page);
+    }
+
+
+    @Override
+    @HashCacheable(key = RedisKeys.NODES, keyField = "#uId-#type-#noId")
+    public Long focus(Long uId, Long noId, Long type) {
+        this.baseMapper.increaseFocus(noId);
+        return noId;
     }
 }
