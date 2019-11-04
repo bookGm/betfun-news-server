@@ -144,7 +144,7 @@ public class InMenuServiceImpl extends ServiceImpl<InMenuDao, InMenu> implements
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
         LambdaQueryWrapper<InMenu> qw=new LambdaQueryWrapper<InMenu>();
-        qw.eq(InMenu::getmStatus,0);
+        qw.eq(InMenu::getmDisable,0);
         IPage<InMenu> page = this.page(
                 new Query<InMenu>().getPage(params),
                 qw

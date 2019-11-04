@@ -144,7 +144,7 @@ public class InMenuController {
     public R getAllMenu(){
         InMenu menu =new InMenu();
         menu.setmCode("0");
-        getMenuTree(menuService.list(new LambdaQueryWrapper<InMenu>().eq(InMenu::getmStatus,0)),menu);
+        getMenuTree(menuService.list(new LambdaQueryWrapper<InMenu>().eq(InMenu::getmDisable,0)),menu);
         return R.ok().put("menus",menu.getChildren());
     }
 }

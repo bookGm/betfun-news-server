@@ -84,6 +84,9 @@ public class InCommonReplyController {
             @ApiImplicitParam(value = "评论ID", name = "id", required = true)
     })
     public R discuss(@RequestParam Map<String, Object> map) {
+        if(null==map||!map.containsKey("tId")||!map.containsKey("tType")){
+            return R.error("缺少必要参数");
+        }
         PageUtils discuss = commonReplyService.discuss(map);
         return R.ok().put("discuss", discuss);
     }

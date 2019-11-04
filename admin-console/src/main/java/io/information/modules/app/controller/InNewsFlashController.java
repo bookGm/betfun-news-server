@@ -5,15 +5,20 @@ import com.alibaba.fastjson.JSON;
 import io.information.common.utils.IdGenerator;
 import io.information.common.utils.PageUtils;
 import io.information.common.utils.R;
+import io.information.modules.app.annotation.Login;
+import io.information.modules.app.annotation.LoginUser;
 import io.information.modules.app.entity.InNewsFlash;
+import io.information.modules.app.entity.InUser;
 import io.information.modules.app.service.IInNewsFlashService;
 import io.mq.utils.Constants;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import springfox.documentation.annotations.ApiIgnore;
 
 import java.util.Arrays;
 import java.util.Date;
@@ -91,6 +96,21 @@ public class InNewsFlashController {
         newsFlashService.removeByIds(Arrays.asList(nIds));
         rabbitTemplate.convertAndSend(Constants.flashExchange,
                 Constants.flash_Delete_RouteKey, nIds);
+        return R.ok();
+    }
+
+    /**
+     * 利好利空
+     */
+    @Login
+    @PostMapping("/attitude")
+    @ApiOperation(value = "利好利空", httpMethod = "POST")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "nId", value = "资讯id", required = true),
+            @ApiImplicitParam(name = "bId", value = "0：利空 1：利好", required = true)
+    })
+    public R attitude(@RequestParam("nId") Long nId, @RequestParam("bId") int bId, @ApiIgnore @LoginUser InUser user) {
+        newsFlashService.attitude(nId,user.getuId(),bId);
         return R.ok();
     }
 }

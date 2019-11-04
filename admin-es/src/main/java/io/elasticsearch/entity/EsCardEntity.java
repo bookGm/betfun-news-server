@@ -25,6 +25,11 @@ public class EsCardEntity implements Serializable {
     @Field(type = FieldType.Long)
     private Long uId;
     /**
+     * 节点id
+     */
+    @Field(type = FieldType.Long)
+    private Long noId;
+    /**
      * 帖子分类（字典）
      */
     @Field(type = FieldType.Integer)
@@ -206,5 +211,13 @@ public class EsCardEntity implements Serializable {
 
     public void setUserEs(EsUserEntity userEs) {
         this.userEs = userEs;
+    }
+
+    public Long getNoId() {
+        return noId;
+    }
+
+    public void setNoId(Long noId) {
+        this.noId = noId;
     }
 }

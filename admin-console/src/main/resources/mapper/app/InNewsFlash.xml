@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="io.information.modules.app.dao.InNewsFlashDao">
-
-
+    <update id="addNBull" parameterType="java.lang.Long">
+         update in_news_flash set n_bull=n_bull+1 where n_id=#{nId}
+    </update>
+    <update id="addNBad" parameterType="java.lang.Long">
+         update in_news_flash set n_bad=n_bad+1 where n_id=#{nId}
+    </update>
 </mapper>

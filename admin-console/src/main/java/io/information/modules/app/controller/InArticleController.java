@@ -169,7 +169,7 @@ public class InArticleController {
      */
     @Login
     @PostMapping("/giveALike")
-    @ApiOperation(value = "文章点赞", httpMethod = "POST", notes = "根据文章ID点赞")
+    @ApiOperation(value = "点赞", httpMethod = "POST", notes = "根据ID点赞")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "id", value = "id", required = true),
             @ApiImplicitParam(name = "type", value = "(0：文章 1：帖子 2：活动)", required = true)
@@ -185,7 +185,7 @@ public class InArticleController {
      */
     @Login
     @PostMapping("/collect")
-    @ApiOperation(value = "文章收藏", httpMethod = "POST", notes = "根据文章ID收藏")
+    @ApiOperation(value = "收藏", httpMethod = "POST", notes = "根据ID收藏")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "id", value = "id", required = true),
             @ApiImplicitParam(name = "type", value = "(0：文章 1：帖子 2：活动)", required = true)
