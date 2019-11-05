@@ -15,6 +15,7 @@ import io.information.modules.app.dto.InNodeDTO;
 import io.information.modules.app.dto.InUserDTO;
 import io.information.modules.app.entity.*;
 import io.information.modules.app.service.*;
+import io.information.modules.app.vo.InLikeVo;
 import org.apache.shiro.crypto.hash.Sha256Hash;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -107,7 +108,7 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
         Integer page = StringUtil.isBlank(map.get("currPage")) ? 0 : Integer.parseInt(String.valueOf(map.get("currPage")));
         Integer bindex = page * size;
         //模糊查询出某类的key  #uId-#type-#noId
-        Long uId = Long.valueOf((String) map.get("uId"));
+        Long uId = Long.parseLong(String.valueOf(map.get("uId")));
         List<Map.Entry<Object, Object>> nmap = redisUtils.hfget(RedisKeys.NODES, uId + "-*-*");
         ArrayList<InNodeDTO> nodeFocus = null;
         //关注目标信息
@@ -162,15 +163,17 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
     @Override
     public PageUtils reply(Map<String, Object> map) {
         if (null != map.get("uId") && StringUtil.isNotBlank(map.get("uId"))) {
-            Long uId = Long.valueOf((String) map.get("uId"));
+            Long uId = Long.parseLong(String.valueOf(map.get("uId")));
             //根据用户ID查询所有目标ID<根>或被评论ID找到回复用户的评论
             LambdaQueryWrapper<InCardBase> cardQuery = new LambdaQueryWrapper<>();
             cardQuery.eq(InCardBase::getuId, uId);
             List<InCardBase> baseList = baseService.list(cardQuery);
-            //获取用户帖子ID
-            List<Long> cIds = baseList.stream().map(InCardBase::getcId).collect(Collectors.toList());
-            //获取回帖信息
-            return commonReplyService.reply(map, cIds);
+            if (null != baseList && !baseList.isEmpty()) {
+                //获取用户帖子ID
+                List<Long> cIds = baseList.stream().map(InCardBase::getcId).collect(Collectors.toList());
+                //获取回帖信息
+                return commonReplyService.reply(map, cIds);
+            }
         }
         return null;
     }
@@ -227,8 +230,9 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
     @Override
     public PageUtils active(Map<String, Object> map) {
         LambdaQueryWrapper<InActivity> queryWrapper = new LambdaQueryWrapper<>();
+//        queryWrapper.eq(InActivity::getActStatus, 2);
         if (null != map.get("type") && StringUtil.isNotBlank(map.get("type"))) {
-            Integer type = Integer.valueOf((String) map.get("type"));
+            int type = Integer.parseInt(String.valueOf(map.get("type")));
             switch (type) {
                 case 0:  //获取未开始活动    开始时间 gt> 当前时间
                     queryWrapper.gt(InActivity::getActStartTime, new Date());
@@ -243,7 +247,7 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
             }
         }
         if (null != map.get("uId") && StringUtil.isNotBlank(map.get("uId"))) {
-            queryWrapper.eq(InActivity::getuId, map.get("uId"));
+            queryWrapper.eq(InActivity::getuId, Long.parseLong(String.valueOf(map.get("uId"))));
         }
         IPage<InActivity> page = activityService.page(
                 new Query<InActivity>().getPage(map),
@@ -255,7 +259,7 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
     @Override
     public PageUtils fansWriter(Map<String, Object> map) {
         //作者需要认证通过  #uId-#status-#fId
-        Long uId = Long.valueOf((String) map.get("uId"));
+        Long uId = Long.parseLong(String.valueOf(map.get("uId")));
         Integer size = StringUtil.isBlank(map.get("pageSize")) ? 10 : Integer.parseInt(String.valueOf(map.get("pageSize")));
         Integer page = StringUtil.isBlank(map.get("currPage")) ? 0 : Integer.parseInt(String.valueOf(map.get("currPage")));
         Integer bindex = page * size;
@@ -292,19 +296,19 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
         Integer page = StringUtil.isBlank(map.get("currPage")) ? 0 : Integer.parseInt(String.valueOf(map.get("currPage")));
         Integer size = StringUtil.isBlank(map.get("pageSize")) ? 10 : Integer.parseInt(String.valueOf(map.get("pageSize")));
         Integer bindex = page * size;
-        Long uId = Long.valueOf((String) map.get("uId"));
+        Long uId = Long.parseLong(String.valueOf(map.get("uId")));
         //根据uId查询用户关注的目标  #uId-#type-#fId
         ArrayList<InUserDTO> newsFocus = null;
         List<Map.Entry<Object, Object>> cmap = redisUtils.hfget(RedisKeys.FOCUS, uId + "-*-*");
-        //关注目标信息
         List<Map.Entry<Object, Object>> slist = null;
-        if (bindex + size < cmap.size()) {
-            slist = cmap.subList(bindex, bindex + size);
-        } else {
-            slist = cmap;
-        }
-        if (slist.size() > 0) {
+        //关注目标信息
+        if (null != cmap && cmap.size() > 0) {
             newsFocus = new ArrayList<>();
+            if (bindex + size < cmap.size()) {
+                cmap = cmap.subList(bindex, bindex + size);
+            }
+        } else {
+            return new PageUtils(newsFocus, 0, size, page);
         }
         for (Map.Entry<Object, Object> obj : slist) {
             InUserDTO userDTO = new InUserDTO();
@@ -324,22 +328,22 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
 
     @Override
     public PageUtils follower(Map<String, Object> map) {
-        Long uId = Long.valueOf((String) map.get("uId"));
+        Long uId = Long.parseLong(String.valueOf(map.get("uId")));
         Integer page = StringUtil.isBlank(map.get("currPage")) ? 0 : Integer.parseInt(String.valueOf(map.get("currPage")));
         Integer size = StringUtil.isBlank(map.get("pageSize")) ? 10 : Integer.parseInt(String.valueOf(map.get("pageSize")));
         Integer bindex = page * size;
         //以uId为目标查询粉丝  #uId-#type-#fId
         ArrayList<InUserDTO> newsFans = null;
         List<Map.Entry<Object, Object>> cmap = redisUtils.hfget(RedisKeys.FOCUS, "*-*-" + uId);
-        //关注目标信息
         List<Map.Entry<Object, Object>> slist = null;
-        if (bindex + size < cmap.size()) {
-            slist = cmap.subList(bindex, bindex + size);
-        } else {
-            slist = cmap;
-        }
-        if (slist.size() > 0) {
+        //关注目标信息
+        if (null != cmap && cmap.size() > 0) {
             newsFans = new ArrayList<>();
+            if (bindex + size < cmap.size()) {
+                cmap = cmap.subList(bindex, bindex + size);
+            }
+        } else {
+            return new PageUtils(newsFans, 0, size, page);
         }
         for (Map.Entry<Object, Object> obj : slist) {
             InUserDTO userDTO = new InUserDTO();
@@ -370,22 +374,23 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
     @Override
     public PageUtils favorite(Map<String, Object> map) {
         if (null != map.get("type") && StringUtil.isNotBlank(map.get("type"))) {
-            Integer type = Integer.valueOf((String) map.get("type"));
-            Long uId = Long.valueOf((String) map.get("uId"));
+            int type = Integer.parseInt(String.valueOf(map.get("type")));
+            Long uId = Long.parseLong(String.valueOf(map.get("uId")));
             Integer page = StringUtil.isBlank(map.get("currPage")) ? 0 : Integer.parseInt(String.valueOf(map.get("currPage")));
             Integer size = StringUtil.isBlank(map.get("pageSize")) ? 10 : Integer.parseInt(String.valueOf(map.get("pageSize")));
             Integer bindex = page * size;
-            //查询用户的收藏   #id-#tid-#type-#uid
+            //查询用户的收藏   #id-#uid-#tId-#type
             ArrayList<CollectDTO> collects = null;
-            List<Map.Entry<Object, Object>> cmap = redisUtils.hfget(RedisKeys.COLLECT, "*-*-" + type + "-" + uId);
+            List<Map.Entry<Object, Object>> cmap = redisUtils.hfget(RedisKeys.COLLECT, "*-" + uId + "-*-" + type);
             List<Map.Entry<Object, Object>> slist = null;
-            if (bindex + size < cmap.size()) {
-                slist = cmap.subList(bindex, bindex + size);
-            } else {
-                slist = cmap;
-            }
-            if (slist.size() > 0) {
+            //关注目标信息
+            if (null != cmap && cmap.size() > 0) {
                 collects = new ArrayList<>();
+                if (bindex + size < cmap.size()) {
+                    cmap = cmap.subList(bindex, bindex + size);
+                }
+            } else {
+                return new PageUtils(collects, 0, size, page);
             }
             switch (type) {
                 case 0:     //文章

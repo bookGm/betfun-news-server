@@ -8,11 +8,12 @@ import java.util.Date;
 import lombok.Data;
 
 /**
- * 
- * 
+ * <p>
+ * 帖子节点表
+ * </p>
+ *
  * @author zxs
- * @email zhangxiaos@163.com
- * @date 2019-11-04 09:11:01
+ * @since 2019-11-04
  */
 
 @TableName("in_node")

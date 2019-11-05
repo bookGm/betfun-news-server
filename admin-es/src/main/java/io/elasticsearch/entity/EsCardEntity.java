@@ -40,6 +40,11 @@ public class EsCardEntity implements Serializable {
     @Field(type = FieldType.Integer)
     private Integer cNodeCategory;
     /**
+     * 帖子标题
+     */
+    @Field(type = FieldType.Keyword)
+    private String cTitle;
+    /**
      * 帖子正文
      */
     @Field(type = FieldType.Keyword)
@@ -121,6 +126,14 @@ public class EsCardEntity implements Serializable {
 
     public void setNoId(Long noId) {
         this.noId = noId;
+    }
+
+    public String getcTitle() {
+        return cTitle;
+    }
+
+    public void setcTitle(String cTitle) {
+        this.cTitle = cTitle;
     }
 
     public Integer getcCategory() {

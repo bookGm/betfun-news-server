@@ -18,16 +18,22 @@ import io.information.modules.app.service.IInArticleService;
 import io.information.modules.app.service.IInCardBaseService;
 import io.information.modules.app.service.IInNodeService;
 import io.information.modules.app.service.IInUserService;
+import io.information.modules.app.vo.InNodeVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.LongSummaryStatistics;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 
+/**
+ * <p>
+ * 帖子节点表  服务实现类
+ * </p>
+ *
+ * @author zxs
+ * @since 2019-11-04
+ */
 @Service
 public class InNodeServiceImpl extends ServiceImpl<InNodeDao, InNode> implements IInNodeService {
     @Autowired
@@ -64,16 +70,33 @@ public class InNodeServiceImpl extends ServiceImpl<InNodeDao, InNode> implements
 
     @Override
     public PageUtils query(Map<String, Object> map) {
+        Integer size = StringUtil.isBlank(map.get("pageSize")) ? 10 : Integer.parseInt(String.valueOf(map.get("pageSize")));
+        Integer curr = StringUtil.isBlank(map.get("currPage")) ? 0 : Integer.parseInt(String.valueOf(map.get("currPage")));
         LambdaQueryWrapper<InNode> queryWrapper = new LambdaQueryWrapper<>();
         if (null != map.get("noType") && StringUtil.isNotBlank(map.get("noType"))) {
-            Integer noType = Integer.valueOf(String.valueOf(map.get("noType")));
+            Integer noType = Integer.parseInt(String.valueOf(map.get("noType")));
             queryWrapper.eq(InNode::getNoType, noType);
         }
         IPage<InNode> page = this.page(
                 new Query<InNode>().getPage(map),
                 queryWrapper
         );
-        return new PageUtils(page);
+        if (!page.getRecords().isEmpty() && null != page.getRecords()) {
+            ArrayList<InNodeVo> list = new ArrayList<>();
+            for (InNode node : page.getRecords()) {
+                //获取节点对应的帖子集合求出总数(size)
+                List<InCardBase> baseList = baseService.list(new LambdaQueryWrapper<InCardBase>().eq(InCardBase::getNoId, node.getNoId()));
+                //将节点和对应帖子的总数放入集合
+                InNodeVo nodeVo = new InNodeVo();
+                nodeVo.setNode(node);
+                nodeVo.setCardNumber(baseList.size());
+                list.add(nodeVo);
+            }
+            int total = (int) page.getTotal();
+            return new PageUtils(list, total, size, curr);
+        }
+
+        return null;
     }
 
 
@@ -113,11 +136,11 @@ public class InNodeServiceImpl extends ServiceImpl<InNodeDao, InNode> implements
     public PageUtils cardList(Map<String, Object> map) {
         LambdaQueryWrapper<InCardBase> queryWrapper = new LambdaQueryWrapper<>();
         if (null != map.get("noId") && StringUtil.isNotBlank(map.get("noId"))) {
-            Long noId = Long.valueOf(String.valueOf(map.get("noId")));
+            Long noId = Long.parseLong(String.valueOf(map.get("noId")));
             queryWrapper.eq(InCardBase::getNoId, noId);
 
             if (null != map.get("cCategory") && StringUtil.isNotBlank(map.get("cCategory"))) {
-                Integer type = Integer.valueOf(String.valueOf(map.get("cCategory")));
+                int type = Integer.parseInt(String.valueOf(map.get("cCategory")));
                 switch (type) {
                     case 0: //投票
                         queryWrapper.eq(InCardBase::getcCategory, 2);
@@ -128,7 +151,7 @@ public class InNodeServiceImpl extends ServiceImpl<InNodeDao, InNode> implements
                 }
             }
             if (null != map.get("type") && StringUtil.isNotBlank(map.get("type"))) {
-                Integer type = Integer.valueOf(String.valueOf(map.get("type")));
+                int type = Integer.parseInt(String.valueOf(map.get("type")));
                 switch (type) {
                     case 0: //最新
                         queryWrapper.orderByDesc(InCardBase::getcCreateTime);
@@ -152,7 +175,7 @@ public class InNodeServiceImpl extends ServiceImpl<InNodeDao, InNode> implements
     public PageUtils star(Map<String, Object> map) {
         LambdaQueryWrapper<InUser> queryWrapper = new LambdaQueryWrapper<>();
         if (null != map.get("type") && StringUtil.isNotBlank(map.get("type"))) {
-            Integer type = Integer.valueOf(String.valueOf(map.get("type")));
+            int type = Integer.parseInt(String.valueOf(map.get("type")));
             switch (type) {
                 case 0: //最新
                     queryWrapper.orderByDesc(InUser::getuFans);

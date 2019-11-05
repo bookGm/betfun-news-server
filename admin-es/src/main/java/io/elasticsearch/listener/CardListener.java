@@ -1,5 +1,7 @@
 package io.elasticsearch.listener;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import io.elasticsearch.entity.EsCardEntity;
 import io.elasticsearch.service.EsCardService;
 import io.mq.utils.Constants;
@@ -24,8 +26,8 @@ public class CardListener {
             exchange = @Exchange(name = Constants.cardExchange),
             key = Constants.card_Save_RouteKey
     ))
-    public void created(EsCardEntity cardEntity) {
-        cardService.saveCard(cardEntity);
+    public void created(JSONObject obj) {
+        cardService.saveCard(JSON.toJavaObject(obj, EsCardEntity.class));
     }
 
 
@@ -50,7 +52,7 @@ public class CardListener {
             exchange = @Exchange(name = Constants.cardExchange),
             key = Constants.card_Update_RouteKey
     ))
-    public void update(EsCardEntity cardEntity) {
-        cardService.updatedCard(cardEntity);
+    public void update(JSONObject obj) {
+        cardService.updatedCard(JSON.toJavaObject(obj, EsCardEntity.class));
     }
 }

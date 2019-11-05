@@ -32,6 +32,7 @@ public class InArticle implements Serializable {
      * 文章id
      */
     @TableId(type = IdType.INPUT)
+    @ApiModelProperty(hidden = true)
     private Long aId;
     /**
      * 用户id

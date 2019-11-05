@@ -37,7 +37,7 @@ public class InActivity implements Serializable {
     @ApiModelProperty(value = "活动票种信息集合", name = "ticketList", dataType = "List", required = false)
     @TableField(exist = false)
     private List<InActivityTicket> ticketList;
-    @ApiModelProperty(value = "动态表单数据集合", name = "datasList", dataType = "List", required = false)
+    @ApiModelProperty(value = "动态表单数据集合", hidden = true, name = "datasList", dataType = "List", required = false)
     @TableField(exist = false)
     private List<InActivityDatas> datasList;
     /**

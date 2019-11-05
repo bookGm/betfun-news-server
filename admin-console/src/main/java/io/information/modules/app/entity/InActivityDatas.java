@@ -27,6 +27,7 @@ public class InActivityDatas implements Serializable {
 	 * 数据id
 	 */
 	@TableId(type = IdType.INPUT)
+	@ApiModelProperty(hidden = true)
 	private Long dId;
 	/**
 	 * 活动id

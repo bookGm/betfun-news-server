@@ -47,11 +47,12 @@ public class InActivityController {
      * 添加
      */
     @Login
-    @ApiOperation(value = "新增咨讯活动", httpMethod = "POST")
     @PostMapping("/save")
-    public R save(@RequestParam InActivity activity, @ApiIgnore @LoginUser InUser user) {
+    @ApiOperation(value = "新增咨讯活动", httpMethod = "POST")
+    public R save(@RequestBody InActivity activity, @ApiIgnore @LoginUser InUser user) {
         activity.setActCreateTime(new Date());
         activity.setuId(user.getuId());
+        activity.setActStatus(1);
         activityService.saveActivity(activity);
         return R.ok();
     }

@@ -28,7 +28,7 @@ public class InCardBase implements Serializable {
      * 帖子id
      */
     @TableId(type = IdType.INPUT)
-//    @ApiModelProperty(hidden = true)
+    @ApiModelProperty(hidden = true)
     private Long cId;
 
     /**

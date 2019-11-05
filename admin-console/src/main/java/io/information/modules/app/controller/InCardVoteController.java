@@ -7,7 +7,7 @@ import io.information.common.utils.R;
 import io.information.modules.app.annotation.Login;
 import io.information.modules.app.annotation.LoginUser;
 import io.information.modules.app.entity.InCardBase;
-import io.information.modules.app.entity.InCardVote;
+import io.information.modules.app.vo.InCardVote;
 import io.information.modules.app.entity.InUser;
 import io.information.modules.app.service.IInCardBaseService;
 import io.information.modules.app.service.IInCardVoteService;

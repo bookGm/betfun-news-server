@@ -3,8 +3,6 @@ package io.information.modules.app.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import io.information.common.exception.ExceptionEnum;
-import io.information.common.exception.IMException;
 import io.information.common.utils.RedisKeys;
 import io.information.modules.app.dao.InDicDao;
 import io.information.modules.app.entity.InDic;
@@ -29,58 +27,30 @@ import java.util.Map;
 public class InDicServiceImpl extends ServiceImpl<InDicDao, InDic> implements IInDicService {
 
     @Override
-    public void deleteDic(Long[] dIds) {
-        //判断是否为父字典
-        for (Long dId : dIds) {
-            InDic dic = this.getById(dId);
-            List<InDic> dics = this.findPSDic(dic);
-            if(dics != null && !dics.isEmpty()){
-                throw new IMException(ExceptionEnum.NODE_PARENT_PATH);
-            }else {
-                //删除
-                this.removeByIds(dics);
-            }
-        }
-    }
-
-    @Override
     public List<InDic> queryDidAscList() {
-        QueryWrapper<InDic> queryWrapper = new QueryWrapper<>();
-        queryWrapper.lambda().orderByAsc(InDic::getdId);
+        LambdaQueryWrapper<InDic> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(InDic::getdDisable, 0).orderByAsc(InDic::getdId);
         return this.list(queryWrapper);
     }
 
     @Override
-    @Cacheable(value= RedisKeys.CONSTANT ,key = "#key")
-    public Map<String,List<InDic>> getListAll(String key) {
+    @Cacheable(value = RedisKeys.CONSTANT, key = "#key")
+    public Map<String, List<InDic>> getListAll(String key) {
         HashMap<String, List<InDic>> map = new HashMap<>();
         QueryWrapper<InDic> queryWrapper = new QueryWrapper<>();
+        queryWrapper.lambda().eq(InDic::getdDisable, 0);
         List<InDic> dicts = this.list(queryWrapper);
-        map.put("dict",dicts);
+        map.put("dict", dicts);
         return map;
     }
 
-    @Override
-    public void updateDic(InDic dic) {
-        //判断是否为父字典
-        List<InDic> dics = this.findPSDic(dic);
-        if(dics != null && !dics.isEmpty()){
-            //修改子节点中的父节点
-            dics.forEach(dicSon->{
-                dicSon.setdPcode(dic.getdCode());
-                this.updateById(dicSon);
-            });
-        }
-        //更新
-        this.updateById(dic);
-    }
 
     @Override
     public List<InDic> queryDicById(Long dicId) {
         List<InDic> dicList = new ArrayList<>();
         InDic dic = this.getById(dicId);
         List<InDic> dics = this.findPSDic(dic);
-        if(dics!=null&&!dics.isEmpty()){
+        if (dics != null && !dics.isEmpty()) {
             dicList.addAll(dics);
         }
         dicList.add(dic);
@@ -89,9 +59,9 @@ public class InDicServiceImpl extends ServiceImpl<InDicDao, InDic> implements II
 
 
     //查询节点和其下子节点
-    private List<InDic> findPSDic(InDic dic){
+    private List<InDic> findPSDic(InDic dic) {
         LambdaQueryWrapper<InDic> queryWrapper = new LambdaQueryWrapper<InDic>();
-        queryWrapper.eq(InDic::getdPcode,dic.getdCode());
+        queryWrapper.eq(InDic::getdPcode, dic.getdCode());
         return this.list(queryWrapper);
     }
 

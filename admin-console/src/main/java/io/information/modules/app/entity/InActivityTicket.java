@@ -25,6 +25,7 @@ public class InActivityTicket implements Serializable {
      * 票id
      */
     @TableId(type = IdType.INPUT)
+    @ApiModelProperty(hidden = true)
     private Long tId;
     /**
      * 活动id

@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.guansuo.common.StringUtil;
+import io.information.common.utils.IdGenerator;
 import io.information.common.utils.PageUtils;
 import io.information.common.utils.Query;
 import io.information.modules.app.dao.InActivityDao;
@@ -48,6 +49,7 @@ public class InActivityServiceImpl extends ServiceImpl<InActivityDao, InActivity
         if (null != activity.getFieldsList() && !activity.getFieldsList().isEmpty()) {
             List<InActivityFields> fieldsList = activity.getFieldsList();
             for (InActivityFields fields : fieldsList) {
+                fields.setfId(IdGenerator.getId());
                 fields.setActId(activity.getActId());
                 fieldsService.save(fields);
             }
@@ -55,6 +57,7 @@ public class InActivityServiceImpl extends ServiceImpl<InActivityDao, InActivity
         if (null != activity.getTicketList() && !activity.getTicketList().isEmpty()) {
             List<InActivityTicket> ticketList = activity.getTicketList();
             for (InActivityTicket ticket : ticketList) {
+                ticket.settId(IdGenerator.getId());
                 ticket.setActId(activity.getActId());
                 ticketService.save(ticket);
             }

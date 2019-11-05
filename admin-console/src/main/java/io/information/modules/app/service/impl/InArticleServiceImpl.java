@@ -28,6 +28,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -114,6 +115,8 @@ public class InArticleServiceImpl extends ServiceImpl<InArticleDao, InArticle> i
         if (NewsEnum.点赞_活动.getCode().equals(type)) {
             this.inActivityDao.addALike(id);
         }
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        format.format(new Date());
         return new Date();
     }
 

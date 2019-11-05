@@ -8,9 +8,8 @@ import io.information.common.utils.PageUtils;
 import io.information.common.utils.Query;
 import io.information.common.utils.RedisKeys;
 import io.information.modules.app.dao.InCardVoteDao;
-import io.information.modules.app.entity.InCardVote;
+import io.information.modules.app.vo.InCardVote;
 import io.information.modules.app.service.IInCardVoteService;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

@@ -1,5 +1,6 @@
 package io.information.modules.app.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.guansuo.common.StringUtil;
@@ -11,6 +12,7 @@ import io.information.modules.app.service.IInCardArgueService;
 import io.information.modules.app.service.IInCardBaseService;
 import io.information.modules.app.service.IInCardService;
 import io.information.modules.app.service.IInCardVoteService;
+import io.information.modules.app.vo.InCardVote;
 import io.mq.utils.Constants;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,30 +35,30 @@ public class InCardServiceImpl implements IInCardService {
 
     @Override
     public void issueCard(InCard card, InUser user) {
-        long cId = IdGenerator.getId();
-        InCardArgue argue = card.getArgue();
+        Long cId = IdGenerator.getId();
         InCardBase base = card.getBase();
-        InCardVote vote = card.getVote();
-        base.setcId(cId);
-        if (null != base.getcTitle()) {
-            if (null != argue.getCaRside() && StringUtil.isNotBlank(argue.getCaRside())
-                    && null != argue.getCaFside() && StringUtil.isNotBlank(argue.getCaFside())) {
-                argue.setcId(cId);
-                argueService.save(argue);
-                rabbitTemplate.convertAndSend(Constants.cardExchange,
-                        Constants.card_Save_RouteKey, argue);
-            }
-            if (null != vote.getCvInfo() && StringUtil.isNotBlank(vote.getCvInfo())) {
-                vote.setcId(cId);
-                voteService.save(vote);
-                rabbitTemplate.convertAndSend(Constants.cardExchange,
-                        Constants.card_Save_RouteKey, vote);
-            }
-            base.setcCreateTime(new Date());
-            baseService.save(base);
+        if (null != card.getArgue() && StringUtil.isNotBlank(card.getArgue().getCaRside())
+                && null != card.getArgue().getCaFside() && StringUtil.isNotBlank(card.getArgue().getCaFside())) {
+            InCardArgue argue = card.getArgue();
+            argue.setcId(cId);
+            argueService.save(argue);
             rabbitTemplate.convertAndSend(Constants.cardExchange,
-                    Constants.card_Save_RouteKey, base);
+                    Constants.card_Save_RouteKey, JSON.toJSON(argue));
         }
+        if (null != card.getVote() && StringUtil.isNotBlank(card.getVote().getCvInfo())) {
+            InCardVote vote = card.getVote();
+            vote.setcId(cId);
+            voteService.save(vote);
+            rabbitTemplate.convertAndSend(Constants.cardExchange,
+                    Constants.card_Save_RouteKey, JSON.toJSON(vote));
+        }
+        base.setcId(cId);
+        base.setuId(user.getuId());
+        base.setcCreateTime(new Date());
+        baseService.save(base);
+        rabbitTemplate.convertAndSend(Constants.cardExchange,
+                Constants.card_Save_RouteKey, JSON.toJSON(base));
+
     }
 
     @Override
@@ -117,10 +119,10 @@ public class InCardServiceImpl implements IInCardService {
     public PageUtils queryPage(Map<String, Object> map) {
         LambdaQueryWrapper<InCardBase> queryWrapper = new LambdaQueryWrapper<>();
         if (null != map.get("uId")) {
-            queryWrapper.eq(InCardBase::getuId, Long.valueOf(String.valueOf(map.get("type"))));
+            queryWrapper.eq(InCardBase::getuId, Long.parseLong(String.valueOf(map.get("uId"))));
         }
         if (null != map.get("type")) {
-            queryWrapper.eq(InCardBase::getcCategory, Integer.valueOf(String.valueOf(map.get("type"))));
+            queryWrapper.eq(InCardBase::getcCategory, Integer.parseInt(String.valueOf(map.get("type"))));
         }
         IPage<InCardBase> page = baseService.page(
                 new Query<InCardBase>().getPage(map),

@@ -44,7 +44,7 @@ public class InDicController {
 
 
     /**
-     * 所有菜单列表
+     * 所有字典节点
      */
     @GetMapping("/list")
     @ApiOperation(value = "获取所有字典节点信息", httpMethod = "GET", notes = "不需要任何参数")

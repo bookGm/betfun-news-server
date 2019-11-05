@@ -16,11 +16,7 @@ import java.util.Map;
  */
 public interface IInDicService extends IService<InDic> {
 
-    void deleteDic(Long[] dIds);
-
     List<InDic> queryDidAscList();
-
-    void updateDic(InDic dic);
 
     Map<String, List<InDic>> getListAll(String key);
 

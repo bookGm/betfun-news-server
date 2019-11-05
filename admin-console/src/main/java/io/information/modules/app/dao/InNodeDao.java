@@ -5,11 +5,12 @@ import io.information.modules.app.entity.InNode;
 import org.apache.ibatis.annotations.Mapper;
 
 /**
- * 
- * 
+ * <p>
+ * 帖子节点表  接口
+ * </p>
+ *
  * @author zxs
- * @email zhangxiaos@163.com
- * @date 2019-11-04 09:11:01
+ * @since 2019-11-04
  */
 @Mapper
 public interface InNodeDao extends BaseMapper<InNode> {

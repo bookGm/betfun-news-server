@@ -1,6 +1,8 @@
 package io.information.modules.app.entity;
 
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.EqualsAndHashCode;
@@ -12,8 +14,7 @@ import java.util.Date;
 /**
  * 评论回复表
  */
-@EqualsAndHashCode(callSuper = false)
-@Accessors(chain = true)
+@TableName("in_common_reply")
 @Api(value = "评论回复表", description = "评论回复表信息")
 public class InCommonReply implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -21,7 +22,7 @@ public class InCommonReply implements Serializable {
     /**
      * 评论或回复id
      */
-    @TableId
+    @TableId(type = IdType.INPUT)
     @ApiModelProperty(hidden = true)
     private Long crId;
     /**

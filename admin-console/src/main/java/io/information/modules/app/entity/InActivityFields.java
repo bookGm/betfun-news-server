@@ -28,6 +28,7 @@ public class InActivityFields implements Serializable {
 	 * 属性id
 	 */
 	@TableId(type = IdType.INPUT)
+	@ApiModelProperty(hidden = true)
 	private Long fId;
 	/**
 	 * 活动id

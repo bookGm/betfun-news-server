@@ -81,7 +81,7 @@ public class InCommonReplyController {
             @ApiImplicitParam(value = "每页显示条数", name = "pageSize", required = true),
             @ApiImplicitParam(value = "当前页数", name = "currPage", required = true),
             @ApiImplicitParam(value = "目标类型", name = "tType", required = true),
-            @ApiImplicitParam(value = "评论ID", name = "id", required = true)
+            @ApiImplicitParam(value = "页面ID", name = "tId", required = true)
     })
     public R discuss(@RequestParam Map<String, Object> map) {
         if(null==map||!map.containsKey("tId")||!map.containsKey("tType")){

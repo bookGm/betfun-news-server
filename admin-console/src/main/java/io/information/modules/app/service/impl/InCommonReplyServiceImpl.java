@@ -21,11 +21,11 @@ public class InCommonReplyServiceImpl extends ServiceImpl<InCommonReplyDao, InCo
     @Override
     public PageUtils discuss(Map<String, Object> map) {
         LambdaQueryWrapper<InCommonReply> queryWrapper = new LambdaQueryWrapper<>();
-        if (null != map.get("id") && StringUtil.isNotBlank(map.get("id"))) {
-            int tId = (int) map.get("id");
+        if (null != map.get("tId") && StringUtil.isNotBlank(map.get("tId"))) {
+            Long tId = Long.parseLong(String.valueOf(map.get("tId")));
             queryWrapper.eq(InCommonReply::gettId, tId);
             if (null != map.get("tType") && StringUtil.isNotBlank(map.get("tType"))) {
-                int tType = (int) map.get("tType");
+                int tType = Integer.parseInt(String.valueOf(map.get("tType")));
                 queryWrapper.eq(InCommonReply::gettType, tType);
             }
             IPage<InCommonReply> page = this.page(
@@ -41,7 +41,7 @@ public class InCommonReplyServiceImpl extends ServiceImpl<InCommonReplyDao, InCo
     public PageUtils revert(Map<String, Object> map) {
         LambdaQueryWrapper<InCommonReply> queryWrapper = new LambdaQueryWrapper<>();
         if (null != map.get("id") && StringUtil.isNotBlank(map.get("id"))) {
-            int id = (int) map.get("id");
+            int id = Integer.parseInt(String.valueOf(map.get("id")));
             queryWrapper.eq(InCommonReply::getToCrId, id);
             IPage<InCommonReply> page = this.page(
                     new Query<InCommonReply>().getPage(map),
@@ -55,7 +55,7 @@ public class InCommonReplyServiceImpl extends ServiceImpl<InCommonReplyDao, InCo
     @Override
     public PageUtils userMsg(Map<String, Object> params) {
         if (null != params.get("uId") && StringUtil.isNotBlank(params.get("uId"))) {
-            Long uId = (Long) params.get("uId");
+            Long uId = Long.parseLong(String.valueOf(params.get("uId")));
             LambdaQueryWrapper<InCommonReply> queryWrapper = new LambdaQueryWrapper<>();
             queryWrapper.eq(InCommonReply::gettId, uId).or().eq(InCommonReply::getToCrId, uId);
             IPage<InCommonReply> page = this.page(
