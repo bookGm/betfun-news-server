@@ -2,16 +2,15 @@ package io.information.modules.app.controller;
 
 import io.information.common.utils.PageUtils;
 import io.information.common.utils.R;
+import io.information.common.utils.ResultUtil;
 import io.information.modules.app.annotation.Login;
 import io.information.modules.app.annotation.LoginUser;
+import io.information.modules.app.entity.InCard;
 import io.information.modules.app.entity.InNode;
 import io.information.modules.app.entity.InUser;
 import io.information.modules.app.service.IInCardBaseService;
 import io.information.modules.app.service.IInNodeService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
@@ -30,12 +29,10 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("app/node")
-@Api(value = "/app/article", tags = "APP社区接口")
+@Api(value = "/app/node", tags = "APP社区接口")
 public class InNodeController {
     @Autowired
     private IInNodeService nodeService;
-    @Autowired
-    private IInCardBaseService baseService;
 
     /**
      * 查询
@@ -54,7 +51,7 @@ public class InNodeController {
      * 信息
      */
     @GetMapping("/info/{noId}")
-    @ApiOperation(value = "查询节点信息", httpMethod = "GET", notes = "节点ID")
+    @ApiOperation(value = "查询节点信息", httpMethod = "GET", notes = "节点ID", response = InNode.class)
     public R info(@PathVariable("noId") Long noId) {
         InNode node = nodeService.getById(noId);
         return R.ok().put("node", node);
@@ -79,11 +76,12 @@ public class InNodeController {
      * 节点社区列表
      */
     @GetMapping("/nodeList")
-    @ApiOperation(value = "节点社区列表", httpMethod = "GET", notes = "分页数据")
+    @ApiOperation(value = "节点社区列表", httpMethod = "GET", notes = "分页数据", response = InNode.class)
     @ApiImplicitParams({
             @ApiImplicitParam(value = "每页显示条数", name = "pageSize", required = true),
             @ApiImplicitParam(value = "当前页数", name = "currPage", required = true),
     })
+    @ApiResponse(code = 200,message = "list:{数字：{节点社区数据}}  数字：节点类型  2：项目 3：社区 4：平台 5：资本 ")
     public R nodeList(@RequestParam Map<String, Object> map) {
         Map<Long, List<InNode>> list = nodeService.query(map);
         return R.ok().put("list", list);
@@ -94,16 +92,16 @@ public class InNodeController {
      * 内部帖子列表
      */
     @GetMapping("/cardList")
-    @ApiOperation(value = "节点社区内部帖子列表", httpMethod = "GET", notes = "分页数据，状态码")
+    @ApiOperation(value = "节点社区内部帖子列表", httpMethod = "GET", notes = "分页数据，状态码", response = InCard.class)
     @ApiImplicitParams({
             @ApiImplicitParam(value = "每页显示条数", name = "pageSize", required = true),
             @ApiImplicitParam(value = "当前页数", name = "currPage", required = true),
             @ApiImplicitParam(value = "帖子类型（0：投票 1：辩论）", name = "cCategory", required = false),
             @ApiImplicitParam(value = "拍讯方式（0：最新 1：最热）", name = "type", required = false)
     })
-    public R cardList(@RequestParam Map<String, Object> map) {
+    public ResultUtil<PageUtils<InCard>> cardList(@RequestParam Map<String, Object> map) {
         PageUtils page = nodeService.cardList(map);
-        return R.ok().put("page", page);
+        return ResultUtil.ok(page);
     }
 
 
@@ -111,11 +109,12 @@ public class InNodeController {
      * 人物社区
      */
     @GetMapping("/star")
-    @ApiOperation(value = "人物社区列表", httpMethod = "GET", notes = "分页数据")
+    @ApiOperation(value = "人物社区列表", httpMethod = "GET", notes = "分页数据", response = InUser.class)
     @ApiImplicitParams({
             @ApiImplicitParam(value = "每页显示条数", name = "pageSize", required = true),
             @ApiImplicitParam(value = "当前页数", name = "currPage", required = true),
     })
+    @ApiResponse(code = 200,message = "list:{数字:{用户数据}  数字：用户类型  0：普通用户 1：红人榜 2：黑榜 ")
     public R star(@RequestParam Map<String, Object> map) {
         Map<Integer, List<InUser>> list = nodeService.star(map);
         return R.ok().put("list", list);
@@ -130,7 +129,11 @@ public class InNodeController {
             @ApiImplicitParam(value = "每页显示条数", name = "pageSize", required = true),
             @ApiImplicitParam(value = "当前页数", name = "currPage", required = true),
     })
-    @ApiOperation(value = "专栏社区列表", httpMethod = "GET")
+    @ApiOperation(value = "专栏社区列表", httpMethod = "GET", response = InUser.class)
+    @ApiResponse(code = 200,message = "aCount：累计文章数  " +
+            "rCount：累计阅读量  fCount：累计粉丝数  user：用户信息 " +
+            "pageSize：每页显示条数  currPage：当前页数" +
+            "totalCount：总条数  totalPage：总页数")
     public R special(@RequestParam Map<String, Object> map) {
         Map<String, Object> userMap = nodeService.special(map);
         return R.ok().put("userMap", userMap);

@@ -9,7 +9,10 @@ import io.elasticsearch.utils.PageUtils;
 import io.elasticsearch.utils.SearchRequest;
 import io.mq.utils.Constants;
 import io.mq.utils.RabbitMQUtils;
-import org.elasticsearch.index.query.MultiMatchQueryBuilder;
+import org.elasticsearch.index.query.Operator;
+import org.elasticsearch.index.query.QueryBuilder;
+import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
@@ -19,6 +22,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
 import org.springframework.data.elasticsearch.core.aggregation.AggregatedPage;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
+import org.springframework.data.elasticsearch.core.query.SearchQuery;
 import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.stereotype.Service;
 
@@ -66,15 +70,15 @@ public class EsArticleServiceImpl implements EsArticleService {
             String key = request.getKey();
             Integer size = request.getPageSize();
             Integer page = request.getCurrPage();
-            NativeSearchQueryBuilder queryBuilder = new NativeSearchQueryBuilder();
             //多字段匹配[关键字，标题，内容，摘要]
-            queryBuilder.withQuery(
-                    multiMatchQuery(key, "aKeyword", "aTitle", "aContent", "aBrief")
-                            .type(MultiMatchQueryBuilder.Type.BEST_FIELDS)); //匹配度评分优先
-            //分页
-            queryBuilder.withPageable(PageRequest.of(page, size));
+            SearchQuery searchQuery = new NativeSearchQueryBuilder()
+                    .withQuery(multiMatchQuery(key, "aKeyword", "aTitle", "aContent", "aBrief")
+                            .operator(Operator.OR)
+                            /*.minimumShouldMatch("30%")*/)
+                    .withPageable(PageRequest.of(page, size))
+                    .build();
             AggregatedPage<EsArticleEntity> esArticleEntities =
-                    elasticsearchTemplate.queryForPage(queryBuilder.build(), EsArticleEntity.class);
+                    elasticsearchTemplate.queryForPage(searchQuery, EsArticleEntity.class);
             if (null != esArticleEntities && !esArticleEntities.getContent().isEmpty()) {
                 List<EsArticleEntity> list = esArticleEntities.getContent();
                 long totalCount = esArticleEntities.getTotalElements();

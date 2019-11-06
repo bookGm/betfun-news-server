@@ -50,6 +50,7 @@ public class InActivityController {
     @PostMapping("/save")
     @ApiOperation(value = "新增咨讯活动", httpMethod = "POST")
     public R save(@RequestBody InActivity activity, @ApiIgnore @LoginUser InUser user) {
+        activity.setActId(IdGenerator.getId());
         activity.setActCreateTime(new Date());
         activity.setuId(user.getuId());
         activity.setActStatus(1);
