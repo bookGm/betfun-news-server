@@ -39,36 +39,6 @@ public class Constants {
 
 
     /**
-     * 帖子交换机
-     */
-    public static final String cardExchange="exchangeCard";
-    /**
-     * 帖子新增队列
-     */
-    public static final String card_Save_Queue="news_card_save";
-    /**
-     * 帖子删除队列
-     */
-    public static final String card_Delete_Queue="news_card_delete";
-    /**
-     * 帖子修改队列
-     */
-    public static final String card_Update_Queue="news_card_update";
-    /**
-     * 帖子新增
-     */
-    public static final String card_Save_RouteKey="save_news_card";
-    /**
-     * 帖子删除
-     */
-    public static final String card_Delete_RouteKey="delete_news_card";
-    /**
-     * 帖子修改
-     */
-    public static final String card_Update_RouteKey="update_news_card";
-
-
-    /**
      * 用户交换机
      */
     public static final String userExchange="exchangeUser";

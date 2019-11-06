@@ -3,7 +3,6 @@ package io.information.modules.app.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.guansuo.common.StringUtil;
-import io.elasticsearch.entity.EsCardEntity;
 import io.information.common.utils.BeanHelper;
 import io.information.common.utils.IdGenerator;
 import io.information.common.utils.PageUtils;
@@ -13,7 +12,6 @@ import io.information.modules.app.service.IInCardArgueService;
 import io.information.modules.app.service.IInCardBaseService;
 import io.information.modules.app.service.IInCardService;
 import io.information.modules.app.service.IInCardVoteService;
-import io.mq.utils.Constants;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -37,34 +35,21 @@ public class InCardServiceImpl implements IInCardService {
     public void issueCard(InCard card, InUser user) {
         Long cId = IdGenerator.getId();
         InCardBase base = card.getBase();
-        EsCardEntity cardEntity = BeanHelper.copyProperties(base, EsCardEntity.class);
         if (null != card.getArgue() && StringUtil.isNotBlank(card.getArgue().getCaRside())
                 && null != card.getArgue().getCaFside() && StringUtil.isNotBlank(card.getArgue().getCaFside())) {
             InCardArgue argue = card.getArgue();
             argue.setcId(cId);
             argueService.save(argue);
-            if (null != cardEntity) {
-                cardEntity.setCaFside(argue.getCaFside());
-                cardEntity.setCaRside(argue.getCaRside());
-                cardEntity.setCaCloseTime(argue.getCaCloseTime());
-            }
         }
         if (null != card.getVote() && StringUtil.isNotBlank(card.getVote().getCvInfo())) {
             InCardVote vote = card.getVote();
             vote.setcId(cId);
             voteService.save(vote);
-            if (null != cardEntity) {
-                cardEntity.setCvCloseTime(vote.getCvCloseTime());
-            }
         }
         base.setcId(cId);
         base.setuId(user.getuId());
         base.setcCreateTime(new Date());
         baseService.save(base);
-        if (null != cardEntity) {
-            rabbitTemplate.convertAndSend(Constants.cardExchange,
-                    Constants.card_Save_RouteKey, cardEntity);
-        }
     }
 
     @Override
@@ -116,8 +101,6 @@ public class InCardServiceImpl implements IInCardService {
                 //基础帖子
                 baseService.removeById(cId);
             }
-            rabbitTemplate.convertAndSend(Constants.cardExchange,
-                    Constants.card_Delete_RouteKey, cIds);
         }
     }
 
@@ -156,8 +139,6 @@ public class InCardServiceImpl implements IInCardService {
                     break;
             }
             baseService.updateById(card.getBase());
-            rabbitTemplate.convertAndSend(Constants.cardExchange,
-                    Constants.card_Update_RouteKey, card);
         }
     }
 }

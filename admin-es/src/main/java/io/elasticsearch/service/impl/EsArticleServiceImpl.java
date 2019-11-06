@@ -1,5 +1,6 @@
 package io.elasticsearch.service.impl;
 
+import com.guansuo.common.StringUtil;
 import com.rabbitmq.client.Channel;
 import io.elasticsearch.dao.EsArticleDao;
 import io.elasticsearch.entity.EsArticleEntity;
@@ -8,29 +9,22 @@ import io.elasticsearch.utils.PageUtils;
 import io.elasticsearch.utils.SearchRequest;
 import io.mq.utils.Constants;
 import io.mq.utils.RabbitMQUtils;
-import org.elasticsearch.action.search.SearchResponse;
-import org.elasticsearch.index.query.Operator;
-import org.elasticsearch.index.query.QueryBuilders;
-import org.elasticsearch.search.SearchHit;
-import org.elasticsearch.search.SearchHits;
+import org.elasticsearch.index.query.MultiMatchQueryBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.amqp.support.AmqpHeaders;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
-import org.springframework.data.elasticsearch.core.SearchResultMapper;
 import org.springframework.data.elasticsearch.core.aggregation.AggregatedPage;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
 import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.stereotype.Service;
 
-import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.List;
+
+import static org.elasticsearch.index.query.QueryBuilders.multiMatchQuery;
 
 @Service
 public class EsArticleServiceImpl implements EsArticleService {
@@ -68,52 +62,26 @@ public class EsArticleServiceImpl implements EsArticleService {
 
     @Override
     public PageUtils searchInfo(SearchRequest request) {
-        String key = request.getKey();
-        if (null != key && !key.isEmpty()) {
+        if (null != request.getKey() && StringUtil.isNotBlank(request.getKey())) {
+            String key = request.getKey();
+            Integer size = request.getPageSize();
+            Integer page = request.getCurrPage();
             NativeSearchQueryBuilder queryBuilder = new NativeSearchQueryBuilder();
             //多字段匹配[关键字，标题，内容，摘要]
-            queryBuilder.withQuery(QueryBuilders
-                    .multiMatchQuery(key, "aKeyword", "aTitle", "aContent", "aBrief")
-                    .operator(Operator.OR)
-                    .minimumShouldMatch("80%"));
-            Page<EsArticleEntity> search = elasticsearchTemplate.queryForPage(queryBuilder.build(), EsArticleEntity.class, new SearchResultMapper() {
-                @Override
-                public <T> AggregatedPage<T> mapResults(SearchResponse response, Class<T> aClass, Pageable pageable) {
-                    List<EsArticleEntity> articles = new ArrayList<>();
-                    SearchHits hits = response.getHits();
-                    for (SearchHit searchHit : hits) {
-                        if (hits.getHits().length <= 0) {
-                            return null;
-                        }
-                        EsArticleEntity article = new EsArticleEntity();
-                        String msg = searchHit.getHighlightFields().get(key).fragments()[0].toString();
-                        article.setaKeyword(String.valueOf(searchHit.getFields().get("aKeyword")));
-                        article.setaTitle(String.valueOf(searchHit.getFields().get("aTitle")));
-                        article.setaContent(String.valueOf(searchHit.getFields().get("aContent")));
-                        article.setaBrief(String.valueOf(searchHit.getFields().get("aBrief")));
-                        try {
-                            String name = parSetName(key);
-                            Class<? extends EsArticleEntity> articleClass = article.getClass();
-                            Method method = articleClass.getMethod(name, String.class);
-                            method.invoke(article, msg);
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                        articles.add(article);
-                    }
-                    if (articles.size() > 0) {
-                        return (AggregatedPage<T>) new PageImpl<T>((List<T>) articles);
-
-                    }
-                    return null;
-                }
-            });
-            List<EsArticleEntity> list = search.getContent();
-            long totalCount = search.getTotalElements();
-            Integer pageSize = request.getPageSize();
-            Integer currPage = request.getCurrPage();
-            //列表数据 总记录数 每页记录数 当前页数
-            return new PageUtils(list, totalCount, pageSize, currPage);
+            queryBuilder.withQuery(
+                    multiMatchQuery(key, "aKeyword", "aTitle", "aContent", "aBrief")
+                            .type(MultiMatchQueryBuilder.Type.BEST_FIELDS)); //匹配度评分优先
+            //分页
+            queryBuilder.withPageable(PageRequest.of(page, size));
+            AggregatedPage<EsArticleEntity> esArticleEntities =
+                    elasticsearchTemplate.queryForPage(queryBuilder.build(), EsArticleEntity.class);
+            if (null != esArticleEntities && !esArticleEntities.getContent().isEmpty()) {
+                List<EsArticleEntity> list = esArticleEntities.getContent();
+                long totalCount = esArticleEntities.getTotalElements();
+                //列表数据 总记录数 每页记录数 当前页数
+                return new PageUtils(list, totalCount, size, page);
+            }
+            return null;
         }
         return null;
     }

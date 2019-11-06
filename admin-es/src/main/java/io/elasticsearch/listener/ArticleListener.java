@@ -1,7 +1,5 @@
 package io.elasticsearch.listener;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
 import io.elasticsearch.entity.EsArticleEntity;
 import io.elasticsearch.service.EsArticleService;
 import io.mq.utils.Constants;
@@ -26,8 +24,8 @@ public class ArticleListener {
             exchange = @Exchange(name = Constants.articleExchange),
             key = Constants.article_Save_RouteKey
     ))
-    public void created(JSONObject obj){
-        articleService.saveArticle(JSON.toJavaObject(obj,EsArticleEntity.class));
+    public void created(EsArticleEntity esArticle) {
+        articleService.saveArticle(esArticle);
     }
 
 
@@ -39,7 +37,7 @@ public class ArticleListener {
             exchange = @Exchange(name = Constants.articleExchange),
             key = Constants.article_Delete_RouteKey
     ))
-    public void remove(Long[] aIds){
+    public void remove(Long[] aIds) {
         articleService.removeArticle(aIds);
     }
 
@@ -52,7 +50,7 @@ public class ArticleListener {
             exchange = @Exchange(name = Constants.articleExchange),
             key = Constants.article_Update_RouteKey
     ))
-    public void update(JSONObject obj){
-        articleService.updatedArticle(JSON.toJavaObject(obj,EsArticleEntity.class));
+    public void update(EsArticleEntity esArticle) {
+        articleService.updatedArticle(esArticle);
     }
 }

@@ -4,6 +4,7 @@ package io.information.modules.app.controller;
 import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.guansuo.newsenum.NewsEnum;
+import io.elasticsearch.entity.EsArticleEntity;
 import io.information.common.utils.*;
 import io.information.modules.app.annotation.Login;
 import io.information.modules.app.annotation.LoginUser;
@@ -63,8 +64,9 @@ public class InArticleController {
             article.setuId(user.getuId());
             article.setaCreateTime(new Date());
             articleService.save(article);
+            EsArticleEntity esArticle = BeanHelper.copyProperties(article, EsArticleEntity.class);
             rabbitTemplate.convertAndSend(Constants.articleExchange,
-                    Constants.article_Save_RouteKey, JSON.toJSON(article));
+                    Constants.article_Save_RouteKey, esArticle);
             return R.ok();
         }
         return R.error("此操作需要认证通过");

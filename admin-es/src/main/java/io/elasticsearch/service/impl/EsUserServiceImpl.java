@@ -88,7 +88,6 @@ public class EsUserServiceImpl implements EsUserService {
                     }
                     if (users.size() > 0) {
                         return (AggregatedPage<T>) new PageImpl<T>((List<T>) users);
-
                     }
                     return null;
                 }

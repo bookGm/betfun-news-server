@@ -1,21 +1,18 @@
 package io.elasticsearch.utils;
 
-import lombok.AllArgsConstructor;
-
-import java.util.List;
 import java.util.Map;
 
 /**
  * 搜索过滤条件及分页工具类
  */
-@AllArgsConstructor
+
 public class SearchRequest {
 
     //关键字
     private String key;
 
     //过滤条件
-    private Map<String,String> params;
+    private Map<String,String> filter;
 
     //当前页数
     private Integer currPage;
@@ -42,10 +39,10 @@ public class SearchRequest {
         this.key = key;
     }
     public Map<String, String> getParams() {
-        return params;
+        return filter;
     }
     public void setParams(Map<String, String> params) {
-        this.params = params;
+        this.filter = params;
     }
     public Integer getPageSize() {
         return pageSize;

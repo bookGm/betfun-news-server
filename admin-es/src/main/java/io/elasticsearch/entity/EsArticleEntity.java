@@ -22,7 +22,7 @@ public class EsArticleEntity implements Serializable {
     private Long uId;   //用户Id
 
     @Field(type = FieldType.Keyword)
-    private String uName;   //用户
+    private String uName;   //用户名称
 
     @Field(type = FieldType.Keyword)
     private String aTitle;  //文章标题
@@ -52,16 +52,21 @@ public class EsArticleEntity implements Serializable {
     private String aLink;   //文章链接
 
     @Field(type = FieldType.Date,format= DateFormat.custom,pattern = "yyyy-MM-dd HH:mm:ss")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date aCreateTime;// 创建时间
 
+    @TableField(exist = false)
     private Long aLike; //点赞数
 
+    @TableField(exist = false)
     private Integer aCollect; //收藏数
 
+    @TableField(exist = false)
     private Long aCritic; //评论数
 
+    @TableField(exist = false)
     private Long aReadNumber; //浏览量
+
     @TableField(exist = false)
     private String aSimpleTime; //简单时间
 
