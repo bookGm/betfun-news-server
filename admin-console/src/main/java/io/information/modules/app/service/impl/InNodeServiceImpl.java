@@ -79,8 +79,7 @@ public class InNodeServiceImpl extends ServiceImpl<InNodeDao, InNode> implements
                 node.setCardNumber(cardNumber);
             }
         }
-        Map<Long, List<InNode>> collect = nodes.stream().collect(Collectors.groupingBy(InNode::getNoType));
-        return collect;
+        return nodes.stream().collect(Collectors.groupingBy(InNode::getNoType));
     }
 
 
@@ -159,8 +158,7 @@ public class InNodeServiceImpl extends ServiceImpl<InNodeDao, InNode> implements
     public Map<Integer, List<InUser>> star(Map<String, Object> map) {
         //榜单用户需要通过认证
         List<InUser> list = userService.list();
-        Map<Integer, List<InUser>> collect = list.stream().collect(Collectors.groupingBy(InUser::getuPotential));
-        return collect;
+        return list.stream().collect(Collectors.groupingBy(InUser::getuPotential));
     }
 
 

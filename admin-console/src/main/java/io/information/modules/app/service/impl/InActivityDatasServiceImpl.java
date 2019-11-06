@@ -33,8 +33,7 @@ public class InActivityDatasServiceImpl extends ServiceImpl<InActivityDatasDao, 
     public List<InActivityDatas> queryByActId(Long actId) {
         LambdaQueryWrapper<InActivityDatas> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.in(InActivityDatas::getActId,actId);
-        List<InActivityDatas> datasList = this.list(queryWrapper);
-        return datasList;
+        return this.list(queryWrapper);
     }
 
     @Override

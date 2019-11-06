@@ -1,5 +1,6 @@
 package io.elasticsearch.service.impl;
 
+import com.guansuo.common.StringUtil;
 import io.elasticsearch.dao.EsCardDao;
 import io.elasticsearch.dao.EsUserDao;
 import io.elasticsearch.entity.EsCardEntity;
@@ -51,23 +52,23 @@ public class EsCardServiceImpl implements EsCardService {
     @Override
     //TODO  未完全实现
     //只需展示基本信息[标题、时间、用户头像、用户昵称等]
-    public PageUtils cardSearch(SearchRequest request) {
-        Integer pageSize = request.getPageSize();
-        Integer currPage = request.getCurrPage();
+    public PageUtils cardSearch(Map<String,Object> map) {
+        Integer pageSize = StringUtil.isBlank(map.get("pageSize")) ? 10 : Integer.parseInt(String.valueOf(map.get("pageSize")));
+        Integer currPage = StringUtil.isBlank(map.get("currPage")) ? 0 : Integer.parseInt(String.valueOf(map.get("currPage")));
         NativeSearchQueryBuilder queryBuilder = new NativeSearchQueryBuilder();
-        String key = request.getKey();
-        queryBuilder.withQuery(QueryBuilders
-                .multiMatchQuery(key, "cContent", "caFside", "caRside")
-                .operator(Operator.AND)
-                .minimumShouldMatch("75%"));
-        Map<String, String> params = request.getParams();
-        if (null != params || 0 < params.size()) {
-            for (String filter : params.keySet()) {
-                queryBuilder.withQuery(QueryBuilders.boolQuery()
-                        .filter(QueryBuilders.termQuery(filter, params.get(filter))));
-            }
+        if (null != map.get("key") && StringUtil.isNotBlank(map.get("key"))) {
+            String key = String.valueOf(map.get("key"));
+            queryBuilder.withQuery(QueryBuilders
+                    .multiMatchQuery(key, "cContent", "caFside", "caRside")
+                    .operator(Operator.AND)
+                    .minimumShouldMatch("75%"));
+            queryBuilder.withPageable(PageRequest.of(currPage, pageSize));
+            AggregatedPage<EsCardEntity> aggregatedPage = elasticsearchTemplate.queryForPage(queryBuilder.build(), EsCardEntity.class);
+            List<EsCardEntity> cardEntities = aggregatedPage.getContent();
+            long totalCount = aggregatedPage.getTotalElements();
+            return new PageUtils(cardEntities, totalCount, pageSize, currPage);
         }
-        return pageOK(queryBuilder, request, null);
+       return null;
     }
 
     @Override

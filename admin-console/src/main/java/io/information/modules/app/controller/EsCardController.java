@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Map;
+
 /**
  * es帖子的操作
  *
@@ -24,8 +26,8 @@ public class EsCardController {
      * 帖子关键字查询
      */
     @GetMapping("/search")
-    public PageUtils cardSearch(@RequestParam SearchRequest request) {
-        return cardService.cardSearch(request);
+    public PageUtils cardSearch(@RequestParam Map<String,Object> map) {
+        return cardService.cardSearch(map);
     }
 
     /**

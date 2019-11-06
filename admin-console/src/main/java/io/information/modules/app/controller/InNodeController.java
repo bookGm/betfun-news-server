@@ -89,9 +89,9 @@ public class InNodeController {
         return R.ok().put("list", list);
     }
 
+
     /**
-     * 节点社区内部帖子列表
-     * 根据节点ID和排序方式查询帖子
+     * 内部帖子列表
      */
     @GetMapping("/cardList")
     @ApiOperation(value = "节点社区内部帖子列表", httpMethod = "GET", notes = "分页数据，状态码")

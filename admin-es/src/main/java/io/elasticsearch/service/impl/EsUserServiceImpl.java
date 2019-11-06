@@ -1,10 +1,10 @@
 package io.elasticsearch.service.impl;
 
+import com.guansuo.common.StringUtil;
 import io.elasticsearch.dao.EsUserDao;
 import io.elasticsearch.entity.EsUserEntity;
 import io.elasticsearch.service.EsUserService;
 import io.elasticsearch.utils.PageUtils;
-import io.elasticsearch.utils.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.common.unit.Fuzziness;
 import org.elasticsearch.index.query.QueryBuilders;
@@ -24,6 +24,7 @@ import org.springframework.stereotype.Service;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class EsUserServiceImpl implements EsUserService {
@@ -52,49 +53,52 @@ public class EsUserServiceImpl implements EsUserService {
     }
 
     @Override
-    public PageUtils search(SearchRequest request) {
-        String key = request.getKey();
-        //根据昵称匹配用户
-        NativeSearchQueryBuilder queryBuilder = new NativeSearchQueryBuilder();
-        queryBuilder.withQuery(QueryBuilders
-                .fuzzyQuery("uNick", key).fuzziness(Fuzziness.AUTO))
-                .withHighlightFields(new HighlightBuilder.Field(key)).build();
-        Page<EsUserEntity> search = esTemplate.queryForPage(queryBuilder.build(), EsUserEntity.class, new SearchResultMapper() {
-            @Override
-            public <T> AggregatedPage<T> mapResults(SearchResponse response, Class<T> aClass, Pageable pageable) {
-                List<EsUserEntity> users = new ArrayList<>();
-                SearchHits hits = response.getHits();
-                for (SearchHit searchHit : hits) {
-                    if (hits.getHits().length <= 0) {
-                        return null;
+    public PageUtils search(Map<String, Object> map) {
+        Integer size = StringUtil.isBlank(map.get("pageSize")) ? 10 : Integer.parseInt(String.valueOf(map.get("pageSize")));
+        Integer page = StringUtil.isBlank(map.get("currPage")) ? 0 : Integer.parseInt(String.valueOf(map.get("currPage")));
+        if (null != map.get("key") && StringUtil.isNotBlank(map.get("key"))) {
+            String key = String.valueOf(map.get("key"));
+            //根据昵称匹配用户
+            NativeSearchQueryBuilder queryBuilder = new NativeSearchQueryBuilder();
+            queryBuilder.withQuery(QueryBuilders
+                    .fuzzyQuery("uNick", key).fuzziness(Fuzziness.AUTO))
+                    .withHighlightFields(new HighlightBuilder.Field(key)).build();
+            Page<EsUserEntity> search = esTemplate.queryForPage(queryBuilder.build(), EsUserEntity.class, new SearchResultMapper() {
+                @Override
+                public <T> AggregatedPage<T> mapResults(SearchResponse response, Class<T> aClass, Pageable pageable) {
+                    List<EsUserEntity> users = new ArrayList<>();
+                    SearchHits hits = response.getHits();
+                    for (SearchHit searchHit : hits) {
+                        if (hits.getHits().length <= 0) {
+                            return null;
+                        }
+                        EsUserEntity user = new EsUserEntity();
+                        String highLightMessage = searchHit.getHighlightFields().get(key).fragments()[0].toString();
+                        user.setuNick(String.valueOf(searchHit.getFields().get("content")));
+                        // 反射调用set方法将高亮内容设置进去
+                        try {
+                            String setMethodName = parSetName(key);
+                            Class<? extends EsUserEntity> userClass = user.getClass();
+                            Method setMethod = userClass.getMethod(setMethodName, String.class);
+                            setMethod.invoke(user, highLightMessage);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        users.add(user);
                     }
-                    EsUserEntity user = new EsUserEntity();
-                    String highLightMessage = searchHit.getHighlightFields().get(key).fragments()[0].toString();
-                    user.setuNick(String.valueOf(searchHit.getFields().get("content")));
-                    // 反射调用set方法将高亮内容设置进去
-                    try {
-                        String setMethodName = parSetName(key);
-                        Class<? extends EsUserEntity> userClass = user.getClass();
-                        Method setMethod = userClass.getMethod(setMethodName, String.class);
-                        setMethod.invoke(user, highLightMessage);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                    users.add(user);
-                }
-                if (users.size() > 0) {
-                    return (AggregatedPage<T>) new PageImpl<T>((List<T>) users);
+                    if (users.size() > 0) {
+                        return (AggregatedPage<T>) new PageImpl<T>((List<T>) users);
 
+                    }
+                    return null;
                 }
-                return null;
-            }
-        });
-        List<EsUserEntity> list = search.getContent();
-        long totalCount = search.getTotalElements();
-        Integer pageSize = request.getPageSize();
-        Integer currPage = request.getCurrPage();
-        //列表数据 总记录数 每页记录数 当前页数
-        return new PageUtils(list, totalCount, pageSize, currPage);
+            });
+            List<EsUserEntity> list = search.getContent();
+            long totalCount = search.getTotalElements();
+            //列表数据 总记录数 每页记录数 当前页数
+            return new PageUtils(list, totalCount, size, page);
+        }
+        return null;
     }
 
     /**

@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Map;
+
 @RestController
 @RequestMapping("/app/es/user")
 public class EsUserController {
@@ -19,7 +21,7 @@ public class EsUserController {
      * 搜索作者
      */
     @GetMapping("/search")
-    public PageUtils search(@RequestParam SearchRequest request){
-        return userService.search(request);
+    public PageUtils search(@RequestParam Map<String,Object> map){
+        return userService.search(map);
     }
 }

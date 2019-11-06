@@ -4,6 +4,8 @@ import io.elasticsearch.entity.EsCardEntity;
 import io.elasticsearch.utils.PageUtils;
 import io.elasticsearch.utils.SearchRequest;
 
+import java.util.Map;
+
 public interface EsCardService {
 
     void saveCard(EsCardEntity cardEntity);
@@ -12,7 +14,7 @@ public interface EsCardService {
 
     void updatedCard(EsCardEntity cardEntity);
 
-    PageUtils cardSearch(SearchRequest request);
+    PageUtils cardSearch(Map<String,Object> map);
 
     PageUtils statusSearch(SearchRequest request);
 
