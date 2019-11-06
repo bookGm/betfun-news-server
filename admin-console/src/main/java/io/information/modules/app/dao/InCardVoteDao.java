@@ -1,7 +1,7 @@
 package io.information.modules.app.dao;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import io.information.modules.app.vo.InCardVote;
+import io.information.modules.app.entity.InCardVote;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 

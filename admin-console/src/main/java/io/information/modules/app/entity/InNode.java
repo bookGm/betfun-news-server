@@ -1,11 +1,13 @@
 package io.information.modules.app.entity;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 
 import java.io.Serializable;
 import java.util.Date;
-import lombok.Data;
 
 /**
  * <p>
@@ -17,93 +19,109 @@ import lombok.Data;
  */
 
 @TableName("in_node")
+@ApiModel()
 public class InNode implements Serializable {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	/**
-	 * 节点表ID
-	 */
-	@TableId
-	private Long noId;
-	/**
-	 * 节点名称
-	 */
-	private String noName;
-	/**
-	 * 节点头像
-	 */
-	private String noPhoto;
-	/**
-	 * 节点简介
-	 */
-	private String noBrief;
-	/**
-	 * 节点属性(字典)
-	 */
-	private Long noType;
-	/**
-	 * 关注
-	 */
-	private Integer noFocus;
-	/**
-	 * 创建时间
-	 */
-	private Date noCreateTime;
+    /**
+     * 节点表ID
+     */
+    @TableId
+    private Long noId;
+    /**
+     * 节点名称
+     */
+    private String noName;
+    /**
+     * 节点头像
+     */
+    private String noPhoto;
+    /**
+     * 节点简介
+     */
+    private String noBrief;
+    /**
+     * 节点属性(字典)
+     */
+    private Long noType;
+    /**
+     * 关注
+     */
+    private Integer noFocus;
+    /**
+     * 创建时间
+     */
+    private Date noCreateTime;
+
+    /**
+     * 帖子总数
+     */
+    @ApiModelProperty(value = "帖子总数", name = "cardNumber", dataType = "Integer")
+    @TableField(exist = false)
+    private Integer cardNumber;
 
 
-	public Long getNoId() {
-		return noId;
-	}
+    public Integer getCardNumber() {
+        return cardNumber;
+    }
 
-	public void setNoId(Long noId) {
-		this.noId = noId;
-	}
+    public void setCardNumber(Integer cardNumber) {
+        this.cardNumber = cardNumber;
+    }
 
-	public String getNoName() {
-		return noName;
-	}
+    public Long getNoId() {
+        return noId;
+    }
 
-	public void setNoName(String noName) {
-		this.noName = noName;
-	}
+    public void setNoId(Long noId) {
+        this.noId = noId;
+    }
 
-	public String getNoPhoto() {
-		return noPhoto;
-	}
+    public String getNoName() {
+        return noName;
+    }
 
-	public void setNoPhoto(String noPhoto) {
-		this.noPhoto = noPhoto;
-	}
+    public void setNoName(String noName) {
+        this.noName = noName;
+    }
 
-	public String getNoBrief() {
-		return noBrief;
-	}
+    public String getNoPhoto() {
+        return noPhoto;
+    }
 
-	public void setNoBrief(String noBrief) {
-		this.noBrief = noBrief;
-	}
+    public void setNoPhoto(String noPhoto) {
+        this.noPhoto = noPhoto;
+    }
 
-	public Long getNoType() {
-		return noType;
-	}
+    public String getNoBrief() {
+        return noBrief;
+    }
 
-	public void setNoType(Long noType) {
-		this.noType = noType;
-	}
+    public void setNoBrief(String noBrief) {
+        this.noBrief = noBrief;
+    }
 
-	public Integer getNoFocus() {
-		return noFocus;
-	}
+    public Long getNoType() {
+        return noType;
+    }
 
-	public void setNoFocus(Integer noFocus) {
-		this.noFocus = noFocus;
-	}
+    public void setNoType(Long noType) {
+        this.noType = noType;
+    }
 
-	public Date getNoCreateTime() {
-		return noCreateTime;
-	}
+    public Integer getNoFocus() {
+        return noFocus;
+    }
 
-	public void setNoCreateTime(Date noCreateTime) {
-		this.noCreateTime = noCreateTime;
-	}
+    public void setNoFocus(Integer noFocus) {
+        this.noFocus = noFocus;
+    }
+
+    public Date getNoCreateTime() {
+        return noCreateTime;
+    }
+
+    public void setNoCreateTime(Date noCreateTime) {
+        this.noCreateTime = noCreateTime;
+    }
 }

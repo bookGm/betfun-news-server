@@ -3,6 +3,7 @@ package io.information.modules.app.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import io.information.common.utils.PageUtils;
 import io.information.modules.app.entity.InNode;
+import io.information.modules.app.entity.InUser;
 import io.information.modules.app.vo.InNodeVo;
 
 import java.util.List;
@@ -22,13 +23,13 @@ public interface IInNodeService extends IService<InNode> {
 
     Map<Long, String> search(Long noType);
 
-    PageUtils query(Map<String, Object> map);
+    Map<Long, List<InNode>> query(Map<String, Object> map);
 
     Map<String, Object> special(Map<String, Object> map);
 
     PageUtils cardList(Map<String, Object> map);
 
-    PageUtils star(Map<String, Object> map);
+    Map<Integer, List<InUser>> star(Map<String, Object> map);
 
     Long focus(Long uId, Long noId, Long type);
 }

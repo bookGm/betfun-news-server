@@ -26,8 +26,8 @@ public class CardListener {
             exchange = @Exchange(name = Constants.cardExchange),
             key = Constants.card_Save_RouteKey
     ))
-    public void created(JSONObject obj) {
-        cardService.saveCard(JSON.toJavaObject(obj, EsCardEntity.class));
+    public void created(EsCardEntity cardEntity) {
+        cardService.saveCard(cardEntity);
     }
 
 
@@ -52,7 +52,7 @@ public class CardListener {
             exchange = @Exchange(name = Constants.cardExchange),
             key = Constants.card_Update_RouteKey
     ))
-    public void update(JSONObject obj) {
-        cardService.updatedCard(JSON.toJavaObject(obj, EsCardEntity.class));
+    public void update(EsCardEntity cardEntity) {
+        cardService.updatedCard(cardEntity);
     }
 }

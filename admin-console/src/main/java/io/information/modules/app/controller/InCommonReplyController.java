@@ -19,11 +19,12 @@ import java.util.Map;
 
 
 /**
- * 评论回复表
+ * <p>
+ *  评论回复表
+ * </p>
  *
  * @author zxs
- * @email zhangxiaos@163.com
- * @date 2019-10-08 15:11:28
+ * @since 2019-10-08 15:11:28
  */
 @Api(value = "/app/commonreply", tags = "APP评论与回复")
 @RestController

@@ -61,6 +61,18 @@ public class InCardController {
 
 
     /**
+     * 帖子修改
+     */
+    @Login
+    @PutMapping("/update")
+    @ApiOperation(value = "帖子修改", httpMethod = "PUT", notes = "帖子数据")
+    public R update(@RequestBody InCard card) {
+        cardService.update(card);
+        return R.ok();
+    }
+
+
+    /**
      * 列表
      */
     @GetMapping("/list")

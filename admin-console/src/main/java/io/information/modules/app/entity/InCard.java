@@ -1,7 +1,6 @@
 package io.information.modules.app.entity;
 
 
-import io.information.modules.app.vo.InCardVote;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 

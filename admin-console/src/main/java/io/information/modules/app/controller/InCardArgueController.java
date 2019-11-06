@@ -1,28 +1,18 @@
 package io.information.modules.app.controller;
 
 
-import io.information.common.utils.IdGenerator;
-import io.information.common.utils.PageUtils;
 import io.information.common.utils.R;
 import io.information.modules.app.annotation.Login;
 import io.information.modules.app.annotation.LoginUser;
-import io.information.modules.app.entity.InCardArgue;
-import io.information.modules.app.entity.InCardBase;
 import io.information.modules.app.entity.InUser;
 import io.information.modules.app.service.IInCardArgueService;
-import io.information.modules.app.service.IInCardBaseService;
-import io.mq.utils.Constants;
 import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import springfox.documentation.annotations.ApiIgnore;
-
-import java.util.Arrays;
-import java.util.Map;
 
 /**
  * <p>
@@ -38,71 +28,6 @@ import java.util.Map;
 public class InCardArgueController {
     @Autowired
     private IInCardArgueService argueService;
-    @Autowired
-    private RabbitTemplate rabbitTemplate;
-    @Autowired
-    private IInCardBaseService baseService;
-
-    /**
-     * 添加 esOK
-     */
-    @Login
-    @PostMapping("/save")
-    @ApiOperation(value = "新增辩论帖子", httpMethod = "POST")
-    public R save(@RequestBody InCardArgue cardArgue) {
-        long cId = IdGenerator.getId();
-        InCardBase cardBase = cardArgue.getInCardBase();
-        cardBase.setcId(cId);
-        cardArgue.setcId(cId);
-        argueService.save(cardArgue);
-        baseService.save(cardBase);
-        rabbitTemplate.convertAndSend(Constants.cardExchange,
-                Constants.card_Save_RouteKey, cardArgue);
-        return R.ok();
-    }
-
-
-    /**
-     * 删除 esOK
-     */
-    @Login
-    @DeleteMapping("/delete")
-    @ApiOperation(value = "删除辩论帖子", httpMethod = "DELETE", notes = "根据cId[数组]删除辩论帖子")
-    public R delete(@RequestParam Long[] cIds) {
-        argueService.removeByIds(Arrays.asList(cIds));
-        rabbitTemplate.convertAndSend(Constants.cardExchange,
-                Constants.card_Delete_RouteKey, cIds);
-        return R.ok();
-    }
-
-
-    /**
-     * 修改 esOK
-     */
-    @Login
-    @PutMapping("/update")
-    @ApiOperation(value = "修改辩论帖子", httpMethod = "PUT")
-    public R updateCardArgue(@RequestBody InCardArgue cardArgue) {
-        argueService.updateById(cardArgue);
-        rabbitTemplate.convertAndSend(Constants.cardExchange,
-                Constants.card_Update_RouteKey, cardArgue);
-        return R.ok();
-    }
-
-
-    /**
-     * 列表 esOK
-     */
-    @GetMapping("/list")
-    @ApiOperation(value = "全部辩论帖子", httpMethod = "GET", notes = "分页数据")
-    @ApiImplicitParams({
-            @ApiImplicitParam(value = "每页显示条数", name = "pageSize", required = true),
-            @ApiImplicitParam(value = "当前页数", name = "currPage", required = true)
-    })
-    public R list(@RequestParam Map<String, Object> map) {
-        PageUtils page = argueService.queryPage(map);
-        return R.ok().put("page", page);
-    }
 
     /**
      * 辩论支持

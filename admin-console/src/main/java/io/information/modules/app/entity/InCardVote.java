@@ -1,4 +1,4 @@
-package io.information.modules.app.vo;
+package io.information.modules.app.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;

@@ -69,34 +69,18 @@ public class InNodeServiceImpl extends ServiceImpl<InNodeDao, InNode> implements
     }
 
     @Override
-    public PageUtils query(Map<String, Object> map) {
-        Integer size = StringUtil.isBlank(map.get("pageSize")) ? 10 : Integer.parseInt(String.valueOf(map.get("pageSize")));
-        Integer curr = StringUtil.isBlank(map.get("currPage")) ? 0 : Integer.parseInt(String.valueOf(map.get("currPage")));
-        LambdaQueryWrapper<InNode> queryWrapper = new LambdaQueryWrapper<>();
-        if (null != map.get("noType") && StringUtil.isNotBlank(map.get("noType"))) {
-            Integer noType = Integer.parseInt(String.valueOf(map.get("noType")));
-            queryWrapper.eq(InNode::getNoType, noType);
-        }
-        IPage<InNode> page = this.page(
-                new Query<InNode>().getPage(map),
-                queryWrapper
-        );
-        if (!page.getRecords().isEmpty() && null != page.getRecords()) {
-            ArrayList<InNodeVo> list = new ArrayList<>();
-            for (InNode node : page.getRecords()) {
+    public Map<Long, List<InNode>> query(Map<String, Object> map) {
+        List<InNode> nodes = this.list();
+        if (!nodes.isEmpty()) {
+            for (InNode node : nodes) {
                 //获取节点对应的帖子集合求出总数(size)
-                List<InCardBase> baseList = baseService.list(new LambdaQueryWrapper<InCardBase>().eq(InCardBase::getNoId, node.getNoId()));
+                int cardNumber = baseService.count(new LambdaQueryWrapper<InCardBase>().eq(InCardBase::getNoId, node.getNoId()));
                 //将节点和对应帖子的总数放入集合
-                InNodeVo nodeVo = new InNodeVo();
-                nodeVo.setNode(node);
-                nodeVo.setCardNumber(baseList.size());
-                list.add(nodeVo);
+                node.setCardNumber(cardNumber);
             }
-            int total = (int) page.getTotal();
-            return new PageUtils(list, total, size, curr);
         }
-
-        return null;
+        Map<Long, List<InNode>> collect = nodes.stream().collect(Collectors.groupingBy(InNode::getNoType));
+        return collect;
     }
 
 
@@ -172,24 +156,11 @@ public class InNodeServiceImpl extends ServiceImpl<InNodeDao, InNode> implements
 
 
     @Override
-    public PageUtils star(Map<String, Object> map) {
-        LambdaQueryWrapper<InUser> queryWrapper = new LambdaQueryWrapper<>();
-        if (null != map.get("type") && StringUtil.isNotBlank(map.get("type"))) {
-            int type = Integer.parseInt(String.valueOf(map.get("type")));
-            switch (type) {
-                case 0: //最新
-                    queryWrapper.orderByDesc(InUser::getuFans);
-                    break;
-                case 1: //最热
-                    queryWrapper.orderByDesc(InUser::getuCreateTime).orderByDesc(InUser::getuFans);
-                    break;
-            }
-        }
-        IPage<InUser> page = userService.page(
-                new Query<InUser>().getPage(map),
-                queryWrapper
-        );
-        return new PageUtils(page);
+    public Map<Integer, List<InUser>> star(Map<String, Object> map) {
+        //榜单用户需要通过认证
+        List<InUser> list = userService.list();
+        Map<Integer, List<InUser>> collect = list.stream().collect(Collectors.groupingBy(InUser::getuPotential));
+        return collect;
     }
 
 

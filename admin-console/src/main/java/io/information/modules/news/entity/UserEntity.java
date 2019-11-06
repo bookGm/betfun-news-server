@@ -107,6 +107,10 @@ public class UserEntity implements Serializable {
      * 创建时间
      */
     private Date uCreateTime;
+    /**
+     * 用户力度 (0：普通用户 1：红人榜 2：黑榜  )
+     */
+    private Integer uPotential;
 
 
     public Long getuId() {
@@ -283,5 +287,13 @@ public class UserEntity implements Serializable {
 
     public void setuCreateTime(Date uCreateTime) {
         this.uCreateTime = uCreateTime;
+    }
+
+    public Integer getuPotential() {
+        return uPotential;
+    }
+
+    public void setuPotential(Integer uPotential) {
+        this.uPotential = uPotential;
     }
 }

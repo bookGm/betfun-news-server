@@ -1,6 +1,6 @@
-package io.elasticsearch.controller;
+package io.information.modules.app.controller;
 
-import io.elasticsearch.service.EsArticleService;
+import io.elasticsearch.service.EsUserService;
 import io.elasticsearch.utils.PageUtils;
 import io.elasticsearch.utils.SearchRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,20 +9,17 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-/**
- * es文章操作
- */
 @RestController
-@RequestMapping("es/article")
-public class EsArticleController {
+@RequestMapping("/app/es/user")
+public class EsUserController {
     @Autowired
-    private EsArticleService articleService;
+    private EsUserService userService;
 
     /**
-     * 搜索咨讯
+     * 搜索作者
      */
     @GetMapping("/search")
-    public PageUtils searchInfo(@RequestParam SearchRequest request) {
-        return articleService.searchInfo(request);
+    public PageUtils search(@RequestParam SearchRequest request){
+        return userService.search(request);
     }
 }

@@ -2,7 +2,7 @@ package io.information.modules.app.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import io.information.common.utils.PageUtils;
-import io.information.modules.app.vo.InCardVote;
+import io.information.modules.app.entity.InCardVote;
 
 import java.util.List;
 import java.util.Map;

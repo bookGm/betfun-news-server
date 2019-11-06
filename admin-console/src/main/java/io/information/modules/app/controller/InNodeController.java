@@ -1,16 +1,13 @@
 package io.information.modules.app.controller;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import io.information.common.utils.PageUtils;
 import io.information.common.utils.R;
 import io.information.modules.app.annotation.Login;
 import io.information.modules.app.annotation.LoginUser;
-import io.information.modules.app.entity.InCardBase;
 import io.information.modules.app.entity.InNode;
 import io.information.modules.app.entity.InUser;
 import io.information.modules.app.service.IInCardBaseService;
 import io.information.modules.app.service.IInNodeService;
-import io.information.modules.app.vo.InNodeVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -82,16 +79,14 @@ public class InNodeController {
      * 节点社区列表
      */
     @GetMapping("/nodeList")
-    @ApiOperation(value = "节点社区列表", httpMethod = "GET", notes = "分页数据，状态码[noType]")
-    @ApiImplicitParam(value = "2：项目 3：社区 4：平台 5：资本", name = "noType", required = true)
+    @ApiOperation(value = "节点社区列表", httpMethod = "GET", notes = "分页数据")
     @ApiImplicitParams({
             @ApiImplicitParam(value = "每页显示条数", name = "pageSize", required = true),
             @ApiImplicitParam(value = "当前页数", name = "currPage", required = true),
-            @ApiImplicitParam(value = "2：项目 3：社区 4：平台 5：资本", name = "noType", required = true),
     })
     public R nodeList(@RequestParam Map<String, Object> map) {
-        PageUtils page = nodeService.query(map);
-        return R.ok().put("page", page);
+        Map<Long, List<InNode>> list = nodeService.query(map);
+        return R.ok().put("list", list);
     }
 
     /**
@@ -116,15 +111,14 @@ public class InNodeController {
      * 人物社区
      */
     @GetMapping("/star")
-    @ApiOperation(value = "人物社区列表", httpMethod = "GET", notes = "分页数据，状态码")
+    @ApiOperation(value = "人物社区列表", httpMethod = "GET", notes = "分页数据")
     @ApiImplicitParams({
             @ApiImplicitParam(value = "每页显示条数", name = "pageSize", required = true),
             @ApiImplicitParam(value = "当前页数", name = "currPage", required = true),
-            @ApiImplicitParam(value = "类型（0：红人榜 1：黑榜）", name = "type", required = true),
     })
     public R star(@RequestParam Map<String, Object> map) {
-        PageUtils page = nodeService.star(map);
-        return R.ok().put("page", page);
+        Map<Integer, List<InUser>> list = nodeService.star(map);
+        return R.ok().put("list", list);
     }
 
 

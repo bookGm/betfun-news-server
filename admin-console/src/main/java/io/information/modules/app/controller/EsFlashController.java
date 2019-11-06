@@ -1,4 +1,4 @@
-package io.elasticsearch.controller;
+package io.information.modules.app.controller;
 
 import io.elasticsearch.service.EsFlashService;
 import io.elasticsearch.utils.PageUtils;
@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
  * es快讯查询
  */
 @RestController
-@RequestMapping("/es/flash")
+@RequestMapping("/app/es/flash")
 public class EsFlashController {
     @Autowired
     private EsFlashService flashService;

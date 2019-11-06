@@ -52,6 +52,8 @@ public class EsCardServiceImpl implements EsCardService {
     //TODO  未完全实现
     //只需展示基本信息[标题、时间、用户头像、用户昵称等]
     public PageUtils cardSearch(SearchRequest request) {
+        Integer pageSize = request.getPageSize();
+        Integer currPage = request.getCurrPage();
         NativeSearchQueryBuilder queryBuilder = new NativeSearchQueryBuilder();
         String key = request.getKey();
         queryBuilder.withQuery(QueryBuilders
@@ -59,13 +61,13 @@ public class EsCardServiceImpl implements EsCardService {
                 .operator(Operator.AND)
                 .minimumShouldMatch("75%"));
         Map<String, String> params = request.getParams();
-        if (params != null || params.size() != 0) {
+        if (null != params || 0 < params.size()) {
             for (String filter : params.keySet()) {
                 queryBuilder.withQuery(QueryBuilders.boolQuery()
                         .filter(QueryBuilders.termQuery(filter, params.get(filter))));
             }
         }
-        return pageOK(queryBuilder,request,null);
+        return pageOK(queryBuilder, request, null);
     }
 
     @Override
@@ -74,14 +76,8 @@ public class EsCardServiceImpl implements EsCardService {
         String cCategory = map.get("cCategory");
         NativeSearchQueryBuilder queryBuilder = new NativeSearchQueryBuilder();
         queryBuilder.withQuery(QueryBuilders.termQuery("cCategory", cCategory));
-        //判断帖子类型
-        if (Integer.valueOf(cCategory) == 2) {
-            //投票帖子
-            return pageResult(queryBuilder, request,null);
-        } else {
-            //普通帖子和辩论帖子
-            return pageOK(queryBuilder, request,null);
-        }
+        return pageOK(queryBuilder, request, null);
+
     }
 
     @Override
@@ -99,10 +95,10 @@ public class EsCardServiceImpl implements EsCardService {
         //判断帖子类型
         if (Integer.valueOf(cCategory) == 2) {
             //投票帖子
-            return pageResult(queryBuilder,request,user);
+            return pageOK(queryBuilder, request, user);
         } else {
             //普通帖子和辩论帖子
-            return pageOK(queryBuilder,request,user);
+            return pageOK(queryBuilder, request, user);
         }
     }
 
@@ -115,55 +111,25 @@ public class EsCardServiceImpl implements EsCardService {
         Long uId = cardEntity.getuId();
         //查询用户信息
         EsUserEntity user = userDao.findByuId(uId);
-        if (cardEntity.getcCategory() == 2) {
-            if (!cardEntity.getCvInfo().isEmpty()) {
-                String[] split = cardEntity.getCvInfo().split(",");
-                cardEntity.setCvInfoList(split);
-                cardEntity.setUserEs(user);
-            }
-            return cardEntity;
-        } else {
-            cardEntity.setUserEs(user);
-            return cardEntity;
-        }
+        cardEntity.setUserEs(user);
+        return cardEntity;
+
     }
 
 
     //普通、辩论帖子数据填充
-    private PageUtils pageOK(NativeSearchQueryBuilder queryBuilder, SearchRequest request,EsUserEntity user) {
+    private PageUtils pageOK(NativeSearchQueryBuilder queryBuilder, SearchRequest request, EsUserEntity user) {
         Integer pageSize = request.getPageSize();
         Integer currPage = request.getCurrPage();
         queryBuilder.withPageable(PageRequest.of(currPage, pageSize));
         AggregatedPage<EsCardEntity> aggregatedPage = elasticsearchTemplate.queryForPage(queryBuilder.build(), EsCardEntity.class);
         List<EsCardEntity> cardEntities = aggregatedPage.getContent();
         long totalCount = aggregatedPage.getTotalElements();
-        if(user!=null){
+        if (user != null) {
             cardEntities.stream().forEach(cardEntity -> {
                 cardEntity.setUserEs(user);
             });
         }
         return new PageUtils(cardEntities, totalCount, pageSize, currPage);
-    }
-
-    //投票帖子数据填充
-    private PageUtils pageResult(NativeSearchQueryBuilder queryBuilder, SearchRequest request,EsUserEntity user) {
-        Integer pageSize = request.getPageSize();
-        Integer currPage = request.getCurrPage();
-        queryBuilder.withPageable(PageRequest.of(currPage, pageSize));
-        AggregatedPage<EsCardEntity> aggregatedPage = elasticsearchTemplate.queryForPage(queryBuilder.build(), EsCardEntity.class);
-        List<EsCardEntity> entityList = aggregatedPage.getContent();
-        for (EsCardEntity esCardEntity : entityList) {
-            if (!esCardEntity.getCvInfo().isEmpty()) {
-                String[] split = esCardEntity.getCvInfo().split(",");
-                esCardEntity.setCvInfoList(split);
-            }
-        }
-        long totalCount = aggregatedPage.getTotalElements();
-        if(user!=null){
-            entityList.stream().forEach(cardEntity -> {
-                cardEntity.setUserEs(user);
-            });
-        }
-        return new PageUtils(entityList, totalCount, pageSize, currPage);
     }
 }

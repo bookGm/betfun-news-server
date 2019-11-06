@@ -1,25 +1,19 @@
 package io.information.modules.app.controller;
 
 
-import io.information.common.utils.IdGenerator;
 import io.information.common.utils.PageUtils;
 import io.information.common.utils.R;
-import io.information.modules.app.annotation.Login;
-import io.information.modules.app.annotation.LoginUser;
-import io.information.modules.app.entity.InCardBase;
-import io.information.modules.app.entity.InUser;
 import io.information.modules.app.service.IInCardBaseService;
-import io.mq.utils.Constants;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
-import springfox.documentation.annotations.ApiIgnore;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Arrays;
 import java.util.Map;
 
 /**
@@ -36,65 +30,6 @@ import java.util.Map;
 public class InCardBaseController {
     @Autowired
     private IInCardBaseService cardBaseService;
-    @Autowired
-    private RabbitTemplate rabbitTemplate;
-
-
-    /**
-     * 添加基础帖子
-     */
-    @Login
-    @PostMapping("/save")
-    @ApiOperation(value = "新增基础帖子", httpMethod = "POST")
-    public R save(@RequestBody InCardBase cardBase) {
-        long cId = IdGenerator.getId();
-        cardBase.setcId(cId);
-        cardBaseService.save(cardBase);
-        rabbitTemplate.convertAndSend(Constants.cardExchange,
-                Constants.card_Save_RouteKey, cardBase);
-        return R.ok();
-    }
-
-
-    /**
-     * 删除
-     */
-    @Login
-    @DeleteMapping("/delete")
-    @ApiOperation(value = "删除基础帖子", httpMethod = "DELETE", notes = "删除基础帖子")
-    @ApiImplicitParam(value = "帖子ID[数组]", name = "cIds", required = true)
-    public R delete(@RequestParam Long[] cIds) {
-        cardBaseService.removeByIds(Arrays.asList(cIds));
-        rabbitTemplate.convertAndSend(Constants.cardExchange,
-                Constants.card_Delete_RouteKey, cIds);
-        return R.ok();
-    }
-
-
-    /**
-     * 修改
-     */
-    @Login
-    @PutMapping("/update")
-    @ApiOperation(value = "修改基础帖子", httpMethod = "PUT")
-    public R update(@RequestBody InCardBase cardBase) {
-        cardBaseService.updateById(cardBase);
-        rabbitTemplate.convertAndSend(Constants.cardExchange,
-                Constants.card_Update_RouteKey, cardBase);
-        return R.ok();
-
-    }
-
-
-    /**
-     * 查询
-     */
-    @GetMapping("/info/{cId}")
-    @ApiOperation(value = "单个基础帖子", httpMethod = "GET", notes = "帖子ID[cId]")
-    public R info(@PathVariable("cId") Long cId) {
-        InCardBase cardBase = cardBaseService.getById(cId);
-        return R.ok().put("cardBase", cardBase);
-    }
 
 
     /**
