@@ -11,17 +11,12 @@ import io.information.modules.app.annotation.LoginUser;
 import io.information.modules.app.dto.IdentifyCompanyDTO;
 import io.information.modules.app.dto.IdentifyPersonalDTO;
 import io.information.modules.app.dto.RedactDataDTO;
-import io.information.modules.app.entity.InActivity;
-import io.information.modules.app.entity.InCommonReply;
-import io.information.modules.app.entity.InUser;
+import io.information.modules.app.entity.*;
 import io.information.modules.app.service.IInUserService;
 import io.information.modules.app.vo.InLikeVo;
 import io.information.modules.sys.controller.AbstractController;
 import io.mq.utils.Constants;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.*;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -151,6 +146,7 @@ public class InUserController extends AbstractController {
     @Login
     @GetMapping("/honor")
     @ApiOperation(value = "个人成就", httpMethod = "GET")
+    @ApiResponse(code = 200, message = "artNumber：文章数量   artLikeNumber：文章获赞数量   replyNumber：评论数量")
     public R honor(@ApiIgnore @LoginUser InUser user) {
         Map<String, Object> params = userService.honor(user.getuId());
         return R.ok().put("map", params);
@@ -210,10 +206,10 @@ public class InUserController extends AbstractController {
             @ApiImplicitParam(value = "每页显示条数", name = "pageSize", required = true),
             @ApiImplicitParam(value = "当前页数", name = "currPage", required = true)
     })
-    public R card(@RequestParam Map<String, Object> map, @ApiIgnore @LoginUser InUser user) {
+    public ResultUtil<PageUtils<InCard>> card(@RequestParam Map<String, Object> map, @ApiIgnore @LoginUser InUser user) {
         map.put("uId", user.getuId());
         PageUtils page = userService.card(map);
-        return R.ok().put("page", page);
+        return ResultUtil.ok(page);
     }
 
     /**
@@ -226,10 +222,10 @@ public class InUserController extends AbstractController {
             @ApiImplicitParam(value = "每页显示条数", name = "pageSize", required = true),
             @ApiImplicitParam(value = "当前页数", name = "currPage", required = true)
     })
-    public R reply(@RequestParam Map<String, Object> map, @ApiIgnore @LoginUser InUser user) {
+    public ResultUtil<PageUtils<InCard>> reply(@RequestParam Map<String, Object> map, @ApiIgnore @LoginUser InUser user) {
         map.put("uId", user.getuId());
         PageUtils page = userService.reply(map);
-        return R.ok().put("page", page);
+        return ResultUtil.ok(page);
     }
 
     /**
@@ -260,10 +256,10 @@ public class InUserController extends AbstractController {
             @ApiImplicitParam(value = "每页显示条数", name = "pageSize", required = true),
             @ApiImplicitParam(value = "当前页数", name = "currPage", required = true)
     })
-    public R fansWriter(@RequestParam Map<String, Object> map, @ApiIgnore @LoginUser InUser user) {
+    public ResultUtil<PageUtils<InUser>> fansWriter(@RequestParam Map<String, Object> map, @ApiIgnore @LoginUser InUser user) {
         map.put("uId", user.getuId());
         PageUtils page = userService.fansWriter(map);
-        return R.ok().put("page", page);
+        return ResultUtil.ok(page);
     }
 
 
@@ -277,10 +273,10 @@ public class InUserController extends AbstractController {
             @ApiImplicitParam(value = "每页显示条数", name = "pageSize", required = true),
             @ApiImplicitParam(value = "当前页数", name = "currPage", required = true)
     })
-    public R fansNode(@RequestParam Map<String, Object> map, @ApiIgnore @LoginUser InUser user) {
+    public ResultUtil<PageUtils<InNode>> fansNode(@RequestParam Map<String, Object> map, @ApiIgnore @LoginUser InUser user) {
         map.put("uId", user.getuId());
         PageUtils page = userService.fansNode(map);
-        return R.ok().put("page", page);
+        return ResultUtil.ok(page);
     }
 
     /**
@@ -293,10 +289,10 @@ public class InUserController extends AbstractController {
             @ApiImplicitParam(value = "每页显示条数", name = "pageSize", required = true),
             @ApiImplicitParam(value = "当前页数", name = "currPage", required = true)
     })
-    public R fansPerson(@RequestParam Map<String, Object> map, @ApiIgnore @LoginUser InUser user) {
+    public ResultUtil<PageUtils<InUser>> fansPerson(@RequestParam Map<String, Object> map, @ApiIgnore @LoginUser InUser user) {
         map.put("uId", user.getuId());
         PageUtils page = userService.fansPerson(map);
-        return R.ok().put("page", page);
+        return ResultUtil.ok(page);
     }
 
     /**
@@ -309,10 +305,10 @@ public class InUserController extends AbstractController {
             @ApiImplicitParam(value = "每页显示条数", name = "pageSize", required = true),
             @ApiImplicitParam(value = "当前页数", name = "currPage", required = true)
     })
-    public R follower(@RequestParam Map<String, Object> map, @ApiIgnore @LoginUser InUser user) {
+    public ResultUtil<PageUtils<InUser>> follower(@RequestParam Map<String, Object> map, @ApiIgnore @LoginUser InUser user) {
         map.put("uId", user.getuId());
         PageUtils page = userService.follower(map);
-        return R.ok().put("page", page);
+        return ResultUtil.ok(page);
     }
 
 
@@ -327,12 +323,11 @@ public class InUserController extends AbstractController {
             @ApiImplicitParam(value = "当前页数", name = "currPage", required = true),
             @ApiImplicitParam(value = "0：文章 1：帖子 2：活动", name = "type", required = true)
     })
-    public R favorite(@RequestParam Map<String, Object> map, @ApiIgnore @LoginUser InUser user) {
+    public ResultUtil<PageUtils<InCard>> favorite(@RequestParam Map<String, Object> map, @ApiIgnore @LoginUser InUser user) {
         map.put("uId", user.getuId());
         PageUtils page = userService.favorite(map);
-        return R.ok().put("page", page);
+        return ResultUtil.ok(page);
     }
-
 
 
     /**
@@ -341,6 +336,7 @@ public class InUserController extends AbstractController {
     @Login
     @GetMapping("/focusIds")
     @ApiOperation(value = "查询当前用户的关注ID集合", httpMethod = "GET")
+    @ApiResponse(code = 200, message = "uId：用户ID")
     public List<Long> searchFocusId(@ApiIgnore @LoginUser InUser user) {
         return userService.searchFocusId(user.getuId());
     }
