@@ -12,8 +12,10 @@ import io.information.modules.app.dto.IdentifyCompanyDTO;
 import io.information.modules.app.dto.IdentifyPersonalDTO;
 import io.information.modules.app.dto.RedactDataDTO;
 import io.information.modules.app.entity.InActivity;
+import io.information.modules.app.entity.InCommonReply;
 import io.information.modules.app.entity.InUser;
 import io.information.modules.app.service.IInUserService;
+import io.information.modules.app.vo.InLikeVo;
 import io.information.modules.sys.controller.AbstractController;
 import io.mq.utils.Constants;
 import io.swagger.annotations.Api;
@@ -164,10 +166,10 @@ public class InUserController extends AbstractController {
             @ApiImplicitParam(value = "每页显示条数", name = "pageSize", required = true),
             @ApiImplicitParam(value = "当前页数", name = "currPage", required = true)
     })
-    public R comment(@RequestParam Map<String, Object> map, @ApiIgnore @LoginUser InUser user) {
+    public ResultUtil<PageUtils<InCommonReply>> comment(@RequestParam Map<String, Object> map, @ApiIgnore @LoginUser InUser user) {
         map.put("uId", user.getuId());
         PageUtils page = userService.comment(map);
-        return R.ok().put("page", page);
+        return ResultUtil.ok(page);
     }
 
     /**
@@ -180,9 +182,9 @@ public class InUserController extends AbstractController {
             @ApiImplicitParam(value = "每页显示条数", name = "pageSize", required = true),
             @ApiImplicitParam(value = "当前页数", name = "currPage", required = true)
     })
-    public R like(@RequestParam Map<String, Object> map, @ApiIgnore @LoginUser InUser user) {
+    public ResultUtil<PageUtils<InLikeVo>> like(@RequestParam Map<String, Object> map, @ApiIgnore @LoginUser InUser user) {
         PageUtils page = userService.like(map, user.getuId());
-        return R.ok().put("page", page);
+        return ResultUtil.ok(page);
     }
 
     /**
