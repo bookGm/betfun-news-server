@@ -1,10 +1,8 @@
 package io.information.modules.app.service;
 
-import io.elasticsearch.entity.EsCardEntity;
 import io.information.common.utils.PageUtils;
 import io.information.modules.app.entity.InCard;
 import io.information.modules.app.entity.InUser;
-import org.elasticsearch.common.collect.HppcMaps;
 
 import java.util.Map;
 

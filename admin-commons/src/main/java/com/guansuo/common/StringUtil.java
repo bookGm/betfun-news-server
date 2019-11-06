@@ -120,7 +120,7 @@ public class StringUtil {
 	 */
 	public static boolean isBlank(final Object str) {
 		int strLen;
-		if ((str == null) || ((strLen = str.toString().length()) == 0))
+		if ((str == null) || ((strLen = str.toString().length()) == 0)||"null".equals(str))
 			return true;
 		for (int i = 0; i < strLen; i++) {
 			if (!Character.isWhitespace(str.toString().charAt(i))) {

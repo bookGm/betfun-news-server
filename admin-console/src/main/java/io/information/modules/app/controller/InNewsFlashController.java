@@ -109,7 +109,7 @@ public class InNewsFlashController {
             @ApiImplicitParam(name = "nId", value = "资讯id", required = true),
             @ApiImplicitParam(name = "bId", value = "0：利空 1：利好", required = true)
     })
-    public R attitude(@RequestParam("nId") Long nId, @RequestParam("bId") int bId, @ApiIgnore @LoginUser InUser user) {
+    public R attitude(@RequestParam("nId") Long nId, @RequestParam("bId") Integer bId, @ApiIgnore @LoginUser InUser user) {
         newsFlashService.attitude(nId,user.getuId(),bId);
         return R.ok();
     }

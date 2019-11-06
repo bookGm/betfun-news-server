@@ -178,8 +178,7 @@ public class InArticleController {
     })
     public R giveALike(@RequestParam("id") Long id, @RequestParam("type") int type, @ApiIgnore @LoginUser InUser user) {
         Long tid = filterId(id, type);
-        Date d = articleService.giveALike(id, user.getuId(), type, tid);
-        return R.ok().put("time", d);
+        return R.ok().put("time", articleService.giveALike(id, user.getuId(), type, tid));
     }
 
     /**
@@ -194,8 +193,7 @@ public class InArticleController {
     })
     public R collect(@RequestParam("id") Long id, @RequestParam("type") int type, @ApiIgnore @LoginUser InUser user) {
         Long tid = filterId(id, type);
-        Date d = articleService.collect(id, user.getuId(), type, tid);
-        return R.ok().put("time", d);
+        return R.ok().put("time", articleService.collect(id, user.getuId(), type, tid));
     }
 
     /**

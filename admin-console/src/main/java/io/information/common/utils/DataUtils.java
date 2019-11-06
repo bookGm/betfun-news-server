@@ -168,4 +168,40 @@ public class DataUtils {
 			return result;
 		}
 
+	/**
+	 * Object 转 Object
+	 * @param param
+	 * @return
+	 */
+	public static Object objToObject(Object param) {
+		Object result = "";
+		BigDecimal re = new BigDecimal(0);
+		if (param instanceof Integer) {
+			result = (Integer) param;
+		} else if (param instanceof String) {
+			result = (String) param;
+		} else if (param instanceof Double) {
+			result = (Double) param;
+		} else if (param instanceof Float) {
+			result = (Float) param;
+		} else if (param instanceof Long) {
+			result = (Long) param;
+		} else if (param instanceof Boolean) {
+			result = (Boolean) param;
+		} else if (param instanceof Date) {
+			Date d = (Date) param;
+			result = d;
+		} else if( param instanceof BigDecimal ) {
+			re = (BigDecimal) param;
+			result= re;
+		} else if( param instanceof BigInteger ) {
+			re = new BigDecimal( (BigInteger) param );
+			result= re;
+		} else if( param instanceof Number ) {
+			re = new BigDecimal( ((Number)param).doubleValue() );
+			result= re;
+		}
+		return result;
+	}
+
 }

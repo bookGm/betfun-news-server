@@ -28,11 +28,11 @@ public class InCardVoteServiceImpl extends ServiceImpl<InCardVoteDao, InCardVote
 
     @Override
     @HashCacheable(key = RedisKeys.VOTE, keyField = "#cid-#uid")
-    public List<Integer> vote(Long cid, Long uid, List<Integer> optIndex) {
+    public String vote(Long cid, Long uid, List<Integer> optIndex) {
         for (int index : optIndex) {
             this.baseMapper.addVote(cid, index);
         }
-        return optIndex;
+        return optIndex.toString();
     }
 
     @Override

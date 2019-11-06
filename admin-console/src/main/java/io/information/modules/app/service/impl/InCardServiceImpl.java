@@ -107,11 +107,11 @@ public class InCardServiceImpl implements IInCardService {
     @Override
     public PageUtils queryPage(Map<String, Object> map) {
         LambdaQueryWrapper<InCardBase> queryWrapper = new LambdaQueryWrapper<>();
-        if (null != map.get("uId")) {
-            queryWrapper.eq(InCardBase::getuId, Long.parseLong(String.valueOf(map.get("uId"))));
+        if (StringUtil.isNotBlank(map.get("uId"))) {
+            queryWrapper.eq(InCardBase::getuId, Long.valueOf(String.valueOf(map.get("uId"))));
         }
-        if (null != map.get("type")) {
-            queryWrapper.eq(InCardBase::getcCategory, Integer.parseInt(String.valueOf(map.get("type"))));
+        if (StringUtil.isNotBlank(map.get("type"))) {
+            queryWrapper.eq(InCardBase::getcCategory, Integer.valueOf(String.valueOf(map.get("type"))));
         }
         IPage<InCardBase> page = baseService.page(
                 new Query<InCardBase>().getPage(map),

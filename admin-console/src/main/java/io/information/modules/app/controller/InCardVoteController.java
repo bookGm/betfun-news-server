@@ -1,6 +1,7 @@
 package io.information.modules.app.controller;
 
 
+import com.guansuo.common.JsonUtil;
 import io.information.common.utils.R;
 import io.information.modules.app.annotation.Login;
 import io.information.modules.app.annotation.LoginUser;
@@ -45,7 +46,7 @@ public class InCardVoteController {
             @ApiImplicitParam(value = "投票选项索引", name = "optIndexs", dataType = "List<int>", required = true)
     })
     public R vote(@RequestParam("cid") Long cid, @RequestParam(value = "optIndexs", required = false) List<Integer> optIndexs, @ApiIgnore @LoginUser InUser user) {
-        List<Integer> vote = voteService.vote(cid, user.getuId(), optIndexs);
+        List<Integer> vote =JsonUtil.parseList(voteService.vote(cid, user.getuId(), optIndexs),Integer.class);
         return R.ok().put("vote", vote);
     }
 }

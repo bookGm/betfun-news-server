@@ -5,11 +5,13 @@ import com.alibaba.fastjson.JSON;
 import io.information.common.utils.DataUtils;
 import io.information.common.utils.PageUtils;
 import io.information.common.utils.R;
+import io.information.common.utils.ResultUtil;
 import io.information.modules.app.annotation.Login;
 import io.information.modules.app.annotation.LoginUser;
 import io.information.modules.app.dto.IdentifyCompanyDTO;
 import io.information.modules.app.dto.IdentifyPersonalDTO;
 import io.information.modules.app.dto.RedactDataDTO;
+import io.information.modules.app.entity.InActivity;
 import io.information.modules.app.entity.InUser;
 import io.information.modules.app.service.IInUserService;
 import io.information.modules.sys.controller.AbstractController;
@@ -202,6 +204,7 @@ public class InUserController extends AbstractController {
     @GetMapping("/card")
     @ApiOperation(value = "个人消息 -- 帖子", httpMethod = "GET", notes = "分页数据")
     @ApiImplicitParams({
+            @ApiImplicitParam(value = "帖子节点分类", name = "type", required = true),
             @ApiImplicitParam(value = "每页显示条数", name = "pageSize", required = true),
             @ApiImplicitParam(value = "当前页数", name = "currPage", required = true)
     })
@@ -238,10 +241,10 @@ public class InUserController extends AbstractController {
             @ApiImplicitParam(value = "当前页数", name = "currPage", required = true),
             @ApiImplicitParam(value = "0：未开始 1：已开始 2：已结束", name = "type", required = true)
     })
-    public R active(@RequestParam Map<String, Object> map, @ApiIgnore @LoginUser InUser user) {
+    public ResultUtil<PageUtils<InActivity>> active(@RequestParam Map<String, Object> map, @ApiIgnore @LoginUser InUser user) {
         map.put("uId", user.getuId());
-        PageUtils page = userService.active(map);
-        return R.ok().put("page", page);
+        PageUtils<InActivity> page = userService.active(map);
+        return ResultUtil.ok(page);
     }
 
 

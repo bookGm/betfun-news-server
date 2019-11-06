@@ -68,7 +68,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleDao, ArticleEntity> i
                 for(BbtcListVo b:blist){
                     Long bid=b.getId();
                     if(redisUtils.hasKey(RedisKeys.ARTICLE+b.getTitle())){
-                        LOG.error("文章title---------------------已存在continue当前循环:",RedisKeys.ARTICLE+b.getTitle());
+                        LOG.debug("文章title---------------"+RedisKeys.ARTICLE+b.getTitle()+"-------------已存在continue当前循环");
                         continue;
                     }
                     redisUtils.set(RedisKeys.ARTICLE+b.getTitle(),String.valueOf(bid),60*60*24*3);

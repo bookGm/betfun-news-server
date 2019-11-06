@@ -20,7 +20,7 @@ public interface IInCardVoteService extends IService<InCardVote> {
      * 投票
      * @return
      */
-    List<Integer> vote(Long cid, Long uid, List<Integer> optIndex);
+    String vote(Long cid, Long uid, List<Integer> optIndex);
 
     PageUtils queryPage(Map<String, Object> params);
 }

@@ -26,13 +26,13 @@ public interface IInArticleService extends IService<InArticle> {
      * 点赞
      * type(0：文章 1：帖子 2：活动)
      */
-    Date giveALike(Long id,Long tId,int type, Long uid);
+    String giveALike(Long id,Long tId,int type, Long uid);
 
     /**
      * 收藏
      * type(0：文章 1：帖子 2：活动)
      */
-    Date collect(Long id,Long tId,int type, Long uid);
+    String collect(Long id,Long tId,int type, Long uid);
 
 
     List<InArticle> hotTopic();

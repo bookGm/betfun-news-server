@@ -81,10 +81,10 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
 
     @Override
     @HashCacheable(key = RedisKeys.FOCUS, keyField = "#uId-#status-#fId")
-    public Long focus(Long uId, Long fId, Integer status) {
+    public String focus(Long uId, Long fId, Integer status) {
         this.baseMapper.addFans(uId);
         this.baseMapper.addFocus(fId);
-        return fId;
+        return String.valueOf(fId);
     }
 
     @Override
@@ -172,7 +172,9 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
                 //获取用户帖子ID
                 List<Long> cIds = baseList.stream().map(InCardBase::getcId).collect(Collectors.toList());
                 //获取回帖信息
-                return commonReplyService.reply(map, cIds);
+                if(null==cIds||cIds.size()<1){
+                return null;
+            }return commonReplyService.reply(map, cIds);
             }
         }
         return null;

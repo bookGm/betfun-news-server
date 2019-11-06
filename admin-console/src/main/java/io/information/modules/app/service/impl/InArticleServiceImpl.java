@@ -14,26 +14,16 @@ import io.information.common.utils.RedisUtils;
 import io.information.modules.app.dao.InActivityDao;
 import io.information.modules.app.dao.InArticleDao;
 import io.information.modules.app.dao.InCardBaseDao;
-import io.information.modules.app.entity.InActivity;
 import io.information.modules.app.entity.InArticle;
 import io.information.modules.app.entity.InUser;
-import io.information.modules.app.service.IInActivityService;
 import io.information.modules.app.service.IInArticleService;
-import io.information.modules.app.service.IInCardBaseService;
-import io.mq.utils.Constants;
-import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CachePut;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -105,7 +95,7 @@ public class InArticleServiceImpl extends ServiceImpl<InArticleDao, InArticle> i
 
     @Override
     @HashCacheable(key = RedisKeys.LIKE, keyField = "#id-#uid-#tId-#type")
-    public Date giveALike(Long id, Long tId, int type, Long uid) {
+    public String giveALike(Long id, Long tId, int type, Long uid) {
         if (NewsEnum.点赞_文章.getCode().equals(type)) {
             this.baseMapper.addALike(id);
         }
@@ -115,14 +105,12 @@ public class InArticleServiceImpl extends ServiceImpl<InArticleDao, InArticle> i
         if (NewsEnum.点赞_活动.getCode().equals(type)) {
             this.inActivityDao.addALike(id);
         }
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        format.format(new Date());
-        return new Date();
+        return DateUtils.format(new Date());
     }
 
     @Override
     @HashCacheable(key = RedisKeys.COLLECT, keyField = "#id-#uid-#tId-#type")
-    public Date collect(Long id, Long tId, int type, Long uid) {
+    public String collect(Long id, Long tId, int type, Long uid) {
         if (NewsEnum.收藏_文章.getCode().equals(type)) {
             this.baseMapper.addACollect(id);
         }
@@ -132,6 +120,6 @@ public class InArticleServiceImpl extends ServiceImpl<InArticleDao, InArticle> i
         if (NewsEnum.收藏_活动.getCode().equals(type)) {
             this.inActivityDao.addACollect(id);
         }
-        return new Date();
+        return DateUtils.format(new Date());
     }
 }

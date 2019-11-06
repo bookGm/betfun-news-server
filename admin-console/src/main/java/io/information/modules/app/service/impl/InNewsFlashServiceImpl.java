@@ -46,13 +46,13 @@ public class InNewsFlashServiceImpl extends ServiceImpl<InNewsFlashDao, InNewsFl
 
     @Override
     @HashCacheable(key= RedisKeys.NATTITUDE, keyField = "#nId-#uId")
-    public Integer attitude(Long nId, Long uId, int bId) {
-        if(NewsEnum.快讯_利空.getCode().equals(bId)){
+    public String attitude(Long nId, Long uId, Integer bId) {
+        if(NewsEnum.快讯_利空.getCode().equals(bId+"")){
             this.baseMapper.addNBad(nId);
         }
-        if(NewsEnum.快讯_利好.getCode().equals(bId)){
+        if(NewsEnum.快讯_利好.getCode().equals(bId+"")){
             this.baseMapper.addNBull(nId);
         }
-        return bId;
+        return String.valueOf(bId);
     }
 }

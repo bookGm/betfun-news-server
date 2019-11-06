@@ -25,5 +25,5 @@ public interface IInNewsFlashService extends IService<InNewsFlash> {
      * @param bId 0：利空 1：利好
      * @return
      */
-    Integer attitude(Long nId,Long uId,int bId);
+    String attitude(Long nId,Long uId,Integer bId);
 }

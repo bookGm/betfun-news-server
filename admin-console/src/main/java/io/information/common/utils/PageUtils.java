@@ -3,6 +3,8 @@
 package io.information.common.utils;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 
 import java.io.Serializable;
 import java.util.List;
@@ -12,28 +14,34 @@ import java.util.List;
  *
  * @author Mark sunlightcs@gmail.com
  */
-public class PageUtils implements Serializable {
+@ApiModel(value = "分页", description = "分页对象")
+public class PageUtils<T> implements Serializable {
 	private static final long serialVersionUID = 1L;
 	/**
 	 * 总记录数
 	 */
+	@ApiModelProperty(value = "总记录数", name = "totalCount", required = true)
 	private int totalCount;
 	/**
 	 * 每页记录数
 	 */
+	@ApiModelProperty(value = "每页记录数", name = "pageSize", required = true)
 	private int pageSize;
 	/**
 	 * 总页数
 	 */
+	@ApiModelProperty(value = "总页数", name = "totalPage", required = true)
 	private int totalPage;
 	/**
 	 * 当前页数
 	 */
+	@ApiModelProperty(value = "当前页数", name = "currPage", required = true)
 	private int currPage;
 	/**
 	 * 列表数据
 	 */
-	private List<?> list;
+	@ApiModelProperty(value = "列表数据", name = "list", required = true)
+	private List<T> list;
 	
 	/**
 	 * 分页
@@ -42,7 +50,7 @@ public class PageUtils implements Serializable {
 	 * @param pageSize    每页记录数
 	 * @param currPage    当前页数
 	 */
-	public PageUtils(List<?> list, int totalCount, int pageSize, int currPage) {
+	public PageUtils(List<T> list, int totalCount, int pageSize, int currPage) {
 		this.list = list;
 		this.totalCount = totalCount;
 		this.pageSize = pageSize;
@@ -53,7 +61,7 @@ public class PageUtils implements Serializable {
 	/**
 	 * 分页
 	 */
-	public PageUtils(IPage<?> page) {
+	public PageUtils(IPage<T> page) {
 		this.list = page.getRecords();
 		this.totalCount = (int)page.getTotal();
 		this.pageSize = (int)page.getSize();
@@ -93,11 +101,11 @@ public class PageUtils implements Serializable {
 		this.currPage = currPage;
 	}
 
-	public List<?> getList() {
+	public List<T> getList() {
 		return list;
 	}
 
-	public void setList(List<?> list) {
+	public void setList(List<T> list) {
 		this.list = list;
 	}
 	

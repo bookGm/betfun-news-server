@@ -37,13 +37,13 @@ public class InCardArgueServiceImpl extends ServiceImpl<InCardArgueDao, InCardAr
 
     @Override
     @HashCacheable(key = RedisKeys.SUPPORT, keyField = "#cid-#uid")
-    public Integer support(Long cid,Long uid,Integer sIndex) {
-        return sIndex;
+    public String support(Long cid,Long uid,Integer sIndex) {
+        return String.valueOf(sIndex);
     }
 
     @Override
     @HashCacheable(key = RedisKeys.JOIN, keyField = "#cid-#uid")
-    public Integer join(Long cid,Long uid,Integer jIndex) {
-        return jIndex;
+    public String join(Long cid,Long uid,Integer jIndex) {
+        return String.valueOf(jIndex);
     }
 }
