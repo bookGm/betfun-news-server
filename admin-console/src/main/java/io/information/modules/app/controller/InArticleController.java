@@ -3,6 +3,7 @@ package io.information.modules.app.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.guansuo.common.StringUtil;
 import com.guansuo.newsenum.NewsEnum;
 import io.elasticsearch.entity.EsArticleEntity;
 import io.information.common.utils.*;
@@ -13,6 +14,8 @@ import io.information.modules.app.entity.InUser;
 import io.information.modules.app.service.IInActivityService;
 import io.information.modules.app.service.IInArticleService;
 import io.information.modules.app.service.IInCardBaseService;
+import io.information.modules.app.service.IInUserService;
+import io.information.modules.app.vo.InArticleUserDetailVo;
 import io.mq.utils.Constants;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -46,6 +49,8 @@ public class InArticleController {
     private IInActivityService activityService;
     @Autowired
     private IInCardBaseService baseService;
+    @Autowired
+    private IInUserService inUserService;
     @Autowired
     private RabbitTemplate rabbitTemplate;
     @Autowired
@@ -239,5 +244,27 @@ public class InArticleController {
             tid = activityService.getById(id).getuId();
         }
         return tid;
+    }
+
+    @GetMapping("/articleUserDetail/{aId}")
+    @ApiOperation(value = "查询文章作者及详情", httpMethod = "GET" ,notes = "文章id")
+    public ResultUtil<InArticleUserDetailVo> getArticleUserDetail(@PathVariable("aId") String aId,HttpServletRequest request){
+        InArticle a=articleService.getById(aId);
+        if(null==a){
+            return ResultUtil.error("不存在此文章");
+        }
+        Object obj=request.getAttribute("AppUserId");
+        InArticleUserDetailVo av=new InArticleUserDetailVo();
+        if(StringUtil.isNotBlank(obj)){
+            Long uId=Long.parseLong(String.valueOf(obj));
+            InUser u=inUserService.getById(a.getuId());
+            av.setuNick(u.getuNick());
+            av.setuPhoto(u.getuPhoto());
+            av.setLiked(redisTemplate.opsForHash().hasKey(RedisKeys.LIKE,aId+"-"+uId+"-"+u.getuId()+"-"+NewsEnum.点赞_文章.getCode()));
+            av.setCollected(redisTemplate.opsForHash().hasKey(RedisKeys.COLLECT,aId+"-"+uId+"-"+u.getuId()+"-"+NewsEnum.收藏_文章.getCode()));
+        }
+        av.setaLike(a.getaLike());
+        av.setaCollect(a.getaCollect());
+        return ResultUtil.ok(av);
     }
 }

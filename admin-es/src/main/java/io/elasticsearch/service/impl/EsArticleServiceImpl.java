@@ -9,6 +9,7 @@ import io.elasticsearch.utils.PageUtils;
 import io.elasticsearch.utils.SearchRequest;
 import io.mq.utils.Constants;
 import io.mq.utils.RabbitMQUtils;
+import org.elasticsearch.index.query.MultiMatchQueryBuilder;
 import org.elasticsearch.index.query.Operator;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
@@ -73,7 +74,7 @@ public class EsArticleServiceImpl implements EsArticleService {
             //多字段匹配[关键字，标题，内容，摘要]
             SearchQuery searchQuery = new NativeSearchQueryBuilder()
                     .withQuery(multiMatchQuery(key, "aKeyword", "aTitle", "aContent", "aBrief")
-                            .operator(Operator.OR)
+                            .operator(Operator.OR).type(MultiMatchQueryBuilder.Type.MOST_FIELDS)
                             /*.minimumShouldMatch("30%")*/)
                     .withPageable(PageRequest.of(page, size))
                     .build();
