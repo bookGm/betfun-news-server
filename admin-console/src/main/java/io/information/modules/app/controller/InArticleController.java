@@ -16,6 +16,7 @@ import io.information.modules.app.service.IInArticleService;
 import io.information.modules.app.service.IInCardBaseService;
 import io.information.modules.app.service.IInUserService;
 import io.information.modules.app.vo.ArticleUserVo;
+import io.information.modules.app.vo.ArticleVo;
 import io.information.modules.app.vo.InArticleUserDetailVo;
 import io.mq.utils.Constants;
 import io.swagger.annotations.*;
@@ -241,9 +242,9 @@ public class InArticleController {
      */
     @GetMapping("/hotTopic")
     @ApiOperation(value = "热门资讯", httpMethod = "GET", notes = "返回10条数据")
-    public R hotTopic() {
-        List<InArticle> articles = articleService.hotTopic();
-        return R.ok().put("list", articles);
+    public ResultUtil<List<ArticleVo>> hotTopic() {
+        List<ArticleVo> articleVos = articleService.hotTopic();
+        return ResultUtil.ok(articleVos);
     }
 
 

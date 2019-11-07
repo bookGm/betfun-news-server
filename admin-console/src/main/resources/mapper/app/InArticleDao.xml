@@ -14,4 +14,7 @@
     <select id="searchTitleAndId" resultType="io.information.modules.app.vo.ArticleVo">
         select a_id,a_title from in_article where u_id = #{uId} limit #{currPage},#{pageSize}
     </select>
+    <select id="searchArticleByTime" resultType="io.information.modules.app.vo.ArticleVo">
+        SELECT a_id,a_title,a_cover,a_create_time FROM (SELECT a_id,a_title,a_cover,a_create_time,a_like FROM in_article ORDER BY a_critic DESC) AS article ORDER BY a_like DESC LIMIT 10
+    </select>
 </mapper>

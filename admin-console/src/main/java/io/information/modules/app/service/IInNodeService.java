@@ -4,8 +4,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import io.information.common.utils.PageUtils;
 import io.information.modules.app.entity.InNode;
 import io.information.modules.app.entity.InUser;
-import io.information.modules.app.vo.CardUserVo;
-import io.information.modules.app.vo.InNodeVo;
+import io.information.modules.app.vo.*;
 
 import java.util.List;
 import java.util.Map;
@@ -35,5 +34,12 @@ public interface IInNodeService extends IService<InNode> {
     Long focus(Long uId, Long noId, Long type);
 
     CardUserVo cardRecommended(Map<String, Object> map);
+
+    List<CardBaseVo> heatCard();
+
+    List<NodeVo> recommendNode();
+
+    List<NewDynamicVo> newDynamic();
+
 }
 

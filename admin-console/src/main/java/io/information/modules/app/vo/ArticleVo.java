@@ -16,6 +16,11 @@ public class ArticleVo implements Serializable {
     @ApiModelProperty(value = "文章标题", name = "aTitle", required = true)
     private String aTitle;
 
+    @ApiModelProperty(value = "文章封面URL", name = "aCover", required = true)
+    private String aCover;
+
+    @ApiModelProperty(value = "文章创建时间", name = "aCreateTime", required = true)
+    private String aCreateTime;
 
     public Long getaId() {
         return aId;
@@ -31,5 +36,21 @@ public class ArticleVo implements Serializable {
 
     public void setaTitle(String aTitle) {
         this.aTitle = aTitle;
+    }
+
+    public String getaCover() {
+        return aCover;
+    }
+
+    public void setaCover(String aCover) {
+        this.aCover = aCover;
+    }
+
+    public String getaCreateTime() {
+        return aCreateTime;
+    }
+
+    public void setaCreateTime(String aCreateTime) {
+        this.aCreateTime = aCreateTime;
     }
 }

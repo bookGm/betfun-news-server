@@ -8,6 +8,13 @@
          update in_card_base set c_collect=c_collect+1 where c_id=#{cid}
     </update>
     <select id="searchTitleAndId" resultType="io.information.modules.app.vo.CardBaseVo">
-        select c_id,c_title from in_card_base where u_id = #{uId} limit #{currPage},#{pageSize}
+        SELECT c_id,c_title FROM in_card_base WHERE u_id = #{uId} LIMIT #{currPage},#{pageSize}
     </select>
+    <select id="searchBaseByLike" resultType="io.information.modules.app.vo.CardBaseVo">
+        SELECT * FROM (SELECT c_id,c_title FROM in_card_base ORDER BY c_like DESC) AS base LIMIT 5
+    </select>
+    <select id="searchBaseByTime" resultType="io.information.modules.app.vo.DynamicCardVo">
+        SELECT * FROM (SELECT c_id,c_title,c_create_time FROM in_card_base ORDER BY c_create_time DESC) AS base LIMIT 5
+    </select>
+
 </mapper>

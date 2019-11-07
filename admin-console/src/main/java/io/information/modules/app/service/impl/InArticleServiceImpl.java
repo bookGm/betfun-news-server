@@ -89,10 +89,8 @@ public class InArticleServiceImpl extends ServiceImpl<InArticleDao, InArticle> i
 
 
     @Override
-    public List<InArticle> hotTopic() {
-        LambdaQueryWrapper<InArticle> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.orderByDesc(InArticle::getaCritic).orderByDesc(InArticle::getaLike);
-        return new ArrayList<>(this.list(queryWrapper).subList(0, 10));
+    public List<ArticleVo> hotTopic() {
+        return this.baseMapper.searchArticleByTime();
     }
 
     @Override

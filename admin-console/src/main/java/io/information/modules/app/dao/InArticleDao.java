@@ -3,10 +3,8 @@ package io.information.modules.app.dao;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import io.information.modules.app.entity.InArticle;
 import io.information.modules.app.vo.ArticleVo;
-import io.information.modules.app.vo.CardBaseVo;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
-import org.springframework.beans.factory.annotation.Value;
 
 import java.util.List;
 
@@ -40,9 +38,13 @@ public interface InArticleDao extends BaseMapper<InArticle> {
 
     /**
      * 查询文章ID和标题
-     * @param uId  用户ID
-     * @param currPage  当前页
-     * @param pageSize  显示数量
+     * 根据用户ID和分页
      */
     List<ArticleVo> searchTitleAndId(@Param("uId") Long uId, @Param("currPage") Integer currPage, @Param("pageSize") Integer pageSize);
+
+    /**
+     * 查询热门文章
+     * 根据点赞和评论排序
+     */
+    List<ArticleVo> searchArticleByTime();
 }

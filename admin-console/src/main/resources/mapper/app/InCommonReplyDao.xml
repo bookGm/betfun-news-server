@@ -14,5 +14,8 @@
         <result property="crTime" column="cr_time"/>
     </resultMap>
 
+    <select id="searchReplyByTime" resultType="io.information.modules.app.vo.DynamicReplyVo">
+        SELECT * FROM (SELECT cr_id,t_name,cr_time FROM in_common_reply ORDER BY cr_time DESC) AS reply LIMIT 5
+    </select>
 
 </mapper>

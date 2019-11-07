@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import io.information.common.utils.PageUtils;
 import io.information.modules.app.entity.InArticle;
 import io.information.modules.app.vo.ArticleUserVo;
+import io.information.modules.app.vo.ArticleVo;
 import io.information.modules.app.vo.CardUserVo;
 
 import java.util.Date;
@@ -37,7 +38,7 @@ public interface IInArticleService extends IService<InArticle> {
     String collect(Long id,Long tId,int type, Long uid);
 
 
-    List<InArticle> hotTopic();
+    List<ArticleVo> hotTopic();
 
     ArticleUserVo articleRecommended(Map<String, Object> map);
 }

@@ -269,7 +269,6 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
     @Override
     public PageUtils active(Map<String, Object> map) {
         LambdaQueryWrapper<InActivity> queryWrapper = new LambdaQueryWrapper<>();
-//        queryWrapper.eq(InActivity::getActStatus, 2);
         if (null != map.get("type") && StringUtil.isNotBlank(map.get("type"))) {
             int type = Integer.parseInt(String.valueOf(map.get("type")));
             switch (type) {
@@ -303,7 +302,7 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
         Integer page = StringUtil.isBlank(map.get("currPage")) ? 0 : Integer.parseInt(String.valueOf(map.get("currPage")));
         Integer bindex = page * size;
         //根据uId查询用户关注的目标
-        List<Map.Entry<Object, Object>> cmap = redisUtils.hfget(RedisKeys.FOCUS, uId + "-2-*");
+        List<Map.Entry<Object, Object>> cmap = redisUtils.hfget(RedisKeys.FOCUS, uId + "-*-*");
         ArrayList<InUserDTO> newsFocus = null;
         //关注目标信息
         if (null != cmap && cmap.size() > 0) {
@@ -338,7 +337,13 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
         Long uId = Long.parseLong(String.valueOf(map.get("uId")));
         //根据uId查询用户关注的目标  #uId-#type-#fId
         ArrayList<InUserDTO> newsFocus = null;
-        List<Map.Entry<Object, Object>> cmap = redisUtils.hfget(RedisKeys.FOCUS, uId + "-*-*");
+        List<Map.Entry<Object, Object>> cmap = redisUtils.hfget(RedisKeys.FOCUS, uId + "-1-*");
+        List<Map.Entry<Object, Object>> cmap2 = redisUtils.hfget(RedisKeys.FOCUS, uId + "-2-*");
+        if (null != cmap) {
+            cmap.addAll(cmap2);
+        }else {
+            cmap = cmap2;
+        }
         List<Map.Entry<Object, Object>> slist = null;
         //关注目标信息
         if (null != cmap && cmap.size() > 0) {

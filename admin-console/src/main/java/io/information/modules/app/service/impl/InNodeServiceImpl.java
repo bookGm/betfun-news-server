@@ -11,24 +11,19 @@ import io.information.common.utils.PageUtils;
 import io.information.common.utils.Query;
 import io.information.common.utils.RedisKeys;
 import io.information.modules.app.dao.InCardBaseDao;
+import io.information.modules.app.dao.InCommonReplyDao;
 import io.information.modules.app.dao.InNodeDao;
-import io.information.modules.app.entity.InArticle;
-import io.information.modules.app.entity.InCardBase;
-import io.information.modules.app.entity.InNode;
-import io.information.modules.app.entity.InUser;
+import io.information.modules.app.entity.*;
 import io.information.modules.app.service.IInArticleService;
 import io.information.modules.app.service.IInCardBaseService;
 import io.information.modules.app.service.IInNodeService;
 import io.information.modules.app.service.IInUserService;
-import io.information.modules.app.vo.CardBaseVo;
-import io.information.modules.app.vo.CardUserVo;
+import io.information.modules.app.vo.*;
+import io.swagger.annotations.ApiModelProperty;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.LongSummaryStatistics;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 
@@ -50,6 +45,8 @@ public class InNodeServiceImpl extends ServiceImpl<InNodeDao, InNode> implements
     private IInCardBaseService baseService;
     @Autowired
     private InCardBaseDao baseDao;
+    @Autowired
+    private InCommonReplyDao replyDao;
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
@@ -203,4 +200,31 @@ public class InNodeServiceImpl extends ServiceImpl<InNodeDao, InNode> implements
         }
         return null;
     }
+
+
+    @Override
+    public List<NodeVo> recommendNode() {
+        return this.baseMapper.searchNodeByFocus();
+    }
+
+
+    @Override
+    public List<CardBaseVo> heatCard() {
+        return baseDao.searchBaseByLike();
+    }
+
+
+    @Override
+    public List<NewDynamicVo> newDynamic() {
+        List<DynamicCardVo> base = baseDao.searchBaseByTime();
+        List<DynamicReplyVo> reply = replyDao.searchReplyByTime();
+        List<String> collect = base.stream().map(DynamicCardVo::getcCreateTime).collect(Collectors.toList());
+        List<String> list = reply.stream().map(DynamicReplyVo::getCrTime).collect(Collectors.toList());
+        collect.addAll(list);
+
+        return null;
+    }
+
+
+
 }
