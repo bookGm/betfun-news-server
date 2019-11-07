@@ -1,7 +1,5 @@
 package io.elasticsearch.listener;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
 import io.elasticsearch.entity.EsFlashEntity;
 import io.elasticsearch.service.EsFlashService;
 import io.mq.utils.Constants;
@@ -26,8 +24,8 @@ public class FlashListener {
             exchange = @Exchange(name = Constants.flashExchange),
             key = Constants.flash_Save_RouteKey
     ))
-    public void created(JSONObject obj){
-        flashService.saveFlash(JSON.toJavaObject(obj,EsFlashEntity.class));
+    public void created(EsFlashEntity esFlash){
+        flashService.saveFlash(esFlash);
     }
 
 
@@ -52,7 +50,7 @@ public class FlashListener {
             exchange = @Exchange(name = Constants.flashExchange),
             key = Constants.flash_Update_RouteKey
     ))
-    public void update(JSONObject obj){
-        flashService.updatedFlash(JSON.toJavaObject(obj,EsFlashEntity.class));
+    public void update(EsFlashEntity esFlash){
+        flashService.updatedFlash(esFlash);
     }
 }

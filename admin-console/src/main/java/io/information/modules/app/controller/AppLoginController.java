@@ -1,16 +1,13 @@
 package io.information.modules.app.controller;
 
-import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.guansuo.common.SmsUtil;
 import com.guansuo.common.StringUtil;
 import com.guansuo.template.SmsTemplate;
 import com.guansuo.validgroups.CodeLogin;
 import com.guansuo.validgroups.PwdLogin;
-import io.information.common.utils.IdGenerator;
-import io.information.common.utils.R;
-import io.information.common.utils.RedisKeys;
-import io.information.common.utils.RedisUtils;
+import io.elasticsearch.entity.EsUserEntity;
+import io.information.common.utils.*;
 import io.information.modules.app.entity.InUser;
 import io.information.modules.app.form.AppLoginForm;
 import io.information.modules.app.form.RegisterForm;
@@ -168,8 +165,9 @@ public class AppLoginController {
             user.setuSalt(new Sha256Hash(phone.substring(phone.length() - 6), salt).toHex());
             user.setuToken(r.get("token").toString());
             if (iInUserService.saveWithCache(user)) {
+                EsUserEntity esUser = BeanHelper.copyProperties(user, EsUserEntity.class);
                 rabbitTemplate.convertAndSend(Constants.userExchange,
-                        Constants.user_Save_RouteKey, JSON.toJSON(user));
+                        Constants.user_Save_RouteKey, esUser);
                 return r;
             } else {
                 return R.error("注册失败");

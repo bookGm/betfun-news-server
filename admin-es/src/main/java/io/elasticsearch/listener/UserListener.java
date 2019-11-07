@@ -1,8 +1,6 @@
 package io.elasticsearch.listener;
 
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
 import io.elasticsearch.entity.EsUserEntity;
 import io.elasticsearch.service.EsUserService;
 import io.mq.utils.Constants;
@@ -27,8 +25,8 @@ public class UserListener {
             exchange = @Exchange(name = Constants.userExchange),
             key = Constants.user_Save_RouteKey
     ))
-    public void created(JSONObject obj) {
-        userService.saveUser(JSON.toJavaObject(obj, EsUserEntity.class));
+    public void created(EsUserEntity esUser) {
+        userService.saveUser(esUser);
     }
 
 
@@ -53,7 +51,7 @@ public class UserListener {
             exchange = @Exchange(name = Constants.userExchange),
             key = Constants.user_Update_RouteKey
     ))
-    public void update(JSONObject obj) {
-        userService.updatedUser(JSON.toJavaObject(obj, EsUserEntity.class));
+    public void update(EsUserEntity esUser) {
+        userService.updatedUser(esUser);
     }
 }

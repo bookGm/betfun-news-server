@@ -3,6 +3,7 @@ package io.information.modules.app.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import io.information.common.utils.PageUtils;
 import io.information.modules.app.entity.InUser;
+import io.information.modules.app.vo.UserBoolVo;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.io.IOException;
@@ -53,4 +54,8 @@ public interface IInUserService extends IService<InUser> {
     List<Long> searchFocusId(Long uId);
 
     PageUtils fansNode(Map<String, Object> map);
+
+    UserBoolVo userNumber(Long uId, Long tId, Integer type, InUser user);
+
+    Boolean isFocus(Long tId, Long uId);
 }

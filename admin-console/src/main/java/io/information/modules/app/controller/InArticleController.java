@@ -15,12 +15,10 @@ import io.information.modules.app.service.IInActivityService;
 import io.information.modules.app.service.IInArticleService;
 import io.information.modules.app.service.IInCardBaseService;
 import io.information.modules.app.service.IInUserService;
+import io.information.modules.app.vo.ArticleUserVo;
 import io.information.modules.app.vo.InArticleUserDetailVo;
 import io.mq.utils.Constants;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.*;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -207,6 +205,7 @@ public class InArticleController {
     @Login
     @GetMapping("/getArticleStatistics")
     @ApiOperation(value = "获取专栏主页文章统计数据", httpMethod = "GET")
+    @ApiResponse(code = 200, message = "aCount：文章数  rCount：阅读量  fCount：粉丝数")
     public R getArticleStatistics(@ApiIgnore @LoginUser InUser user) {
         Map<String, Object> rm = new HashMap<>();
         List<InArticle> list = articleService.list(new LambdaQueryWrapper<InArticle>().eq(InArticle::getuId, user.getuId()));
@@ -218,6 +217,22 @@ public class InArticleController {
         //累计粉丝数
         rm.put("fCount", user.getuFans());
         return R.ok(rm);
+    }
+
+
+    /**
+     * 社区 -- 帖子详情 --发布者信息和帖子推荐
+     */
+    @GetMapping("/articleRecommended")
+    @ApiOperation(value = "文章详情 -- 发布者信息[右上]", httpMethod = "GET", notes = "分页数据，用户ID", response = ArticleUserVo.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(value = "每页显示条数", name = "pageSize", required = true),
+            @ApiImplicitParam(value = "当前页数", name = "currPage", required = true),
+            @ApiImplicitParam(value = "用户ID", name = "uId", required = true)
+    })
+    public ResultUtil<ArticleUserVo> articleRecommended(@RequestParam Map<String, Object> map) {
+        ArticleUserVo articleUserVo = articleService.articleRecommended(map);
+        return ResultUtil.ok(articleUserVo);
     }
 
 
@@ -247,21 +262,21 @@ public class InArticleController {
     }
 
     @GetMapping("/articleUserDetail/{aId}")
-    @ApiOperation(value = "查询文章作者及详情", httpMethod = "GET" ,notes = "文章id")
-    public ResultUtil<InArticleUserDetailVo> getArticleUserDetail(@PathVariable("aId") String aId,HttpServletRequest request){
-        InArticle a=articleService.getById(aId);
-        if(null==a){
+    @ApiOperation(value = "查询文章作者及详情", httpMethod = "GET", notes = "文章id")
+    public ResultUtil<InArticleUserDetailVo> getArticleUserDetail(@PathVariable("aId") String aId, HttpServletRequest request) {
+        InArticle a = articleService.getById(aId);
+        if (null == a) {
             return ResultUtil.error("不存在此文章");
         }
-        Object obj=request.getAttribute("AppUserId");
-        InArticleUserDetailVo av=new InArticleUserDetailVo();
-        if(StringUtil.isNotBlank(obj)){
-            Long uId=Long.parseLong(String.valueOf(obj));
-            InUser u=inUserService.getById(a.getuId());
+        Object obj = request.getAttribute("AppUserId");
+        InArticleUserDetailVo av = new InArticleUserDetailVo();
+        if (StringUtil.isNotBlank(obj)) {
+            Long uId = Long.parseLong(String.valueOf(obj));
+            InUser u = inUserService.getById(a.getuId());
             av.setuNick(u.getuNick());
             av.setuPhoto(u.getuPhoto());
-            av.setLiked(redisTemplate.opsForHash().hasKey(RedisKeys.LIKE,aId+"-"+uId+"-"+u.getuId()+"-"+NewsEnum.点赞_文章.getCode()));
-            av.setCollected(redisTemplate.opsForHash().hasKey(RedisKeys.COLLECT,aId+"-"+uId+"-"+u.getuId()+"-"+NewsEnum.收藏_文章.getCode()));
+            av.setLiked(redisTemplate.opsForHash().hasKey(RedisKeys.LIKE, aId + "-" + uId + "-" + u.getuId() + "-" + NewsEnum.点赞_文章.getCode()));
+            av.setCollected(redisTemplate.opsForHash().hasKey(RedisKeys.COLLECT, aId + "-" + uId + "-" + u.getuId() + "-" + NewsEnum.收藏_文章.getCode()));
         }
         av.setaLike(a.getaLike());
         av.setaCollect(a.getaCollect());

@@ -1,7 +1,8 @@
 package io.information.modules.app.controller;
 
 
-import com.alibaba.fastjson.JSON;
+import io.elasticsearch.entity.EsFlashEntity;
+import io.information.common.utils.BeanHelper;
 import io.information.common.utils.IdGenerator;
 import io.information.common.utils.PageUtils;
 import io.information.common.utils.R;
@@ -70,8 +71,9 @@ public class InNewsFlashController {
         flash.setnId(IdGenerator.getId());
         flash.setnCreateTime(new Date());
         newsFlashService.save(flash);
+        EsFlashEntity esFlash = BeanHelper.copyProperties(flash, EsFlashEntity.class);
         rabbitTemplate.convertAndSend(Constants.flashExchange,
-                Constants.flash_Save_RouteKey, JSON.toJSON(flash));
+                Constants.flash_Save_RouteKey, esFlash);
         return R.ok();
     }
 
@@ -82,8 +84,9 @@ public class InNewsFlashController {
     @ApiOperation(value = "修改快讯", httpMethod = "PUT")
     public R update(@RequestBody InNewsFlash flash) {
         newsFlashService.updateById(flash);
+        EsFlashEntity esFlash = BeanHelper.copyProperties(flash, EsFlashEntity.class);
         rabbitTemplate.convertAndSend(Constants.flashExchange,
-                Constants.flash_Update_RouteKey, JSON.toJSON(flash));
+                Constants.flash_Update_RouteKey, esFlash);
         return R.ok();
     }
 
@@ -110,7 +113,7 @@ public class InNewsFlashController {
             @ApiImplicitParam(name = "bId", value = "0：利空 1：利好", required = true)
     })
     public R attitude(@RequestParam("nId") Long nId, @RequestParam("bId") Integer bId, @ApiIgnore @LoginUser InUser user) {
-        newsFlashService.attitude(nId,user.getuId(),bId);
+        newsFlashService.attitude(nId, user.getuId(), bId);
         return R.ok();
     }
 }

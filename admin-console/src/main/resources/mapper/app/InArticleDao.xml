@@ -11,4 +11,7 @@
     <update id="addReadNumber" parameterType="java.lang.Long">
          update in_article set a_read_number=#{aReadNumber} where a_id=#{aid}
     </update>
+    <select id="searchTitleAndId" resultType="io.information.modules.app.vo.ArticleVo">
+        select a_id,a_title from in_article where u_id = #{uId} limit #{currPage},#{pageSize}
+    </select>
 </mapper>

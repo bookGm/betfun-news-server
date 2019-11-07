@@ -7,16 +7,16 @@ import com.guansuo.common.DateUtils;
 import com.guansuo.common.StringUtil;
 import com.guansuo.newsenum.NewsEnum;
 import io.information.common.annotation.HashCacheable;
-import io.information.common.utils.PageUtils;
-import io.information.common.utils.Query;
-import io.information.common.utils.RedisKeys;
-import io.information.common.utils.RedisUtils;
+import io.information.common.utils.*;
 import io.information.modules.app.dao.InActivityDao;
 import io.information.modules.app.dao.InArticleDao;
 import io.information.modules.app.dao.InCardBaseDao;
 import io.information.modules.app.entity.InArticle;
 import io.information.modules.app.entity.InUser;
 import io.information.modules.app.service.IInArticleService;
+import io.information.modules.app.service.IInUserService;
+import io.information.modules.app.vo.ArticleUserVo;
+import io.information.modules.app.vo.ArticleVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -38,9 +38,11 @@ public class InArticleServiceImpl extends ServiceImpl<InArticleDao, InArticle> i
     @Autowired
     RedisUtils redisUtils;
     @Autowired
-    InActivityDao inActivityDao;
+    private IInUserService userService;
     @Autowired
-    InCardBaseDao inCardBaseDao;
+    private InActivityDao inActivityDao;
+    @Autowired
+    private InCardBaseDao inCardBaseDao;
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
@@ -91,6 +93,33 @@ public class InArticleServiceImpl extends ServiceImpl<InArticleDao, InArticle> i
         LambdaQueryWrapper<InArticle> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.orderByDesc(InArticle::getaCritic).orderByDesc(InArticle::getaLike);
         return new ArrayList<>(this.list(queryWrapper).subList(0, 10));
+    }
+
+    @Override
+    public ArticleUserVo articleRecommended(Map<String, Object> map) {
+        Integer pageSize = StringUtil.isBlank(map.get("pageSize")) ? 10 : Integer.parseInt(String.valueOf(map.get("pageSize")));
+        Integer currPage = StringUtil.isBlank(map.get("currPage")) ? 0 : Integer.parseInt(String.valueOf(map.get("currPage")));
+        if (null != map.get("uId") && StringUtil.isNotBlank(map.get("uId"))) {
+            long uId = Long.parseLong(String.valueOf(map.get("uId")));
+            InUser user = userService.getById(uId);
+            ArticleUserVo articleUserVo = BeanHelper.copyProperties(user, ArticleUserVo.class);
+            if (null != articleUserVo) {
+                LambdaQueryWrapper<InArticle> queryWrapper = new LambdaQueryWrapper<>();
+                queryWrapper.eq(InArticle::getuId, uId);
+                int articleNumber = this.count(queryWrapper);
+                if (articleNumber > 0) {
+                    articleUserVo.setArticleNumber(articleNumber);
+                    List<ArticleVo> articleVos = this.baseMapper.searchTitleAndId(uId, currPage, pageSize);
+                    articleUserVo.setArticleVos(articleVos);
+                } else {
+                    articleUserVo.setArticleNumber(0);
+                    articleUserVo.setArticleVos(null);
+                }
+                return articleUserVo;
+            }
+            return null;
+        }
+        return null;
     }
 
     @Override

@@ -6,9 +6,11 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.guansuo.common.StringUtil;
 import io.information.common.annotation.HashCacheable;
+import io.information.common.utils.BeanHelper;
 import io.information.common.utils.PageUtils;
 import io.information.common.utils.Query;
 import io.information.common.utils.RedisKeys;
+import io.information.modules.app.dao.InCardBaseDao;
 import io.information.modules.app.dao.InNodeDao;
 import io.information.modules.app.entity.InArticle;
 import io.information.modules.app.entity.InCardBase;
@@ -18,11 +20,15 @@ import io.information.modules.app.service.IInArticleService;
 import io.information.modules.app.service.IInCardBaseService;
 import io.information.modules.app.service.IInNodeService;
 import io.information.modules.app.service.IInUserService;
-import io.information.modules.app.vo.InNodeVo;
+import io.information.modules.app.vo.CardBaseVo;
+import io.information.modules.app.vo.CardUserVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.LongSummaryStatistics;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 
@@ -42,6 +48,8 @@ public class InNodeServiceImpl extends ServiceImpl<InNodeDao, InNode> implements
     private IInArticleService articleService;
     @Autowired
     private IInCardBaseService baseService;
+    @Autowired
+    private InCardBaseDao baseDao;
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
@@ -167,5 +175,32 @@ public class InNodeServiceImpl extends ServiceImpl<InNodeDao, InNode> implements
     public Long focus(Long uId, Long noId, Long type) {
         this.baseMapper.increaseFocus(noId);
         return noId;
+    }
+
+    @Override
+    public CardUserVo cardRecommended(Map<String, Object> map) {
+        Integer pageSize = StringUtil.isBlank(map.get("pageSize")) ? 10 : Integer.parseInt(String.valueOf(map.get("pageSize")));
+        Integer currPage = StringUtil.isBlank(map.get("currPage")) ? 0 : Integer.parseInt(String.valueOf(map.get("currPage")));
+        if (null != map.get("uId") && StringUtil.isNotBlank(map.get("uId"))) {
+            long uId = Long.parseLong(String.valueOf(map.get("uId")));
+            InUser user = userService.getById(uId);
+            CardUserVo cardUserVo = BeanHelper.copyProperties(user, CardUserVo.class);
+            if (null != cardUserVo) {
+                LambdaQueryWrapper<InCardBase> queryWrapper = new LambdaQueryWrapper<>();
+                queryWrapper.eq(InCardBase::getuId, uId);
+                int cardNumber = baseService.count(queryWrapper);
+                if (cardNumber > 0) {
+                    cardUserVo.setCardNumber(cardNumber);
+                    List<CardBaseVo> cardBaseVos = baseDao.searchTitleAndId(uId, currPage, pageSize);
+                    cardUserVo.setCardBaseVos(cardBaseVos);
+                } else {
+                    cardUserVo.setCardNumber(0);
+                    cardUserVo.setCardBaseVos(null);
+                }
+                return cardUserVo;
+            }
+            return null;
+        }
+        return null;
     }
 }

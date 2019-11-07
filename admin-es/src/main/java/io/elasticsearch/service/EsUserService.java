@@ -14,5 +14,5 @@ public interface EsUserService {
 
     void updatedUser(EsUserEntity userEntity);
 
-    PageUtils search(Map<String,Object> map);
+    PageUtils search(SearchRequest request);
 }

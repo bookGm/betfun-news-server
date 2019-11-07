@@ -19,12 +19,12 @@ public class EsUserEntity implements Serializable {
     /**
      * 用户昵称
      */
-    @Field(type = FieldType.Keyword)
+    @Field(type = FieldType.Keyword, analyzer = "ik_max_word",searchAnalyzer="ik_max_word")
     private String uNick;
     /**
      * 用户简介
      */
-    @Field(type = FieldType.Keyword)
+    @Field(type = FieldType.Keyword, analyzer = "ik_max_word",searchAnalyzer="ik_max_word")
     private String uIntro;
     /**
      * 认证状态（0：未通过  1：通过 ）
@@ -36,6 +36,11 @@ public class EsUserEntity implements Serializable {
      */
     @Field(type = FieldType.Integer)
     private Integer uAuthType;
+    /**
+     * 企业名称
+     */
+    @Field(type = FieldType.Keyword, analyzer = "ik_max_word",searchAnalyzer="ik_max_word")
+    private String uCompanyName;
 
     public Long getuId() {
         return uId;
@@ -75,5 +80,13 @@ public class EsUserEntity implements Serializable {
 
     public void setuAuthType(Integer uAuthType) {
         this.uAuthType = uAuthType;
+    }
+
+    public String getuCompanyName() {
+        return uCompanyName;
+    }
+
+    public void setuCompanyName(String uCompanyName) {
+        this.uCompanyName = uCompanyName;
     }
 }

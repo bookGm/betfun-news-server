@@ -4,13 +4,17 @@ import io.information.modules.app.entity.InNode;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
+import java.io.Serializable;
+
 /**
  * <p>
  * 节点信息前端
  * </p>
  */
 @ApiModel(value = "节点列表数据", description = "节点列表数据对象")
-public class InNodeVo {
+public class InNodeVo implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     /**
      * 节点信息
      */

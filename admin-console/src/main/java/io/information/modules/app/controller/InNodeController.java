@@ -8,8 +8,8 @@ import io.information.modules.app.annotation.LoginUser;
 import io.information.modules.app.entity.InCard;
 import io.information.modules.app.entity.InNode;
 import io.information.modules.app.entity.InUser;
-import io.information.modules.app.service.IInCardBaseService;
 import io.information.modules.app.service.IInNodeService;
+import io.information.modules.app.vo.CardUserVo;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -81,10 +81,26 @@ public class InNodeController {
             @ApiImplicitParam(value = "每页显示条数", name = "pageSize", required = true),
             @ApiImplicitParam(value = "当前页数", name = "currPage", required = true),
     })
-    @ApiResponse(code = 200,message = "list:{数字：{节点社区数据}}  数字：节点类型  2：项目 3：社区 4：平台 5：资本 ")
+    @ApiResponse(code = 200, message = "list:{数字：{节点社区数据}}  数字：节点类型  2：项目 3：社区 4：平台 5：资本 ")
     public R nodeList(@RequestParam Map<String, Object> map) {
         Map<Long, List<InNode>> list = nodeService.query(map);
         return R.ok().put("list", list);
+    }
+
+
+    /**
+     * 社区 -- 帖子详情 --发布者信息和帖子推荐
+     */
+    @GetMapping("/cardRecommended")
+    @ApiOperation(value = "社区 -- 帖子详情 -- 发布者信息[右上]", httpMethod = "GET", notes = "分页数据，用户ID",response = CardUserVo.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(value = "每页显示条数", name = "pageSize", required = true),
+            @ApiImplicitParam(value = "当前页数", name = "currPage", required = true),
+            @ApiImplicitParam(value = "用户ID", name = "uId", required = true)
+    })
+    public ResultUtil<CardUserVo> cardRecommended(@RequestParam Map<String,Object> map) {
+        CardUserVo cardUserVo = nodeService.cardRecommended(map);
+        return ResultUtil.ok(cardUserVo);
     }
 
 
@@ -114,7 +130,7 @@ public class InNodeController {
             @ApiImplicitParam(value = "每页显示条数", name = "pageSize", required = true),
             @ApiImplicitParam(value = "当前页数", name = "currPage", required = true),
     })
-    @ApiResponse(code = 200,message = "list:{数字:{用户数据}  数字：用户类型  0：普通用户 1：红人榜 2：黑榜 ")
+    @ApiResponse(code = 200, message = "list:{数字:{用户数据}  数字：用户类型  0：普通用户 1：红人榜 2：黑榜 ")
     public R star(@RequestParam Map<String, Object> map) {
         Map<Integer, List<InUser>> list = nodeService.star(map);
         return R.ok().put("list", list);
@@ -130,7 +146,7 @@ public class InNodeController {
             @ApiImplicitParam(value = "当前页数", name = "currPage", required = true),
     })
     @ApiOperation(value = "专栏社区列表", httpMethod = "GET", response = InUser.class)
-    @ApiResponse(code = 200,message = "aCount：累计文章数  " +
+    @ApiResponse(code = 200, message = "aCount：累计文章数  " +
             "rCount：累计阅读量  fCount：累计粉丝数  user：用户信息 " +
             "pageSize：每页显示条数  currPage：当前页数" +
             "totalCount：总条数  totalPage：总页数")

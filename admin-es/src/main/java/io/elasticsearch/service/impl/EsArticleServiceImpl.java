@@ -74,8 +74,7 @@ public class EsArticleServiceImpl implements EsArticleService {
             //多字段匹配[关键字，标题，内容，摘要]
             SearchQuery searchQuery = new NativeSearchQueryBuilder()
                     .withQuery(multiMatchQuery(key, "aKeyword", "aTitle", "aContent", "aBrief")
-                            .operator(Operator.OR).type(MultiMatchQueryBuilder.Type.MOST_FIELDS)
-                            /*.minimumShouldMatch("30%")*/)
+                            .operator(Operator.OR)/*.minimumShouldMatch("30%")*/)
                     .withPageable(PageRequest.of(page, size))
                     .build();
             AggregatedPage<EsArticleEntity> esArticleEntities =

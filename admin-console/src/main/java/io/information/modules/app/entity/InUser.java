@@ -29,7 +29,7 @@ public class InUser implements Serializable {
      * 用户id
      */
     @TableId(value = "u_id", type = IdType.INPUT)
-    @ApiModelProperty(value = "文章标题", name = "aTitle", required = true)
+    @ApiModelProperty(value = "用户ID", name = "uId", required = true)
     private Long uId;
     /**
      * 账号

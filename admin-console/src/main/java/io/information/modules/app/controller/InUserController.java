@@ -1,19 +1,19 @@
 package io.information.modules.app.controller;
 
 
-import com.alibaba.fastjson.JSON;
-import io.information.common.utils.DataUtils;
-import io.information.common.utils.PageUtils;
-import io.information.common.utils.R;
-import io.information.common.utils.ResultUtil;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import io.elasticsearch.entity.EsUserEntity;
+import io.information.common.utils.*;
 import io.information.modules.app.annotation.Login;
 import io.information.modules.app.annotation.LoginUser;
 import io.information.modules.app.dto.IdentifyCompanyDTO;
 import io.information.modules.app.dto.IdentifyPersonalDTO;
 import io.information.modules.app.dto.RedactDataDTO;
 import io.information.modules.app.entity.*;
+import io.information.modules.app.service.IInArticleService;
 import io.information.modules.app.service.IInUserService;
 import io.information.modules.app.vo.InLikeVo;
+import io.information.modules.app.vo.UserBoolVo;
 import io.information.modules.sys.controller.AbstractController;
 import io.mq.utils.Constants;
 import io.swagger.annotations.*;
@@ -22,8 +22,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.LongSummaryStatistics;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -41,6 +44,8 @@ public class InUserController extends AbstractController {
     private IInUserService userService;
     @Autowired
     private RabbitTemplate rabbitTemplate;
+    @Autowired
+    private IInArticleService articleService;
 
 
     /**
@@ -73,8 +78,10 @@ public class InUserController extends AbstractController {
         InUser u = DataUtils.copyData(identifyPersonalDTO, InUser.class);
         u.setuId(user.getuId());
         userService.updateById(u);
+        InUser inUser = userService.getById(u.getuId());
+        EsUserEntity esUser = BeanHelper.copyProperties(inUser, EsUserEntity.class);
         rabbitTemplate.convertAndSend(Constants.userExchange,
-                Constants.user_Update_RouteKey, JSON.toJSON(u));
+                Constants.user_Update_RouteKey, esUser);
         return R.ok();
     }
 
@@ -89,8 +96,10 @@ public class InUserController extends AbstractController {
         InUser u = DataUtils.copyData(identifyCompanyDTO, InUser.class);
         u.setuId(user.getuId());
         userService.updateById(u);
+        InUser inUser = userService.getById(u.getuId());
+        EsUserEntity esUser = BeanHelper.copyProperties(inUser, EsUserEntity.class);
         rabbitTemplate.convertAndSend(Constants.userExchange,
-                Constants.user_Update_RouteKey, JSON.toJSON(u));
+                Constants.user_Update_RouteKey, esUser);
         return R.ok();
     }
 
@@ -105,8 +114,10 @@ public class InUserController extends AbstractController {
         InUser u = DataUtils.copyData(identifyCompanyDTO, InUser.class);
         u.setuId(user.getuId());
         userService.updateById(u);
+        InUser inUser = userService.getById(u.getuId());
+        EsUserEntity esUser = BeanHelper.copyProperties(inUser, EsUserEntity.class);
         rabbitTemplate.convertAndSend(Constants.userExchange,
-                Constants.user_Update_RouteKey, JSON.toJSON(u));
+                Constants.user_Update_RouteKey, esUser);
         return R.ok();
     }
 
@@ -121,8 +132,10 @@ public class InUserController extends AbstractController {
         InUser u = DataUtils.copyData(redactDataDTO, InUser.class);
         u.setuId(user.getuId());
         userService.updateById(u);
+        InUser inUser = userService.getById(u.getuId());
+        EsUserEntity esUser = BeanHelper.copyProperties(inUser, EsUserEntity.class);
         rabbitTemplate.convertAndSend(Constants.userExchange,
-                Constants.user_Update_RouteKey, JSON.toJSON(u));
+                Constants.user_Update_RouteKey, esUser);
         return R.ok();
     }
 
@@ -135,8 +148,52 @@ public class InUserController extends AbstractController {
     @ApiOperation(value = "关注用户", httpMethod = "POST", notes = "被关注的用户id")
     @ApiImplicitParam(value = "用户id", name = "uId", required = true)
     public R focus(@RequestParam Long uId, @ApiIgnore @LoginUser InUser user) {
-        userService.focus(user.getuId(), uId, user.getuAuthStatus());
+        userService.focus(user.getuId(), uId, user.getuPotential());
         return R.ok();
+    }
+
+
+    /**
+     * 用户 -- 相关数量
+     */
+    @Login
+    @GetMapping("/userNumber")
+    @ApiOperation(value = "用户数据信息[点赞，收藏，评论]", httpMethod = "GET")
+    @ApiImplicitParams({
+            @ApiImplicitParam(value = "用户ID", name = "uId", required = true),
+            @ApiImplicitParam(value = "目标[文章，帖子，活动]ID", name = "tId", required = true),
+            @ApiImplicitParam(value = "目标类型(0：文章 1：帖子 2：活动)", name = "type", required = true)
+    })
+    public ResultUtil<UserBoolVo> userNumber(@RequestParam Long uId, @RequestParam Long tId, @RequestParam Integer type, @ApiIgnore @LoginUser InUser user) {
+        UserBoolVo boolVo = userService.userNumber(uId, tId, type, user);
+        return ResultUtil.ok(boolVo);
+    }
+
+
+    /**
+     * 专栏主页用户统计
+     */
+    @Login
+    @GetMapping("/getUserStatistics")
+    @ApiOperation(value = "获取专栏主页用户统计数据", httpMethod = "GET")
+    @ApiImplicitParam(value = "用户ID", name = "uId", required = true)
+    @ApiResponse(code = 200, message = "uLook：浏览量  uLike：获赞数  uFans：粉丝数  isFocus：是否关注")
+    public R getUserStatistics(@RequestParam Long uId, @ApiIgnore @LoginUser InUser user) {
+        Map<String, Object> rm = new HashMap<>();
+        List<InArticle> list = articleService.list(new LambdaQueryWrapper<InArticle>().eq(InArticle::getuId, uId));
+        //浏览量
+        LongSummaryStatistics readNumber = list.stream().collect(Collectors.summarizingLong((n) -> n.getaReadNumber() == null ? 0L : n.getaReadNumber()));
+        rm.put("uLook", readNumber == null ? 0 : readNumber.getSum());
+        //获赞数
+        LongSummaryStatistics likeNumber = list.stream().collect(Collectors.summarizingLong((n) -> n.getaLike() == null ? 0L : n.getaLike()));
+        rm.put("uLike", likeNumber == null ? 0 : likeNumber.getSum());
+        //粉丝数
+        InUser inUser = userService.getById(uId);
+        rm.put("uFans", inUser == null ? 0 : inUser.getuFans());
+        //是否关注
+        Boolean isFocus = userService.isFocus(uId, user.getuId());
+        rm.put("isFocus", isFocus);
+        return R.ok(rm);
     }
 
 
@@ -151,6 +208,7 @@ public class InUserController extends AbstractController {
         Map<String, Object> params = userService.honor(user.getuId());
         return R.ok().put("map", params);
     }
+
 
     /**
      * 个人消息 -- 评论

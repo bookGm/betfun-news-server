@@ -23,18 +23,18 @@ public class EsFlashEntity implements Serializable {
     /**
      * 快讯标题
      */
-    @Field(type = FieldType.Keyword)
+    @Field(type = FieldType.Keyword, analyzer = "ik_max_word",searchAnalyzer="ik_max_word")
     private String nTitle;
     /**
      * 快讯摘要
      */
-    @Field(type = FieldType.Keyword)
+    @Field(type = FieldType.Keyword, analyzer = "ik_max_word",searchAnalyzer="ik_max_word")
     private String nBrief;
 
     /**
      * 快讯内容
      */
-    @Field(type = FieldType.Keyword)
+    @Field(type = FieldType.Keyword, analyzer = "ik_max_word",searchAnalyzer="ik_max_word")
     private String nContent;
     /**
      * 利好

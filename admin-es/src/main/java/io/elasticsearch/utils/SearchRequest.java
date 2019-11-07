@@ -16,7 +16,7 @@ public class SearchRequest {
 
     //当前页数
     private Integer currPage;
-    private static final Integer DEFAULT_PAGE = 1;// 默认页
+    private static final Integer DEFAULT_PAGE = 0;// 默认页
 
     //条数
     private Integer pageSize = 10;
@@ -26,7 +26,7 @@ public class SearchRequest {
         if(currPage == null){
             return DEFAULT_PAGE;
         }
-        // 获取页码时做一些校验，不能小于1
+        // 获取页码时做一些校验，不能小于0
         return Math.max(DEFAULT_PAGE, currPage);
     }
     public void setCurrPage(Integer currPage) {

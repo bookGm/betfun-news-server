@@ -7,4 +7,7 @@
     <update id="addACollect" parameterType="java.lang.Long">
          update in_card_base set c_collect=c_collect+1 where c_id=#{cid}
     </update>
+    <select id="searchTitleAndId" resultType="io.information.modules.app.vo.CardBaseVo">
+        select c_id,c_title from in_card_base where u_id = #{uId} limit #{currPage},#{pageSize}
+    </select>
 </mapper>

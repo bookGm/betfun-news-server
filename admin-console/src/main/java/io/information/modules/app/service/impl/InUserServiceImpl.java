@@ -16,6 +16,7 @@ import io.information.modules.app.dto.InUserDTO;
 import io.information.modules.app.entity.*;
 import io.information.modules.app.service.*;
 import io.information.modules.app.vo.InLikeVo;
+import io.information.modules.app.vo.UserBoolVo;
 import org.apache.shiro.crypto.hash.Sha256Hash;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -80,6 +81,7 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
     }
 
     @Override
+    //status为0则不是人物
     @HashCacheable(key = RedisKeys.FOCUS, keyField = "#uId-#status-#fId")
     public String focus(Long uId, Long fId, Integer status) {
         this.baseMapper.addFans(uId);
@@ -134,6 +136,40 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
     }
 
     @Override
+    //目标用户ID   目标ID   目标类型   用户ID
+    public UserBoolVo userNumber(Long uId, Long tId, Integer type, InUser user) {
+        if (null != uId) {
+            //用户信息
+            InUser inUser = this.getById(uId);
+            UserBoolVo boolVo = BeanHelper.copyProperties(inUser, UserBoolVo.class);
+            if (null != boolVo) {
+                //是否收藏
+                Boolean isCollect = redisUtils.hashHasKey(RedisKeys.COLLECT, tId + "-" + user.getuId() + "-" + uId + "-*");
+                boolVo.setCollect(isCollect);
+                //收藏数量
+                List<Map.Entry<Object, Object>> cNumber = redisUtils.hfget(RedisKeys.COLLECT, "*-*-" + uId + "-*");
+                boolVo.setCollectNumber(cNumber == null ? 0 : cNumber.size());
+                //是否点赞
+                Boolean isLike = redisUtils.hashHasKey(RedisKeys.LIKE, tId + "-" + user.getuId() + "-" + uId + "-*");
+                boolVo.setLike(isLike);
+                //点赞数量
+                List<Map.Entry<Object, Object>> lNumber = redisUtils.hfget(RedisKeys.LIKE, "*-*-" + uId + "-*");
+                boolVo.setLikeNumber(lNumber == null ? 0 : lNumber.size());
+                //评论数量
+                int count = commonReplyService.count(new LambdaQueryWrapper<InCommonReply>().eq(InCommonReply::gettId, uId));
+                boolVo.setReplyNumber(count);
+            }
+            return boolVo;
+        }
+        return null;
+    }
+
+    @Override
+    public Boolean isFocus(Long tId, Long uId) {
+        return redisUtils.hashHasKey(RedisKeys.FOCUS, uId + "-*-" + tId);
+    }
+
+    @Override
     public PageUtils comment(Map<String, Object> params) {
         //根据用户ID查询所有目标ID<根>或被评论ID找到回复用户的评论
         return commonReplyService.userMsg(params);
@@ -172,9 +208,10 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
                 //获取用户帖子ID
                 List<Long> cIds = baseList.stream().map(InCardBase::getcId).collect(Collectors.toList());
                 //获取回帖信息
-                if(null==cIds||cIds.size()<1){
-                return null;
-            }return commonReplyService.reply(map, cIds);
+                if (null == cIds || cIds.size() < 1) {
+                    return null;
+                }
+                return commonReplyService.reply(map, cIds);
             }
         }
         return null;
