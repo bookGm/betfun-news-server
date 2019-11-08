@@ -20,17 +20,21 @@ import java.util.List;
 public interface InArticleDao extends BaseMapper<InArticle> {
     /**
      * 增加点赞数
+     *
      * @param aid
      */
-    void addALike (Long aid);
+    void addALike(Long aid);
+
     /**
      * 增加收藏数
+     *
      * @param aid
      */
-    void addACollect (Long aid);
+    void addACollect(Long aid);
 
     /**
      * 增加访问量
+     *
      * @param aReadNumber
      * @param aId
      */
@@ -47,4 +51,24 @@ public interface InArticleDao extends BaseMapper<InArticle> {
      * 根据点赞和评论排序
      */
     List<ArticleVo> searchArticleByTime();
+
+    /**
+     * 1：行业要闻  2：技术前沿
+     */
+    List<InArticle> searchArticleInTag(@Param("status") Integer status, @Param("currPage") Integer currPage, @Param("pageSize") Integer pageSize);
+
+
+    /**
+     * 1：行业要闻  2：技术前沿
+     * 热门
+     */
+    List<InArticle> searchArticleInTagByLike(@Param("status") Integer status, @Param("currPage") Integer currPage, @Param("pageSize") Integer pageSize);
+
+    /**
+     * 1：行业要闻  2：技术前沿
+     * 推荐
+     */
+    List<InArticle> searchArticleInTagByTime(@Param("status") Integer status, @Param("currPage") Integer currPage, @Param("pageSize") Integer pageSize);
+
+
 }

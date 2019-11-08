@@ -39,6 +39,12 @@ public class CardUserVo implements Serializable {
     private Integer cardNumber;
 
     /**
+     * 用户帖子获赞数量
+     */
+    @ApiModelProperty(value = "用户帖子获赞数量", name = "cLike")
+    private Long cLike;
+
+    /**
      * 用户帖子推荐信息
      */
     @ApiModelProperty(value = "用户帖子信息", name = "cardBaseVos")
@@ -91,5 +97,13 @@ public class CardUserVo implements Serializable {
 
     public void setCardBaseVos(List<CardBaseVo> cardBaseVos) {
         this.cardBaseVos = cardBaseVos;
+    }
+
+    public Long getcLike() {
+        return cLike;
+    }
+
+    public void setcLike(Long cLike) {
+        this.cLike = cLike;
     }
 }

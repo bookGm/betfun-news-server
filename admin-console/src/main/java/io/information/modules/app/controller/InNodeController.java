@@ -134,7 +134,7 @@ public class InNodeController {
             @ApiImplicitParam(value = "每页显示条数", name = "pageSize", required = true),
             @ApiImplicitParam(value = "当前页数", name = "currPage", required = true),
     })
-    @ApiResponse(code = 200, message = "list:{数字:{用户数据}  数字：用户类型  0：普通用户 1：红人榜 2：黑榜 ")
+    @ApiResponse(code = 200, message = "list:{数字:{用户数据}  数字：用户类型 1：红人榜 2：黑榜 ")
     public R star(@RequestParam Map<String, Object> map) {
         Map<Integer, List<InUser>> list = nodeService.star(map);
         return R.ok().put("list", list);
@@ -150,15 +150,19 @@ public class InNodeController {
             @ApiImplicitParam(value = "每页显示条数", name = "pageSize", required = true),
             @ApiImplicitParam(value = "当前页数", name = "currPage", required = true),
     })
-    @ApiResponse(code = 200, message = "aCount：累计文章数  " +
-            "rCount：累计阅读量  fCount：累计粉丝数  user：用户信息 " +
-            "pageSize：每页显示条数  currPage：当前页数" +
-            "totalCount：总条数  totalPage：总页数")
+    @ApiResponses(@ApiResponse(code = 200, message = "{\r\n" +
+            "    \"aCount\": \"累计文章数\",\r\n" +
+            "    \"rCount\": \"累计阅读量\",\r\n" +
+            "    \"kCount\": \"累计点赞数\",\r\n" +
+            "    \"aCount\": \"累计文章数\",\r\n" +
+            "    \"user\": \"用户信息\",\r\n" +
+            "    \"totalCount\": \"总条数\",\r\n" +
+            "    \"totalPage\": \"总页数\"\r\n" +
+            "  }"))
     public R special(@RequestParam Map<String, Object> map) {
         Map<String, Object> userMap = nodeService.special(map);
         return R.ok().put("userMap", userMap);
     }
-
 
     /**
      * 社区 -- 推荐节点

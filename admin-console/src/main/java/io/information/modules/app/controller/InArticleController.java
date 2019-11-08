@@ -61,11 +61,14 @@ public class InArticleController {
      */
     @Login
     @PostMapping("/save")
-    @ApiOperation(value = "新增咨讯文章", httpMethod = "POST")
+    @ApiOperation(value = "专栏 -- 发布文章", httpMethod = "POST")
     public R save(@RequestBody InArticle article, @ApiIgnore @LoginUser InUser user) {
         if (user.getuAuthStatus() == 2) {
-            article.setaId(IdGenerator.getId());
+            if (null == article.getaId() || ("").equals(article.getaId())) {
+                article.setaId(IdGenerator.getId());
+            }
             article.setuId(user.getuId());
+            article.setaStatus(1);
             article.setaCreateTime(new Date());
             articleService.save(article);
             EsArticleEntity esArticle = BeanHelper.copyProperties(article, EsArticleEntity.class);
@@ -74,6 +77,19 @@ public class InArticleController {
             return R.ok();
         }
         return R.error("此操作需要认证通过");
+    }
+
+
+    @Login
+    @PostMapping("/saveDraft")
+    @ApiOperation(value = "专栏 -- 保存草稿", httpMethod = "POST")
+    public R saveDraft(@RequestBody InArticle article, @ApiIgnore @LoginUser InUser user) {
+        article.setaId(IdGenerator.getId());
+        article.setuId(user.getuId());
+        article.setaStatus(0);
+        article.setaCreateTime(new Date());
+        articleService.save(article);
+        return R.ok();
     }
 
 
@@ -104,8 +120,10 @@ public class InArticleController {
     public R update(@RequestBody InArticle article, @ApiIgnore @LoginUser InUser user) {
         if (user.getuAuthStatus() == 2) {
             articleService.updateById(article);
-            rabbitTemplate.convertAndSend(Constants.articleExchange,
-                    Constants.article_Update_RouteKey, JSON.toJSON(article));
+            if (null != article.getaStatus() && article.getaStatus() == 2) {
+                rabbitTemplate.convertAndSend(Constants.articleExchange,
+                        Constants.article_Update_RouteKey, JSON.toJSON(article));
+            }
             return R.ok();
         }
         return R.error("此操作需要认证通过");
@@ -274,13 +292,13 @@ public class InArticleController {
             @ApiImplicitParam(value = "文章id", name = "aId", required = true),
             @ApiImplicitParam(value = "文章所属用户id", name = "uId", required = true),
     })
-    public ResultUtil<InArticleUserDetailVo> getArticleUserDetail(@RequestParam("aId") Long aId, @RequestParam(value = "uId",required = false) Long uId) {
+    public ResultUtil<InArticleUserDetailVo> getArticleUserDetail(@RequestParam("aId") Long aId, @RequestParam(value = "uId", required = false) Long uId) {
         InArticle a = articleService.getById(aId);
         if (null == a) {
             return ResultUtil.error("不存在此文章");
         }
         InArticleUserDetailVo av = new InArticleUserDetailVo();
-        if(StringUtil.isNotBlank(uId)){
+        if (StringUtil.isNotBlank(uId)) {
             InUser u = inUserService.getById(uId);
             av.setuNick(u.getuNick());
             av.setuPhoto(u.getuPhoto());
@@ -291,4 +309,22 @@ public class InArticleController {
         av.setaCollect(a.getaCollect());
         return ResultUtil.ok(av);
     }
+
+
+    /**
+     * 行业要闻&技术前沿
+     */
+    @GetMapping("/doubleArticle")
+    @ApiOperation(value = "行业要闻 和 技术前沿", httpMethod = "GET")
+    @ApiImplicitParams({
+            @ApiImplicitParam(value = "每页显示条数", name = "pageSize", required = true),
+            @ApiImplicitParam(value = "当前页数", name = "currPage", required = true),
+            @ApiImplicitParam(value = "1：行业要闻  2：技术前沿", name = "status", required = true),
+            @ApiImplicitParam(value = "排序规则 0：最热  1：推荐", name = "type", required = true),
+    })
+    public ResultUtil<List<InArticle>> doubleArticle(@RequestParam Map<String, Object> map) {
+        List<InArticle> articles = articleService.doubleArticle(map);
+        return ResultUtil.ok(articles);
+    }
+
 }

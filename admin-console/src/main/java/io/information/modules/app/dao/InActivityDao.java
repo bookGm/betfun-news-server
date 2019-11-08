@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
  * @author ZXS
  * @since 2019-09-24
  */
+@Component
 @Mapper
 public interface InActivityDao extends BaseMapper<InActivity> {
     /**

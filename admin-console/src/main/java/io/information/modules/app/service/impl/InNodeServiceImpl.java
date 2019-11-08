@@ -13,17 +13,22 @@ import io.information.common.utils.RedisKeys;
 import io.information.modules.app.dao.InCardBaseDao;
 import io.information.modules.app.dao.InCommonReplyDao;
 import io.information.modules.app.dao.InNodeDao;
-import io.information.modules.app.entity.*;
+import io.information.modules.app.entity.InArticle;
+import io.information.modules.app.entity.InCardBase;
+import io.information.modules.app.entity.InNode;
+import io.information.modules.app.entity.InUser;
 import io.information.modules.app.service.IInArticleService;
 import io.information.modules.app.service.IInCardBaseService;
 import io.information.modules.app.service.IInNodeService;
 import io.information.modules.app.service.IInUserService;
 import io.information.modules.app.vo.*;
-import io.swagger.annotations.ApiModelProperty;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.LongSummaryStatistics;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 
@@ -106,9 +111,10 @@ public class InNodeServiceImpl extends ServiceImpl<InNodeDao, InNode> implements
             rm.put("aCount", list.size());
             //累计阅读量
             LongSummaryStatistics readNumber = list.stream().collect(Collectors.summarizingLong((n) -> n.getaReadNumber() == null ? 0L : n.getaReadNumber()));
-            rm.put("rCount", readNumber.getSum());
-            //累计粉丝数
-            rm.put("fCount", user.getuFans());
+            rm.put("rCount", readNumber == null ? 0L : readNumber.getSum());
+            //累计点赞数
+            LongSummaryStatistics likeNumber = list.stream().collect(Collectors.summarizingLong((n) -> n.getaLike() == null ? 0L : n.getaLike()));
+            rm.put("kCount", likeNumber == null ? 0L : likeNumber.getSum());
             //用户信息
             rm.put("user", user);
             //分页数据
@@ -161,8 +167,10 @@ public class InNodeServiceImpl extends ServiceImpl<InNodeDao, InNode> implements
 
     @Override
     public Map<Integer, List<InUser>> star(Map<String, Object> map) {
-        //榜单用户需要通过认证
-        List<InUser> list = userService.list();
+        //榜单用户需要为人物
+        LambdaQueryWrapper<InUser> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.between(InUser::getuPotential, 1, 2);
+        List<InUser> list = userService.list(queryWrapper);
         return list.stream().collect(Collectors.groupingBy(InUser::getuPotential));
     }
 
@@ -173,6 +181,7 @@ public class InNodeServiceImpl extends ServiceImpl<InNodeDao, InNode> implements
         this.baseMapper.increaseFocus(noId);
         return noId;
     }
+
 
     @Override
     public CardUserVo cardRecommended(Map<String, Object> map) {
@@ -189,9 +198,12 @@ public class InNodeServiceImpl extends ServiceImpl<InNodeDao, InNode> implements
                 if (cardNumber > 0) {
                     cardUserVo.setCardNumber(cardNumber);
                     List<CardBaseVo> cardBaseVos = baseDao.searchTitleAndId(uId, currPage, pageSize);
+                    long sum = cardBaseVos.stream().mapToLong(CardBaseVo::getcLike).sum();
+                    cardUserVo.setcLike(sum);
                     cardUserVo.setCardBaseVos(cardBaseVos);
                 } else {
                     cardUserVo.setCardNumber(0);
+                    cardUserVo.setcLike(0L);
                     cardUserVo.setCardBaseVos(null);
                 }
                 return cardUserVo;
@@ -221,10 +233,9 @@ public class InNodeServiceImpl extends ServiceImpl<InNodeDao, InNode> implements
         List<String> collect = base.stream().map(DynamicCardVo::getcCreateTime).collect(Collectors.toList());
         List<String> list = reply.stream().map(DynamicReplyVo::getCrTime).collect(Collectors.toList());
         collect.addAll(list);
-
+        //TODO  排序
         return null;
     }
-
 
 
 }

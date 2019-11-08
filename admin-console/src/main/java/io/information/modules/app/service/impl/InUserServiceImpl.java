@@ -341,7 +341,7 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
         List<Map.Entry<Object, Object>> cmap2 = redisUtils.hfget(RedisKeys.FOCUS, uId + "-2-*");
         if (null != cmap) {
             cmap.addAll(cmap2);
-        }else {
+        } else {
             cmap = cmap2;
         }
         List<Map.Entry<Object, Object>> slist = null;

@@ -30,7 +30,7 @@ public class InCardController {
      */
     @Login
     @PostMapping("/issue")
-    @ApiOperation(value = "发布帖子", httpMethod = "POST")
+    @ApiOperation(value = "发布帖子", httpMethod = "POST", response = InCard.class)
     public R issueCard(@RequestBody InCard card, @ApiIgnore @LoginUser InUser user) {
         cardService.issueCard(card, user);
         return R.ok();

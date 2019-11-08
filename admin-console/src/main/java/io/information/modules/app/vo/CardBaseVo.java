@@ -16,6 +16,9 @@ public class CardBaseVo implements Serializable {
     @ApiModelProperty(value = "帖子标题", name = "cTitle", required = true)
     private String cTitle;
 
+    @ApiModelProperty(value = "帖子点赞数", name = "cLike", required = true)
+    private Long cLike;
+
     public Long getcId() {
         return cId;
     }
@@ -30,5 +33,13 @@ public class CardBaseVo implements Serializable {
 
     public void setcTitle(String cTitle) {
         this.cTitle = cTitle;
+    }
+
+    public Long getcLike() {
+        return cLike;
+    }
+
+    public void setcLike(Long cLike) {
+        this.cLike = cLike;
     }
 }

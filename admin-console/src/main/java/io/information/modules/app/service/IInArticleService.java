@@ -25,6 +25,12 @@ public interface IInArticleService extends IService<InArticle> {
 
     PageUtils queryPage(Map<String, Object> params);
 
+    List<ArticleVo> hotTopic();
+
+    ArticleUserVo articleRecommended(Map<String, Object> map);
+
+    List<InArticle> doubleArticle(Map<String, Object> map);
+
     /**
      * 点赞
      * type(0：文章 1：帖子 2：活动)
@@ -36,9 +42,4 @@ public interface IInArticleService extends IService<InArticle> {
      * type(0：文章 1：帖子 2：活动)
      */
     String collect(Long id,Long tId,int type, Long uid);
-
-
-    List<ArticleVo> hotTopic();
-
-    ArticleUserVo articleRecommended(Map<String, Object> map);
 }

@@ -125,11 +125,38 @@ public class InArticleServiceImpl extends ServiceImpl<InArticleDao, InArticle> i
         return null;
     }
 
+    @Override
+    public List<InArticle> doubleArticle(Map<String, Object> map) {
+        Integer pageSize = StringUtil.isBlank(map.get("pageSize")) ? 10 : Integer.parseInt(String.valueOf(map.get("pageSize")));
+        Integer currPage = StringUtil.isBlank(map.get("currPage")) ? 0 : Integer.parseInt(String.valueOf(map.get("currPage")));
+        ArrayList<InArticle> arrayList = new ArrayList<>();
+        if (null != map.get("status") && StringUtil.isNotBlank(map.get("status"))) {
+            int status = Integer.parseInt(String.valueOf(map.get("status")));
+            if (null != map.get("type") && StringUtil.isNotBlank(map.get("type"))) {
+                int type = Integer.parseInt(String.valueOf(map.get("type")));
+                switch (type) {
+                    case 0:
+                        List<InArticle> inArticles = this.baseMapper.searchArticleInTagByLike(status, currPage, pageSize);
+                        arrayList.addAll(inArticles);
+                        break;
+                    case 1:
+                        List<InArticle> inArticleList = this.baseMapper.searchArticleInTagByTime(status, currPage, pageSize);
+                        arrayList.addAll(inArticleList);
+                        break;
+                }
+                return arrayList;
+            } else {
+                return this.baseMapper.searchArticleInTag(status, currPage, pageSize);
+            }
+        }
+        return null;
+    }
+
     /**
      * 记录操作日志
      */
-    void logOperate(Long uId,Long tId,NewsEnum e){
-        InLog log=new InLog();
+    void logOperate(Long uId, Long tId, NewsEnum e) {
+        InLog log = new InLog();
         log.setlOperateId(uId);
         log.setlTargetId(tId);
         log.setlTargetType(1);
@@ -145,7 +172,7 @@ public class InArticleServiceImpl extends ServiceImpl<InArticleDao, InArticle> i
             this.baseMapper.addALike(id);
         }
         if (NewsEnum.点赞_帖子.getCode().equals(type)) {
-            logOperate(uid,id,NewsEnum.操作_点赞);
+            logOperate(uid, id, NewsEnum.操作_点赞);
             this.inCardBaseDao.addALike(id);
         }
         if (NewsEnum.点赞_活动.getCode().equals(type)) {
@@ -161,7 +188,7 @@ public class InArticleServiceImpl extends ServiceImpl<InArticleDao, InArticle> i
             this.baseMapper.addACollect(id);
         }
         if (NewsEnum.收藏_帖子.getCode().equals(type)) {
-            logOperate(uid,id,NewsEnum.操作_收藏);
+            logOperate(uid, id, NewsEnum.操作_收藏);
             this.inCardBaseDao.addACollect(id);
         }
         if (NewsEnum.收藏_活动.getCode().equals(type)) {

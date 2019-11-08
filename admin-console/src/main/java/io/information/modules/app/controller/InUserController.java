@@ -77,6 +77,7 @@ public class InUserController extends AbstractController {
     public R identifyPersonal(@RequestBody IdentifyPersonalDTO identifyPersonalDTO, @ApiIgnore @LoginUser InUser user) {
         InUser u = DataUtils.copyData(identifyPersonalDTO, InUser.class);
         u.setuId(user.getuId());
+        u.setuAuthStatus(1);
         userService.updateById(u);
         InUser inUser = userService.getById(u.getuId());
         EsUserEntity esUser = BeanHelper.copyProperties(inUser, EsUserEntity.class);
@@ -95,6 +96,7 @@ public class InUserController extends AbstractController {
     public R identifyCompany(@RequestBody IdentifyCompanyDTO identifyCompanyDTO, @ApiIgnore @LoginUser InUser user) {
         InUser u = DataUtils.copyData(identifyCompanyDTO, InUser.class);
         u.setuId(user.getuId());
+        u.setuAuthStatus(1);
         userService.updateById(u);
         InUser inUser = userService.getById(u.getuId());
         EsUserEntity esUser = BeanHelper.copyProperties(inUser, EsUserEntity.class);
@@ -113,6 +115,7 @@ public class InUserController extends AbstractController {
     public R identifyMedia(@RequestBody IdentifyCompanyDTO identifyCompanyDTO, @ApiIgnore @LoginUser InUser user) {
         InUser u = DataUtils.copyData(identifyCompanyDTO, InUser.class);
         u.setuId(user.getuId());
+        u.setuAuthStatus(1);
         userService.updateById(u);
         InUser inUser = userService.getById(u.getuId());
         EsUserEntity esUser = BeanHelper.copyProperties(inUser, EsUserEntity.class);
@@ -154,13 +157,25 @@ public class InUserController extends AbstractController {
 
 
     /**
+     * 是否关注用户
+     */
+    @Login
+    @GetMapping("/isFocus")
+    @ApiOperation(value = "是否已关注用户", httpMethod = "GET" ,notes = "true：已关注  false：未关注")
+    @ApiImplicitParam(value = "目标用户ID", name = "uId", required = true)
+    public Boolean isFocus(@RequestParam Long uId, @ApiIgnore @LoginUser InUser user) {
+        return userService.isFocus(uId,user.getuId());
+    }
+
+
+    /**
      * 用户 -- 相关数量
      */
     @Login
     @GetMapping("/userNumber")
     @ApiOperation(value = "用户数据信息[点赞，收藏，评论]", httpMethod = "GET")
     @ApiImplicitParams({
-            @ApiImplicitParam(value = "用户ID", name = "uId", required = true),
+            @ApiImplicitParam(value = "目标用户ID", name = "uId", required = true),
             @ApiImplicitParam(value = "目标[文章，帖子，活动]ID", name = "tId", required = true),
             @ApiImplicitParam(value = "目标类型(0：文章 1：帖子 2：活动)", name = "type", required = true)
     })
