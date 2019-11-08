@@ -75,7 +75,7 @@ public class NewsFlashServiceImpl extends ServiceImpl<NewsFlashDao, NewsFlash> i
                 if(redisUtils.hasKey(RedisKeys.NEWSFLASH+id)){
                     continue;
                 }
-                redisUtils.set(RedisKeys.NEWSFLASH+id,String.valueOf(id),60*60*24*3);
+                redisUtils.set(RedisKeys.NEWSFLASH+id,String.valueOf(id));
                 NewsFlash n=new NewsFlash();
                 String c=se.getContent();
                 String title=c.substring(c.indexOf("【")+1,c.indexOf("】"));

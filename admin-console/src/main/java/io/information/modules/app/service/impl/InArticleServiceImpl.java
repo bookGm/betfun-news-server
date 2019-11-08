@@ -12,11 +12,14 @@ import io.information.modules.app.dao.InActivityDao;
 import io.information.modules.app.dao.InArticleDao;
 import io.information.modules.app.dao.InCardBaseDao;
 import io.information.modules.app.entity.InArticle;
+import io.information.modules.app.entity.InLog;
 import io.information.modules.app.entity.InUser;
 import io.information.modules.app.service.IInArticleService;
 import io.information.modules.app.service.IInUserService;
 import io.information.modules.app.vo.ArticleUserVo;
 import io.information.modules.app.vo.ArticleVo;
+import io.mq.utils.Constants;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -43,6 +46,8 @@ public class InArticleServiceImpl extends ServiceImpl<InArticleDao, InArticle> i
     private InActivityDao inActivityDao;
     @Autowired
     private InCardBaseDao inCardBaseDao;
+    @Autowired
+    private RabbitTemplate rabbitTemplate;
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
@@ -120,6 +125,19 @@ public class InArticleServiceImpl extends ServiceImpl<InArticleDao, InArticle> i
         return null;
     }
 
+    /**
+     * 记录操作日志
+     */
+    void logOperate(Long uId,Long tId,NewsEnum e){
+        InLog log=new InLog();
+        log.setlOperateId(uId);
+        log.setlTargetId(tId);
+        log.setlTargetType(1);
+        log.setlDo(Integer.parseInt(e.getCode()));
+        log.setlTime(new Date());
+        rabbitTemplate.convertAndSend(Constants.articleExchange, Constants.article_Save_RouteKey, log);
+    }
+
     @Override
     @HashCacheable(key = RedisKeys.LIKE, keyField = "#id-#uid-#tId-#type")
     public String giveALike(Long id, Long tId, int type, Long uid) {
@@ -127,6 +145,7 @@ public class InArticleServiceImpl extends ServiceImpl<InArticleDao, InArticle> i
             this.baseMapper.addALike(id);
         }
         if (NewsEnum.点赞_帖子.getCode().equals(type)) {
+            logOperate(uid,id,NewsEnum.操作_点赞);
             this.inCardBaseDao.addALike(id);
         }
         if (NewsEnum.点赞_活动.getCode().equals(type)) {
@@ -142,6 +161,7 @@ public class InArticleServiceImpl extends ServiceImpl<InArticleDao, InArticle> i
             this.baseMapper.addACollect(id);
         }
         if (NewsEnum.收藏_帖子.getCode().equals(type)) {
+            logOperate(uid,id,NewsEnum.操作_收藏);
             this.inCardBaseDao.addACollect(id);
         }
         if (NewsEnum.收藏_活动.getCode().equals(type)) {

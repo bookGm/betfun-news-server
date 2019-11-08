@@ -43,6 +43,10 @@ public class RedisKeys {
     public static final String NEWSFLASH=BASEKEY+"newsflash:";
     //标签名
     public static final String TAGNAME=BASEKEY+"tagname:";
+    //作者id
+    public static final String AUTHORID=BASEKEY+"authorid:";
     //快讯利好利空
     public static final String NATTITUDE=BASEKEY+"nattitude:";
+    //抓取文章锁
+    public static final String CATCH_ARTICLE_LOCK="catch_article_lock";
 }

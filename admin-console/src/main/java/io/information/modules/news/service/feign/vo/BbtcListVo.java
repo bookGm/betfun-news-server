@@ -8,11 +8,33 @@ public class BbtcListVo implements Serializable {
      * 文章id
      */
     Long id;
+    /**
+     * 文章访问量
+     */
     String views;
+    /**
+     * 文章标题
+     */
     String title;
+    /**
+     * 文章封面图
+     */
     String image;
+    /**
+     * 文章简介
+     */
     String desc;
+    /**
+     * 文章发布时间
+     */
     String post_date_format;
+    /**
+     * 作者信息
+     */
+    AuthorInfoVo author_info;
+    /**
+     * 文章涉及标签
+     */
     Object []tags;
 
     public Long getId() {
@@ -69,5 +91,13 @@ public class BbtcListVo implements Serializable {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public AuthorInfoVo getAuthor_info() {
+        return author_info;
+    }
+
+    public void setAuthor_info(AuthorInfoVo author_info) {
+        this.author_info = author_info;
     }
 }

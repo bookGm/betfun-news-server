@@ -3,6 +3,7 @@ package io.information.modules.app.controller;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.guansuo.common.SmsUtil;
 import com.guansuo.common.StringUtil;
+import com.guansuo.newsenum.NewsEnum;
 import com.guansuo.template.SmsTemplate;
 import com.guansuo.validgroups.CodeLogin;
 import com.guansuo.validgroups.PwdLogin;
@@ -113,7 +114,7 @@ public class AppLoginController {
             return R.error("" +
                     "手机号或密码不正确");
         }
-        return resultToken(user.getuId(), user.getuAuthStatus());
+        return resultToken(user.getuId(), user.getuAuthStatus(),user.getuNick());
     }
 
     @PostMapping("codeLogin")
@@ -131,7 +132,7 @@ public class AppLoginController {
         }
         if (redis.get(rkey).equals(form.getCode())) {
             redis.remove(rkey);
-            return resultToken(user.getuId(), user.getuAuthStatus());
+            return resultToken(user.getuId(), user.getuAuthStatus(),user.getuNick());
         } else {
             return R.error("验证码输入错误");
         }
@@ -153,12 +154,13 @@ public class AppLoginController {
         }
         if (redis.get(rkey).equals(form.getCode())) {
             Long uid = IdGenerator.getId();
-            R r = resultToken(uid, 0);
             String salt = RandomStringUtils.randomAlphanumeric(20);
             String phone = form.getPhone();
+            R r = resultToken(uid, Integer.parseInt(NewsEnum.用户认证状态_未通过.getCode()),phone);
             user = new InUser();
             user.setuId(uid);
             user.setuAccount(phone);
+            user.setuNick(phone);
             user.setuSalt(salt);
             user.setuPhone(phone);
             user.setuCreateTime(new Date());
@@ -177,13 +179,15 @@ public class AppLoginController {
         }
     }
 
-    public R resultToken(Long userid, int authStatus) {
+    public R resultToken(Long userid, int authStatus,String nick) {
         //生成token
         String token = jwtUtils.generateToken(userid);
         Map<String, Object> map = new HashMap<>();
         map.put("token", token);
         map.put("expire", jwtUtils.getExpire());
         map.put("authStatus", authStatus);
+        map.put("uId", userid);
+        map.put("uName",nick);
         return R.ok(map);
     }
 

@@ -1,6 +1,7 @@
 package io.information.modules.news.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -11,10 +12,13 @@ import io.information.common.utils.*;
 import io.information.modules.news.dao.ArticleDao;
 import io.information.modules.news.entity.ArticleEntity;
 import io.information.modules.news.entity.TagEntity;
+import io.information.modules.news.entity.UserEntity;
 import io.information.modules.news.service.ArticleService;
 import io.information.modules.news.service.TagService;
+import io.information.modules.news.service.UserService;
 import io.information.modules.news.service.feign.common.FeignRes;
 import io.information.modules.news.service.feign.service.BbtcService;
+import io.information.modules.news.service.feign.vo.AuthorInfoVo;
 import io.information.modules.news.service.feign.vo.BbtcListVo;
 import me.zhyd.hunter.entity.VirtualArticle;
 import me.zhyd.hunter.processor.BlogHunterProcessor;
@@ -33,6 +37,8 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleDao, ArticleEntity> i
     private static final Logger LOG = LoggerFactory.getLogger(ArticleServiceImpl.class);
     @Autowired
     BbtcService bbtcService;
+    @Autowired
+    UserService userService;
     @Autowired
     TagService tagService;
     @Autowired
@@ -59,61 +65,45 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleDao, ArticleEntity> i
     }
 
 
-    @Override
-    public void catchArticles(int page) {
-        HashSet<String> hashSet = new HashSet<String>();
-            FeignRes res=bbtcService.getPageList(20,1);
-            JSONObject obj=JsonUtil.parseJSONObject(JsonUtil.toJSONString(res.get("data")));
-            List<BbtcListVo> blist=JsonUtil.parseList(obj.getString("list"), BbtcListVo.class);
-                for(BbtcListVo b:blist){
-                    Long bid=b.getId();
-                    if(redisUtils.hasKey(RedisKeys.ARTICLE+b.getTitle())){
-                        LOG.debug("文章title---------------"+RedisKeys.ARTICLE+b.getTitle()+"-------------已存在continue当前循环");
-                        continue;
-                    }
-                    redisUtils.set(RedisKeys.ARTICLE+b.getTitle(),String.valueOf(bid),60*60*24*3);
-                    String url = "https://www.8btc.com/article/"+bid;
-                    HunterProcessor hunter = new BlogHunterProcessor(url, true);
-                    CopyOnWriteArrayList<VirtualArticle> list = hunter.execute();
-                    VirtualArticle v=null;
-                    try {
-                        if(null!=list&&list.size()>0){
-                            v=list.get(0);
-                            ArticleEntity a=new ArticleEntity();
-                            a.setaId(IdGenerator.getId());
-                            a.setuName(v.getAuthor());
-                            a.setaTitle(b.getTitle());
-                            a.setaBrief(b.getDesc());
-                            a.setaContent(v.getContent());
-                            a.setaSource("巴比特");
-                            a.setaLink(v.getSource());
-                            a.setaCover(b.getImage());
-                            Date date=DateUtils.stringToDate(b.getPost_date_format(),"yyyy-MM-dd HH:mm:ss");
-                            a.setaCreateTime(date);
-                            a.setaSimpleTime(DateUtils.getSimpleTime(date));
-                            a.setaStatus(Integer.parseInt(NewsEnum.文章状态_已发布.getCode()));
-                            a.setaReadNumber(Long.parseLong(b.getViews()));
-                            a.setaType(Integer.parseInt(NewsEnum.文章类型_转载.getCode()));
-                            StringBuffer ts=new StringBuffer();
-                            for(Object t:b.getTags()){
-                                String tName=JsonUtil.parseJSONObject(JsonUtil.toJSONString(t)).getString("name");
-                                ts.append(tName).append(",");
-                                hashSet.add(tName);
-                            }
-                            if(ts.indexOf(",")>0){
-                                a.setaKeyword(ts.substring(0,ts.length()-1));
-                            }
-                            this.save(a);
-                        }
-                    } catch (Exception e) {
-                        LOG.error("同步文章异常：---------------------",e.getMessage());
-                    }
-                    hunter=null;
-                    list=null;
-                  }
-                 res=null;
-                 obj=null;
-                 blist=null;
+    /**
+     * 保存文章
+     * @param v 文章实体
+     * @param b 巴比特接口实体
+     */
+    void saveArticle(VirtualArticle v,BbtcListVo b,HashSet<String> hashSet,Long uId){
+        ArticleEntity a=new ArticleEntity();
+        a.setaId(IdGenerator.getId());
+        a.setuId(uId);
+        a.setuName(v.getAuthor());
+        a.setaTitle(b.getTitle());
+        a.setaBrief(b.getDesc());
+        a.setaContent(v.getContent());
+        a.setaSource("巴比特");
+        a.setaLink(v.getSource());
+        a.setaCover(b.getImage());
+        Date date=DateUtils.stringToDate(b.getPost_date_format(),"yyyy-MM-dd HH:mm:ss");
+        a.setaCreateTime(date);
+        a.setaSimpleTime(DateUtils.getSimpleTime(date));
+        a.setaStatus(Integer.parseInt(NewsEnum.文章状态_已发布.getCode()));
+        a.setaReadNumber(Long.parseLong(b.getViews()));
+        a.setaType(Integer.parseInt(NewsEnum.文章类型_转载.getCode()));
+        StringBuffer ts=new StringBuffer();
+        for(Object t:b.getTags()){
+            String tName=JsonUtil.parseJSONObject(JsonUtil.toJSONString(t)).getString("name");
+            ts.append(tName).append(",");
+            hashSet.add(tName);
+        }
+        if(ts.indexOf(",")>0){
+            a.setaKeyword(ts.substring(0,ts.length()-1));
+        }
+        this.save(a);
+    }
+
+    /**
+     *  保存标签
+     * @param hashSet
+     */
+    void saveTag(HashSet<String> hashSet){
         if(redisUtils.isFuzzyEmpty(RedisKeys.TAGNAME)){
             Map<String,String> mtl=new HashMap<>();
             for(TagEntity t:tagService.list()){
@@ -140,6 +130,95 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleDao, ArticleEntity> i
         mt=null;
     }
 
+    /**
+     * 保存作者
+     * @param author
+     */
+    void saveAuthor(AuthorInfoVo author,Long uId){
+        //用户id
+        String authorId=author.getId();
+        if(redisUtils.isFuzzyEmpty(RedisKeys.AUTHORID)){
+            Map<String,String> umap=new HashMap<>();
+            for(UserEntity u:userService.list(new LambdaQueryWrapper<UserEntity>().eq(UserEntity::getuPotential,NewsEnum.用户类型_抓取用户.getCode()))){
+                umap.put(RedisKeys.AUTHORID+u.getuAccount(),u.getuAccount());
+            }
+            redisUtils.batchSet(umap);
+            umap=null;
+        }
+        if(redisUtils.hasKey(RedisKeys.AUTHORID+authorId)){
+           return ;
+        }
+        redisUtils.set(RedisKeys.AUTHORID+authorId,authorId);
+        UserEntity user=new UserEntity();
+        user.setuId(uId);
+        user.setuAccount(authorId);
+        user.setuAuthStatus(Integer.parseInt(NewsEnum.用户认证状态_审核通过.getCode()));
+        user.setuAuthType(Integer.parseInt(NewsEnum.用户认证类型_个人.getCode()));
+        user.setuName(author.getName());
+        user.setuIntro(author.getDesc());
+        user.setuNick(author.getDisplay_name());
+        String [] as=author.getAvatars();
+        if(null!=as&&as.length>0){
+            user.setuPhoto(as[as.length-1]);
+        }else{
+            user.setuPhoto(author.getAvatar());
+        }
+        user.setuPotential(Integer.parseInt(NewsEnum.用户类型_抓取用户.getCode()));
+        user.setuCreateTime(new Date());
+        userService.save(user);
+        user=null;
+    }
+
+    /**
+     * 获取巴比特文章首页数据
+     */
+    List<BbtcListVo> getBbtcList(int page){
+        FeignRes res=bbtcService.getPageList(20,page);
+        JSONObject obj=JsonUtil.parseJSONObject(JsonUtil.toJSONString(res.get("data")));
+        List<BbtcListVo> blist=JsonUtil.parseList(obj.getString("list"), BbtcListVo.class);
+        return blist;
+    }
+
+    @Override
+    public void catchArticles(int page) {
+        boolean lock = redisUtils.lock(RedisKeys.CATCH_ARTICLE_LOCK);
+        HashSet<String> hashSet = new HashSet<String>();
+        if(lock){
+                for(BbtcListVo b:getBbtcList(page)){
+                    Long bid=b.getId();
+                    if(redisUtils.hasKey(RedisKeys.ARTICLE+bid)){
+                        continue;
+                    }
+                    redisUtils.set(RedisKeys.ARTICLE+bid,String.valueOf(bid));
+                    String url = "https://www.8btc.com/article/"+bid;
+                    HunterProcessor hunter = new BlogHunterProcessor(url, true);
+                    CopyOnWriteArrayList<VirtualArticle> list = hunter.execute();
+                    VirtualArticle v=null;
+                    try {
+                        if(null!=list&&list.size()>0){
+                            v=list.get(0);
+                            Long uid=IdGenerator.getId();
+                            //保存文章
+                            saveArticle(v,b,hashSet,uid);
+                            //保存作者
+                            saveAuthor(b.getAuthor_info(),uid);
+                        }
+                    } catch (Exception e) {
+                        LOG.error("同步文章异常：---------------------",e.getMessage());
+                    }
+                    hunter=null;
+                    list=null;
+                  }
+                //保存标签
+                saveTag(hashSet);
+            redisUtils.remove(RedisKeys.CATCH_ARTICLE_LOCK);
+        }
+    }
+
+
+    /**
+     *  增量同步文章，用户，标签
+     */
     @Override
     public void catchIncrementArticles() {
         catchArticles(1);

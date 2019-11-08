@@ -250,30 +250,32 @@ public class InArticleController {
 
     private Long filterId(Long id, Integer type) {
         Long tid = null;
-        if (NewsEnum.点赞_文章.getCode().equals(type)) {
+        if (NewsEnum.点赞_文章.getCode().equals(String.valueOf(type))) {
             tid = articleService.getById(id).getuId();
         }
-        if (NewsEnum.点赞_帖子.getCode().equals(type)) {
+        if (NewsEnum.点赞_帖子.getCode().equals(String.valueOf(type))) {
             tid = baseService.getById(id).getuId();
         }
-        if (NewsEnum.点赞_活动.getCode().equals(type)) {
+        if (NewsEnum.点赞_活动.getCode().equals(String.valueOf(type))) {
             tid = activityService.getById(id).getuId();
         }
         return tid;
     }
 
-    @GetMapping("/articleUserDetail/{aId}")
+    @GetMapping("/articleUserDetail")
     @ApiOperation(value = "查询文章作者及详情", httpMethod = "GET", notes = "文章id")
-    public ResultUtil<InArticleUserDetailVo> getArticleUserDetail(@PathVariable("aId") String aId, HttpServletRequest request) {
+    @ApiImplicitParams({
+            @ApiImplicitParam(value = "文章id", name = "aId", required = true),
+            @ApiImplicitParam(value = "文章所属用户id", name = "uId", required = true),
+    })
+    public ResultUtil<InArticleUserDetailVo> getArticleUserDetail(@RequestParam("aId") Long aId, @RequestParam(value = "uId",required = false) Long uId) {
         InArticle a = articleService.getById(aId);
         if (null == a) {
             return ResultUtil.error("不存在此文章");
         }
-        Object obj = request.getAttribute("AppUserId");
         InArticleUserDetailVo av = new InArticleUserDetailVo();
-        if (StringUtil.isNotBlank(obj)) {
-            Long uId = Long.parseLong(String.valueOf(obj));
-            InUser u = inUserService.getById(a.getuId());
+        if(StringUtil.isNotBlank(uId)){
+            InUser u = inUserService.getById(uId);
             av.setuNick(u.getuNick());
             av.setuPhoto(u.getuPhoto());
             av.setLiked(redisTemplate.opsForHash().hasKey(RedisKeys.LIKE, aId + "-" + uId + "-" + u.getuId() + "-" + NewsEnum.点赞_文章.getCode()));

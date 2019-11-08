@@ -2,16 +2,20 @@ package io.information.modules.app.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.guansuo.common.StringUtil;
+import com.guansuo.newsenum.NewsEnum;
 import io.information.common.utils.BeanHelper;
 import io.information.common.utils.IdGenerator;
 import io.information.common.utils.PageUtils;
 import io.information.common.utils.Query;
+import io.information.modules.app.dao.InCardBaseDao;
 import io.information.modules.app.entity.*;
 import io.information.modules.app.service.IInCardArgueService;
 import io.information.modules.app.service.IInCardBaseService;
 import io.information.modules.app.service.IInCardService;
 import io.information.modules.app.service.IInCardVoteService;
+import io.mq.utils.Constants;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,7 +24,7 @@ import java.util.Date;
 import java.util.Map;
 
 @Service
-public class InCardServiceImpl implements IInCardService {
+public class InCardServiceImpl  extends ServiceImpl<InCardBaseDao, InCardBase> implements IInCardService {
     @Autowired
     private IInCardBaseService baseService;
     @Autowired
@@ -50,6 +54,20 @@ public class InCardServiceImpl implements IInCardService {
         base.setuId(user.getuId());
         base.setcCreateTime(new Date());
         baseService.save(base);
+        logOperate(user.getuId(),cId,NewsEnum.操作_发布);
+    }
+
+    /**
+     * 记录操作日志
+     */
+    void logOperate(Long uId, Long tId, NewsEnum e){
+        InLog log=new InLog();
+        log.setlOperateId(uId);
+        log.setlTargetId(tId);
+        log.setlTargetType(1);
+        log.setlDo(Integer.parseInt(e.getCode()));
+        log.setlTime(new Date());
+        rabbitTemplate.convertAndSend(Constants.articleExchange, Constants.article_Save_RouteKey, log);
     }
 
     @Override

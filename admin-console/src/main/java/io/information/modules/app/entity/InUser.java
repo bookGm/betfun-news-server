@@ -146,9 +146,9 @@ public class InUser implements Serializable {
     @ApiModelProperty(value = "注册时间", name = "uCreateTime", required = false)
     private Date uCreateTime;
     /**
-     * 用户位置 (0：普通用户 1：红人榜 2：黑榜  )
+     * 用户类型 (-1：抓取用户 0：普通用户 1：红人榜 2：黑榜  )
      */
-    @ApiModelProperty(value = "用户位置 (0：普通用户 1：红人榜 2：黑榜  )", name = "uPotential", required = false)
+    @ApiModelProperty(value = "用户类型 (-1：抓取用户 0：普通用户 1：红人榜 2：黑榜  )", name = "uPotential", required = false)
     private Integer uPotential;
 
 

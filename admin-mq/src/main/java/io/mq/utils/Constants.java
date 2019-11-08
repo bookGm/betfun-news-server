@@ -69,6 +69,20 @@ public class Constants {
 
 
     /**
+     * 日志交换机
+     */
+    public static final String logExchange="exchangeLog";
+    /**
+     * 日志新增队列
+     */
+    public static final String log_Save_Queue="news_log_save";
+    /**
+     * 日志新增key
+     */
+    public static final String log_Save_RouteKey="save_news_log";
+
+
+    /**
      * 快讯交换机
      */
     public static final String flashExchange="exchangeFlash";

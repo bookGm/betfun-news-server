@@ -1,5 +1,6 @@
 package io.information.modules.news.entity;
 
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 
@@ -21,7 +22,7 @@ public class UserEntity implements Serializable {
 	/**
 	 * 用户id
 	 */
-	@TableId
+	@TableId(type = IdType.INPUT)
 	private Long uId;
     /**
      * 账号
@@ -108,7 +109,7 @@ public class UserEntity implements Serializable {
      */
     private Date uCreateTime;
     /**
-     * 用户力度 (0：普通用户 1：红人榜 2：黑榜  )
+     * 用户类型 (-1：抓取用户 0：普通用户 1：红人榜 2：黑榜  )
      */
     private Integer uPotential;
 
