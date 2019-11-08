@@ -3,10 +3,13 @@
 package io.information.common.utils;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.connection.RedisStringCommands;
+import org.springframework.data.redis.connection.ReturnType;
 import org.springframework.data.redis.core.Cursor;
 import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ScanOptions;
+import org.springframework.data.redis.core.types.Expiration;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -20,8 +23,11 @@ import java.util.concurrent.TimeUnit;
  */
 @Component
 public class RedisUtils {
-    public static final String LOCK_PREFIX = "redis_lock:";
-    public static final int LOCK_EXPIRE = 5000; // ms
+    private static final Long RELEASE_SUCCESS = 1L;
+    private static final String LOCK_SUCCESS = "OK";
+    private static final String SET_IF_NOT_EXIST = "NX";
+    private static final String SET_WITH_EXPIRE_TIME = "EX";
+    private static final String RELEASE_LOCK_SCRIPT = "if redis.call('get', KEYS[1]) == ARGV[1] then return redis.call('del', KEYS[1]) else return 0 end";
     @Autowired
     private RedisTemplate<String, Object> redisTemplate;
 
@@ -36,40 +42,18 @@ public class RedisUtils {
 
     //- - - - - - - - - - - - - - - - - - - - -  公共方法 - - - - - - - - - - - - - - - - - - - -
 
-    /**
-     *  最终加强分布式锁
-     *
-     * @param key key值
-     * @return 是否获取到
-     */
-    public boolean lock(String key){
-        String lock = LOCK_PREFIX + key;
-        // 利用lambda表达式
+    public synchronized boolean lock(String key, String requestId, long expire) {
         return (Boolean) redisTemplate.execute((RedisCallback) connection -> {
+            Boolean result = connection.set(key.getBytes(), requestId.getBytes(), Expiration.from(expire, TimeUnit.SECONDS), RedisStringCommands.SetOption.SET_IF_ABSENT);
+            return result;
+        });
+    }
 
-            long expireAt = System.currentTimeMillis() + LOCK_EXPIRE + 1;
-            Boolean acquire = connection.setNX(lock.getBytes(), String.valueOf(expireAt).getBytes());
-
-
-            if (acquire) {
-                return true;
-            } else {
-
-                byte[] value = connection.get(lock.getBytes());
-
-                if (Objects.nonNull(value) && value.length > 0) {
-
-                    long expireTime = Long.parseLong(new String(value));
-
-                    if (expireTime < System.currentTimeMillis()) {
-                        // 如果锁已经过期
-                        byte[] oldValue = connection.getSet(lock.getBytes(), String.valueOf(System.currentTimeMillis() + LOCK_EXPIRE + 1).getBytes());
-                        // 防止死锁
-                        return Long.parseLong(new String(oldValue)) < System.currentTimeMillis();
-                    }
-                }
-            }
-            return false;
+    public synchronized boolean releaseLock(String key, String requestId) {
+        return (Boolean) redisTemplate.execute((RedisCallback) connection -> {
+            String script = "if redis.call('get', KEYS[1]) == ARGV[1] then return redis.call('del', KEYS[1]) else return 0 end";
+            Boolean result = connection.eval(script.getBytes(), ReturnType.BOOLEAN, 1, key.getBytes(), requestId.getBytes());
+            return result;
         });
     }
 
@@ -359,7 +343,7 @@ public class RedisUtils {
      * @param pattern
      */
     public List<Map.Entry<Object,Object>> hfget(String key,String pattern){
-        Cursor<Map.Entry<Object, Object>> cursor= redisTemplate.opsForHash().scan(key,ScanOptions.scanOptions().match(pattern).count(Integer.MAX_VALUE).build());
+        Cursor<Map.Entry<Object, Object>> cursor= redisTemplate.opsForHash().scan(key, ScanOptions.scanOptions().match(pattern).count(Integer.MAX_VALUE).build());
         List<Map.Entry<Object,Object>> cmap=null;
         try {
             while (cursor.hasNext()){

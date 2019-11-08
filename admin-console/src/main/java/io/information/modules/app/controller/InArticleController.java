@@ -182,6 +182,9 @@ public class InArticleController {
     })
     public R giveALike(@RequestParam("id") Long id, @RequestParam("type") int type, @ApiIgnore @LoginUser InUser user) {
         Long tid = filterId(id, type);
+        if(StringUtil.isBlank(tid)){
+            return R.error("点赞失败");
+        }
         return R.ok().put("time", articleService.giveALike(id, user.getuId(), type, tid));
     }
 
@@ -197,6 +200,9 @@ public class InArticleController {
     })
     public R collect(@RequestParam("id") Long id, @RequestParam("type") int type, @ApiIgnore @LoginUser InUser user) {
         Long tid = filterId(id, type);
+        if(StringUtil.isBlank(tid)){
+            return R.error("收藏失败");
+        }
         return R.ok().put("time", articleService.collect(id, user.getuId(), type, tid));
     }
 

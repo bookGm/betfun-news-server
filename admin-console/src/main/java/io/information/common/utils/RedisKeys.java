@@ -47,6 +47,11 @@ public class RedisKeys {
     public static final String AUTHORID=BASEKEY+"authorid:";
     //快讯利好利空
     public static final String NATTITUDE=BASEKEY+"nattitude:";
+
+    //-------------------------锁-------------------------//
+    public static final String BASELOCK="redis_lock:";
     //抓取文章锁
-    public static final String CATCH_ARTICLE_LOCK="catch_article_lock";
+    public static final String CATCH_ARTICLE_LOCK=BASELOCK+"catch_article_lock";
+    //抓取咨询锁
+    public static final String CATCH_NEWS_LOCK=BASELOCK+"catch_news_lock";
 }

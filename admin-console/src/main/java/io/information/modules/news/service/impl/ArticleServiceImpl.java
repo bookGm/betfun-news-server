@@ -181,7 +181,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleDao, ArticleEntity> i
 
     @Override
     public void catchArticles(int page) {
-        boolean lock = redisUtils.lock(RedisKeys.CATCH_ARTICLE_LOCK);
+        boolean lock = redisUtils.lock(RedisKeys.CATCH_ARTICLE_LOCK,RedisKeys.CATCH_ARTICLE_LOCK,10);
         HashSet<String> hashSet = new HashSet<String>();
         if(lock){
                 for(BbtcListVo b:getBbtcList(page)){
@@ -211,7 +211,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleDao, ArticleEntity> i
                   }
                 //保存标签
                 saveTag(hashSet);
-            redisUtils.remove(RedisKeys.CATCH_ARTICLE_LOCK);
+            redisUtils.releaseLock(RedisKeys.CATCH_ARTICLE_LOCK,RedisKeys.CATCH_ARTICLE_LOCK);
         }
     }
 

@@ -67,7 +67,7 @@ public class InCardServiceImpl  extends ServiceImpl<InCardBaseDao, InCardBase> i
         log.setlTargetType(1);
         log.setlDo(Integer.parseInt(e.getCode()));
         log.setlTime(new Date());
-        rabbitTemplate.convertAndSend(Constants.articleExchange, Constants.article_Save_RouteKey, log);
+        rabbitTemplate.convertAndSend(Constants.logExchange, Constants.log_Save_RouteKey, log);
     }
 
     @Override
