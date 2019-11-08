@@ -47,7 +47,7 @@ public class NewsTask{
 	/**
 	 * 增量抓取文章(30分钟一次)
 	 */
-	@Scheduled(cron = "0 */1 * * * ?")
+	@Scheduled(cron = "0 */5 * * * ?")
 	public void incrementCatchArticle(){
 		articleService.catchIncrementArticles();
 	}
