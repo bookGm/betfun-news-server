@@ -1,9 +1,9 @@
 package io.information.modules.news.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.guansuo.common.StringUtil;
 import com.guansuo.newsenum.NewsEnum;
 import io.information.common.utils.BeanHelper;
 import io.information.common.utils.PageUtils;
@@ -36,6 +36,10 @@ public class CardBaseServiceImpl extends ServiceImpl<CardBaseDao, CardBaseEntity
     public PageUtils queryPage(Map<String, Object> params) {
         LambdaQueryWrapper<CardBaseEntity> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(CardBaseEntity::getcCategory, NewsEnum.帖子分类_投票帖.getCode());
+        if (null != params.get("cTitle") && StringUtil.isNotBlank(params.get("cTitle"))) {
+            String cTitle = String.valueOf(params.get("cTitle"));
+            queryWrapper.like(CardBaseEntity::getcTitle, cTitle);
+        }
         IPage<CardBaseEntity> page = this.page(
                 new Query<CardBaseEntity>().getPage(params),
                 queryWrapper

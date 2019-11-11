@@ -13,11 +13,14 @@ import io.information.modules.app.dao.InArticleDao;
 import io.information.modules.app.dao.InCardBaseDao;
 import io.information.modules.app.entity.InArticle;
 import io.information.modules.app.entity.InLog;
+import io.information.modules.app.entity.InTag;
 import io.information.modules.app.entity.InUser;
 import io.information.modules.app.service.IInArticleService;
+import io.information.modules.app.service.IInTagService;
 import io.information.modules.app.service.IInUserService;
 import io.information.modules.app.vo.ArticleUserVo;
 import io.information.modules.app.vo.ArticleVo;
+import io.information.modules.app.vo.TagArticleVo;
 import io.mq.utils.Constants;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,6 +51,8 @@ public class InArticleServiceImpl extends ServiceImpl<InArticleDao, InArticle> i
     private InCardBaseDao inCardBaseDao;
     @Autowired
     private RabbitTemplate rabbitTemplate;
+    @Autowired
+    private IInTagService tagService;
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
@@ -195,5 +200,21 @@ public class InArticleServiceImpl extends ServiceImpl<InArticleDao, InArticle> i
             this.inActivityDao.addACollect(id);
         }
         return DateUtils.format(new Date());
+    }
+
+    @Override
+    public TagArticleVo tagArticle(Map<String, Object> map) {
+        Integer pageSize = StringUtil.isBlank(map.get("pageSize")) ? 10 : Integer.parseInt(String.valueOf(map.get("pageSize")));
+        Integer currPage = StringUtil.isBlank(map.get("currPage")) ? 0 : Integer.parseInt(String.valueOf(map.get("currPage")));
+        if (null != map.get("tId") && StringUtil.isNotBlank(map.get("tId"))) {
+            Long tId = Long.parseLong(String.valueOf(map.get("tId")));
+            InTag tag = tagService.getById(tId);
+            List<InArticle> articles = this.baseMapper.searchArticleByTag(tag.gettName(), currPage, pageSize);
+            TagArticleVo vo = new TagArticleVo();
+            vo.setTag(tag);
+            vo.setArticleList(articles);
+            return vo;
+        }
+        return null;
     }
 }

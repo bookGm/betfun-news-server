@@ -9,6 +9,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
+import org.springframework.data.elasticsearch.annotations.Field;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -27,7 +28,6 @@ import java.util.Date;
 public class InArticle implements Serializable {
 
     private static final long serialVersionUID = 1L;
-
     /**
      * 文章id
      */

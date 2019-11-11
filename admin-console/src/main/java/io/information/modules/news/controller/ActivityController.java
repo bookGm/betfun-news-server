@@ -41,6 +41,17 @@ public class ActivityController extends AbstractController {
 
 
     /**
+     * 审核
+     */
+    @RequestMapping("/audit")
+    @RequiresPermissions("news:activity:list")
+    public R audit(@RequestParam Map<String, Object> params){
+        PageUtils page = activityService.audit(params);
+        return R.ok();
+    }
+
+
+    /**
      * 信息
      */
     @RequestMapping("/info/{actId}")

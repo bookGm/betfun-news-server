@@ -18,6 +18,7 @@ import io.information.modules.app.service.IInUserService;
 import io.information.modules.app.vo.ArticleUserVo;
 import io.information.modules.app.vo.ArticleVo;
 import io.information.modules.app.vo.InArticleUserDetailVo;
+import io.information.modules.app.vo.TagArticleVo;
 import io.mq.utils.Constants;
 import io.swagger.annotations.*;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -200,7 +201,7 @@ public class InArticleController {
     })
     public R giveALike(@RequestParam("id") Long id, @RequestParam("type") int type, @ApiIgnore @LoginUser InUser user) {
         Long tid = filterId(id, type);
-        if(StringUtil.isBlank(tid)){
+        if (StringUtil.isBlank(tid)) {
             return R.error("点赞失败");
         }
         return R.ok().put("time", articleService.giveALike(id, user.getuId(), type, tid));
@@ -218,7 +219,7 @@ public class InArticleController {
     })
     public R collect(@RequestParam("id") Long id, @RequestParam("type") int type, @ApiIgnore @LoginUser InUser user) {
         Long tid = filterId(id, type);
-        if(StringUtil.isBlank(tid)){
+        if (StringUtil.isBlank(tid)) {
             return R.error("收藏失败");
         }
         return R.ok().put("time", articleService.collect(id, user.getuId(), type, tid));
@@ -327,4 +328,19 @@ public class InArticleController {
         return ResultUtil.ok(articles);
     }
 
+
+    /**
+     * 首页 -- 标签
+     */
+    @GetMapping("/tagArticle")
+    @ApiOperation(value = "首页 -- 标签", httpMethod = "GET", response = TagArticleVo.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(value = "每页显示条数", name = "pageSize", required = true),
+            @ApiImplicitParam(value = "当前页数", name = "currPage", required = true),
+            @ApiImplicitParam(value = "标签ID", name = "tId", required = true),
+    })
+    public ResultUtil<TagArticleVo> tagArticle(@RequestParam Map<String, Object> map) {
+        TagArticleVo tagArticleVo = articleService.tagArticle(map);
+        return ResultUtil.ok(tagArticleVo);
+    }
 }

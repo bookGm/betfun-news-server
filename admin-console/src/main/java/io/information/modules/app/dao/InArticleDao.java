@@ -70,5 +70,9 @@ public interface InArticleDao extends BaseMapper<InArticle> {
      */
     List<InArticle> searchArticleInTagByTime(@Param("status") Integer status, @Param("currPage") Integer currPage, @Param("pageSize") Integer pageSize);
 
+    /**
+     * 首页标签
+     */
+    List<InArticle> searchArticleByTag(@Param("tName") String tName, @Param("currPage") Integer currPage, @Param("pageSize") Integer pageSize);
 
 }

@@ -4,8 +4,7 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import io.swagger.annotations.ApiModel;
-import lombok.EqualsAndHashCode;
-import lombok.experimental.Accessors;
+import io.swagger.annotations.ApiModelProperty;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -20,7 +19,7 @@ import java.util.Date;
  */
 
 @TableName("in_tag")
-@ApiModel(value = "InTag",description = "标签信息")
+@ApiModel(value = "InTag", description = "标签信息")
 public class InTag implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -29,29 +28,35 @@ public class InTag implements Serializable {
      * 标签id
      */
     @TableId(value = "t_id", type = IdType.AUTO)
+    @ApiModelProperty(value = "标签id", name = "tId", required = true)
     private Long tId;
 
     /**
      * 标签名称
      */
+    @ApiModelProperty(value = "标签名称", name = "tName")
     private String tName;
     /**
      * 标签描述
      */
+    @ApiModelProperty(value = "标签描述", name = "tDescribe")
     private String tDescribe;
 
     /**
      * 标签来源（0：抓取  1：后台维护）
      */
+    @ApiModelProperty(value = "标签来源(0：抓取  1：后台维护）", name = "tFrom")
     private Integer tFrom;
     /**
      * 标签类型
      */
+    @ApiModelProperty(value = "标签类型", name = "tCategory")
     private Integer tCategory;
 
     /**
      * 标签创建时间
      */
+    @ApiModelProperty(value = "标签创建时间", name = "tCreateTime")
     private Date tCreateTime;
 
 

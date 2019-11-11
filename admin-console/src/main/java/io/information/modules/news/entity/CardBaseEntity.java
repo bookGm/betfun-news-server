@@ -46,6 +46,10 @@ public class CardBaseEntity implements Serializable {
      */
     private Integer cNodeCategory;
     /**
+     * 帖子标题
+     */
+    private String cTitle;
+    /**
      * 帖子正文
      */
     private String cContent;
@@ -69,6 +73,15 @@ public class CardBaseEntity implements Serializable {
      * 创建时间
      */
     private Date cCreateTime;
+
+
+    public String getcTitle() {
+        return cTitle;
+    }
+
+    public void setcTitle(String cTitle) {
+        this.cTitle = cTitle;
+    }
 
     public Long getcId() {
         return cId;

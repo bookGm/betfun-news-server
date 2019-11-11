@@ -6,6 +6,7 @@ import io.information.modules.app.entity.InArticle;
 import io.information.modules.app.vo.ArticleUserVo;
 import io.information.modules.app.vo.ArticleVo;
 import io.information.modules.app.vo.CardUserVo;
+import io.information.modules.app.vo.TagArticleVo;
 
 import java.util.Date;
 import java.util.List;
@@ -42,4 +43,6 @@ public interface IInArticleService extends IService<InArticle> {
      * type(0：文章 1：帖子 2：活动)
      */
     String collect(Long id,Long tId,int type, Long uid);
+
+    TagArticleVo tagArticle(Map<String, Object> map);
 }
