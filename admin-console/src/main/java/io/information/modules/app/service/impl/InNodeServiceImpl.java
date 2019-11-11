@@ -121,7 +121,7 @@ public class InNodeServiceImpl extends ServiceImpl<InNodeDao, InNode> implements
     }
 
     @Override
-    public PageUtils<CardUserVo> cardList(Map<String, Object> map) {
+    public PageUtils<UserCardVo> cardList(Map<String, Object> map) {
         LambdaQueryWrapper<InCardBase> queryWrapper = new LambdaQueryWrapper<>();
         Integer pageSize = StringUtil.isBlank(map.get("pageSize")) ? 10 : Integer.parseInt(String.valueOf(map.get("pageSize")));
         Integer currPage = StringUtil.isBlank(map.get("currPage")) ? 0 : Integer.parseInt(String.valueOf(map.get("currPage")));

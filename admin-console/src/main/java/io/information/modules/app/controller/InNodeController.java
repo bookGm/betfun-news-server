@@ -9,10 +9,7 @@ import io.information.modules.app.entity.InCard;
 import io.information.modules.app.entity.InNode;
 import io.information.modules.app.entity.InUser;
 import io.information.modules.app.service.IInNodeService;
-import io.information.modules.app.vo.CardBaseVo;
-import io.information.modules.app.vo.CardUserVo;
-import io.information.modules.app.vo.NewDynamicVo;
-import io.information.modules.app.vo.NodeVo;
+import io.information.modules.app.vo.*;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -111,7 +108,7 @@ public class InNodeController {
      * 内部帖子列表
      */
     @GetMapping("/cardList")
-    @ApiOperation(value = "节点社区内部帖子列表", httpMethod = "GET", notes = "分页数据，状态码", response = CardUserVo.class)
+    @ApiOperation(value = "节点社区内部帖子列表", httpMethod = "GET", notes = "分页数据，状态码", response = UserCardVo.class)
     @ApiImplicitParams({
             @ApiImplicitParam(value = "每页显示条数", name = "pageSize", required = true),
             @ApiImplicitParam(value = "当前页数", name = "currPage", required = true),
@@ -119,8 +116,8 @@ public class InNodeController {
             @ApiImplicitParam(value = "帖子类型（0：投票 1：辩论）", name = "cCategory", required = false),
             @ApiImplicitParam(value = "拍讯方式（0：最新 1：最热）", name = "type", required = false)
     })
-    public ResultUtil<PageUtils<CardUserVo>> cardList(@RequestParam Map<String, Object> map) {
-        PageUtils<CardUserVo> page = nodeService.cardList(map);
+    public ResultUtil<PageUtils<UserCardVo>> cardList(@RequestParam Map<String, Object> map) {
+        PageUtils<UserCardVo> page = nodeService.cardList(map);
         return ResultUtil.ok(page);
     }
 
@@ -129,15 +126,15 @@ public class InNodeController {
      * 首页 -- 社区
      */
     @GetMapping("/list")
-    @ApiOperation(value = "首页 -- 社区", httpMethod = "GET", notes = "分页数据，状态码", response = CardUserVo.class)
+    @ApiOperation(value = "首页 -- 社区", httpMethod = "GET", notes = "分页数据，状态码", response = UserCardVo.class)
     @ApiImplicitParams({
             @ApiImplicitParam(value = "每页显示条数", name = "pageSize", required = true),
             @ApiImplicitParam(value = "当前页数", name = "currPage", required = true),
             @ApiImplicitParam(value = "帖子类型（0：投票 1：辩论）", name = "cCategory", required = false),
             @ApiImplicitParam(value = "拍讯方式（0：最新 1：最热）", name = "type", required = false)
     })
-    public ResultUtil<PageUtils<CardUserVo>> list(@RequestParam Map<String, Object> map) {
-        PageUtils<CardUserVo> page = nodeService.cardList(map);
+    public ResultUtil<PageUtils<UserCardVo>> list(@RequestParam Map<String, Object> map) {
+        PageUtils<UserCardVo> page = nodeService.cardList(map);
         return ResultUtil.ok(page);
     }
 
