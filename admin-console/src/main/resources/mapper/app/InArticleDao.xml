@@ -26,7 +26,7 @@
     <select id="searchArticleInTagByLike" resultType="io.information.modules.app.entity.InArticle">
         SELECT a.* FROM in_article a,in_tag t WHERE FIND_IN_SET(t.t_name,a.a_keyword) AND t.t_category= #{status} GROUP BY a.a_id ORDER BY a.a_like DESC LIMIT #{currPage},#{pageSize}
     </select>
-    <select id="searchArticleInTagByLike" resultType="io.information.modules.app.entity.InArticle">
+    <select id="searchArticleByTag" resultType="io.information.modules.app.entity.InArticle">
         SELECT a.* FROM in_article a,in_tag t WHERE FIND_IN_SET(#{tName},a.a_keyword) LIMIT #{currPage},#{pageSize}
     </select>
 </mapper>
