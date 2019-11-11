@@ -33,4 +33,9 @@ public class InCardBaseServiceImpl extends ServiceImpl<InCardBaseDao, InCardBase
         );
         return new PageUtils(page);
     }
+
+    @Override
+    public void updateReadNumber(long number, Long cId) {
+        this.baseMapper.addReadNumber(number, cId);
+    }
 }

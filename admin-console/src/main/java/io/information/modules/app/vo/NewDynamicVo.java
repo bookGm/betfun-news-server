@@ -4,6 +4,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 import java.io.Serializable;
+import java.util.List;
 
 @ApiModel(value = "社区最新动态", description = "社区最新动态")
 public class NewDynamicVo implements Serializable {
@@ -13,27 +14,27 @@ public class NewDynamicVo implements Serializable {
      * 帖子
      */
     @ApiModelProperty(value = "帖子信息[发布]", name = "dynamicCardVo")
-    private DynamicCardVo dynamicCardVo;
+    private List<DynamicCardVo> dynamicCardVos;
 
     /**
      * 评论
      */
     @ApiModelProperty(value = "评论信息[回复]", name = "dynamicReplyVo")
-    private DynamicReplyVo dynamicReplyVo;
+    private List<DynamicReplyVo> dynamicReplyVos;
 
-    public DynamicCardVo getDynamicCardVo() {
-        return dynamicCardVo;
+    public List<DynamicCardVo> getDynamicCardVos() {
+        return dynamicCardVos;
     }
 
-    public void setDynamicCardVo(DynamicCardVo dynamicCardVo) {
-        this.dynamicCardVo = dynamicCardVo;
+    public void setDynamicCardVos(List<DynamicCardVo> dynamicCardVos) {
+        this.dynamicCardVos = dynamicCardVos;
     }
 
-    public DynamicReplyVo getDynamicReplyVo() {
-        return dynamicReplyVo;
+    public List<DynamicReplyVo> getDynamicReplyVos() {
+        return dynamicReplyVos;
     }
 
-    public void setDynamicReplyVo(DynamicReplyVo dynamicReplyVo) {
-        this.dynamicReplyVo = dynamicReplyVo;
+    public void setDynamicReplyVos(List<DynamicReplyVo> dynamicReplyVos) {
+        this.dynamicReplyVos = dynamicReplyVos;
     }
 }

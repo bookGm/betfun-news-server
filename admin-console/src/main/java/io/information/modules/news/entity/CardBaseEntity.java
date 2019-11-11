@@ -73,7 +73,19 @@ public class CardBaseEntity implements Serializable {
      * 创建时间
      */
     private Date cCreateTime;
+    /**
+     * 浏览量
+     */
+    private Long cReadNumber;
 
+
+    public Long getcReadNumber() {
+        return cReadNumber;
+    }
+
+    public void setcReadNumber(Long cReadNumber) {
+        this.cReadNumber = cReadNumber;
+    }
 
     public String getcTitle() {
         return cTitle;

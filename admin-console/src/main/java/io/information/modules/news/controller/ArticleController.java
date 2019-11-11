@@ -97,4 +97,31 @@ public class ArticleController extends AbstractController {
         return ResponseEntity.ok(page);
     }
 
+
+    /**
+     * 已通过
+     */
+    @PostMapping("/auditOk")
+    @RequiresPermissions("news:article:update")
+    public R auditOk(@RequestBody Long aId) {
+        ArticleEntity articleEntity = new ArticleEntity();
+        articleEntity.setaId(aId);
+        articleEntity.setaStatus(2);
+        articleService.updateById(articleEntity);
+        return R.ok();
+    }
+
+
+    /**
+     * 未通过
+     */
+    @PostMapping("/auditNo")
+    @RequiresPermissions("news:article:update")
+    public R auditNo(@RequestBody Long aId) {
+        ArticleEntity articleEntity = new ArticleEntity();
+        articleEntity.setaId(aId);
+        articleEntity.setaStatus(0);
+        articleService.updateById(articleEntity);
+        return R.ok();
+    }
 }

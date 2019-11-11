@@ -4,13 +4,20 @@ import io.information.common.utils.IdGenerator;
 import io.information.common.utils.PageUtils;
 import io.information.common.utils.R;
 import io.information.modules.app.annotation.Login;
+import io.information.modules.app.entity.InActivity;
+import io.information.modules.app.entity.InArticle;
+import io.information.modules.app.entity.InCardBase;
 import io.information.modules.app.entity.InCommonReply;
+import io.information.modules.app.service.IInActivityService;
+import io.information.modules.app.service.IInArticleService;
+import io.information.modules.app.service.IInCardBaseService;
 import io.information.modules.app.service.IInCommonReplyService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
@@ -20,7 +27,7 @@ import java.util.Map;
 
 /**
  * <p>
- *  评论回复表
+ * 评论回复表
  * </p>
  *
  * @author zxs
@@ -32,7 +39,12 @@ import java.util.Map;
 public class InCommonReplyController {
     @Autowired
     private IInCommonReplyService commonReplyService;
-
+    @Autowired
+    private IInArticleService articleService;
+    @Autowired
+    private IInCardBaseService cardBaseService;
+    @Autowired
+    private IInActivityService activityService;
 
     /**
      * 信息
@@ -50,13 +62,42 @@ public class InCommonReplyController {
      */
     @Login
     @PostMapping("/save")
-    @ApiOperation(value = "保存评论信息", httpMethod = "POST")
+    @ApiOperation(value = "保存评论信息", httpMethod = "POST", notes = "目标类型（0文章，1帖子，2活动，3用户）")
     public R save(@RequestBody InCommonReply commonReply) {
         commonReply.setCrId(IdGenerator.getId());
         commonReply.setCrTime(new Date());
         commonReplyService.save(commonReply);
-
+        addCritic(commonReply);
         return R.ok();
+    }
+
+    //添加评论数量
+    @Async
+    public void addCritic(InCommonReply commonReply) {
+        Integer type = commonReply.gettType();
+        switch (type) {
+            case 0:
+                InArticle article = articleService.getById(commonReply.gettId());
+                if (null != article) {
+                    article.setaCritic(article.getaCritic() + 1);
+                    articleService.updateById(article);
+                }
+                break;
+            case 1:
+                InCardBase cardBase = cardBaseService.getById(commonReply.gettId());
+                if (null != cardBase) {
+                    cardBase.setcCritic(cardBase.getcCritic() + 1);
+                    cardBaseService.updateById(cardBase);
+                }
+                break;
+            case 2:
+                InActivity activity = activityService.getById(commonReply.gettId());
+                if (null != activity) {
+                    activity.setActCritic(activity.getActCritic() + 1);
+                    activityService.updateById(activity);
+                }
+                break;
+        }
     }
 
 
@@ -81,11 +122,11 @@ public class InCommonReplyController {
     @ApiImplicitParams({
             @ApiImplicitParam(value = "每页显示条数", name = "pageSize", required = true),
             @ApiImplicitParam(value = "当前页数", name = "currPage", required = true),
-            @ApiImplicitParam(value = "目标类型", name = "tType", required = true),
+            @ApiImplicitParam(value = "目标类型（0文章，1帖子，2活动，3用户）", name = "tType", required = true),
             @ApiImplicitParam(value = "页面ID", name = "tId", required = true)
     })
     public R discuss(@RequestParam Map<String, Object> map) {
-        if(null==map||!map.containsKey("tId")||!map.containsKey("tType")){
+        if (null == map || !map.containsKey("tId") || !map.containsKey("tType")) {
             return R.error("缺少必要参数");
         }
         PageUtils discuss = commonReplyService.discuss(map);

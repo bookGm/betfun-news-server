@@ -9,7 +9,7 @@
          update in_article set a_collect=a_collect+1 where a_id=#{aid}
     </update>
     <update id="addReadNumber" parameterType="java.lang.Long">
-         update in_article set a_read_number=#{aReadNumber} where a_id=#{aid}
+         update in_article set a_read_number=#{aReadNumber} where a_id=#{aId}
     </update>
     <select id="searchTitleAndId" resultType="io.information.modules.app.vo.ArticleVo">
         select a_id,a_title from in_article where u_id = #{uId} limit #{currPage},#{pageSize}

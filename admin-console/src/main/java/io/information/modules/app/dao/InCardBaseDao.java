@@ -53,4 +53,9 @@ public interface InCardBaseDao extends BaseMapper<InCardBase> {
      */
     List<DynamicCardVo> searchBaseByTime();
 
+    /**
+     * 增加访问量
+     *
+     */
+    void addReadNumber(@Param("number") long number, @Param("cId") Long cId);
 }

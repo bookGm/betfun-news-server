@@ -8,6 +8,10 @@ public class Constants {
     public static final String queue="news_es_queue";
     public static final String routeKey="key_news_es";
 
+
+
+
+
     /**
      * 文章交换机
      */

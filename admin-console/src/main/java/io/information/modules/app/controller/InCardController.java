@@ -1,20 +1,26 @@
 package io.information.modules.app.controller;
 
+import io.information.common.utils.IPUtils;
 import io.information.common.utils.PageUtils;
 import io.information.common.utils.R;
+import io.information.common.utils.RedisKeys;
 import io.information.modules.app.annotation.Login;
 import io.information.modules.app.annotation.LoginUser;
 import io.information.modules.app.entity.InCard;
+import io.information.modules.app.entity.InCardBase;
 import io.information.modules.app.entity.InUser;
+import io.information.modules.app.service.IInCardBaseService;
 import io.information.modules.app.service.IInCardService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 
 
@@ -24,6 +30,10 @@ import java.util.Map;
 public class InCardController {
     @Autowired
     private IInCardService cardService;
+    @Autowired
+    private RedisTemplate redisTemplate;
+    @Autowired
+    private IInCardBaseService cardBaseService;
 
     /**
      * 发布帖子
@@ -42,8 +52,20 @@ public class InCardController {
      */
     @GetMapping("/details/{cId}")
     @ApiOperation(value = "帖子详情", httpMethod = "GET", notes = "帖子ID")
-    public R details(@PathVariable("cId") Long cId) {
+    public R details(@PathVariable("cId") Long cId, @ApiIgnore HttpServletRequest request) {
+        String ip = IPUtils.getIpAddr(request);
         InCard card = cardService.details(cId);
+        Boolean aBoolean = redisTemplate.hasKey(RedisKeys.CARDBROWSEIP + ip + cId);
+        if (!aBoolean) {
+            redisTemplate.opsForValue().set(RedisKeys.CARDBROWSEIP + ip + cId, cId, 60 * 60 * 2);
+            Long aLong = redisTemplate.opsForValue().increment(RedisKeys.CARDBROWSE + cId, 1);//如果通过自增1
+            if (aLong % 100 == 0) {
+                redisTemplate.delete(ip + cId);
+                InCardBase base = cardBaseService.getById(cId);
+                long readNumber = aLong + base.getcReadNumber();
+                cardBaseService.updateReadNumber(readNumber, cId);
+            }
+        }
         return R.ok().put("card", card);
     }
 
@@ -80,7 +102,8 @@ public class InCardController {
     @ApiImplicitParams({
             @ApiImplicitParam(value = "每页显示条数", name = "pageSize", required = true),
             @ApiImplicitParam(value = "当前页数", name = "currPage", required = true),
-            @ApiImplicitParam(value = "0：普通帖  1：辩论帖  2：投票帖", name = "type", required = true)
+            @ApiImplicitParam(value = "0：普通帖  1：辩论帖  2：投票帖", name = "status", required = true),
+            @ApiImplicitParam(value = "0：最新  1：最热", name = "type", required = true)
     })
     public R status(@RequestParam Map<String, Object> map) {
         PageUtils page = cardService.queryPage(map);

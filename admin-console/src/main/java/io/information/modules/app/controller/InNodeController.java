@@ -6,7 +6,6 @@ import io.information.common.utils.ResultUtil;
 import io.information.modules.app.annotation.Login;
 import io.information.modules.app.annotation.LoginUser;
 import io.information.modules.app.entity.InCard;
-import io.information.modules.app.entity.InCardBase;
 import io.information.modules.app.entity.InNode;
 import io.information.modules.app.entity.InUser;
 import io.information.modules.app.service.IInNodeService;
@@ -112,15 +111,33 @@ public class InNodeController {
      * 内部帖子列表
      */
     @GetMapping("/cardList")
-    @ApiOperation(value = "节点社区内部帖子列表", httpMethod = "GET", notes = "分页数据，状态码", response = InCard.class)
+    @ApiOperation(value = "节点社区内部帖子列表", httpMethod = "GET", notes = "分页数据，状态码", response = CardUserVo.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(value = "每页显示条数", name = "pageSize", required = true),
+            @ApiImplicitParam(value = "当前页数", name = "currPage", required = true),
+            @ApiImplicitParam(value = "节点ID", name = "noId", required = true),
+            @ApiImplicitParam(value = "帖子类型（0：投票 1：辩论）", name = "cCategory", required = false),
+            @ApiImplicitParam(value = "拍讯方式（0：最新 1：最热）", name = "type", required = false)
+    })
+    public ResultUtil<PageUtils<CardUserVo>> cardList(@RequestParam Map<String, Object> map) {
+        PageUtils<CardUserVo> page = nodeService.cardList(map);
+        return ResultUtil.ok(page);
+    }
+
+
+    /**
+     * 首页 -- 社区
+     */
+    @GetMapping("/list")
+    @ApiOperation(value = "首页 -- 社区", httpMethod = "GET", notes = "分页数据，状态码", response = CardUserVo.class)
     @ApiImplicitParams({
             @ApiImplicitParam(value = "每页显示条数", name = "pageSize", required = true),
             @ApiImplicitParam(value = "当前页数", name = "currPage", required = true),
             @ApiImplicitParam(value = "帖子类型（0：投票 1：辩论）", name = "cCategory", required = false),
             @ApiImplicitParam(value = "拍讯方式（0：最新 1：最热）", name = "type", required = false)
     })
-    public ResultUtil<PageUtils<InCard>> cardList(@RequestParam Map<String, Object> map) {
-        PageUtils page = nodeService.cardList(map);
+    public ResultUtil<PageUtils<CardUserVo>> list(@RequestParam Map<String, Object> map) {
+        PageUtils<CardUserVo> page = nodeService.cardList(map);
         return ResultUtil.ok(page);
     }
 
@@ -194,8 +211,8 @@ public class InNodeController {
      */
     @GetMapping("/newDynamic")
     @ApiOperation(value = "社区 -- 最新动态[5条]", httpMethod = "GET", response = NewDynamicVo.class)
-    public ResultUtil<List<NewDynamicVo>> newDynamic() {
-        List<NewDynamicVo> newDynamicVos = nodeService.newDynamic();
-        return ResultUtil.ok(newDynamicVos);
+    public ResultUtil<NewDynamicVo> newDynamic() {
+        NewDynamicVo newDynamicVo = nodeService.newDynamic();
+        return ResultUtil.ok(newDynamicVo);
     }
 }

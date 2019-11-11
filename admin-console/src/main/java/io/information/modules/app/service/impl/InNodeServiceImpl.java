@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.guansuo.common.DateUtils;
 import com.guansuo.common.StringUtil;
 import io.information.common.annotation.HashCacheable;
 import io.information.common.utils.BeanHelper;
@@ -13,22 +14,13 @@ import io.information.common.utils.RedisKeys;
 import io.information.modules.app.dao.InCardBaseDao;
 import io.information.modules.app.dao.InCommonReplyDao;
 import io.information.modules.app.dao.InNodeDao;
-import io.information.modules.app.entity.InArticle;
-import io.information.modules.app.entity.InCardBase;
-import io.information.modules.app.entity.InNode;
-import io.information.modules.app.entity.InUser;
-import io.information.modules.app.service.IInArticleService;
-import io.information.modules.app.service.IInCardBaseService;
-import io.information.modules.app.service.IInNodeService;
-import io.information.modules.app.service.IInUserService;
+import io.information.modules.app.entity.*;
+import io.information.modules.app.service.*;
 import io.information.modules.app.vo.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.LongSummaryStatistics;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 
@@ -52,6 +44,8 @@ public class InNodeServiceImpl extends ServiceImpl<InNodeDao, InNode> implements
     private InCardBaseDao baseDao;
     @Autowired
     private InCommonReplyDao replyDao;
+    @Autowired
+    private IInDicService dicService;
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
@@ -127,41 +121,61 @@ public class InNodeServiceImpl extends ServiceImpl<InNodeDao, InNode> implements
     }
 
     @Override
-    public PageUtils cardList(Map<String, Object> map) {
+    public PageUtils<CardUserVo> cardList(Map<String, Object> map) {
         LambdaQueryWrapper<InCardBase> queryWrapper = new LambdaQueryWrapper<>();
+        Integer pageSize = StringUtil.isBlank(map.get("pageSize")) ? 10 : Integer.parseInt(String.valueOf(map.get("pageSize")));
+        Integer currPage = StringUtil.isBlank(map.get("currPage")) ? 0 : Integer.parseInt(String.valueOf(map.get("currPage")));
         if (null != map.get("noId") && StringUtil.isNotBlank(map.get("noId"))) {
             Long noId = Long.parseLong(String.valueOf(map.get("noId")));
             queryWrapper.eq(InCardBase::getNoId, noId);
-
-            if (null != map.get("cCategory") && StringUtil.isNotBlank(map.get("cCategory"))) {
-                int type = Integer.parseInt(String.valueOf(map.get("cCategory")));
-                switch (type) {
-                    case 0: //投票
-                        queryWrapper.eq(InCardBase::getcCategory, 2);
-                        break;
-                    case 1: //辩论
-                        queryWrapper.eq(InCardBase::getcCategory, 1);
-                        break;
-                }
-            }
-            if (null != map.get("type") && StringUtil.isNotBlank(map.get("type"))) {
-                int type = Integer.parseInt(String.valueOf(map.get("type")));
-                switch (type) {
-                    case 0: //最新
-                        queryWrapper.orderByDesc(InCardBase::getcCreateTime);
-                        break;
-                    case 1: //最热
-                        queryWrapper.orderByDesc(InCardBase::getcLike);
-                        break;
-                }
-            }
-            IPage<InCardBase> page = baseService.page(
-                    new Query<InCardBase>().getPage(map),
-                    queryWrapper
-            );
-            return new PageUtils(page);
         }
-        return null;
+        if (null != map.get("cCategory") && StringUtil.isNotBlank(map.get("cCategory"))) {
+            int type = Integer.parseInt(String.valueOf(map.get("cCategory")));
+            switch (type) {
+                case 0: //投票
+                    queryWrapper.eq(InCardBase::getcCategory, 2);
+                    break;
+                case 1: //辩论
+                    queryWrapper.eq(InCardBase::getcCategory, 1);
+                    break;
+            }
+        }
+        if (null != map.get("type") && StringUtil.isNotBlank(map.get("type"))) {
+            int type = Integer.parseInt(String.valueOf(map.get("type")));
+            switch (type) {
+                case 0: //最新
+                    queryWrapper.orderByDesc(InCardBase::getcCreateTime);
+                    break;
+                case 1: //最热
+                    queryWrapper.orderByDesc(InCardBase::getcLike);
+                    break;
+            }
+        }
+        IPage<InCardBase> page = baseService.page(
+                new Query<InCardBase>().getPage(map),
+                queryWrapper
+        );
+        ArrayList<UserCardVo> list = new ArrayList<>();
+        for (InCardBase base : page.getRecords()) {
+            UserCardVo cardVo = new UserCardVo();
+            Long id = base.getuId();
+            InUser user = userService.getById(base.getuId() == null ? 0 : base.getuId());
+            cardVo.setuId(id);
+            cardVo.setuName(user.getuName());
+            cardVo.setuPhoto(user.getuPhoto());
+            String simpleTime = DateUtils.getSimpleTime(base.getcCreateTime() == null ? new Date() : base.getcCreateTime());
+            cardVo.setTime(simpleTime);
+            InDic dic = dicService.getById(base.getcNodeCategory() == null ? 0 : base.getcNodeCategory());
+            cardVo.setType(dic.getdName());
+            cardVo.setcId(base.getcId());
+            cardVo.setcTitle(base.getcTitle());
+            cardVo.setcId(base.getcId());
+            cardVo.setReadNumber(base.getcReadNumber());
+            cardVo.setReplyNumber(base.getcCritic());
+            list.add(cardVo);
+        }
+        int total = (int) page.getTotal();
+        return new PageUtils(list, total, pageSize, currPage);
     }
 
 
@@ -227,14 +241,19 @@ public class InNodeServiceImpl extends ServiceImpl<InNodeDao, InNode> implements
 
 
     @Override
-    public List<NewDynamicVo> newDynamic() {
+    public NewDynamicVo newDynamic() {
         List<DynamicCardVo> base = baseDao.searchBaseByTime();
         List<DynamicReplyVo> reply = replyDao.searchReplyByTime();
-        List<String> collect = base.stream().map(DynamicCardVo::getcCreateTime).collect(Collectors.toList());
-        List<String> list = reply.stream().map(DynamicReplyVo::getCrTime).collect(Collectors.toList());
-        collect.addAll(list);
+        //List<String> collect = base.stream().map(DynamicCardVo::getcCreateTime).collect(Collectors.toList());
+        //List<String> list = reply.stream().map(DynamicReplyVo::getCrTime).collect(Collectors.toList());
+        //collect.addAll(list);
         //TODO  排序
-        return null;
+        List<DynamicCardVo> cardVos = base.subList(0, 2);   //2
+        List<DynamicReplyVo> replyVos = reply.subList(0, 3);    //3
+        NewDynamicVo newDynamicVo = new NewDynamicVo();
+        newDynamicVo.setDynamicCardVos(cardVos);
+        newDynamicVo.setDynamicReplyVos(replyVos);
+        return newDynamicVo;
     }
 
 

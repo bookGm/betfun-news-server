@@ -25,6 +25,7 @@ public class InCommonReplyServiceImpl extends ServiceImpl<InCommonReplyDao, InCo
             Long tId = Long.parseLong(String.valueOf(map.get("tId")));
             queryWrapper.eq(InCommonReply::gettId, tId);
             if (null != map.get("tType") && StringUtil.isNotBlank(map.get("tType"))) {
+                //0文章，1帖子，2活动，3用户
                 int tType = Integer.parseInt(String.valueOf(map.get("tType")));
                 queryWrapper.eq(InCommonReply::gettType, tType);
             }

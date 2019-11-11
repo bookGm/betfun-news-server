@@ -171,14 +171,14 @@ public class InArticleController {
      */
     @GetMapping("/info/{aId}")
     @ApiOperation(value = "查询单个咨讯文章", httpMethod = "GET", notes = "文章ID[aId]")
-    public R queryArticle(@PathVariable("aId") String aId, HttpServletRequest request) {
+    public R queryArticle(@PathVariable("aId") String aId, @ApiIgnore HttpServletRequest request) {
         String ip = IPUtils.getIpAddr(request);
         InArticle article = articleService.getById(aId);
-        Boolean aBoolean = redisTemplate.hasKey(RedisKeys.BROWSEIP + ip + aId);
+        Boolean aBoolean = redisTemplate.hasKey(RedisKeys.ABROWSEIP + ip + aId);
         if (!aBoolean) {
-            redisTemplate.opsForValue().set(RedisKeys.BROWSEIP + ip + aId, aId, 60 * 60 * 2);
+            redisTemplate.opsForValue().set(RedisKeys.ABROWSEIP + ip + aId, aId, 60 * 60 * 2);
 //            redisTemplate.setValueSerializer(new GenericToStringSerializer<Long>(Long.class));
-            Long aLong = redisTemplate.opsForValue().increment(RedisKeys.BROWSE + aId, 1);//如果通过自增1
+            Long aLong = redisTemplate.opsForValue().increment(RedisKeys.ABROWSE + aId, 1);//如果通过自增1
             if (aLong % 100 == 0) {
                 redisTemplate.delete(ip + aId);
                 long readNumber = aLong + article.getaReadNumber();

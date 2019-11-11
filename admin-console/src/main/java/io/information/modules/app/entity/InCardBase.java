@@ -34,11 +34,13 @@ public class InCardBase implements Serializable {
     /**
      * 用户id
      */
+    @ApiModelProperty(value = "用户id", name = "uId")
     private Long uId;
 
     /**
      * 节点id
      */
+    @ApiModelProperty(value = "节点id", name = "noId")
     private Long noId;
 
     /**
@@ -72,23 +74,41 @@ public class InCardBase implements Serializable {
     /**
      * 点赞数
      */
+    @ApiModelProperty(value = "点赞数", name = "cLike")
     private Long cLike;
 
     /**
      * 收藏数
      */
+    @ApiModelProperty(value = "收藏数", name = "cCollect")
     private Integer cCollect;
 
     /**
      * 评论数
      */
+    @ApiModelProperty(value = "评论数", name = "cCritic")
     private Long cCritic;
 
     /**
      * 创建时间
      */
+    @ApiModelProperty(value = "创建时间", name = "cCreateTime")
     private Date cCreateTime;
 
+    /**
+     * 浏览量
+     */
+    @ApiModelProperty(value = "浏览量", name = "cReadNumber")
+    private Long cReadNumber;
+
+
+    public Long getcReadNumber() {
+        return cReadNumber;
+    }
+
+    public void setcReadNumber(Long cReadNumber) {
+        this.cReadNumber = cReadNumber;
+    }
 
     public Long getcId() {
         return cId;

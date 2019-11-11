@@ -17,4 +17,6 @@ import java.util.Map;
 public interface IInCardBaseService extends IService<InCardBase> {
 
     PageUtils queryPage(Map<String, Object> map);
+
+    void updateReadNumber(long number, Long cId);
 }
