@@ -44,5 +44,7 @@ public interface IInNodeService extends IService<InNode> {
     UserArticleVo articleList(Map<String, Object> map);
 
     Boolean isFocus(Long uId, Long noId);
+
+    UserSpecialVo specialList(Map<String, Object> map);
 }
 

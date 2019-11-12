@@ -2,13 +2,14 @@ package io.information.modules.news.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.guansuo.common.DateUtils;
 import com.guansuo.common.JsonUtil;
 import com.guansuo.common.StringUtil;
 import com.guansuo.newsenum.NewsEnum;
+import io.elasticsearch.entity.EsArticleEntity;
+import io.elasticsearch.entity.EsUserEntity;
 import io.information.common.utils.*;
 import io.information.modules.news.dao.ArticleDao;
 import io.information.modules.news.entity.ArticleEntity;
@@ -21,11 +22,13 @@ import io.information.modules.news.service.feign.common.FeignRes;
 import io.information.modules.news.service.feign.service.BbtcService;
 import io.information.modules.news.service.feign.vo.AuthorInfoVo;
 import io.information.modules.news.service.feign.vo.BbtcListVo;
+import io.mq.utils.Constants;
 import me.zhyd.hunter.entity.VirtualArticle;
 import me.zhyd.hunter.processor.BlogHunterProcessor;
 import me.zhyd.hunter.processor.HunterProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -33,7 +36,7 @@ import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 
-@Service("articleService")
+@Service
 public class ArticleServiceImpl extends ServiceImpl<ArticleDao, ArticleEntity> implements ArticleService {
     private static final Logger LOG = LoggerFactory.getLogger(ArticleServiceImpl.class);
     @Autowired
@@ -44,6 +47,8 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleDao, ArticleEntity> i
     TagService tagService;
     @Autowired
     RedisUtils redisUtils;
+    @Autowired
+    private RabbitTemplate rabbitTemplate;
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
@@ -61,8 +66,12 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleDao, ArticleEntity> i
 
     @Override
     public PageUtils audit(Map<String, Object> params) {
-        QueryWrapper<ArticleEntity> queryWrapper = new QueryWrapper<>();
-        queryWrapper.lambda().eq(ArticleEntity::getaStatus, 1);
+        LambdaQueryWrapper<ArticleEntity> queryWrapper = new LambdaQueryWrapper<>();
+        if (null != params.get("aTitle") && StringUtil.isNotBlank(params.get("aTitle"))) {
+            String aTitle = String.valueOf(params.get("aTitle"));
+            queryWrapper.like(ArticleEntity::getaTitle, aTitle);
+        }
+        queryWrapper.eq(ArticleEntity::getaStatus, 1);
         IPage<ArticleEntity> page = this.page(
                 new Query<ArticleEntity>().getPage(params),
                 queryWrapper
@@ -104,6 +113,9 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleDao, ArticleEntity> i
             a.setaKeyword(ts.substring(0, ts.length() - 1));
         }
         this.save(a);
+        EsArticleEntity esArticle = BeanHelper.copyProperties(a, EsArticleEntity.class);
+        rabbitTemplate.convertAndSend(Constants.articleExchange,
+                Constants.article_Save_RouteKey, esArticle);
     }
 
     /**
@@ -176,6 +188,9 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleDao, ArticleEntity> i
         user.setuCreateTime(new Date());
         userService.save(user);
         user = null;
+        EsUserEntity esUser = BeanHelper.copyProperties(user, EsUserEntity.class);
+        rabbitTemplate.convertAndSend(Constants.userExchange,
+                Constants.user_Save_RouteKey, esUser);
     }
 
     /**

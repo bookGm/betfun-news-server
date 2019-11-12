@@ -54,7 +54,8 @@ public class ActivityController extends AbstractController {
      */
     @PostMapping("/auditOk")
     @RequiresPermissions("news:activity:update")
-    public R auditOk(@RequestBody Long actId) {
+    public R auditOk(@RequestBody Map<String, Object> map) {
+        long actId = Long.parseLong(String.valueOf(map.get("actId")));
         ActivityEntity activityEntity = new ActivityEntity();
         activityEntity.setActId(actId);
         activityEntity.setActStatus(2);
@@ -68,7 +69,8 @@ public class ActivityController extends AbstractController {
      */
     @PostMapping("/auditNo")
     @RequiresPermissions("news:activity:update")
-    public R auditNo(@RequestBody Long actId) {
+    public R auditNo(@RequestBody Map<String, Object> map) {
+        long actId = Long.parseLong(String.valueOf(map.get("actId")));
         ActivityEntity activityEntity = new ActivityEntity();
         activityEntity.setActId(actId);
         activityEntity.setActStatus(0);

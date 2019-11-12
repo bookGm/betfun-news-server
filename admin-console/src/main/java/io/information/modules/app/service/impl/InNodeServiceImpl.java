@@ -254,11 +254,19 @@ public class InNodeServiceImpl extends ServiceImpl<InNodeDao, InNode> implements
         //List<String> list = reply.stream().map(DynamicReplyVo::getCrTime).collect(Collectors.toList());
         //collect.addAll(list);
         //TODO  排序
-        List<DynamicCardVo> cardVos = base.subList(0, 2);   //2
-        List<DynamicReplyVo> replyVos = reply.subList(0, 3);    //3
         NewDynamicVo newDynamicVo = new NewDynamicVo();
-        newDynamicVo.setDynamicCardVos(cardVos);
-        newDynamicVo.setDynamicReplyVos(replyVos);
+        if (null != reply && reply.size() >= 5) {
+            List<DynamicReplyVo> replyVos = reply.subList(0, 3);    //3
+            newDynamicVo.setDynamicReplyVos(replyVos);
+        } else {
+            newDynamicVo.setDynamicReplyVos(reply);
+        }
+        if (null != base && base.size() >= 5) {
+            List<DynamicCardVo> cardVos = base.subList(0, 2);    //2
+            newDynamicVo.setDynamicCardVos(cardVos);
+        } else {
+            newDynamicVo.setDynamicCardVos(base);
+        }
         return newDynamicVo;
     }
 
@@ -299,4 +307,39 @@ public class InNodeServiceImpl extends ServiceImpl<InNodeDao, InNode> implements
     }
 
 
+    @Override
+    public UserSpecialVo specialList(Map<String, Object> map) {
+        LambdaQueryWrapper<InArticle> queryWrapper = new LambdaQueryWrapper<>();
+        Integer pageSize = StringUtil.isBlank(map.get("pageSize")) ? 10 : Integer.parseInt(String.valueOf(map.get("pageSize")));
+        Integer currPage = StringUtil.isBlank(map.get("currPage")) ? 0 : Integer.parseInt(String.valueOf(map.get("currPage")));
+        if (null != map.get("uId") && StringUtil.isNotBlank(map.get("uId"))) {
+            long uId = Long.parseLong(String.valueOf(map.get("uId")));
+            InUser user = userService.getById(uId);
+            UserSpecialVo vo = BeanHelper.copyProperties(user, UserSpecialVo.class);
+            if (null != vo) {
+                queryWrapper.eq(InArticle::getuId, uId);
+                List<InArticle> articles = articleService.list(queryWrapper);
+                //获赞数
+                long likeNumber = articles.stream().mapToLong(InArticle::getaLike).sum();
+                //浏览量
+                long readNumber = articles.stream().mapToLong(InArticle::getaReadNumber).sum();
+                vo.setLikeNumber(likeNumber);
+                vo.setReadNumber(readNumber);
+                IPage<InArticle> page = articleService.page(
+                        new Query<InArticle>().getPage(map),
+                        queryWrapper
+                );
+                //文章信息
+                List<InArticle> articleList = page.getRecords();
+                vo.setArticles(articleList);
+                //分页数据
+                vo.setTotalPage(articles.size());
+                vo.setCurrPage(currPage);
+                vo.setPageSize(pageSize);
+                return vo;
+            }
+            return null;
+        }
+        return null;
+    }
 }

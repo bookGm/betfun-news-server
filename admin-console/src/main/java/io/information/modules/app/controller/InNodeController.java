@@ -206,6 +206,22 @@ public class InNodeController {
         return R.ok().put("userMap", userMap);
     }
 
+
+    /**
+     * 专栏社区 -- 详情
+     */
+    @GetMapping("/specialList")
+    @ApiOperation(value = "专栏社区 -- 详情", httpMethod = "GET", response = UserSpecialVo.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(value = "每页显示条数", name = "pageSize", required = true),
+            @ApiImplicitParam(value = "当前页数", name = "currPage", required = true),
+            @ApiImplicitParam(value = "用户ID", name = "uId", required = true)
+    })
+    public ResultUtil<UserSpecialVo> specialList(@RequestParam Map<String, Object> map) {
+        UserSpecialVo userSpecialVo = nodeService.specialList(map);
+        return ResultUtil.ok(userSpecialVo);
+    }
+
     /**
      * 社区 -- 推荐节点
      */

@@ -8,7 +8,6 @@ import io.information.modules.news.service.ArticleService;
 import io.information.modules.sys.controller.AbstractController;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
@@ -88,13 +87,13 @@ public class ArticleController extends AbstractController {
 
 
     /**
-     * 获取审核状态文章
+     * 审核
      */
-    @GetMapping("/audit")
+    @GetMapping("/auditList")
     @RequiresPermissions("news:article:list")
-    public ResponseEntity<PageUtils> draft(@RequestParam Map<String, Object> params) {
+    public R draft(@RequestParam Map<String, Object> params) {
         PageUtils page = articleService.audit(params);
-        return ResponseEntity.ok(page);
+        return R.ok().put("page", page);
     }
 
 
@@ -103,7 +102,8 @@ public class ArticleController extends AbstractController {
      */
     @PostMapping("/auditOk")
     @RequiresPermissions("news:article:update")
-    public R auditOk(@RequestBody Long aId) {
+    public R auditOk(@RequestBody Map<String, Object> params) {
+        long aId = Long.parseLong(String.valueOf(params.get("aId")));
         ArticleEntity articleEntity = new ArticleEntity();
         articleEntity.setaId(aId);
         articleEntity.setaStatus(2);
@@ -117,7 +117,8 @@ public class ArticleController extends AbstractController {
      */
     @PostMapping("/auditNo")
     @RequiresPermissions("news:article:update")
-    public R auditNo(@RequestBody Long aId) {
+    public R auditNo(@RequestBody Map<String, Object> params) {
+        long aId = Long.parseLong(String.valueOf(params.get("aId")));
         ArticleEntity articleEntity = new ArticleEntity();
         articleEntity.setaId(aId);
         articleEntity.setaStatus(0);
