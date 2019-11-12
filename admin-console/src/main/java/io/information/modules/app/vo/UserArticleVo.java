@@ -1,14 +1,14 @@
 package io.information.modules.app.vo;
 
+import io.information.modules.app.entity.InArticle;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 import java.io.Serializable;
 import java.util.List;
 
-@ApiModel(value = "社区 -- 用户帖子数据", description = "用户信息和帖子信息")
-public class CardUserVo implements Serializable {
-
+@ApiModel(value = "人物社区 -- 用户和文章数据", description = "用户信息和文章信息")
+public class UserArticleVo implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @ApiModelProperty(value = "用户ID", name = "uId", required = true)
@@ -33,22 +33,28 @@ public class CardUserVo implements Serializable {
     private String uIntro;
 
     /**
-     * 用户帖子数量
+     * 用户粉丝数量
      */
-    @ApiModelProperty(value = "用户帖子数量", name = "cardNumber")
-    private Integer cardNumber;
+    @ApiModelProperty(value = "粉丝数量", name = "uFans")
+    private Long uFans;
 
     /**
-     * 用户帖子获赞数量
+     * 用户文章浏览量
      */
-    @ApiModelProperty(value = "用户帖子获赞数量", name = "cLike")
-    private Long cLike;
+    @ApiModelProperty(value = "浏览量", name = "readNumber")
+    private Long readNumber;
 
     /**
-     * 用户帖子推荐信息
+     * 用户获赞数量
      */
-    @ApiModelProperty(value = "用户帖子信息", name = "cardBaseVos")
-    private List<CardBaseVo> cardBaseVos;
+    @ApiModelProperty(value = "获赞数量", name = "likeNumber")
+    private Long likeNumber;
+
+    /**
+     * 用户文章信息
+     */
+    @ApiModelProperty(value = "用户文章信息", name = "articles")
+    private List<InArticle> articles;
 
     /**
      * 总记录数
@@ -103,28 +109,36 @@ public class CardUserVo implements Serializable {
         this.uIntro = uIntro;
     }
 
-    public Integer getCardNumber() {
-        return cardNumber;
+    public Long getReadNumber() {
+        return readNumber;
     }
 
-    public void setCardNumber(Integer cardNumber) {
-        this.cardNumber = cardNumber;
+    public void setReadNumber(Long readNumber) {
+        this.readNumber = readNumber;
     }
 
-    public List<CardBaseVo> getCardBaseVos() {
-        return cardBaseVos;
+    public Long getLikeNumber() {
+        return likeNumber;
     }
 
-    public void setCardBaseVos(List<CardBaseVo> cardBaseVos) {
-        this.cardBaseVos = cardBaseVos;
+    public void setLikeNumber(Long likeNumber) {
+        this.likeNumber = likeNumber;
     }
 
-    public Long getcLike() {
-        return cLike;
+    public Long getuFans() {
+        return uFans;
     }
 
-    public void setcLike(Long cLike) {
-        this.cLike = cLike;
+    public void setuFans(Long uFans) {
+        this.uFans = uFans;
+    }
+
+    public List<InArticle> getArticles() {
+        return articles;
+    }
+
+    public void setArticles(List<InArticle> articles) {
+        this.articles = articles;
     }
 
     public int getTotalCount() {
@@ -148,7 +162,7 @@ public class CardUserVo implements Serializable {
     }
 
     public void setTotalPage(int totalPage) {
-        this.totalPage = (int)Math.ceil((double)totalCount/pageSize);;
+        this.totalPage = (int)Math.ceil((double)totalCount/pageSize);
     }
 
     public int getCurrPage() {

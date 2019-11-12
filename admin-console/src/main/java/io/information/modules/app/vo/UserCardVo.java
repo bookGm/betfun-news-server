@@ -3,9 +3,7 @@ package io.information.modules.app.vo;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
-import javax.xml.crypto.Data;
 import java.io.Serializable;
-import java.util.Date;
 
 @ApiModel(value = "社区列表数据", description = "社区列表对象")
 public class UserCardVo implements Serializable {

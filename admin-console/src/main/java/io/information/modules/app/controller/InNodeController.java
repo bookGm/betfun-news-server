@@ -73,6 +73,18 @@ public class InNodeController {
 
 
     /**
+     * 关注节点 <作者，节点，人物>
+     */
+    @Login
+    @GetMapping("/isFocus")
+    @ApiOperation(value = "是否已关注节点", httpMethod = "GET", notes = "true：已关注  false：未关注")
+    @ApiImplicitParam(value = "目标节点id", name = "noId", required = true)
+    public boolean isFocus(@RequestParam Long noId, @ApiIgnore @LoginUser InUser user) {
+        return nodeService.isFocus(user.getuId(), noId);
+    }
+
+
+    /**
      * 节点社区列表
      */
     @GetMapping("/nodeList")
@@ -108,7 +120,7 @@ public class InNodeController {
      * 内部帖子列表
      */
     @GetMapping("/cardList")
-    @ApiOperation(value = "节点社区内部帖子列表", httpMethod = "GET", notes = "分页数据，状态码", response = UserCardVo.class)
+    @ApiOperation(value = "节点社区 -- 详情", httpMethod = "GET", notes = "分页数据，状态码", response = UserCardVo.class)
     @ApiImplicitParams({
             @ApiImplicitParam(value = "每页显示条数", name = "pageSize", required = true),
             @ApiImplicitParam(value = "当前页数", name = "currPage", required = true),
@@ -152,6 +164,22 @@ public class InNodeController {
     public R star(@RequestParam Map<String, Object> map) {
         Map<Integer, List<InUser>> list = nodeService.star(map);
         return R.ok().put("list", list);
+    }
+
+
+    /**
+     * 人物社区内部文章列表
+     */
+    @GetMapping("/articleList")
+    @ApiOperation(value = "人物社区 -- 详情", httpMethod = "GET", notes = "分页数据", response = UserArticleVo.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(value = "每页显示条数", name = "pageSize", required = true),
+            @ApiImplicitParam(value = "当前页数", name = "currPage", required = true),
+            @ApiImplicitParam(value = "用户ID", name = "uId", required = true),
+    })
+    public ResultUtil<UserArticleVo> articleList(@RequestParam Map<String, Object> map) {
+        UserArticleVo userArticleVo = nodeService.articleList(map);
+        return ResultUtil.ok(userArticleVo);
     }
 
 

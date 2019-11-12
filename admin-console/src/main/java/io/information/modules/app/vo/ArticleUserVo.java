@@ -33,13 +33,13 @@ public class ArticleUserVo implements Serializable {
     private String uIntro;
 
     /**
-     * 用户帖子数量
+     * 用户文章数量
      */
     @ApiModelProperty(value = "用户文章数量", name = "articleNumber")
     private Integer articleNumber;
 
     /**
-     * 用户帖子推荐信息
+     * 用户文章推荐信息
      */
     @ApiModelProperty(value = "用户文章信息", name = "cardBaseVos")
     private List<ArticleVo> articleVos;

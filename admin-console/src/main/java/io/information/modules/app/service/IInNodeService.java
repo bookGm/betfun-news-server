@@ -40,5 +40,9 @@ public interface IInNodeService extends IService<InNode> {
     List<NodeVo> recommendNode();
 
     NewDynamicVo newDynamic();
+
+    UserArticleVo articleList(Map<String, Object> map);
+
+    Boolean isFocus(Long uId, Long noId);
 }
 

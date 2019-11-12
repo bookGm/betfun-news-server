@@ -89,6 +89,12 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
         return String.valueOf(fId);
     }
 
+
+    @Override
+    public Boolean isFocus(Long tId, Long uId) {
+        return redisUtils.hashHasKey(RedisKeys.FOCUS, uId + "-*-" + tId);
+    }
+
     @Override
     public List<Long> searchFocusId(Long uId) {
         ArrayList<Long> list = new ArrayList<>();
@@ -164,10 +170,7 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
         return null;
     }
 
-    @Override
-    public Boolean isFocus(Long tId, Long uId) {
-        return redisUtils.hashHasKey(RedisKeys.FOCUS, uId + "-*-" + tId);
-    }
+
 
     @Override
     public PageUtils comment(Map<String, Object> params) {

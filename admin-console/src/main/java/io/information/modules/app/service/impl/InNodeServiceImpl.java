@@ -7,10 +7,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.guansuo.common.DateUtils;
 import com.guansuo.common.StringUtil;
 import io.information.common.annotation.HashCacheable;
-import io.information.common.utils.BeanHelper;
-import io.information.common.utils.PageUtils;
-import io.information.common.utils.Query;
-import io.information.common.utils.RedisKeys;
+import io.information.common.utils.*;
 import io.information.modules.app.dao.InCardBaseDao;
 import io.information.modules.app.dao.InCommonReplyDao;
 import io.information.modules.app.dao.InNodeDao;
@@ -46,6 +43,8 @@ public class InNodeServiceImpl extends ServiceImpl<InNodeDao, InNode> implements
     private InCommonReplyDao replyDao;
     @Autowired
     private IInDicService dicService;
+    @Autowired
+    private RedisUtils redisUtils;
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
@@ -196,6 +195,10 @@ public class InNodeServiceImpl extends ServiceImpl<InNodeDao, InNode> implements
         return noId;
     }
 
+    @Override
+    public Boolean isFocus(Long uId, Long noId) {
+        return redisUtils.hashHasKey(RedisKeys.NODES, uId + "-*-" + noId);
+    }
 
     @Override
     public CardUserVo cardRecommended(Map<String, Object> map) {
@@ -215,6 +218,9 @@ public class InNodeServiceImpl extends ServiceImpl<InNodeDao, InNode> implements
                     long sum = cardBaseVos.stream().mapToLong(CardBaseVo::getcLike).sum();
                     cardUserVo.setcLike(sum);
                     cardUserVo.setCardBaseVos(cardBaseVos);
+                    cardUserVo.setTotalCount(cardBaseVos.size());
+                    cardUserVo.setCurrPage(currPage);
+                    cardUserVo.setPageSize(pageSize);
                 } else {
                     cardUserVo.setCardNumber(0);
                     cardUserVo.setcLike(0L);
@@ -254,6 +260,42 @@ public class InNodeServiceImpl extends ServiceImpl<InNodeDao, InNode> implements
         newDynamicVo.setDynamicCardVos(cardVos);
         newDynamicVo.setDynamicReplyVos(replyVos);
         return newDynamicVo;
+    }
+
+    @Override
+    public UserArticleVo articleList(Map<String, Object> map) {
+        LambdaQueryWrapper<InArticle> queryWrapper = new LambdaQueryWrapper<>();
+        Integer pageSize = StringUtil.isBlank(map.get("pageSize")) ? 10 : Integer.parseInt(String.valueOf(map.get("pageSize")));
+        Integer currPage = StringUtil.isBlank(map.get("currPage")) ? 0 : Integer.parseInt(String.valueOf(map.get("currPage")));
+        if (null != map.get("uId") && StringUtil.isNotBlank(map.get("uId"))) {
+            long uId = Long.parseLong(String.valueOf(map.get("uId")));
+            InUser user = userService.getById(uId);
+            UserArticleVo vo = BeanHelper.copyProperties(user, UserArticleVo.class);
+            if (null != vo) {
+                queryWrapper.eq(InArticle::getuId, uId);
+                List<InArticle> articles = articleService.list(queryWrapper);
+                //获赞数
+                long likeNumber = articles.stream().mapToLong(InArticle::getaLike).sum();
+                //浏览量
+                long readNumber = articles.stream().mapToLong(InArticle::getaReadNumber).sum();
+                vo.setLikeNumber(likeNumber);
+                vo.setReadNumber(readNumber);
+                IPage<InArticle> page = articleService.page(
+                        new Query<InArticle>().getPage(map),
+                        queryWrapper
+                );
+                //文章信息
+                List<InArticle> articleList = page.getRecords();
+                vo.setArticles(articleList);
+                //分页数据
+                vo.setTotalPage(articles.size());
+                vo.setCurrPage(currPage);
+                vo.setPageSize(pageSize);
+                return vo;
+            }
+            return null;
+        }
+        return null;
     }
 
 
