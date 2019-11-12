@@ -17,6 +17,7 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
@@ -31,7 +32,7 @@ public class InCardController {
     @Autowired
     private IInCardService cardService;
     @Autowired
-    private RedisTemplate redisTemplate;
+    private StringRedisTemplate redisTemplate;
     @Autowired
     private IInCardBaseService cardBaseService;
 
@@ -57,7 +58,7 @@ public class InCardController {
         InCard card = cardService.details(cId);
         Boolean aBoolean = redisTemplate.hasKey(RedisKeys.CARDBROWSEIP + ip + cId);
         if (!aBoolean) {
-            redisTemplate.opsForValue().set(RedisKeys.CARDBROWSEIP + ip + cId, cId, 60 * 60 * 2);
+            redisTemplate.opsForValue().set(RedisKeys.CARDBROWSEIP + ip + cId, cId+"", 60 * 60 * 2);
             Long aLong = redisTemplate.opsForValue().increment(RedisKeys.CARDBROWSE + cId, 1);//如果通过自增1
             if (aLong % 100 == 0) {
                 redisTemplate.delete(ip + cId);

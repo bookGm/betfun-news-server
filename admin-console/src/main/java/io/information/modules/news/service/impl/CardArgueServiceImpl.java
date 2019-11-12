@@ -18,7 +18,7 @@ import org.springframework.stereotype.Service;
 import java.util.Map;
 
 
-@Service("cardArgueService")
+@Service
 public class CardArgueServiceImpl extends ServiceImpl<CardArgueDao, CardArgueEntity> implements CardArgueService {
     @Autowired
     RedisUtils redisUtils;
@@ -29,7 +29,7 @@ public class CardArgueServiceImpl extends ServiceImpl<CardArgueDao, CardArgueEnt
                 new QueryWrapper<CardArgueEntity>()
         );
         for(CardArgueEntity a:page.getRecords()){
-            Object obj=redisUtils.hget(RedisKeys.INUSER,a.getcId());
+            Object obj=redisUtils.hget(RedisKeys.INUSER,a.getcId()+"");
             if(obj instanceof CardBaseEntity){
                 a.setBaseCard((CardBaseEntity)obj);
             }

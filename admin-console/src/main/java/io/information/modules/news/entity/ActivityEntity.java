@@ -87,11 +87,11 @@ public class ActivityEntity implements Serializable {
 	/**
 	 * 收藏数
 	 */
-	private Integer aCollect;
+	private Integer actCollect;
 	/**
 	 * 评论数
 	 */
-	private Long aCritic;
+	private Long actCritic;
 
 	public Long getActId() {
 		return actId;
@@ -213,19 +213,19 @@ public class ActivityEntity implements Serializable {
 		this.actLike = actLike;
 	}
 
-	public Integer getaCollect() {
-		return aCollect;
+	public Integer getActCollect() {
+		return actCollect;
 	}
 
-	public void setaCollect(Integer aCollect) {
-		this.aCollect = aCollect;
+	public void setActCollect(Integer actCollect) {
+		this.actCollect = actCollect;
 	}
 
-	public Long getaCritic() {
-		return aCritic;
+	public Long getActCritic() {
+		return actCritic;
 	}
 
-	public void setaCritic(Long aCritic) {
-		this.aCritic = aCritic;
+	public void setActCritic(Long actCritic) {
+		this.actCritic = actCritic;
 	}
 }

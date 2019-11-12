@@ -90,7 +90,7 @@ public class ArticleController extends AbstractController {
     /**
      * 获取审核状态文章
      */
-    @GetMapping("/draft")
+    @GetMapping("/audit")
     @RequiresPermissions("news:article:list")
     public ResponseEntity<PageUtils> draft(@RequestParam Map<String, Object> params) {
         PageUtils page = articleService.audit(params);

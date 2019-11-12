@@ -254,7 +254,7 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
             String[] str = key.split("-");
             Long id = Long.valueOf(str[1]);
             likeVo.setTime(DateUtils.stringToDate(String.valueOf(obj.getValue()), "yyyy-MM-dd HH:mm:ss"));
-            Object oUser = redisTemplate.opsForHash().get(RedisKeys.INUSER, id);
+            Object oUser = redisTemplate.opsForHash().get(RedisKeys.INUSER, id+"");
             InUser user = (InUser) oUser;
             if (null != user) {
                 likeVo.setNick(user.getuNick());
@@ -317,7 +317,7 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
             InUserDTO userDTO = new InUserDTO();
             String[] str = String.valueOf(obj.getKey()).split("-");
             Long id = Long.valueOf(str[2]);
-            Object oUser = redisTemplate.opsForHash().get(RedisKeys.INUSER, id);
+            Object oUser = redisTemplate.opsForHash().get(RedisKeys.INUSER, id+"");
             InUser user = (InUser) oUser;
             if (null != user) {
                 userDTO.setuNick(user.getuNick());
@@ -358,7 +358,7 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
             InUserDTO userDTO = new InUserDTO();
             String[] str = String.valueOf(obj.getKey()).split("-");
             Long id = Long.valueOf(str[2]);
-            Object oUser = redisTemplate.opsForHash().get(RedisKeys.INUSER, id);
+            Object oUser = redisTemplate.opsForHash().get(RedisKeys.INUSER, id+"");
             InUser user = (InUser) oUser;
             if (null != user) {
                 userDTO.setuPhoto(user.getuPhoto());
@@ -393,7 +393,7 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
             InUserDTO userDTO = new InUserDTO();
             String[] str = String.valueOf(obj.getKey()).split("-");
             Long id = Long.valueOf(str[0]);
-            Object oUser = redisTemplate.opsForHash().get(RedisKeys.INUSER, id);
+            Object oUser = redisTemplate.opsForHash().get(RedisKeys.INUSER, id+"");
             InUser user = (InUser) oUser;
             if (null != user) {
                 userDTO.setuPhoto(user.getuPhoto());

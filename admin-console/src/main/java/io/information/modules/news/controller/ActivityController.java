@@ -14,7 +14,6 @@ import java.util.Date;
 import java.util.Map;
 
 
-
 /**
  * 资讯活动表
  *
@@ -33,7 +32,7 @@ public class ActivityController extends AbstractController {
      */
     @RequestMapping("/list")
     @RequiresPermissions("news:activity:list")
-    public R list(@RequestParam Map<String, Object> params){
+    public R list(@RequestParam Map<String, Object> params) {
         PageUtils page = activityService.queryPage(params);
 
         return R.ok().put("page", page);
@@ -43,10 +42,37 @@ public class ActivityController extends AbstractController {
     /**
      * 审核
      */
-    @RequestMapping("/audit")
-    @RequiresPermissions("news:activity:list")
-    public R audit(@RequestParam Map<String, Object> params){
+    @RequestMapping("/auditList")
+    public R audit(@RequestParam Map<String, Object> params) {
         PageUtils page = activityService.audit(params);
+        return R.ok().put("page", page);
+    }
+
+
+    /**
+     * 已通过
+     */
+    @PostMapping("/auditOk")
+    @RequiresPermissions("news:activity:update")
+    public R auditOk(@RequestBody Long actId) {
+        ActivityEntity activityEntity = new ActivityEntity();
+        activityEntity.setActId(actId);
+        activityEntity.setActStatus(2);
+        activityService.updateById(activityEntity);
+        return R.ok();
+    }
+
+
+    /**
+     * 未通过
+     */
+    @PostMapping("/auditNo")
+    @RequiresPermissions("news:activity:update")
+    public R auditNo(@RequestBody Long actId) {
+        ActivityEntity activityEntity = new ActivityEntity();
+        activityEntity.setActId(actId);
+        activityEntity.setActStatus(0);
+        activityService.updateById(activityEntity);
         return R.ok();
     }
 
@@ -56,8 +82,8 @@ public class ActivityController extends AbstractController {
      */
     @RequestMapping("/info/{actId}")
     @RequiresPermissions("news:activity:info")
-    public R info(@PathVariable("actId") Long actId){
-		ActivityEntity activity = activityService.getById(actId);
+    public R info(@PathVariable("actId") Long actId) {
+        ActivityEntity activity = activityService.getById(actId);
 
         return R.ok().put("activity", activity);
     }
@@ -67,10 +93,10 @@ public class ActivityController extends AbstractController {
      */
     @RequestMapping("/save")
     @RequiresPermissions("news:activity:save")
-    public R save(@RequestBody ActivityEntity activity){
+    public R save(@RequestBody ActivityEntity activity) {
         activity.setuId(getUserId());
         activity.setActCreateTime(new Date());
-		activityService.save(activity);
+        activityService.save(activity);
 
         return R.ok();
     }
@@ -80,8 +106,8 @@ public class ActivityController extends AbstractController {
      */
     @RequestMapping("/update")
     @RequiresPermissions("news:activity:update")
-    public R update(@RequestBody ActivityEntity activity){
-		activityService.updateById(activity);
+    public R update(@RequestBody ActivityEntity activity) {
+        activityService.updateById(activity);
 
         return R.ok();
     }
@@ -91,8 +117,8 @@ public class ActivityController extends AbstractController {
      */
     @RequestMapping("/delete")
     @RequiresPermissions("news:activity:delete")
-    public R delete(@RequestBody Long[] actIds){
-		activityService.removeByIds(Arrays.asList(actIds));
+    public R delete(@RequestBody Long[] actIds) {
+        activityService.removeByIds(Arrays.asList(actIds));
 
         return R.ok();
     }
