@@ -52,7 +52,7 @@ public class HashCacheableAspect {
 			filed=parameterNames[0];
 		}else{
 			for (int i =0 ,len=parameterNames.length;i < len ;i++){
-				filed=filed.replaceAll("#"+parameterNames[i],String.valueOf(args[i]));
+				filed=filed.replace("#"+parameterNames[i],String.valueOf(args[i]));
 			}
 		}
         if(redisTemplate.opsForHash().hasKey(key,filed)){

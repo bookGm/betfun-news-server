@@ -12,6 +12,8 @@ import io.information.modules.app.entity.InActivityFields;
 import io.information.modules.app.entity.InUser;
 import io.information.modules.app.service.IInActivityDatasService;
 import io.information.modules.app.service.IInActivityService;
+import io.information.modules.sys.entity.SysCitysEntity;
+import io.information.modules.sys.service.SysCitysService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -41,6 +43,8 @@ public class InActivityController {
     private IInActivityService activityService;
     @Autowired
     private IInActivityDatasService datasService;
+    @Autowired
+    SysCitysService sysCitysService;
 
 
     /**
@@ -148,6 +152,16 @@ public class InActivityController {
     public R apply(@PathVariable("actId") Long actId) {
         List<InActivityFields> fieldsList = activityService.apply(actId);
         return R.ok().put("fieldsList", fieldsList);
+    }
+
+    /**
+     * 获取所有地区信息
+     */
+    @ApiOperation(value = "所有地区信息", httpMethod = "GET")
+    @GetMapping("/listAll")
+    public R list(){
+        Map<String, List<SysCitysEntity>> listAll = sysCitysService.getListAll("citys");
+        return R.ok().put("citys",listAll );
     }
 
 

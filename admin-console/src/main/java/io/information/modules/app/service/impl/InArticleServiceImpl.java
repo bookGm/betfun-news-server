@@ -172,7 +172,7 @@ public class InArticleServiceImpl extends ServiceImpl<InArticleDao, InArticle> i
 
     @Override
     @HashCacheable(key = RedisKeys.LIKE, keyField = "#id-#uid-#tId-#type")
-    public String giveALike(Long id, Long tId, int type, Long uid) {
+    public String giveALike(Long id, Long uid, int type, Long tId) {
         if (NewsEnum.点赞_文章.getCode().equals(type)) {
             this.baseMapper.addALike(id);
         }
@@ -188,7 +188,7 @@ public class InArticleServiceImpl extends ServiceImpl<InArticleDao, InArticle> i
 
     @Override
     @HashCacheable(key = RedisKeys.COLLECT, keyField = "#id-#uid-#tId-#type")
-    public String collect(Long id, Long tId, int type, Long uid) {
+    public String collect(Long id, Long uid, int type, Long tId) {
         if (NewsEnum.收藏_文章.getCode().equals(type)) {
             this.baseMapper.addACollect(id);
         }

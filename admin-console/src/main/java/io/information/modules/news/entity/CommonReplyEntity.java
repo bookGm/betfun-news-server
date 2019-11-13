@@ -3,6 +3,7 @@ package io.information.modules.news.entity;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -24,6 +25,11 @@ public class CommonReplyEntity implements Serializable {
      */
     @TableId
     private Long crId;
+    /**
+     * id
+     */
+    @ApiModelProperty(value = "用户id", name = "cId", required = true)
+    private Long cId;
     /**
      * 目标id（文章、帖子，活动，用户等）
      */
@@ -49,6 +55,9 @@ public class CommonReplyEntity implements Serializable {
      */
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
     private Date crTime;
+
+    @ApiModelProperty(value = "根评论id", name = "crTId", required = false)
+    private Long crTId;
 
     public Long getCrId() {
         return crId;
@@ -104,5 +113,21 @@ public class CommonReplyEntity implements Serializable {
 
     public void setCrTime(Date crTime) {
         this.crTime = crTime;
+    }
+
+    public Long getCrTId() {
+        return crTId;
+    }
+
+    public void setCrTId(Long crTId) {
+        this.crTId = crTId;
+    }
+
+    public Long getcId() {
+        return cId;
+    }
+
+    public void setcId(Long cId) {
+        this.cId = cId;
     }
 }

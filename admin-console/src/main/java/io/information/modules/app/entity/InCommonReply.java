@@ -1,6 +1,7 @@
 package io.information.modules.app.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import io.swagger.annotations.Api;
@@ -25,6 +26,11 @@ public class InCommonReply implements Serializable {
     @TableId(type = IdType.INPUT)
     @ApiModelProperty(hidden = true)
     private Long crId;
+    /**
+     * id
+     */
+    @ApiModelProperty(value = "用户id", name = "cId", required = true)
+    private Long cId;
     /**
      * 目标id（文章、帖子，活动，用户等）
      */
@@ -53,8 +59,37 @@ public class InCommonReply implements Serializable {
     /**
      * 评论或回复时间
      */
-    @ApiModelProperty(hidden = true)
+    @ApiModelProperty(value = "回复或评论时间", name = "crTime", required = false)
     private Date crTime;
+    /**
+     * 评论或回复时间简单格式
+     */
+    @ApiModelProperty(value = "评论或回复时间简单格式", name = "crSimpleTime", required = false)
+    @TableField(exist = false)
+    private String crSimpleTime;
+    /**
+     * 回复数
+     */
+    @TableField(exist = false)
+    @ApiModelProperty(value = "回复数", name = "crCount", required = false)
+    private Integer crCount;
+
+    @ApiModelProperty(value = "根评论id", name = "crTId", required = false)
+    private Long crTId;
+
+    /**
+     * 用户名
+     */
+    @TableField(exist = false)
+    @ApiModelProperty(value = "用户名", name = "cName", required = false)
+    private String cName;
+
+    /**
+     * 用户头像
+     */
+    @TableField(exist = false)
+    @ApiModelProperty(value = "用户头像", name = "cPhoto", required = false)
+    private String cPhoto;
 
     public Long getCrId() {
         return crId;
@@ -110,5 +145,53 @@ public class InCommonReply implements Serializable {
 
     public void setCrTime(Date crTime) {
         this.crTime = crTime;
+    }
+
+    public Integer getCrCount() {
+        return crCount;
+    }
+
+    public void setCrCount(Integer crCount) {
+        this.crCount = crCount;
+    }
+
+    public Long getCrTId() {
+        return crTId;
+    }
+
+    public void setCrTId(Long crTId) {
+        this.crTId = crTId;
+    }
+
+    public Long getcId() {
+        return cId;
+    }
+
+    public void setcId(Long cId) {
+        this.cId = cId;
+    }
+
+    public String getcName() {
+        return cName;
+    }
+
+    public void setcName(String cName) {
+        this.cName = cName;
+    }
+
+    public String getcPhoto() {
+        return cPhoto;
+    }
+
+    public void setcPhoto(String cPhoto) {
+        this.cPhoto = cPhoto;
+    }
+
+    public String getCrSimpleTime() {
+        return crSimpleTime;
+    }
+
+    public void setCrSimpleTime(String crSimpleTime) {
+        this.crSimpleTime = crSimpleTime;
     }
 }

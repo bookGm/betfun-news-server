@@ -1,13 +1,13 @@
 package io.information.modules.app.controller;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.guansuo.newsenum.NewsEnum;
 import io.information.common.utils.IdGenerator;
 import io.information.common.utils.PageUtils;
 import io.information.common.utils.R;
 import io.information.modules.app.annotation.Login;
-import io.information.modules.app.entity.InActivity;
-import io.information.modules.app.entity.InArticle;
-import io.information.modules.app.entity.InCardBase;
-import io.information.modules.app.entity.InCommonReply;
+import io.information.modules.app.annotation.LoginUser;
+import io.information.modules.app.entity.*;
 import io.information.modules.app.service.IInActivityService;
 import io.information.modules.app.service.IInArticleService;
 import io.information.modules.app.service.IInCardBaseService;
@@ -19,6 +19,7 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.web.bind.annotation.*;
+import springfox.documentation.annotations.ApiIgnore;
 
 import java.util.Arrays;
 import java.util.Date;
@@ -63,9 +64,10 @@ public class InCommonReplyController {
     @Login
     @PostMapping("/save")
     @ApiOperation(value = "保存评论信息", httpMethod = "POST", notes = "目标类型（0文章，1帖子，2活动，3用户）")
-    public R save(@RequestBody InCommonReply commonReply) {
+    public R save(@RequestBody InCommonReply commonReply,@ApiIgnore @LoginUser InUser user) {
         commonReply.setCrId(IdGenerator.getId());
         commonReply.setCrTime(new Date());
+        commonReply.setcId(user.getuId());
         commonReplyService.save(commonReply);
         addCritic(commonReply);
         return R.ok();

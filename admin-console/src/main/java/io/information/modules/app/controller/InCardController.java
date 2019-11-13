@@ -56,12 +56,12 @@ public class InCardController {
     public R details(@PathVariable("cId") Long cId, @ApiIgnore HttpServletRequest request) {
         String ip = IPUtils.getIpAddr(request);
         InCard card = cardService.details(cId);
-        Boolean aBoolean = redisTemplate.hasKey(RedisKeys.CARDBROWSEIP + ip + cId);
+        Boolean aBoolean = redisTemplate.hasKey(RedisKeys.CARDBROWSEIP + ip + String.valueOf(cId));
         if (!aBoolean) {
-            redisTemplate.opsForValue().set(RedisKeys.CARDBROWSEIP + ip + cId, cId+"", 60 * 60 * 2);
-            Long aLong = redisTemplate.opsForValue().increment(RedisKeys.CARDBROWSE + cId, 1);//如果通过自增1
+            redisTemplate.opsForValue().set(RedisKeys.CARDBROWSEIP + ip + String.valueOf(cId), String.valueOf(cId), 60 * 60 * 2);
+            Long aLong = redisTemplate.opsForValue().increment(RedisKeys.CARDBROWSE + String.valueOf(cId), 1);//如果通过自增1
             if (aLong % 100 == 0) {
-                redisTemplate.delete(ip + cId);
+                redisTemplate.delete(ip + String.valueOf(cId));
                 InCardBase base = cardBaseService.getById(cId);
                 long readNumber = aLong + base.getcReadNumber();
                 cardBaseService.updateReadNumber(readNumber, cId);

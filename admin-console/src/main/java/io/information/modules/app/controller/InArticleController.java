@@ -303,8 +303,8 @@ public class InArticleController {
             InUser u = inUserService.getById(uId);
             av.setuNick(u.getuNick());
             av.setuPhoto(u.getuPhoto());
-            av.setLiked(redisTemplate.opsForHash().hasKey(RedisKeys.LIKE, aId + "-" + uId + "-" + u.getuId() + "-" + NewsEnum.点赞_文章.getCode()));
-            av.setCollected(redisTemplate.opsForHash().hasKey(RedisKeys.COLLECT, aId + "-" + uId + "-" + u.getuId() + "-" + NewsEnum.收藏_文章.getCode()));
+            av.setLiked(redisTemplate.opsForHash().hasKey(RedisKeys.LIKE, aId + "-" + uId + "-" + a.getuId() + "-" + NewsEnum.点赞_文章.getCode()));
+            av.setCollected(redisTemplate.opsForHash().hasKey(RedisKeys.COLLECT, aId + "-" + uId + "-" + a.getuId() + "-" + NewsEnum.收藏_文章.getCode()));
         }
         av.setaLike(a.getaLike());
         av.setaCollect(a.getaCollect());
