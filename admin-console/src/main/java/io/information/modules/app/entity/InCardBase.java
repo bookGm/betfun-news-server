@@ -1,6 +1,7 @@
 package io.information.modules.app.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import io.swagger.annotations.ApiModel;
@@ -100,6 +101,12 @@ public class InCardBase implements Serializable {
      */
     @ApiModelProperty(value = "浏览量", name = "cReadNumber")
     private Long cReadNumber;
+
+    /**
+     * 简单时间
+     */
+    @TableField(exist = false)
+    private String cSimpleTime;
 
 
     public Long getcReadNumber() {
@@ -204,5 +211,13 @@ public class InCardBase implements Serializable {
 
     public void setcCreateTime(Date cCreateTime) {
         this.cCreateTime = cCreateTime;
+    }
+
+    public String getcSimpleTime() {
+        return cSimpleTime;
+    }
+
+    public void setcSimpleTime(String cSimpleTime) {
+        this.cSimpleTime = cSimpleTime;
     }
 }

@@ -58,10 +58,10 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
 
     @Override
     public boolean change(String uPwd, String newPwd, InUser user) {
-        if (!uPwd.equals(new Sha256Hash(user.getuPwd(), user.getuSalt()).toHex())) {
+        if (!user.getuPwd().equals(new Sha256Hash(uPwd, user.getuSalt()).toHex())) {
             return false;
         } else {
-            user.setuPwd(newPwd);
+            user.setuPwd(new Sha256Hash(newPwd, user.getuSalt()).toHex());
             this.updateById(user);
             return true;
         }
@@ -255,10 +255,9 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
             InLikeVo likeVo = new InLikeVo();
             String key = String.valueOf(obj.getKey());
             String[] str = key.split("-");
-            Long id = Long.valueOf(str[1]);
+            Long id = Long.valueOf(str[0]);
             likeVo.setTime(DateUtils.stringToDate(String.valueOf(obj.getValue()), "yyyy-MM-dd HH:mm:ss"));
-            Object oUser = redisTemplate.opsForHash().get(RedisKeys.INUSER, id+"");
-            InUser user = (InUser) oUser;
+            InUser user = this.getById(str[1]);
             if (null != user) {
                 likeVo.setNick(user.getuNick());
                 likeVo.setPhoto(user.getuPhoto());
@@ -429,7 +428,7 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
             //查询用户的收藏   #id-#uid-#tId-#type
             ArrayList<CollectDTO> collects = null;
             List<Map.Entry<Object, Object>> cmap = redisUtils.hfget(RedisKeys.COLLECT, "*-" + uId + "-*-" + type);
-            List<Map.Entry<Object, Object>> slist = null;
+//            List<Map.Entry<Object, Object>> slist = null;
             //关注目标信息
             if (null != cmap && cmap.size() > 0) {
                 collects = new ArrayList<>();
@@ -441,32 +440,35 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
             }
             switch (type) {
                 case 0:     //文章
-                    for (Map.Entry<Object, Object> obj : slist) {
+                    for (Map.Entry<Object, Object> obj : cmap) {
                         CollectDTO dto = new CollectDTO();
                         String[] str = String.valueOf(obj.getKey()).split("-");
                         Long id = Long.valueOf(str[0]);
-                        InActivity activity = activityService.getById(id);//目标信息
-                        dto.setActivity(activity);
+                        InArticle article = articleService.getById(id);//目标信息
+                        article.setaSimpleTime(DateUtils.getSimpleTime(String.valueOf(obj.getValue())));
+                        dto.setArticle(article);
                         collects.add(dto);
                     }
                     break;
                 case 1:     //帖子
-                    for (Map.Entry<Object, Object> obj : slist) {
+                    for (Map.Entry<Object, Object> obj : cmap) {
                         CollectDTO dto = new CollectDTO();
                         String[] str = String.valueOf(obj.getKey()).split("-");
                         Long id = Long.valueOf(str[0]);
                         InCardBase cardBase = baseService.getById(id);//目标信息
+                        cardBase.setcSimpleTime(DateUtils.getSimpleTime(String.valueOf(obj.getValue())));
                         dto.setCardBase(cardBase);
                         collects.add(dto);
                     }
                     break;
                 case 2:     //活动
-                    for (Map.Entry<Object, Object> obj : slist) {
+                    for (Map.Entry<Object, Object> obj : cmap) {
                         CollectDTO dto = new CollectDTO();
                         String[] str = String.valueOf(obj.getKey()).split("-");
                         Long id = Long.valueOf(str[0]);
-                        InArticle article = articleService.getById(id);//目标信息
-                        dto.setArticle(article);
+                        InActivity activity= activityService.getById(id);//目标信息
+                        activity.setaSimpleTime(DateUtils.getSimpleTime(String.valueOf(obj.getValue())));
+                        dto.setActivity(activity);
                         collects.add(dto);
                     }
                     break;

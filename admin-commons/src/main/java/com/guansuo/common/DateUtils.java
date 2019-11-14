@@ -158,6 +158,10 @@ public class DateUtils {
         return dateTime.plusYears(years).toDate();
     }
 
+    public static String getSimpleTime(String date){
+        return getSimpleTime(stringToDate(date,DATE_TIME_PATTERN));
+    }
+
     public static String getSimpleTime(Date date){
         long nowTime = System.currentTimeMillis(); // 获取当前时间的毫秒数
         String msg = null;

@@ -2,6 +2,7 @@ package io.information.modules.app.controller;
 
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.guansuo.newsenum.NewsEnum;
 import io.elasticsearch.entity.EsUserEntity;
 import io.information.common.utils.*;
 import io.information.modules.app.annotation.Login;
@@ -10,7 +11,9 @@ import io.information.modules.app.dto.IdentifyCompanyDTO;
 import io.information.modules.app.dto.IdentifyPersonalDTO;
 import io.information.modules.app.dto.RedactDataDTO;
 import io.information.modules.app.entity.*;
+import io.information.modules.app.service.IInActivityService;
 import io.information.modules.app.service.IInArticleService;
+import io.information.modules.app.service.IInCardService;
 import io.information.modules.app.service.IInUserService;
 import io.information.modules.app.vo.InLikeVo;
 import io.information.modules.app.vo.UserBoolVo;
@@ -46,6 +49,12 @@ public class InUserController extends AbstractController {
     private RabbitTemplate rabbitTemplate;
     @Autowired
     private IInArticleService articleService;
+    @Autowired
+    private IInActivityService activityService;
+    @Autowired
+    private IInCardService cardService;
+    @Autowired
+    RedisUtils redisUtils;
 
 
     /**
@@ -400,6 +409,36 @@ public class InUserController extends AbstractController {
         map.put("uId", user.getuId());
         PageUtils page = userService.favorite(map);
         return ResultUtil.ok(page);
+    }
+
+    /**
+     * 个人中心 -- 删除收藏
+     */
+    @Login
+    @GetMapping("/delFavorite")
+    @ApiOperation(value = "个人中心 -- 删除收藏", httpMethod = "GET")
+    @ApiImplicitParams({
+            @ApiImplicitParam(value = "文章、帖子、活动id", name = "id", required = true),
+            @ApiImplicitParam(value = "id类型 0：文章 1：帖子 2：活动", name = "type", required = true),
+    })
+    public ResultUtil delFavorite(@RequestParam String id,@RequestParam String type, @ApiIgnore @LoginUser InUser user) {
+        Long uId=-1L;
+        if(NewsEnum.收藏_文章.getCode().equals(type)){
+            uId=articleService.getById(id).getuId();
+        }
+        if(NewsEnum.收藏_帖子.getCode().equals(type)){
+            uId=cardService.getById(id).getuId();
+        }
+        if(NewsEnum.收藏_活动.getCode().equals(type)){
+            uId=activityService.getById(id).getuId();
+        }
+        String key=id+"-"+user.getuId()+"-"+uId+"-"+type;
+        Long r=redisUtils.hremove(RedisKeys.COLLECT,key);
+        if(r>0){
+            return ResultUtil.ok();
+        }else{
+            return ResultUtil.error("收藏删除失败，请重试");
+        }
     }
 
 

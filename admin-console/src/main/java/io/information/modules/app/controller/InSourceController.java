@@ -6,10 +6,18 @@ import io.information.common.utils.R;
 import io.information.modules.app.entity.InSource;
 import io.information.modules.app.service.IInSourceService;
 import io.information.modules.sys.controller.AbstractController;
+import me.zhyd.hunter.config.HunterConfig;
+import me.zhyd.hunter.config.HunterConfigContext;
+import me.zhyd.hunter.config.platform.Platform;
+import me.zhyd.hunter.entity.VirtualArticle;
+import me.zhyd.hunter.enums.ExitWayEnum;
+import me.zhyd.hunter.processor.BlogHunterProcessor;
+import me.zhyd.hunter.processor.HunterProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * <p>
@@ -87,5 +95,16 @@ public class InSourceController extends AbstractController {
     public R delete(@RequestBody String[] sUrls) {
         sourceService.removeByUrl(Arrays.asList(sUrls));
         return R.ok();
+    }
+
+
+    public static void main(String[] args) {
+        HunterConfig config = HunterConfigContext.getHunterConfig(Platform.BBTC);
+        HunterProcessor hunter = new BlogHunterProcessor(config);
+        CopyOnWriteArrayList<VirtualArticle> list = hunter.execute();
+        for(VirtualArticle va:list){
+            System.out.println("getTitle=---------------------："+va.getTitle());
+            System.out.println("getDescription--------------------："+va.getDescription());
+        }
     }
 }

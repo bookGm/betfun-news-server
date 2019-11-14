@@ -30,26 +30,6 @@ public class HunterConfigContext {
     }
 
     /**
-     * 抓取单个文章时可用；
-     *
-     * @param platform 博客平台
-     * @return HunterConfig
-     */
-    public static HunterConfig getHunterConfig(Platform platform) {
-        String platformConfig = HunterConfigTemplate.getConfig(platform.getPlatform());
-        JSONObject platformObj = JSONObject.parseObject(platformConfig);
-        String br = "\r\n";
-        Set<Map.Entry<String, Object>> entries = platformObj.entrySet();
-        for (Map.Entry<String, Object> entry : entries) {
-            if ("header".equals(entry.getKey())) {
-                List<String> headers = JSONArray.parseArray(String.valueOf(entry.getValue()), String.class);
-                entry.setValue(String.join(br, headers));
-            }
-        }
-        return JSONObject.toJavaObject(platformObj, HunterConfig.class);
-    }
-
-    /**
      * 重新解析配置模板， 将用户id替换为真实的id
      *
      * @param config config
@@ -89,5 +69,25 @@ public class HunterConfigContext {
             }
         }
         return config;
+    }
+
+    /**
+     * 抓取单个文章时可用；
+     *
+     * @param platform 博客平台
+     * @return HunterConfig
+     */
+    public static HunterConfig getHunterConfig(Platform platform) {
+        String platformConfig = HunterConfigTemplate.getConfig(platform.getPlatform());
+        JSONObject platformObj = JSONObject.parseObject(platformConfig);
+        String br = "\r\n";
+        Set<Map.Entry<String, Object>> entries = platformObj.entrySet();
+        for (Map.Entry<String, Object> entry : entries) {
+            if ("header".equals(entry.getKey())) {
+                List<String> headers = JSONArray.parseArray(String.valueOf(entry.getValue()), String.class);
+                entry.setValue(String.join(br, headers));
+            }
+        }
+        return JSONObject.toJavaObject(platformObj, HunterConfig.class);
     }
 }

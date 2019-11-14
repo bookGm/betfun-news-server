@@ -329,6 +329,16 @@ public class RedisUtils {
     }
 
     /**
+     * 删除hash
+     * @param key
+     * @param hashKey
+     * @return Object
+     */
+    public Long hremove(String key,Object hashKey){
+        return redisTemplate.opsForHash().delete(key,hashKey);
+    }
+
+    /**
      * 批量添加hash
      * @param key
      * @param map

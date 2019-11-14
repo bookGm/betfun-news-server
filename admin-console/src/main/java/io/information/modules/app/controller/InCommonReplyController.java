@@ -1,17 +1,12 @@
 package io.information.modules.app.controller;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.guansuo.newsenum.NewsEnum;
 import io.information.common.utils.IdGenerator;
 import io.information.common.utils.PageUtils;
 import io.information.common.utils.R;
 import io.information.modules.app.annotation.Login;
 import io.information.modules.app.annotation.LoginUser;
 import io.information.modules.app.entity.*;
-import io.information.modules.app.service.IInActivityService;
-import io.information.modules.app.service.IInArticleService;
-import io.information.modules.app.service.IInCardBaseService;
-import io.information.modules.app.service.IInCommonReplyService;
+import io.information.modules.app.service.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -46,7 +41,8 @@ public class InCommonReplyController {
     private IInCardBaseService cardBaseService;
     @Autowired
     private IInActivityService activityService;
-
+    @Autowired
+    IInUserService iInUserService;
     /**
      * 信息
      */
@@ -70,7 +66,10 @@ public class InCommonReplyController {
         commonReply.setcId(user.getuId());
         commonReplyService.save(commonReply);
         addCritic(commonReply);
-        return R.ok();
+        commonReply.setcName(user.getuNick());
+        commonReply.setcPhoto(user.getuPhoto());
+        commonReply.setCrSimpleTime("刚刚");
+        return R.ok().put("crObj",commonReply);
     }
 
     //添加评论数量

@@ -187,10 +187,10 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleDao, ArticleEntity> i
         user.setuPotential(Integer.parseInt(NewsEnum.用户类型_抓取用户.getCode()));
         user.setuCreateTime(new Date());
         userService.save(user);
-        user = null;
         EsUserEntity esUser = BeanHelper.copyProperties(user, EsUserEntity.class);
         rabbitTemplate.convertAndSend(Constants.userExchange,
                 Constants.user_Save_RouteKey, esUser);
+        user = null;
     }
 
     /**

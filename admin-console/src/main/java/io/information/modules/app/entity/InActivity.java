@@ -139,6 +139,12 @@ public class InActivity implements Serializable {
      */
     private Long actCritic;
 
+    /**
+     * 简单时间
+     */
+    @TableField(exist = false)
+    private String aSimpleTime;
+
     public Long getActId() {
         return actId;
     }
@@ -297,5 +303,13 @@ public class InActivity implements Serializable {
 
     public void setActCritic(Long actCritic) {
         this.actCritic = actCritic;
+    }
+
+    public String getaSimpleTime() {
+        return aSimpleTime;
+    }
+
+    public void setaSimpleTime(String aSimpleTime) {
+        this.aSimpleTime = aSimpleTime;
     }
 }
