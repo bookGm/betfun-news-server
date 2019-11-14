@@ -39,7 +39,7 @@ public class InCommonReply implements Serializable {
     /**
      * 目标类型（字典 ：文章、帖子，活动，用户等）
      */
-    @ApiModelProperty(value = "目标类型（字典 ：文章、帖子，活动，用户等）", name = "tType", required = true)
+    @ApiModelProperty(value = "目标类型（字典 ：0文章，1帖子，2活动，3用户等）", name = "tType", required = true)
     private Integer tType;
     @ApiModelProperty(value = "目标类型名称", name = "tTypeName")
     @TableField(exist = false)

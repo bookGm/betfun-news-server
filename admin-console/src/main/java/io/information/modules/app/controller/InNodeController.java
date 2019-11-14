@@ -73,6 +73,20 @@ public class InNodeController {
 
 
     /**
+     * 取消关注节点
+     */
+    @Login
+    @PostMapping("/delFocus")
+    @ApiOperation(value = "取消关注节点", httpMethod = "POST", notes = "被关注的节点id")
+    @ApiImplicitParam(value = "节点id", name = "noId", required = true)
+    public R delFocus(@RequestBody Long noId, @ApiIgnore @LoginUser InUser user) {
+        InNode node = nodeService.getById(noId);
+        nodeService.focus(user.getuId(), noId, node.getNoType());
+        return R.ok();
+    }
+
+
+    /**
      * 是否已关注节点
      */
     @Login

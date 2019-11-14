@@ -40,9 +40,10 @@ public class ActivityServiceImpl extends ServiceImpl<ActivityDao, ActivityEntity
             String actTitle = String.valueOf(params.get("actTitle"));
             queryWrapper.like(ActivityEntity::getActTitle, actTitle);
         }
+        queryWrapper.eq(ActivityEntity::getActStatus,1);
         IPage<ActivityEntity> page = this.page(
                 new Query<ActivityEntity>().getPage(params),
-                new LambdaQueryWrapper<ActivityEntity>().eq(ActivityEntity::getActStatus,1)
+                queryWrapper
         );
         return new PageUtils(page);
     }

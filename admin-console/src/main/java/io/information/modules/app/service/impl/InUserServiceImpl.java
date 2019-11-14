@@ -317,6 +317,7 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
                 likeVo.setNick(user.getuNick());
                 likeVo.setPhoto(user.getuPhoto());
                 getTitle(id, str[3], likeVo);
+                System.out.println(str[3].toString());
                 newsLike.add(likeVo);
             }
         }

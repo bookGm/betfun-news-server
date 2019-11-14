@@ -29,7 +29,7 @@
     <select id="searchArticleByTag" resultType="io.information.modules.app.entity.InArticle">
         SELECT a.* FROM in_article a,in_tag t WHERE FIND_IN_SET(#{tName},a.a_keyword) LIMIT #{currPage},#{pageSize}
     </select>
-    <select id="allAId" resultType="java.util.List" parameterType="java.lang.Long">
+    <select id="allAId" resultType="java.lang.Long" parameterType="java.lang.Long">
         select a_id from in_article where u_id = #{uId} ORDER BY a_create_time DESC
     </select>
 </mapper>
