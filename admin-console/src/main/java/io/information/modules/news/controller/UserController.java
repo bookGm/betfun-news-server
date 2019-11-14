@@ -1,5 +1,6 @@
 package io.information.modules.news.controller;
 
+import com.guansuo.common.StringUtil;
 import io.information.common.utils.PageUtils;
 import io.information.common.utils.R;
 import io.information.modules.news.entity.UserEntity;
@@ -10,7 +11,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
 import java.util.Map;
-
 
 
 /**
@@ -31,7 +31,7 @@ public class UserController {
      */
     @GetMapping("/list")
     @RequiresPermissions("news:user:list")
-    public R list(@RequestParam Map<String, Object> params){
+    public R list(@RequestParam Map<String, Object> params) {
         PageUtils page = userService.queryPage(params);
 
         return R.ok().put("page", page);
@@ -43,20 +43,10 @@ public class UserController {
      */
     @GetMapping("/info/{uId}")
     @RequiresPermissions("news:user:info")
-    public R info(@PathVariable("uId") Long uId){
-		UserEntity user = userService.getById(uId);
+    public R info(@PathVariable("uId") Long uId) {
+        UserEntity user = userService.getById(uId);
 
         return R.ok().put("user", user);
-    }
-
-
-    /**
-     * 根据用户昵称查询 <昵称不可重复>
-     */
-    @GetMapping("/nice")
-    public R nice(Map<String, Object> params){
-        PageUtils pageNice = userService.queryUserByNick(params);
-        return R.ok().put("pageNice",pageNice);
     }
 
 
@@ -65,8 +55,8 @@ public class UserController {
      */
     @PostMapping("/save")
     @RequiresPermissions("news:user:save")
-    public R save(@RequestBody UserEntity user){
-		userService.save(user);
+    public R save(@RequestBody UserEntity user) {
+        userService.save(user);
 
         return R.ok();
     }
@@ -76,8 +66,8 @@ public class UserController {
      */
     @PostMapping("/update")
     @RequiresPermissions("news:user:update")
-    public R update(@RequestBody UserEntity user){
-		userService.updateById(user);
+    public R update(@RequestBody UserEntity user) {
+        userService.updateById(user);
 
         return R.ok();
     }
@@ -87,10 +77,57 @@ public class UserController {
      */
     @PostMapping("/delete")
     @RequiresPermissions("news:user:delete")
-    public R delete(@RequestBody Long[] uIds){
-		userService.removeByIds(Arrays.asList(uIds));
+    public R delete(@RequestBody Long[] uIds) {
+        userService.removeByIds(Arrays.asList(uIds));
 
         return R.ok();
     }
 
+
+    /**
+     * 审核
+     */
+    @RequestMapping("/auditList")
+    @RequiresPermissions("news:user:list")
+    public R audit(@RequestParam Map<String, Object> params) {
+        PageUtils page = userService.audit(params);
+        return R.ok().put("page", page);
+    }
+
+
+    /**
+     * 已通过
+     */
+    @PostMapping("/auditOk")
+    @RequiresPermissions("news:user:update")
+    public R auditOk(@RequestBody Map<String, Object> map) {
+        if (null != map.get("uId") && StringUtil.isNotBlank(map.get("uId"))) {
+            long actId = Long.parseLong(String.valueOf(map.get("uId")));
+            UserEntity userEntity = new UserEntity();
+            userEntity.setuId(actId);
+            userEntity.setuAuthStatus(2);
+            userService.updateById(userEntity);
+            return R.ok();
+        }
+        return R.error("缺少必要的参数");
+    }
+
+
+    /**
+     * 未通过
+     */
+    @PostMapping("/auditNo")
+    @RequiresPermissions("news:user:update")
+    public R auditNo(@RequestBody Map<String, Object> map) {
+        if (null != map.get("uId") && StringUtil.isNotBlank(map.get("uId"))) {
+            long actId = Long.parseLong(String.valueOf(map.get("uId")));
+            UserEntity userEntity = new UserEntity();
+            userEntity.setuId(actId);
+            userEntity.setuAuthStatus(0);
+            userEntity.setuAuthType(null);
+            userService.updateById(userEntity);
+            return R.ok();
+        }
+        return R.error("缺少必要的参数");
+    }
 }

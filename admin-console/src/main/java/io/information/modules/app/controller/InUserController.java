@@ -267,7 +267,7 @@ public class InUserController extends AbstractController {
      */
     @Login
     @GetMapping("/comment")
-    @ApiOperation(value = "个人中心 -- 评论", httpMethod = "GET", notes = "分页数据")
+    @ApiOperation(value = "个人中心 -- 评论", httpMethod = "GET", notes = "目标类型（字典 ：0文章，1帖子，2活动，3用户）")
     @ApiImplicitParams({
             @ApiImplicitParam(value = "每页显示条数", name = "pageSize", required = true),
             @ApiImplicitParam(value = "当前页数", name = "currPage", required = true)
@@ -284,7 +284,7 @@ public class InUserController extends AbstractController {
      */
     @Login
     @GetMapping("/commentUser")
-    @ApiOperation(value = "个人消息 -- 评论", httpMethod = "GET", notes = "分页数据", response = InCommonReply.class)
+    @ApiOperation(value = "个人消息 -- 评论", httpMethod = "GET", notes = "目标类型（字典 ：0文章，1帖子，2活动，3用户）", response = InCommonReply.class)
     @ApiImplicitParams({
             @ApiImplicitParam(value = "每页显示条数", name = "pageSize", required = true),
             @ApiImplicitParam(value = "当前页数", name = "currPage", required = true)

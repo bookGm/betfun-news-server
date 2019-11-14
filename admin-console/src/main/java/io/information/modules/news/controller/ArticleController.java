@@ -1,5 +1,6 @@
 package io.information.modules.news.controller;
 
+import com.guansuo.common.StringUtil;
 import io.information.common.utils.PageUtils;
 import io.information.common.utils.R;
 import io.information.modules.app.config.IdWorker;
@@ -103,12 +104,15 @@ public class ArticleController extends AbstractController {
     @PostMapping("/auditOk")
     @RequiresPermissions("news:article:update")
     public R auditOk(@RequestBody Map<String, Object> params) {
-        long aId = Long.parseLong(String.valueOf(params.get("aId")));
-        ArticleEntity articleEntity = new ArticleEntity();
-        articleEntity.setaId(aId);
-        articleEntity.setaStatus(2);
-        articleService.updateById(articleEntity);
-        return R.ok();
+        if (null != params.get("aId") && StringUtil.isNotBlank(params.get("aId"))) {
+            long aId = Long.parseLong(String.valueOf(params.get("aId")));
+            ArticleEntity articleEntity = new ArticleEntity();
+            articleEntity.setaId(aId);
+            articleEntity.setaStatus(2);
+            articleService.updateById(articleEntity);
+            return R.ok();
+        }
+        return R.error("缺少必要的参数");
     }
 
 
@@ -118,11 +122,14 @@ public class ArticleController extends AbstractController {
     @PostMapping("/auditNo")
     @RequiresPermissions("news:article:update")
     public R auditNo(@RequestBody Map<String, Object> params) {
-        long aId = Long.parseLong(String.valueOf(params.get("aId")));
-        ArticleEntity articleEntity = new ArticleEntity();
-        articleEntity.setaId(aId);
-        articleEntity.setaStatus(0);
-        articleService.updateById(articleEntity);
-        return R.ok();
+        if (null != params.get("aId") && StringUtil.isNotBlank(params.get("aId"))) {
+            long aId = Long.parseLong(String.valueOf(params.get("aId")));
+            ArticleEntity articleEntity = new ArticleEntity();
+            articleEntity.setaId(aId);
+            articleEntity.setaStatus(0);
+            articleService.updateById(articleEntity);
+            return R.ok();
+        }
+        return R.error("缺少必要的参数");
     }
 }

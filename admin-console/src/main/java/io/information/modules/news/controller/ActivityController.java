@@ -1,5 +1,6 @@
 package io.information.modules.news.controller;
 
+import com.guansuo.common.StringUtil;
 import io.information.common.utils.PageUtils;
 import io.information.common.utils.R;
 import io.information.modules.news.entity.ActivityEntity;
@@ -55,12 +56,15 @@ public class ActivityController extends AbstractController {
     @PostMapping("/auditOk")
     @RequiresPermissions("news:activity:update")
     public R auditOk(@RequestBody Map<String, Object> map) {
-        long actId = Long.parseLong(String.valueOf(map.get("actId")));
-        ActivityEntity activityEntity = new ActivityEntity();
-        activityEntity.setActId(actId);
-        activityEntity.setActStatus(2);
-        activityService.updateById(activityEntity);
-        return R.ok();
+        if (null != map.get("actId") && StringUtil.isNotBlank(map.get("actId"))) {
+            long actId = Long.parseLong(String.valueOf(map.get("actId")));
+            ActivityEntity activityEntity = new ActivityEntity();
+            activityEntity.setActId(actId);
+            activityEntity.setActStatus(2);
+            activityService.updateById(activityEntity);
+            return R.ok();
+        }
+        return R.error("缺少必要的参数");
     }
 
 
@@ -70,12 +74,15 @@ public class ActivityController extends AbstractController {
     @PostMapping("/auditNo")
     @RequiresPermissions("news:activity:update")
     public R auditNo(@RequestBody Map<String, Object> map) {
-        long actId = Long.parseLong(String.valueOf(map.get("actId")));
-        ActivityEntity activityEntity = new ActivityEntity();
-        activityEntity.setActId(actId);
-        activityEntity.setActStatus(0);
-        activityService.updateById(activityEntity);
-        return R.ok();
+        if (null != map.get("actId") && StringUtil.isNotBlank(map.get("actId"))) {
+            long actId = Long.parseLong(String.valueOf(map.get("actId")));
+            ActivityEntity activityEntity = new ActivityEntity();
+            activityEntity.setActId(actId);
+            activityEntity.setActStatus(0);
+            activityService.updateById(activityEntity);
+            return R.ok();
+        }
+        return R.error("缺少必要的参数");
     }
 
 
