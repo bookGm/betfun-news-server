@@ -9,6 +9,8 @@ import com.guansuo.common.StringUtil;
 import com.guansuo.newsenum.NewsEnum;
 import io.information.common.annotation.HashCacheable;
 import io.information.common.utils.*;
+import io.information.modules.app.dao.InActivityDao;
+import io.information.modules.app.dao.InArticleDao;
 import io.information.modules.app.dao.InUserDao;
 import io.information.modules.app.dto.CollectDTO;
 import io.information.modules.app.dto.InNodeDTO;
@@ -17,6 +19,7 @@ import io.information.modules.app.entity.*;
 import io.information.modules.app.service.*;
 import io.information.modules.app.vo.InLikeVo;
 import io.information.modules.app.vo.UserBoolVo;
+import io.information.modules.app.vo.UserCardVo;
 import org.apache.shiro.crypto.hash.Sha256Hash;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,17 +46,21 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
     @Autowired
     StringRedisTemplate redisTemplate;
     @Autowired
-    private IInArticleService articleService;
+    IInArticleService articleService;
     @Autowired
-    private IInCardService cardService;
+    IInCardBaseService baseService;
     @Autowired
-    private IInCardBaseService baseService;
+    IInCommonReplyService commonReplyService;
     @Autowired
-    private IInCommonReplyService commonReplyService;
+    IInActivityService activityService;
     @Autowired
-    private IInActivityService activityService;
+    IInNodeService nodeService;
     @Autowired
-    private IInNodeService nodeService;
+    IInDicService dicService;
+    @Autowired
+    InActivityDao activityDao;
+    @Autowired
+    InArticleDao articleDao;
 
 
     @Override
@@ -93,6 +100,36 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
     @Override
     public Boolean isFocus(Long tId, Long uId) {
         return redisUtils.hashHasKey(RedisKeys.FOCUS, uId + "-*-" + tId);
+    }
+
+    @Override
+    public PageUtils<InCommonReply> commentUser(Map<String, Object> map) {
+        LambdaQueryWrapper<InCommonReply> queryWrapper = new LambdaQueryWrapper<>();
+        if (null != map.get("uId") && StringUtil.isNotBlank(map.get("uId"))) {
+            long uId = Long.parseLong(String.valueOf(map.get("uId")));
+            //查询用户发布的所有文章和活动ID
+            ArrayList<Long> list = new ArrayList<>();
+            List<Long> actIds = activityDao.allActId(uId);
+            List<Long> aIds = articleDao.allAId(uId);
+            list.addAll(actIds);
+            list.addAll(aIds);
+            if (null != list && !list.isEmpty()) {
+                queryWrapper.in(InCommonReply::gettId, list);
+                IPage<InCommonReply> page = commonReplyService.page(
+                        new Query<InCommonReply>().getPage(map),
+                        queryWrapper
+                );
+                for (InCommonReply record : page.getRecords()) {
+                    InUser user = this.getById(record.getcId());
+                    record.setcName(user.getuName());
+                    record.setcPhoto(user.getuPhoto());
+                    record.setCrSimpleTime(DateUtils.getSimpleTime(record.getCrTime()));
+                }
+                return new PageUtils<>(page);
+            }
+            return null;
+        }
+        return null;
     }
 
     @Override
@@ -171,9 +208,8 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
     }
 
 
-
     @Override
-    public PageUtils comment(Map<String, Object> params) {
+    public PageUtils<InCommonReply> comment(Map<String, Object> params) {
         //根据用户ID查询所有目标ID<根>或被评论ID找到回复用户的评论
         return commonReplyService.userMsg(params);
     }
@@ -196,7 +232,39 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
 
     @Override
     public PageUtils card(Map<String, Object> map) {
-        return cardService.queryPage(map);
+        Integer pageSize = StringUtil.isBlank(map.get("pageSize")) ? 10 : Integer.parseInt(String.valueOf(map.get("pageSize")));
+        Integer currPage = StringUtil.isBlank(map.get("currPage")) ? 0 : Integer.parseInt(String.valueOf(map.get("currPage")));
+        LambdaQueryWrapper<InCardBase> queryWrapper = new LambdaQueryWrapper<>();
+        if (null != map.get("uId") && StringUtil.isNotBlank(map.get("uId"))) {
+            long uId = Long.parseLong(String.valueOf(map.get("uId")));
+            queryWrapper.eq(InCardBase::getuId, uId);
+            IPage<InCardBase> page = baseService.page(
+                    new Query<InCardBase>().getPage(map),
+                    queryWrapper
+            );
+            ArrayList<UserCardVo> list = new ArrayList<>();
+            for (InCardBase base : page.getRecords()) {
+                UserCardVo cardVo = new UserCardVo();
+                Long id = base.getuId();
+                InUser user = this.getById(base.getuId() == null ? 0 : base.getuId());
+                cardVo.setuId(id);
+                cardVo.setuName(user.getuName());
+                cardVo.setuPhoto(user.getuPhoto());
+                String simpleTime = DateUtils.getSimpleTime(base.getcCreateTime() == null ? new Date() : base.getcCreateTime());
+                cardVo.setTime(simpleTime);
+                InDic dic = dicService.getById(base.getcNodeCategory() == null ? 0 : base.getcNodeCategory());
+                cardVo.setType(dic.getdName());
+                cardVo.setcId(base.getcId());
+                cardVo.setcTitle(base.getcTitle());
+                cardVo.setcId(base.getcId());
+                cardVo.setReadNumber(base.getcReadNumber());
+                cardVo.setReplyNumber(base.getcCritic());
+                list.add(cardVo);
+            }
+            int total = (int) page.getTotal();
+            return new PageUtils(list, total, pageSize, currPage);
+        }
+        return null;
     }
 
     @Override
@@ -255,9 +323,10 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
             InLikeVo likeVo = new InLikeVo();
             String key = String.valueOf(obj.getKey());
             String[] str = key.split("-");
-            Long id = Long.valueOf(str[0]);
+            Long id = Long.valueOf(str[1]);
             likeVo.setTime(DateUtils.stringToDate(String.valueOf(obj.getValue()), "yyyy-MM-dd HH:mm:ss"));
-            InUser user = this.getById(str[1]);
+            Object oUser = redisTemplate.opsForHash().get(RedisKeys.INUSER, String.valueOf(id));
+            InUser user = (InUser) oUser;
             if (null != user) {
                 likeVo.setNick(user.getuNick());
                 likeVo.setPhoto(user.getuPhoto());
@@ -293,6 +362,9 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
                 new Query<InActivity>().getPage(map),
                 queryWrapper
         );
+        for (InActivity act : page.getRecords()) {
+            act.setaSimpleTime(DateUtils.getSimpleTime(act.getActCreateTime()));
+        }
         return new PageUtils(page);
     }
 
@@ -319,7 +391,7 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
             InUserDTO userDTO = new InUserDTO();
             String[] str = String.valueOf(obj.getKey()).split("-");
             Long id = Long.valueOf(str[2]);
-            Object oUser = redisTemplate.opsForHash().get(RedisKeys.INUSER, id+"");
+            Object oUser = redisTemplate.opsForHash().get(RedisKeys.INUSER, String.valueOf(id));
             InUser user = (InUser) oUser;
             if (null != user) {
                 userDTO.setuNick(user.getuNick());
@@ -360,7 +432,7 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
             InUserDTO userDTO = new InUserDTO();
             String[] str = String.valueOf(obj.getKey()).split("-");
             Long id = Long.valueOf(str[2]);
-            Object oUser = redisTemplate.opsForHash().get(RedisKeys.INUSER, id+"");
+            Object oUser = redisTemplate.opsForHash().get(RedisKeys.INUSER, String.valueOf(id));
             InUser user = (InUser) oUser;
             if (null != user) {
                 userDTO.setuPhoto(user.getuPhoto());
@@ -395,7 +467,7 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
             InUserDTO userDTO = new InUserDTO();
             String[] str = String.valueOf(obj.getKey()).split("-");
             Long id = Long.valueOf(str[0]);
-            Object oUser = redisTemplate.opsForHash().get(RedisKeys.INUSER, id+"");
+            Object oUser = redisTemplate.opsForHash().get(RedisKeys.INUSER, String.valueOf(id));
             InUser user = (InUser) oUser;
             if (null != user) {
                 userDTO.setuPhoto(user.getuPhoto());
@@ -403,16 +475,6 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
                 userDTO.setuNick(user.getuNick());
                 userDTO.setuFans(user.getuFans());
             }
-//            //根据用户ID找到用户所有关注的用户   匹配关注者的ID  是否关注
-//            ArrayList<Long> fIds = new ArrayList<>();
-//            List<Map.Entry<Object, Object>> fmap = redisUtils.hfget(RedisKeys.FOCUS, uId + "-*-*");
-//            for (Map.Entry<Object, Object> entry : fmap) {
-//                String[] strings = String.valueOf(entry.getKey()).split("-");
-//                Long fId = Long.valueOf(strings[2]);
-//                fIds.add(fId);
-//            }
-//            userDTO.setuFIds(fIds);
-//            newsFans.add(userDTO);
         }
         return new PageUtils(newsFans, cmap.size(), size, page);
     }
@@ -466,7 +528,7 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
                         CollectDTO dto = new CollectDTO();
                         String[] str = String.valueOf(obj.getKey()).split("-");
                         Long id = Long.valueOf(str[0]);
-                        InActivity activity= activityService.getById(id);//目标信息
+                        InActivity activity = activityService.getById(id);//目标信息
                         activity.setaSimpleTime(DateUtils.getSimpleTime(String.valueOf(obj.getValue())));
                         dto.setActivity(activity);
                         collects.add(dto);

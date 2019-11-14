@@ -40,8 +40,8 @@ public class InCommonReplyServiceImpl extends ServiceImpl<InCommonReplyDao, InCo
                     queryWrapper
             );
             for (InCommonReply r : page.getRecords()) {
-                r.setCrCount(this.count(new LambdaQueryWrapper<InCommonReply>().eq(InCommonReply::getToCrId,r.getCrId())));
-                InUser u=iInUserService.getById(r.getcId());
+                r.setCrCount(this.count(new LambdaQueryWrapper<InCommonReply>().eq(InCommonReply::getToCrId, r.getCrId())));
+                InUser u = iInUserService.getById(r.getcId());
                 r.setcName(u.getuNick());
                 r.setcPhoto(u.getuPhoto());
             }
@@ -62,7 +62,7 @@ public class InCommonReplyServiceImpl extends ServiceImpl<InCommonReplyDao, InCo
                     queryWrapper
             );
             for (InCommonReply r : page.getRecords()) {
-                InUser u=iInUserService.getById(r.getcId());
+                InUser u = iInUserService.getById(r.getcId());
                 r.setcName(u.getuNick());
                 r.setcPhoto(u.getuPhoto());
                 r.setCrSimpleTime(DateUtils.getSimpleTime(r.getCrTime()));
@@ -73,16 +73,28 @@ public class InCommonReplyServiceImpl extends ServiceImpl<InCommonReplyDao, InCo
     }
 
     @Override
-    public PageUtils userMsg(Map<String, Object> params) {
+    public PageUtils<InCommonReply> userMsg(Map<String, Object> params) {
+        LambdaQueryWrapper<InCommonReply> queryWrapper = new LambdaQueryWrapper<>();
         if (null != params.get("uId") && StringUtil.isNotBlank(params.get("uId"))) {
             Long uId = Long.parseLong(String.valueOf(params.get("uId")));
-            LambdaQueryWrapper<InCommonReply> queryWrapper = new LambdaQueryWrapper<>();
+            //根据用户ID查询回复ID或被评论ID为用户的评论或回复
             queryWrapper.eq(InCommonReply::gettId, uId).or().eq(InCommonReply::getToCrId, uId);
             IPage<InCommonReply> page = this.page(
                     new Query<InCommonReply>().getPage(params),
                     queryWrapper
             );
-            return new PageUtils(page);
+            for (InCommonReply r : page.getRecords()) {
+                InUser u = iInUserService.getById(r.getcId());
+                r.setcName(u.getuNick());
+                r.setcPhoto(u.getuPhoto());
+                r.setCrSimpleTime(DateUtils.getSimpleTime(r.getCrTime()));
+                LambdaQueryWrapper<InCommonReply> query = new LambdaQueryWrapper<>();
+                //根据根ID查询回复数量
+                query.eq(InCommonReply::getCrTId, r.getCrId());
+                int count = this.count(query);
+                r.setCrCount(count);
+            }
+            return new PageUtils<InCommonReply>(page);
         }
         return null;
     }

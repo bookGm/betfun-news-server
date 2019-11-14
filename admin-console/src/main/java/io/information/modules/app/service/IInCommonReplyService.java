@@ -17,7 +17,7 @@ import java.util.Map;
  * @date 2019-10-08 15:11:28
  */
 public interface IInCommonReplyService extends IService<InCommonReply> {
-    PageUtils userMsg(Map<String,Object> params);
+    PageUtils<InCommonReply> userMsg(Map<String,Object> params);
 
     PageUtils reply(Map<String, Object> map, List<Long> cIds);
 

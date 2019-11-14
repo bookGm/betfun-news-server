@@ -32,19 +32,19 @@ import java.util.stream.Collectors;
 @Service
 public class InNodeServiceImpl extends ServiceImpl<InNodeDao, InNode> implements IInNodeService {
     @Autowired
-    private IInUserService userService;
+    IInUserService userService;
     @Autowired
-    private IInArticleService articleService;
+    IInArticleService articleService;
     @Autowired
-    private IInCardBaseService baseService;
+    IInCardBaseService baseService;
     @Autowired
-    private InCardBaseDao baseDao;
+    InCardBaseDao baseDao;
     @Autowired
-    private InCommonReplyDao replyDao;
+    InCommonReplyDao replyDao;
     @Autowired
-    private IInDicService dicService;
+    IInDicService dicService;
     @Autowired
-    private RedisUtils redisUtils;
+    RedisUtils redisUtils;
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {

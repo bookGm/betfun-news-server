@@ -35,9 +35,9 @@ import java.util.stream.Collectors;
 @Service
 public class InMenuServiceImpl extends ServiceImpl<InMenuDao, InMenu> implements IInMenuService {
     @Autowired
-    private IInMenuSourceService menuSourceService;
+    IInMenuSourceService menuSourceService;
     @Autowired
-    private IInSourceService sourceService;
+    IInSourceService sourceService;
 
     @Override
     @Transactional(rollbackFor = Exception.class)

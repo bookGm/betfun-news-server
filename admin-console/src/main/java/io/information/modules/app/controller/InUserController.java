@@ -17,6 +17,7 @@ import io.information.modules.app.service.IInCardService;
 import io.information.modules.app.service.IInUserService;
 import io.information.modules.app.vo.InLikeVo;
 import io.information.modules.app.vo.UserBoolVo;
+import io.information.modules.app.vo.UserCardVo;
 import io.information.modules.sys.controller.AbstractController;
 import io.mq.utils.Constants;
 import io.swagger.annotations.*;
@@ -74,6 +75,17 @@ public class InUserController extends AbstractController {
         } else {
             return R.error("输入的旧密码有误");
         }
+    }
+
+
+    /**
+     * 查询用户信息
+     */
+    @Login
+    @GetMapping("/info")
+    @ApiOperation(value = "查询用户信息", httpMethod = "GET")
+    public ResultUtil<InUser> info(@ApiIgnore @LoginUser InUser user) {
+        return ResultUtil.ok(userService.getById(user.getuId()));
     }
 
 
@@ -170,10 +182,10 @@ public class InUserController extends AbstractController {
      */
     @Login
     @GetMapping("/isFocus")
-    @ApiOperation(value = "是否已关注用户", httpMethod = "GET" ,notes = "true：已关注  false：未关注")
+    @ApiOperation(value = "是否已关注用户", httpMethod = "GET", notes = "true：已关注  false：未关注")
     @ApiImplicitParam(value = "目标用户ID", name = "uId", required = true)
     public Boolean isFocus(@RequestParam Long uId, @ApiIgnore @LoginUser InUser user) {
-        return userService.isFocus(uId,user.getuId());
+        return userService.isFocus(uId, user.getuId());
     }
 
 
@@ -182,7 +194,7 @@ public class InUserController extends AbstractController {
      */
     @Login
     @GetMapping("/userNumber")
-    @ApiOperation(value = "用户数据信息[点赞，收藏，评论]", httpMethod = "GET")
+    @ApiOperation(value = "用户数据信息[点赞，收藏，评论]", httpMethod = "GET", response = UserBoolVo.class)
     @ApiImplicitParams({
             @ApiImplicitParam(value = "目标用户ID", name = "uId", required = true),
             @ApiImplicitParam(value = "目标[文章，帖子，活动]ID", name = "tId", required = true),
@@ -235,20 +247,38 @@ public class InUserController extends AbstractController {
 
 
     /**
-     * 个人消息 -- 评论
+     * 个人中心 -- 评论
      */
     @Login
     @GetMapping("/comment")
-    @ApiOperation(value = "个人消息 -- 评论", httpMethod = "GET", notes = "分页数据")
+    @ApiOperation(value = "个人中心 -- 评论", httpMethod = "GET", notes = "分页数据")
     @ApiImplicitParams({
             @ApiImplicitParam(value = "每页显示条数", name = "pageSize", required = true),
             @ApiImplicitParam(value = "当前页数", name = "currPage", required = true)
     })
     public ResultUtil<PageUtils<InCommonReply>> comment(@RequestParam Map<String, Object> map, @ApiIgnore @LoginUser InUser user) {
         map.put("uId", user.getuId());
-        PageUtils page = userService.comment(map);
+        PageUtils<InCommonReply> page = userService.comment(map);
         return ResultUtil.ok(page);
     }
+
+
+    /**
+     * 个人消息 -- 评论
+     */
+    @Login
+    @GetMapping("/commentUser")
+    @ApiOperation(value = "个人消息 -- 评论", httpMethod = "GET", notes = "分页数据", response = InCommonReply.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(value = "每页显示条数", name = "pageSize", required = true),
+            @ApiImplicitParam(value = "当前页数", name = "currPage", required = true)
+    })
+    public ResultUtil<PageUtils<InCommonReply>> commentUser(@RequestParam Map<String, Object> map, @ApiIgnore @LoginUser InUser user) {
+        map.put("uId", user.getuId());
+        PageUtils<InCommonReply> page = userService.commentUser(map);
+        return ResultUtil.ok(page);
+    }
+
 
     /**
      * 个人消息 -- 点赞
@@ -278,17 +308,16 @@ public class InUserController extends AbstractController {
     }
 
     /**
-     * 个人消息 -- 帖子
+     * 个人中心 -- 帖子
      */
     @Login
     @GetMapping("/card")
-    @ApiOperation(value = "个人消息 -- 帖子", httpMethod = "GET", notes = "分页数据")
+    @ApiOperation(value = "个人中心 -- 帖子", httpMethod = "GET", notes = "分页数据", response = UserCardVo.class)
     @ApiImplicitParams({
-            @ApiImplicitParam(value = "帖子节点分类", name = "type", required = true),
             @ApiImplicitParam(value = "每页显示条数", name = "pageSize", required = true),
             @ApiImplicitParam(value = "当前页数", name = "currPage", required = true)
     })
-    public ResultUtil<PageUtils<InCard>> card(@RequestParam Map<String, Object> map, @ApiIgnore @LoginUser InUser user) {
+    public ResultUtil<PageUtils<UserCardVo>> card(@RequestParam Map<String, Object> map, @ApiIgnore @LoginUser InUser user) {
         map.put("uId", user.getuId());
         PageUtils page = userService.card(map);
         return ResultUtil.ok(page);
@@ -319,7 +348,7 @@ public class InUserController extends AbstractController {
     @ApiImplicitParams({
             @ApiImplicitParam(value = "每页显示条数", name = "pageSize", required = true),
             @ApiImplicitParam(value = "当前页数", name = "currPage", required = true),
-            @ApiImplicitParam(value = "0：未开始 1：已开始 2：已结束", name = "type", required = true)
+            @ApiImplicitParam(value = "0：未开始 1：进行中 2：已结束", name = "type", required = true)
     })
     public ResultUtil<PageUtils<InActivity>> active(@RequestParam Map<String, Object> map, @ApiIgnore @LoginUser InUser user) {
         map.put("uId", user.getuId());
@@ -421,22 +450,22 @@ public class InUserController extends AbstractController {
             @ApiImplicitParam(value = "文章、帖子、活动id", name = "id", required = true),
             @ApiImplicitParam(value = "id类型 0：文章 1：帖子 2：活动", name = "type", required = true),
     })
-    public ResultUtil delFavorite(@RequestParam String id,@RequestParam String type, @ApiIgnore @LoginUser InUser user) {
-        Long uId=-1L;
-        if(NewsEnum.收藏_文章.getCode().equals(type)){
-            uId=articleService.getById(id).getuId();
+    public ResultUtil delFavorite(@RequestParam String id, @RequestParam String type, @ApiIgnore @LoginUser InUser user) {
+        Long uId = -1L;
+        if (NewsEnum.收藏_文章.getCode().equals(type)) {
+            uId = articleService.getById(id).getuId();
         }
-        if(NewsEnum.收藏_帖子.getCode().equals(type)){
-            uId=cardService.getById(id).getuId();
+        if (NewsEnum.收藏_帖子.getCode().equals(type)) {
+            uId = cardService.getById(id).getuId();
         }
-        if(NewsEnum.收藏_活动.getCode().equals(type)){
-            uId=activityService.getById(id).getuId();
+        if (NewsEnum.收藏_活动.getCode().equals(type)) {
+            uId = activityService.getById(id).getuId();
         }
-        String key=id+"-"+user.getuId()+"-"+uId+"-"+type;
-        Long r=redisUtils.hremove(RedisKeys.COLLECT,key);
-        if(r>0){
+        String key = id + "-" + user.getuId() + "-" + uId + "-" + type;
+        Long r = redisUtils.hremove(RedisKeys.COLLECT, key);
+        if (r > 0) {
             return ResultUtil.ok();
-        }else{
+        } else {
             return ResultUtil.error("收藏删除失败，请重试");
         }
     }

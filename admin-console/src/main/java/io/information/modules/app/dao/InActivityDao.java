@@ -3,7 +3,10 @@ package io.information.modules.app.dao;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import io.information.modules.app.entity.InActivity;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 /**
  * <p>
@@ -26,4 +29,9 @@ public interface InActivityDao extends BaseMapper<InActivity> {
      * @param actid
      */
     void addACollect (Long actid);
+
+    /**
+     * 获取用户所有活动ID
+     */
+    List<Long> allActId(@Param("uId") Long uId);
 }

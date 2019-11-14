@@ -44,15 +44,15 @@ public class InArticleServiceImpl extends ServiceImpl<InArticleDao, InArticle> i
     @Autowired
     RedisUtils redisUtils;
     @Autowired
-    private IInUserService userService;
+    IInUserService userService;
     @Autowired
-    private InActivityDao inActivityDao;
+    InActivityDao inActivityDao;
     @Autowired
-    private InCardBaseDao inCardBaseDao;
+    InCardBaseDao inCardBaseDao;
     @Autowired
-    private RabbitTemplate rabbitTemplate;
+    RabbitTemplate rabbitTemplate;
     @Autowired
-    private IInTagService tagService;
+    IInTagService tagService;
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {

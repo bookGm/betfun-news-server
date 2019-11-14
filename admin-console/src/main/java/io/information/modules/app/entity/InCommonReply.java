@@ -41,6 +41,9 @@ public class InCommonReply implements Serializable {
      */
     @ApiModelProperty(value = "目标类型（字典 ：文章、帖子，活动，用户等）", name = "tType", required = true)
     private Integer tType;
+    @ApiModelProperty(value = "目标类型名称", name = "tTypeName")
+    @TableField(exist = false)
+    private String tTypeName;
     /**
      * 目标名称（文章，帖子，活动，用户）
      */
@@ -193,5 +196,13 @@ public class InCommonReply implements Serializable {
 
     public void setCrSimpleTime(String crSimpleTime) {
         this.crSimpleTime = crSimpleTime;
+    }
+
+    public String gettTypeName() {
+        return tTypeName;
+    }
+
+    public void settTypeName(String tTypeName) {
+        this.tTypeName = tTypeName;
     }
 }

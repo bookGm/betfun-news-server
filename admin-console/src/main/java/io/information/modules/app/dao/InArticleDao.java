@@ -5,6 +5,7 @@ import io.information.modules.app.entity.InArticle;
 import io.information.modules.app.vo.ArticleVo;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 
@@ -16,6 +17,7 @@ import java.util.List;
  * @author ZXS
  * @since 2019-09-24
  */
+@Component
 @Mapper
 public interface InArticleDao extends BaseMapper<InArticle> {
     /**
@@ -75,4 +77,8 @@ public interface InArticleDao extends BaseMapper<InArticle> {
      */
     List<InArticle> searchArticleByTag(@Param("tName") String tName, @Param("currPage") Integer currPage, @Param("pageSize") Integer pageSize);
 
+    /**
+     * 获取用户所有文章ID
+     */
+    List<Long> allAId(@Param("uId") Long uId);
 }

@@ -2,11 +2,10 @@ package io.information.modules.app.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import io.information.common.utils.PageUtils;
+import io.information.modules.app.entity.InCommonReply;
 import io.information.modules.app.entity.InUser;
 import io.information.modules.app.vo.UserBoolVo;
-import org.apache.ibatis.annotations.Mapper;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -29,7 +28,7 @@ public interface IInUserService extends IService<InUser> {
 
     Boolean saveWithCache(InUser inUser);
 
-    PageUtils comment(Map<String, Object> params);
+    PageUtils<InCommonReply> comment(Map<String, Object> params);
 
     Map<String, Object> honor(Long uId);
 
@@ -58,4 +57,6 @@ public interface IInUserService extends IService<InUser> {
     UserBoolVo userNumber(Long uId, Long tId, Integer type, InUser user);
 
     Boolean isFocus(Long tId, Long uId);
+
+    PageUtils<InCommonReply> commentUser(Map<String, Object> map);
 }

@@ -17,6 +17,7 @@ import io.information.modules.app.service.IInActivityFieldsService;
 import io.information.modules.app.service.IInActivityService;
 import io.information.modules.app.service.IInActivityTicketService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,11 +37,11 @@ import java.util.stream.Collectors;
 @Service
 public class InActivityServiceImpl extends ServiceImpl<InActivityDao, InActivity> implements IInActivityService {
     @Autowired
-    private IInActivityTicketService ticketService;
+    IInActivityTicketService ticketService;
     @Autowired
-    private IInActivityFieldsService fieldsService;
+    IInActivityFieldsService fieldsService;
     @Autowired
-    private IInActivityDatasService datasService;
+    IInActivityDatasService datasService;
 
 
     @Override
@@ -111,17 +112,32 @@ public class InActivityServiceImpl extends ServiceImpl<InActivityDao, InActivity
         List<InActivityDatas> datasList = datas(actIds);
         if (null != fieldsList && !fieldsList.isEmpty()) {
             List<Long> fIds = fieldsList.stream().map(InActivityFields::getfId).collect(Collectors.toList());
-            fieldsService.removeByIds(fIds);
+            deleteField(fIds);
         }
         if (null != ticketList && !ticketList.isEmpty()) {
             List<Long> tIds = ticketList.stream().map(InActivityTicket::gettId).collect(Collectors.toList());
-            ticketService.removeByIds(tIds);
+            deleteTicket(tIds);
         }
         if (null != datasList && !datasList.isEmpty()) {
             List<Long> dIds = datasList.stream().map(InActivityDatas::getdId).collect(Collectors.toList());
-            datasService.removeByIds(dIds);
+            deleteDatas(dIds);
         }
         this.removeByIds(actIds);
+    }
+
+    @Async
+    void deleteField(List<Long> Ids) {
+        fieldsService.removeByIds(Ids);
+    }
+
+    @Async
+    void deleteTicket(List<Long> Ids) {
+        ticketService.removeByIds(Ids);
+    }
+
+    @Async
+    void deleteDatas(List<Long> Ids) {
+        datasService.removeByIds(Ids);
     }
 
     @Override

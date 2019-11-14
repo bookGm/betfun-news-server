@@ -37,10 +37,12 @@ public class InArticle implements Serializable {
     /**
      * 用户id
      */
+    @ApiModelProperty(value = "用户ID", name = "uId")
     private Long uId;
     /**
      * 用户名称
      */
+    @ApiModelProperty(value = "用户名称", name = "uName")
     private String uName;
 
     /**
@@ -86,14 +88,17 @@ public class InArticle implements Serializable {
     /**
      * 点赞数
      */
+    @ApiModelProperty(value = "文章点赞数", name = "aLike")
     private Long aLike;
     /**
      * 收藏数
      */
+    @ApiModelProperty(value = "文章收藏数", name = "aCollect")
     private Integer aCollect;
     /**
      * 评论数
      */
+    @ApiModelProperty(value = "文章评论数", name = "aCritic")
     private Long aCritic;
     /**
      * 文章状态（0：草稿箱，1：审核中，2：已发布）
@@ -112,6 +117,7 @@ public class InArticle implements Serializable {
     /**
      * 简单时间
      */
+    @ApiModelProperty(value = "文章创建时间", name = "aSimpleTime")
     @TableField(exist = false)
     private String aSimpleTime;
 

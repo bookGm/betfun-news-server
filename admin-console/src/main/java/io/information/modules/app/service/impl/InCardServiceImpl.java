@@ -26,13 +26,13 @@ import java.util.Map;
 @Service
 public class InCardServiceImpl  extends ServiceImpl<InCardBaseDao, InCardBase> implements IInCardService {
     @Autowired
-    private IInCardBaseService baseService;
+    IInCardBaseService baseService;
     @Autowired
-    private IInCardArgueService argueService;
+    IInCardArgueService argueService;
     @Autowired
-    private IInCardVoteService voteService;
+    IInCardVoteService voteService;
     @Autowired
-    private RabbitTemplate rabbitTemplate;
+    RabbitTemplate rabbitTemplate;
 
 
     @Override

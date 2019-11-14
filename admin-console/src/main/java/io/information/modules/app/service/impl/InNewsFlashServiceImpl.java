@@ -37,7 +37,7 @@ public class InNewsFlashServiceImpl extends ServiceImpl<InNewsFlashDao, InNewsFl
                 new Query<InNewsFlash>().getPage(params), qw
         );
         for (InNewsFlash a : page.getRecords()) {
-            if(StringUtil.isNotBlank(a.getnCreateTime())){
+            if (StringUtil.isNotBlank(a.getnCreateTime())) {
                 a.setnSimpleTime(DateUtils.getSimpleTime(a.getnCreateTime()));
             }
         }
@@ -45,12 +45,12 @@ public class InNewsFlashServiceImpl extends ServiceImpl<InNewsFlashDao, InNewsFl
     }
 
     @Override
-    @HashCacheable(key= RedisKeys.NATTITUDE, keyField = "#nId-#uId")
+    @HashCacheable(key = RedisKeys.NATTITUDE, keyField = "#nId-#uId")
     public String attitude(Long nId, Long uId, Integer bId) {
-        if(NewsEnum.快讯_利空.getCode().equals(bId+"")){
+        if (NewsEnum.快讯_利空.getCode().equals(bId + "")) {
             this.baseMapper.addNBad(nId);
         }
-        if(NewsEnum.快讯_利好.getCode().equals(bId+"")){
+        if (NewsEnum.快讯_利好.getCode().equals(bId + "")) {
             this.baseMapper.addNBull(nId);
         }
         return String.valueOf(bId);
