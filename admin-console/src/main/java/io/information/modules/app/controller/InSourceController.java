@@ -5,6 +5,10 @@ import io.information.common.utils.PageUtils;
 import io.information.common.utils.R;
 import io.information.modules.app.entity.InSource;
 import io.information.modules.app.service.IInSourceService;
+import io.information.modules.news.service.feign.common.FeignBbApp;
+import io.information.modules.news.service.feign.service.BbtcAppService;
+import io.information.modules.news.service.feign.vo.BbtcTickersListVo;
+import io.information.modules.news.service.feign.vo.TickerVo;
 import io.information.modules.sys.controller.AbstractController;
 import me.zhyd.hunter.config.HunterConfig;
 import me.zhyd.hunter.config.HunterConfigContext;
@@ -18,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -32,6 +37,8 @@ import java.util.concurrent.CopyOnWriteArrayList;
 public class InSourceController extends AbstractController {
     @Autowired
     private IInSourceService sourceService;
+    @Autowired
+    private BbtcAppService bbtcAppService;
 
     /**
      * 列表
@@ -97,14 +104,18 @@ public class InSourceController extends AbstractController {
         return R.ok();
     }
 
-
-    public static void main(String[] args) {
-        HunterConfig config = HunterConfigContext.getHunterConfig(Platform.BBTC);
-        HunterProcessor hunter = new BlogHunterProcessor(config);
-        CopyOnWriteArrayList<VirtualArticle> list = hunter.execute();
-        for(VirtualArticle va:list){
-            System.out.println("getTitle=---------------------："+va.getTitle());
-            System.out.println("getDescription--------------------："+va.getDescription());
+    /**
+     * 获取行情
+     * @return
+     */
+    @GetMapping("/getPrice")
+    public R getPrice() {
+        FeignBbApp bapp=bbtcAppService.getTikerList("huobipro-btc_usd,huobipro-eth_usd,huobipro-btm_usd,huobipro-bch_usd,huobipro-eos_usd");
+        List<BbtcTickersListVo> ts=bapp.getTickers();
+        for(BbtcTickersListVo t:ts){
+            t.getTicker().setSell(t.getTicker().getSell()*7);
         }
+        return R.ok().put("price",ts);
     }
+
 }
