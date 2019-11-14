@@ -65,7 +65,7 @@ public class InNodeController {
     @PostMapping("/focus")
     @ApiOperation(value = "关注节点", httpMethod = "POST", notes = "被关注的节点id")
     @ApiImplicitParam(value = "节点id", name = "noId", required = true)
-    public R focus(@RequestParam Long noId, @ApiIgnore @LoginUser InUser user) {
+    public R focus(@RequestBody Long noId, @ApiIgnore @LoginUser InUser user) {
         InNode node = nodeService.getById(noId);
         nodeService.focus(user.getuId(), noId, node.getNoType());
         return R.ok();
@@ -73,7 +73,7 @@ public class InNodeController {
 
 
     /**
-     * 关注节点 <作者，节点，人物>
+     * 是否已关注节点
      */
     @Login
     @GetMapping("/isFocus")

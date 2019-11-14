@@ -90,6 +90,21 @@ public class InUserController extends AbstractController {
 
 
     /**
+     * 上传用户头像
+     */
+    @Login
+    @PutMapping("/photo")
+    @ApiOperation(value = "上传用户头像", httpMethod = "PUT")
+    public ResultUtil photo(@RequestBody String uPhoto, @ApiIgnore @LoginUser InUser user) {
+        InUser inUser = new InUser();
+        inUser.setuId(user.getuId());
+        inUser.setuPhone(uPhoto);
+        userService.updateById(inUser);
+        return ResultUtil.ok();
+    }
+
+
+    /**
      * 个人认证
      */
     @Login
@@ -150,8 +165,8 @@ public class InUserController extends AbstractController {
      * 编辑资料
      */
     @Login
-    @PostMapping("/redactData")
-    @ApiOperation(value = "编辑资料", httpMethod = "POST")
+    @PutMapping("/redactData")
+    @ApiOperation(value = "编辑资料", httpMethod = "PUT")
     public R redactData(@RequestBody RedactDataDTO redactDataDTO, @ApiIgnore @LoginUser InUser user) {
         InUser u = DataUtils.copyData(redactDataDTO, InUser.class);
         u.setuId(user.getuId());
@@ -171,8 +186,9 @@ public class InUserController extends AbstractController {
     @PostMapping("/focus")
     @ApiOperation(value = "关注用户", httpMethod = "POST", notes = "被关注的用户id")
     @ApiImplicitParam(value = "用户id", name = "uId", required = true)
-    public R focus(@RequestParam Long uId, @ApiIgnore @LoginUser InUser user) {
-        userService.focus(user.getuId(), uId, user.getuPotential());
+    public R focus(@RequestBody Long uId, @ApiIgnore @LoginUser InUser user) {
+        InUser inUser = userService.getById(uId);
+        userService.focus(user.getuId(), inUser.getuPotential(),uId);
         return R.ok();
     }
 
@@ -291,9 +307,10 @@ public class InUserController extends AbstractController {
             @ApiImplicitParam(value = "当前页数", name = "currPage", required = true)
     })
     public ResultUtil<PageUtils<InLikeVo>> like(@RequestParam Map<String, Object> map, @ApiIgnore @LoginUser InUser user) {
-        PageUtils page = userService.like(map, user.getuId());
+        PageUtils<InLikeVo> page = userService.like(map, user.getuId());
         return ResultUtil.ok(page);
     }
+
 
     /**
      * 个人消息 -- 系统
@@ -306,6 +323,7 @@ public class InUserController extends AbstractController {
         params.put("uId", user.getuId());
         return R.ok();
     }
+
 
     /**
      * 个人中心 -- 帖子
@@ -323,6 +341,7 @@ public class InUserController extends AbstractController {
         return ResultUtil.ok(page);
     }
 
+
     /**
      * 个人消息 -- 回帖
      */
@@ -333,11 +352,12 @@ public class InUserController extends AbstractController {
             @ApiImplicitParam(value = "每页显示条数", name = "pageSize", required = true),
             @ApiImplicitParam(value = "当前页数", name = "currPage", required = true)
     })
-    public ResultUtil<PageUtils<InCard>> reply(@RequestParam Map<String, Object> map, @ApiIgnore @LoginUser InUser user) {
+    public ResultUtil<PageUtils<InCommonReply>> reply(@RequestParam Map<String, Object> map, @ApiIgnore @LoginUser InUser user) {
         map.put("uId", user.getuId());
-        PageUtils page = userService.reply(map);
+        PageUtils<InCommonReply> page = userService.reply(map);
         return ResultUtil.ok(page);
     }
+
 
     /**
      * 个人消息 -- 活动
@@ -389,6 +409,7 @@ public class InUserController extends AbstractController {
         PageUtils page = userService.fansNode(map);
         return ResultUtil.ok(page);
     }
+
 
     /**
      * 个人关注 -- 人物
@@ -468,17 +489,5 @@ public class InUserController extends AbstractController {
         } else {
             return ResultUtil.error("收藏删除失败，请重试");
         }
-    }
-
-
-    /**
-     * 查询用户的所有关注ID<用户ID>
-     */
-    @Login
-    @GetMapping("/focusIds")
-    @ApiOperation(value = "查询当前用户的关注ID集合", httpMethod = "GET")
-    @ApiResponse(code = 200, message = "uId：用户ID")
-    public List<Long> searchFocusId(@ApiIgnore @LoginUser InUser user) {
-        return userService.searchFocusId(user.getuId());
     }
 }

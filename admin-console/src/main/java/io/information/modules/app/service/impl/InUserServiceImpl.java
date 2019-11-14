@@ -90,7 +90,7 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
     @Override
     //status为0则不是人物
     @HashCacheable(key = RedisKeys.FOCUS, keyField = "#uId-#status-#fId")
-    public String focus(Long uId, Long fId, Integer status) {
+    public String focus(Long uId, Integer status,Long fId) {
         this.baseMapper.addFans(uId);
         this.baseMapper.addFocus(fId);
         return String.valueOf(fId);
@@ -130,21 +130,6 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
             return null;
         }
         return null;
-    }
-
-    @Override
-    public List<Long> searchFocusId(Long uId) {
-        ArrayList<Long> list = new ArrayList<>();
-        List<Map.Entry<Object, Object>> cmap = redisUtils.hfget(RedisKeys.FOCUS, uId + "-*-*");
-        if (!cmap.isEmpty()) {
-            for (Map.Entry<Object, Object> entry : cmap) {
-                String key = String.valueOf(entry.getKey());
-                String[] split = key.split("-");
-                Long value = Long.valueOf(split[2]);
-                list.add(value);
-            }
-        }
-        return list;
     }
 
     @Override
@@ -268,7 +253,7 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
     }
 
     @Override
-    public PageUtils reply(Map<String, Object> map) {
+    public PageUtils<InCommonReply> reply(Map<String, Object> map) {
         if (null != map.get("uId") && StringUtil.isNotBlank(map.get("uId"))) {
             Long uId = Long.parseLong(String.valueOf(map.get("uId")));
             //根据用户ID查询所有目标ID<根>或被评论ID找到回复用户的评论
@@ -304,7 +289,7 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
     }
 
     @Override
-    public PageUtils like(Map<String, Object> map, Long uId) {
+    public PageUtils<InLikeVo> like(Map<String, Object> map, Long uId) {
         Integer size = StringUtil.isBlank(map.get("pageSize")) ? 10 : Integer.parseInt(String.valueOf(map.get("pageSize")));
         Integer page = StringUtil.isBlank(map.get("currPage")) ? 0 : Integer.parseInt(String.valueOf(map.get("currPage")));
         Integer bindex = page * size;
@@ -325,8 +310,9 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
             String[] str = key.split("-");
             Long id = Long.valueOf(str[1]);
             likeVo.setTime(DateUtils.stringToDate(String.valueOf(obj.getValue()), "yyyy-MM-dd HH:mm:ss"));
-            Object oUser = redisTemplate.opsForHash().get(RedisKeys.INUSER, String.valueOf(id));
-            InUser user = (InUser) oUser;
+            InUser user = this.getById(id);
+//            Object oUser = redisTemplate.opsForHash().get(RedisKeys.INUSER, String.valueOf(id));
+//            InUser user = (InUser) oUser;
             if (null != user) {
                 likeVo.setNick(user.getuNick());
                 likeVo.setPhoto(user.getuPhoto());
@@ -370,7 +356,7 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
 
     @Override
     public PageUtils fansWriter(Map<String, Object> map) {
-        //作者需要认证通过  #uId-#status-#fId
+        //#uId-#status-#fId
         Long uId = Long.parseLong(String.valueOf(map.get("uId")));
         Integer size = StringUtil.isBlank(map.get("pageSize")) ? 10 : Integer.parseInt(String.valueOf(map.get("pageSize")));
         Integer page = StringUtil.isBlank(map.get("currPage")) ? 0 : Integer.parseInt(String.valueOf(map.get("currPage")));
@@ -391,8 +377,10 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
             InUserDTO userDTO = new InUserDTO();
             String[] str = String.valueOf(obj.getKey()).split("-");
             Long id = Long.valueOf(str[2]);
-            Object oUser = redisTemplate.opsForHash().get(RedisKeys.INUSER, String.valueOf(id));
-            InUser user = (InUser) oUser;
+            //TODO
+//            Object oUser = redisTemplate.opsForHash().get(RedisKeys.INUSER, String.valueOf(id));
+            InUser user = this.getById(id);
+//            InUser user = (InUser) oUser;
             if (null != user) {
                 userDTO.setuNick(user.getuNick());
                 userDTO.setuPhoto(user.getuPhoto());
@@ -410,15 +398,17 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
         Integer bindex = page * size;
         Long uId = Long.parseLong(String.valueOf(map.get("uId")));
         //根据uId查询用户关注的目标  #uId-#type-#fId
-        ArrayList<InUserDTO> newsFocus = null;
         List<Map.Entry<Object, Object>> cmap = redisUtils.hfget(RedisKeys.FOCUS, uId + "-1-*");
         List<Map.Entry<Object, Object>> cmap2 = redisUtils.hfget(RedisKeys.FOCUS, uId + "-2-*");
-        if (null != cmap) {
+        ArrayList<InUserDTO> newsFocus = null;
+        if (null != cmap && cmap2 != null) {
             cmap.addAll(cmap2);
-        } else {
+        } else if (cmap2 == null && cmap == null) {
+            return null;
+        } else if (cmap == null && cmap2 != null) {
             cmap = cmap2;
         }
-        List<Map.Entry<Object, Object>> slist = null;
+//        List<Map.Entry<Object, Object>> slist = null;
         //关注目标信息
         if (null != cmap && cmap.size() > 0) {
             newsFocus = new ArrayList<>();
@@ -428,12 +418,14 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
         } else {
             return new PageUtils(newsFocus, 0, size, page);
         }
-        for (Map.Entry<Object, Object> obj : slist) {
+        for (Map.Entry<Object, Object> obj : cmap) {
             InUserDTO userDTO = new InUserDTO();
             String[] str = String.valueOf(obj.getKey()).split("-");
             Long id = Long.valueOf(str[2]);
-            Object oUser = redisTemplate.opsForHash().get(RedisKeys.INUSER, String.valueOf(id));
-            InUser user = (InUser) oUser;
+            //TODO
+//            Object oUser = redisTemplate.opsForHash().get(RedisKeys.INUSER, String.valueOf(id));
+//            InUser user = (InUser) oUser;
+            InUser user = this.getById(id);
             if (null != user) {
                 userDTO.setuPhoto(user.getuPhoto());
                 userDTO.setuIntro(user.getuIntro());
@@ -453,7 +445,7 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
         //以uId为目标查询粉丝  #uId-#type-#fId
         ArrayList<InUserDTO> newsFans = null;
         List<Map.Entry<Object, Object>> cmap = redisUtils.hfget(RedisKeys.FOCUS, "*-*-" + uId);
-        List<Map.Entry<Object, Object>> slist = null;
+//        List<Map.Entry<Object, Object>> slist = null;
         //关注目标信息
         if (null != cmap && cmap.size() > 0) {
             newsFans = new ArrayList<>();
@@ -463,12 +455,13 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
         } else {
             return new PageUtils(newsFans, 0, size, page);
         }
-        for (Map.Entry<Object, Object> obj : slist) {
+        for (Map.Entry<Object, Object> obj : cmap) {
             InUserDTO userDTO = new InUserDTO();
             String[] str = String.valueOf(obj.getKey()).split("-");
             Long id = Long.valueOf(str[0]);
-            Object oUser = redisTemplate.opsForHash().get(RedisKeys.INUSER, String.valueOf(id));
-            InUser user = (InUser) oUser;
+            InUser user = this.getById(id);
+//            Object oUser = redisTemplate.opsForHash().get(RedisKeys.INUSER, String.valueOf(id));
+//            InUser user = (InUser) oUser;
             if (null != user) {
                 userDTO.setuPhoto(user.getuPhoto());
                 userDTO.setuIntro(user.getuIntro());

@@ -43,6 +43,7 @@ public class InCommonReplyController {
     private IInActivityService activityService;
     @Autowired
     IInUserService iInUserService;
+
     /**
      * 信息
      */
@@ -60,7 +61,7 @@ public class InCommonReplyController {
     @Login
     @PostMapping("/save")
     @ApiOperation(value = "保存评论信息", httpMethod = "POST", notes = "目标类型（0文章，1帖子，2活动，3用户）")
-    public R save(@RequestBody InCommonReply commonReply,@ApiIgnore @LoginUser InUser user) {
+    public R save(@RequestBody InCommonReply commonReply, @ApiIgnore @LoginUser InUser user) {
         commonReply.setCrId(IdGenerator.getId());
         commonReply.setCrTime(new Date());
         commonReply.setcId(user.getuId());
@@ -69,35 +70,37 @@ public class InCommonReplyController {
         commonReply.setcName(user.getuNick());
         commonReply.setcPhoto(user.getuPhoto());
         commonReply.setCrSimpleTime("刚刚");
-        return R.ok().put("crObj",commonReply);
+        return R.ok().put("crObj", commonReply);
     }
 
     //添加评论数量
     @Async
     public void addCritic(InCommonReply commonReply) {
         Integer type = commonReply.gettType();
-        switch (type) {
-            case 0:
-                InArticle article = articleService.getById(commonReply.gettId());
-                if (null != article) {
-                    article.setaCritic(article.getaCritic() + 1);
-                    articleService.updateById(article);
-                }
-                break;
-            case 1:
-                InCardBase cardBase = cardBaseService.getById(commonReply.gettId());
-                if (null != cardBase) {
-                    cardBase.setcCritic(cardBase.getcCritic() + 1);
-                    cardBaseService.updateById(cardBase);
-                }
-                break;
-            case 2:
-                InActivity activity = activityService.getById(commonReply.gettId());
-                if (null != activity) {
-                    activity.setActCritic(activity.getActCritic() + 1);
-                    activityService.updateById(activity);
-                }
-                break;
+        if (null != type) {
+            switch (type) {
+                case 0:
+                    InArticle article = articleService.getById(commonReply.gettId());
+                    if (null != article) {
+                        article.setaCritic(article.getaCritic() + 1);
+                        articleService.updateById(article);
+                    }
+                    break;
+                case 1:
+                    InCardBase cardBase = cardBaseService.getById(commonReply.gettId());
+                    if (null != cardBase) {
+                        cardBase.setcCritic(cardBase.getcCritic() + 1);
+                        cardBaseService.updateById(cardBase);
+                    }
+                    break;
+                case 2:
+                    InActivity activity = activityService.getById(commonReply.gettId());
+                    if (null != activity) {
+                        activity.setActCritic(activity.getActCritic() + 1);
+                        activityService.updateById(activity);
+                    }
+                    break;
+            }
         }
     }
 

@@ -24,7 +24,7 @@ import java.util.Date;
 import java.util.Map;
 
 @Service
-public class InCardServiceImpl  extends ServiceImpl<InCardBaseDao, InCardBase> implements IInCardService {
+public class InCardServiceImpl extends ServiceImpl<InCardBaseDao, InCardBase> implements IInCardService {
     @Autowired
     IInCardBaseService baseService;
     @Autowired
@@ -54,14 +54,14 @@ public class InCardServiceImpl  extends ServiceImpl<InCardBaseDao, InCardBase> i
         base.setuId(user.getuId());
         base.setcCreateTime(new Date());
         baseService.save(base);
-        logOperate(user.getuId(),cId,NewsEnum.操作_发布);
+        logOperate(user.getuId(), cId, NewsEnum.操作_发布);
     }
 
     /**
      * 记录操作日志
      */
-    void logOperate(Long uId, Long tId, NewsEnum e){
-        InLog log=new InLog();
+    void logOperate(Long uId, Long tId, NewsEnum e) {
+        InLog log = new InLog();
         log.setlOperateId(uId);
         log.setlTargetId(tId);
         log.setlTargetType(1);
@@ -74,30 +74,33 @@ public class InCardServiceImpl  extends ServiceImpl<InCardBaseDao, InCardBase> i
     public InCard details(Long cId) {
         InCard card = new InCard();
         InCardBase base = baseService.getById(cId);
-        Integer category = base.getcCategory();
-        card.setBase(base);
-        if (null != category) {
-            if (1 == category) {
-                //辩论帖子
-                InCardArgue argue = argueService.getById(base.getcId());
-                if (null != argue.getCaRsideUids() && StringUtil.isNotBlank(argue.getCaRsideUids())) {
-                    String[] rNumber = argue.getCaRsideUids().split(",");
-                    argue.setCaRsideNumber(rNumber.length);
+        if (null != base) {
+            card.setBase(base);
+            if (null != base.getcCategory()) {
+                Integer category = base.getcCategory();
+                if (1 == category) {
+                    //辩论帖子
+                    InCardArgue argue = argueService.getById(base.getcId());
+                    if (null != argue.getCaRsideUids() && StringUtil.isNotBlank(argue.getCaRsideUids())) {
+                        String[] rNumber = argue.getCaRsideUids().split(",");
+                        argue.setCaRsideNumber(rNumber.length);
+                    }
+                    if (null != argue.getCaFsideUids() && StringUtil.isNotBlank(argue.getCaFsideUids())) {
+                        String[] fNumber = argue.getCaFsideUids().split(",");
+                        argue.setCaFsideNumber(fNumber.length);
+                    }
+                    card.setArgue(argue);
                 }
-                if (null != argue.getCaFsideUids() && StringUtil.isNotBlank(argue.getCaFsideUids())) {
-                    String[] fNumber = argue.getCaFsideUids().split(",");
-                    argue.setCaFsideNumber(fNumber.length);
+                if (2 == category) {
+                    //投票帖子
+                    InCardVote vote = voteService.getById(base.getcId());
+                    card.setVote(vote);
                 }
-                card.setArgue(argue);
             }
-            if (2 == category) {
-                //投票帖子
-                InCardVote vote = voteService.getById(base.getcId());
-                card.setVote(vote);
-            }
+            //基础帖子
+            return card;
         }
-        //基础帖子
-        return card;
+        return null;
     }
 
     @Override

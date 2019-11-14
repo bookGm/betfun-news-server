@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import io.information.common.utils.PageUtils;
 import io.information.modules.app.entity.InCommonReply;
 import io.information.modules.app.entity.InUser;
+import io.information.modules.app.vo.InLikeVo;
 import io.information.modules.app.vo.UserBoolVo;
 
 import java.util.List;
@@ -24,7 +25,7 @@ public interface IInUserService extends IService<InUser> {
      * @param uId 用户id
      * @param fId 被关注的用户id
      */
-    String focus(Long uId, Long fId, Integer status);
+    String focus(Long uId, Integer status,Long fId);
 
     Boolean saveWithCache(InUser inUser);
 
@@ -34,9 +35,9 @@ public interface IInUserService extends IService<InUser> {
 
     PageUtils card(Map<String, Object> map);
 
-    PageUtils reply(Map<String, Object> map);
+    PageUtils<InCommonReply> reply(Map<String, Object> map);
 
-    PageUtils like(Map<String, Object> params, Long uId);
+    PageUtils<InLikeVo> like(Map<String, Object> params, Long uId);
 
     PageUtils active(Map<String, Object> map);
 
@@ -49,8 +50,6 @@ public interface IInUserService extends IService<InUser> {
     PageUtils favorite(Map<String, Object> map);
 
     boolean change(String uPwd, String newPwd, InUser user);
-
-    List<Long> searchFocusId(Long uId);
 
     PageUtils fansNode(Map<String, Object> map);
 

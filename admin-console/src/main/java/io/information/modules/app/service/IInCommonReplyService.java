@@ -19,7 +19,7 @@ import java.util.Map;
 public interface IInCommonReplyService extends IService<InCommonReply> {
     PageUtils<InCommonReply> userMsg(Map<String,Object> params);
 
-    PageUtils reply(Map<String, Object> map, List<Long> cIds);
+    PageUtils<InCommonReply> reply(Map<String, Object> map, List<Long> cIds);
 
     PageUtils discuss(Map<String, Object> map);
 

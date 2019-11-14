@@ -100,12 +100,18 @@ public class InCommonReplyServiceImpl extends ServiceImpl<InCommonReplyDao, InCo
     }
 
     @Override
-    public PageUtils reply(Map<String, Object> map, List<Long> cIds) {
+    public PageUtils<InCommonReply> reply(Map<String, Object> map, List<Long> cIds) {
         IPage<InCommonReply> page = this.page(
                 new Query<InCommonReply>().getPage(map),
                 new LambdaQueryWrapper<InCommonReply>().in(InCommonReply::gettId, cIds)
         );
-        return new PageUtils(page);
+        for (InCommonReply record : page.getRecords()) {
+            InUser user = iInUserService.getById(record.getcId());
+            record.setcName(user.getuName());
+            record.setcPhoto(user.getuPhoto());
+            record.setCrSimpleTime(DateUtils.getSimpleTime(record.getCrTime()));
+        }
+        return new PageUtils<>(page);
     }
 
 

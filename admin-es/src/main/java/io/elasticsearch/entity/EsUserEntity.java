@@ -22,6 +22,11 @@ public class EsUserEntity implements Serializable {
     @Field(type = FieldType.Keyword, analyzer = "ik_max_word",searchAnalyzer="ik_max_word")
     private String uNick;
     /**
+     * 用户昵称
+     */
+    @Field(type = FieldType.Keyword)
+    private String uPhoto;
+    /**
      * 用户简介
      */
     @Field(type = FieldType.Keyword, analyzer = "ik_max_word",searchAnalyzer="ik_max_word")
@@ -88,5 +93,13 @@ public class EsUserEntity implements Serializable {
 
     public void setuCompanyName(String uCompanyName) {
         this.uCompanyName = uCompanyName;
+    }
+
+    public String getuPhoto() {
+        return uPhoto;
+    }
+
+    public void setuPhoto(String uPhoto) {
+        this.uPhoto = uPhoto;
     }
 }
