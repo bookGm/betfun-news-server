@@ -21,6 +21,8 @@ import io.information.modules.news.service.NewsFlashService;
 import io.information.modules.news.service.feign.common.FeignResJinSe;
 import io.information.modules.news.service.feign.service.JinSeService;
 import io.information.modules.news.service.feign.vo.JinSeLivesVo;
+import io.mq.utils.Constants;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -43,6 +45,8 @@ public class NewsFlashServiceImpl extends ServiceImpl<NewsFlashDao, NewsFlash> i
     JinSeService jinSeService;
     @Autowired
     RedisUtils redisUtils;
+    @Autowired
+    private RabbitTemplate rabbitTemplate;
     @Override
     public void catchNewsFlash(int start,int pages) {
         for(int i=0;i<pages;i++){
@@ -90,6 +94,8 @@ public class NewsFlashServiceImpl extends ServiceImpl<NewsFlashDao, NewsFlash> i
                  n.setnBad(se.getDown_counts());
                  n.setnCreateTime(new Date(se.getCreated_at()*1000));
                  this.save(n);
+                 rabbitTemplate.convertAndSend(Constants.flashExchange,
+                         Constants.flash_Delete_RouteKey, n);
              }
              jinse=null;
              jinseList=null;

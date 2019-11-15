@@ -4,10 +4,7 @@ import io.elasticsearch.service.EsUserService;
 import io.elasticsearch.utils.PageUtils;
 import io.elasticsearch.utils.SearchRequest;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/app/es/user")
@@ -18,7 +15,7 @@ public class EsUserController {
     /**
      * 搜索作者
      */
-    @GetMapping("/search")
+    @PostMapping("/search")
     public PageUtils search(@RequestBody SearchRequest request){
         return userService.search(request);
     }

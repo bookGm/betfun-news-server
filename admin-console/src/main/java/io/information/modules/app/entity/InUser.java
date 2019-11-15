@@ -3,6 +3,7 @@ package io.information.modules.app.entity;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiOperation;
@@ -144,6 +145,7 @@ public class InUser implements Serializable {
      * 注册时间
      */
     @ApiModelProperty(value = "注册时间", name = "uCreateTime", required = false)
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date uCreateTime;
     /**
      * 用户类型 (-1：抓取用户 0：普通用户 1：红人榜 2：黑榜  )

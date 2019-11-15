@@ -4,10 +4,7 @@ import io.elasticsearch.service.EsFlashService;
 import io.elasticsearch.utils.PageUtils;
 import io.elasticsearch.utils.SearchRequest;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * es快讯查询
@@ -21,8 +18,8 @@ public class EsFlashController {
     /**
      * 搜索快讯
      */
-    @GetMapping("/search")
-    public PageUtils searchFlash(@RequestParam SearchRequest request){
+    @PostMapping("/search")
+    public PageUtils searchFlash(@RequestBody SearchRequest request){
         return flashService.searchFlash(request);
     }
 }

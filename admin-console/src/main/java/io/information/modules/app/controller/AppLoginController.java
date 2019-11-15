@@ -12,6 +12,7 @@ import io.information.common.utils.*;
 import io.information.modules.app.entity.InUser;
 import io.information.modules.app.form.AppLoginForm;
 import io.information.modules.app.form.RegisterForm;
+import io.information.modules.app.service.IInNewsFlashService;
 import io.information.modules.app.service.IInUserService;
 import io.information.modules.app.utils.JwtUtils;
 import io.mq.utils.Constants;
@@ -23,10 +24,7 @@ import org.apache.shiro.crypto.hash.Sha256Hash;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.text.MessageFormat;
 import java.util.Date;
@@ -44,6 +42,8 @@ import java.util.Map;
 public class AppLoginController {
     @Autowired
     private IInUserService iInUserService;
+    @Autowired
+    private IInNewsFlashService iInNewsFlashService;
     @Autowired
     private RabbitTemplate rabbitTemplate;
     @Autowired
@@ -137,6 +137,14 @@ public class AppLoginController {
             return R.error("验证码输入错误");
         }
 
+    }
+
+    @GetMapping("ttt")
+    public void ttt() {
+        for(InUser u:iInUserService.list()){
+            rabbitTemplate.convertAndSend(Constants.userExchange,
+                    Constants.user_Save_RouteKey, u);
+        }
     }
 
     @PostMapping("codeRegist")
