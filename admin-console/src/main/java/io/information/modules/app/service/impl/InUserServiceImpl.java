@@ -273,7 +273,7 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
         return null;
     }
 
-    private void getTitle(Long id, String type, InLikeVo likeVo) {
+    private void getTitle(String id, String type, InLikeVo likeVo) {
         if (NewsEnum.点赞_文章.getCode().equals(type)) {
             likeVo.setData(articleService.getById(id).getaTitle());
             likeVo.setType(NewsEnum.点赞_文章.getName());
@@ -316,8 +316,7 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
             if (null != user) {
                 likeVo.setNick(user.getuNick());
                 likeVo.setPhoto(user.getuPhoto());
-                getTitle(id, str[3], likeVo);
-                System.out.println(str[3].toString());
+                getTitle(str[0], str[3], likeVo);
                 newsLike.add(likeVo);
             }
         }

@@ -6,12 +6,8 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.guansuo.common.DateUtils;
 import com.guansuo.common.JsonUtil;
 import com.guansuo.common.StringUtil;
-import io.information.common.utils.IdGenerator;
-import io.information.common.utils.JsonUtils;
-import io.information.common.utils.PageUtils;
-import io.information.common.utils.Query;
-import io.information.common.utils.RedisKeys;
-import io.information.common.utils.RedisUtils;
+import io.elasticsearch.entity.EsFlashEntity;
+import io.information.common.utils.*;
 import io.information.modules.app.dao.InNewsFlashDao;
 import io.information.modules.app.entity.InNewsFlash;
 import io.information.modules.app.service.IInNewsFlashService;
@@ -95,7 +91,7 @@ public class NewsFlashServiceImpl extends ServiceImpl<NewsFlashDao, NewsFlash> i
                  n.setnCreateTime(new Date(se.getCreated_at()*1000));
                  this.save(n);
                  rabbitTemplate.convertAndSend(Constants.flashExchange,
-                         Constants.flash_Delete_RouteKey, n);
+                         Constants.flash_Delete_RouteKey, DataUtils.copyData(n, EsFlashEntity.class));
              }
              jinse=null;
              jinseList=null;

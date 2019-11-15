@@ -139,14 +139,6 @@ public class AppLoginController {
 
     }
 
-    @GetMapping("ttt")
-    public void ttt() {
-        for(InUser u:iInUserService.list()){
-            rabbitTemplate.convertAndSend(Constants.userExchange,
-                    Constants.user_Save_RouteKey, u);
-        }
-    }
-
     @PostMapping("codeRegist")
     @ApiOperation("验证码注册")
     public R codeRegist(@RequestBody @Validated(CodeLogin.class) RegisterForm form) {
