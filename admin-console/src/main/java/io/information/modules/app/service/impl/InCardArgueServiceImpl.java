@@ -10,7 +10,6 @@ import io.information.common.utils.RedisKeys;
 import io.information.modules.app.dao.InCardArgueDao;
 import io.information.modules.app.entity.InCardArgue;
 import io.information.modules.app.service.IInCardArgueService;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
@@ -26,6 +25,8 @@ import java.util.Map;
 @Service
 public class InCardArgueServiceImpl extends ServiceImpl<InCardArgueDao, InCardArgue> implements IInCardArgueService {
 
+
+
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
         IPage<InCardArgue> page = this.page(
@@ -35,15 +36,42 @@ public class InCardArgueServiceImpl extends ServiceImpl<InCardArgueDao, InCardAr
         return new PageUtils(page);
     }
 
+
     @Override
-    @HashCacheable(key = RedisKeys.SUPPORT, keyField = "#cid-#uid")
-    public String support(Long cid,Long uid,Integer sIndex) {
+    @HashCacheable(key = RedisKeys.SUPPORT, keyField = "#cid-#uid-#sIndex")
+    public String support(Long cid, Long uid, Integer sIndex) {
+        InCardArgue argue = this.getById(cid);
+        switch (sIndex) {
+            case 0:
+                //正方
+                argue.setCaFsideNumber(argue.getCaFsideNumber() + 1);
+                break;
+            case 1:
+                //反方
+                argue.setCaRsideNumber(argue.getCaRsideNumber() + 1);
+                break;
+        }
+        this.updateById(argue);
         return String.valueOf(sIndex);
     }
 
+
+
     @Override
-    @HashCacheable(key = RedisKeys.JOIN, keyField = "#cid-#uid")
-    public String join(Long cid,Long uid,Integer jIndex) {
+    @HashCacheable(key = RedisKeys.JOIN, keyField = "#cid-#uid-#jIndex")
+    public String join(Long cid, Long uid, Integer jIndex) {
+        InCardArgue argue = this.getById(cid);
+        switch (jIndex) {
+            case 0:
+                //正方
+                argue.setCaFsideDebater(argue.getCaFsideDebater() + 1);
+                break;
+            case 1:
+                //反方
+                argue.setCaRsideDebater(argue.getCaRsideDebater() + 1);
+                break;
+        }
+        this.updateById(argue);
         return String.valueOf(jIndex);
     }
 }

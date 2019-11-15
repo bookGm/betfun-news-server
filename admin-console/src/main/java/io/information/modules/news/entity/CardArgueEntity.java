@@ -39,13 +39,13 @@ public class CardArgueEntity implements Serializable {
 	 */
 	private String caRside;
 	/**
-	 * 正方观点投票人ids，逗号分隔
+	 * 正方观点数量
 	 */
-	private String caFsideUids;
+	private String caFsideNumber;
 	/**
-	 * 反方观点投票人ids，逗号分隔
+	 * 反方观点数量
 	 */
-	private String caRsideUids;
+	private String caRsideNumber;
 	/**
 	 * 辩论结束日期
 	 */
@@ -77,20 +77,20 @@ public class CardArgueEntity implements Serializable {
 		this.caRside = caRside;
 	}
 
-	public String getCaFsideUids() {
-		return caFsideUids;
+	public String getCaFsideNumber() {
+		return caFsideNumber;
 	}
 
-	public void setCaFsideUids(String caFsideUids) {
-		this.caFsideUids = caFsideUids;
+	public void setCaFsideNumber(String caFsideNumber) {
+		this.caFsideNumber = caFsideNumber;
 	}
 
-	public String getCaRsideUids() {
-		return caRsideUids;
+	public String getCaRsideNumber() {
+		return caRsideNumber;
 	}
 
-	public void setCaRsideUids(String caRsideUids) {
-		this.caRsideUids = caRsideUids;
+	public void setCaRsideNumber(String caRsideNumber) {
+		this.caRsideNumber = caRsideNumber;
 	}
 
 	public Date getCaCloseTime() {

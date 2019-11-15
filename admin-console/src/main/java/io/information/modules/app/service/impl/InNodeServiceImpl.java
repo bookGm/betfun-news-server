@@ -253,7 +253,7 @@ public class InNodeServiceImpl extends ServiceImpl<InNodeDao, InNode> implements
         //List<String> collect = base.stream().map(DynamicCardVo::getcCreateTime).collect(Collectors.toList());
         //List<String> list = reply.stream().map(DynamicReplyVo::getCrTime).collect(Collectors.toList());
         //collect.addAll(list);
-        //TODO  排序
+        //TODO  动态显示五条数据 <帖子信息 和 评论信息>
         NewDynamicVo newDynamicVo = new NewDynamicVo();
         if (null != reply && reply.size() >= 5) {
             List<DynamicReplyVo> replyVos = reply.subList(0, 3);    //3

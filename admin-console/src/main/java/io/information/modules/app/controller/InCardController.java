@@ -1,9 +1,6 @@
 package io.information.modules.app.controller;
 
-import io.information.common.utils.IPUtils;
-import io.information.common.utils.PageUtils;
-import io.information.common.utils.R;
-import io.information.common.utils.RedisKeys;
+import io.information.common.utils.*;
 import io.information.modules.app.annotation.Login;
 import io.information.modules.app.annotation.LoginUser;
 import io.information.modules.app.entity.InCard;
@@ -11,12 +8,12 @@ import io.information.modules.app.entity.InCardBase;
 import io.information.modules.app.entity.InUser;
 import io.information.modules.app.service.IInCardBaseService;
 import io.information.modules.app.service.IInCardService;
+import io.information.modules.app.vo.CardArgueVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
@@ -68,6 +65,15 @@ public class InCardController {
             }
         }
         return R.ok().put("card", card);
+    }
+
+
+    @Login
+    @GetMapping("/loginArgue")
+    @ApiOperation(value = "查询用户的支持和加入状态", httpMethod = "GET", notes = "帖子ID")
+    private ResultUtil<CardArgueVo> loginArgue(@RequestParam Long cId, @ApiIgnore @LoginUser InUser user) {
+        CardArgueVo argueVo = cardService.loginArgue(cId, user.getuId());
+        return ResultUtil.ok(argueVo);
     }
 
 

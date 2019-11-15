@@ -49,4 +49,6 @@ public class InCardVoteController {
         List<Integer> vote =JsonUtil.parseList(voteService.vote(cid, user.getuId(), optIndexs),Integer.class);
         return R.ok().put("vote", vote);
     }
+
+
 }

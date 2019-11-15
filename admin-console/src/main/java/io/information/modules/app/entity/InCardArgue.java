@@ -48,28 +48,28 @@ public class InCardArgue implements Serializable {
     private String caRside;
 
     /**
-     * 正方观点投票人ids，逗号分隔
+     * 正方观点数量
      */
-    @ApiModelProperty(hidden=true)
-    private String caFsideUids;
-    /**
-     * 正方数量
-     */
-    @TableField(exist = false)
-    @ApiModelProperty(hidden=true)
+    @ApiModelProperty(value = "正方观点数量", name = "caFsideNumber", required = true)
     private Integer caFsideNumber;
 
     /**
-     * 反方观点投票人ids，逗号分隔
+     * 正方辩手数量
      */
-    @ApiModelProperty(hidden=true)
-    private String caRsideUids;
+    @ApiModelProperty(value = "正方辩手数量", name = "FsideDebater")
+    private Integer caFsideDebater;
+
     /**
-     * 反方数量
+     * 反方观点数量
      */
-    @TableField(exist = false)
-    @ApiModelProperty(hidden=true)
+    @ApiModelProperty(value = "反方观点数量", name = "caRsideNumber", required = true)
     private Integer caRsideNumber;
+
+    /**
+     * 正方辩手数量
+     */
+    @ApiModelProperty(value = "正方辩手数量", name = "RsideDebater")
+    private Integer caRsideDebater;
 
     /**
      * 辩论结束日期
@@ -77,6 +77,7 @@ public class InCardArgue implements Serializable {
     @ApiModelProperty(value = "辩论结束日期", name = "caCloseTime", required = true)
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date caCloseTime;
+
 
     public Long getcId() {
         return cId;
@@ -118,22 +119,6 @@ public class InCardArgue implements Serializable {
         this.caRsideNumber = caRsideNumber;
     }
 
-    public String getCaFsideUids() {
-        return caFsideUids;
-    }
-
-    public void setCaFsideUids(String caFsideUids) {
-        this.caFsideUids = caFsideUids;
-    }
-
-    public String getCaRsideUids() {
-        return caRsideUids;
-    }
-
-    public void setCaRsideUids(String caRsideUids) {
-        this.caRsideUids = caRsideUids;
-    }
-
     public Date getCaCloseTime() {
         return caCloseTime;
     }
@@ -148,5 +133,21 @@ public class InCardArgue implements Serializable {
 
     public void setInCardBase(InCardBase inCardBase) {
         this.inCardBase = inCardBase;
+    }
+
+    public Integer getCaFsideDebater() {
+        return caFsideDebater;
+    }
+
+    public void setCaFsideDebater(Integer caFsideDebater) {
+        this.caFsideDebater = caFsideDebater;
+    }
+
+    public Integer getCaRsideDebater() {
+        return caRsideDebater;
+    }
+
+    public void setCaRsideDebater(Integer caRsideDebater) {
+        this.caRsideDebater = caRsideDebater;
     }
 }

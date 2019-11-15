@@ -29,22 +29,24 @@ public class InCardArgueController {
     @Autowired
     private IInCardArgueService argueService;
 
+
     /**
      * 辩论支持
      */
     @Login
     @GetMapping("/support")
-    @ApiOperation(value = "支持辩论方", httpMethod = "GET")
-    public R support(Long cid, Integer supportSide, @LoginUser InUser user) {
+    @ApiOperation(value = "支持辩论方", httpMethod = "GET", notes = "0：正方  1：反方")
+    public R support(Long cid, Integer supportSide, @ApiIgnore @LoginUser InUser user) {
         return R.ok().put("supportSide", argueService.support(cid, user.getuId(), supportSide));
     }
+
 
     /**
      * 加入辩论
      */
     @Login
     @GetMapping("/join")
-    @ApiOperation(value = "加入辩论方", httpMethod = "GET")
+    @ApiOperation(value = "加入辩论方", httpMethod = "GET", notes = "0：正方  1：反方")
     public R join(Long cid, Integer joinSide, @ApiIgnore @LoginUser InUser user) {
         return R.ok().put("joinSide", argueService.support(cid, user.getuId(), joinSide));
     }

@@ -5,22 +5,21 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.guansuo.common.StringUtil;
 import com.guansuo.newsenum.NewsEnum;
-import io.information.common.utils.BeanHelper;
-import io.information.common.utils.IdGenerator;
-import io.information.common.utils.PageUtils;
-import io.information.common.utils.Query;
+import io.information.common.utils.*;
 import io.information.modules.app.dao.InCardBaseDao;
 import io.information.modules.app.entity.*;
 import io.information.modules.app.service.IInCardArgueService;
 import io.information.modules.app.service.IInCardBaseService;
 import io.information.modules.app.service.IInCardService;
 import io.information.modules.app.service.IInCardVoteService;
+import io.information.modules.app.vo.CardArgueVo;
 import io.mq.utils.Constants;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -33,6 +32,8 @@ public class InCardServiceImpl extends ServiceImpl<InCardBaseDao, InCardBase> im
     IInCardVoteService voteService;
     @Autowired
     RabbitTemplate rabbitTemplate;
+    @Autowired
+    RedisUtils redisUtils;
 
 
     @Override
@@ -57,6 +58,7 @@ public class InCardServiceImpl extends ServiceImpl<InCardBaseDao, InCardBase> im
         logOperate(user.getuId(), cId, NewsEnum.操作_发布);
     }
 
+
     /**
      * 记录操作日志
      */
@@ -70,6 +72,7 @@ public class InCardServiceImpl extends ServiceImpl<InCardBaseDao, InCardBase> im
         rabbitTemplate.convertAndSend(Constants.logExchange, Constants.log_Save_RouteKey, log);
     }
 
+
     @Override
     public InCard details(Long cId) {
         InCard card = new InCard();
@@ -81,14 +84,6 @@ public class InCardServiceImpl extends ServiceImpl<InCardBaseDao, InCardBase> im
                 if (1 == category) {
                     //辩论帖子
                     InCardArgue argue = argueService.getById(base.getcId());
-                    if (null != argue.getCaRsideUids() && StringUtil.isNotBlank(argue.getCaRsideUids())) {
-                        String[] rNumber = argue.getCaRsideUids().split(",");
-                        argue.setCaRsideNumber(rNumber.length);
-                    }
-                    if (null != argue.getCaFsideUids() && StringUtil.isNotBlank(argue.getCaFsideUids())) {
-                        String[] fNumber = argue.getCaFsideUids().split(",");
-                        argue.setCaFsideNumber(fNumber.length);
-                    }
                     card.setArgue(argue);
                 }
                 if (2 == category) {
@@ -162,4 +157,34 @@ public class InCardServiceImpl extends ServiceImpl<InCardBaseDao, InCardBase> im
             baseService.updateById(card.getBase());
         }
     }
+
+
+    @Override
+    public CardArgueVo loginArgue(Long cId, Long uId) {
+        //模糊查询出某类的key  #cid-#uid-#sIndex
+        CardArgueVo argueVo = new CardArgueVo();
+        List<Map.Entry<Object, Object>> smap = redisUtils.hfget(RedisKeys.SUPPORT, cId + "-" + uId + "-*");
+        List<Map.Entry<Object, Object>> jmap = redisUtils.hfget(RedisKeys.JOIN, cId + "-" + uId + "-*");
+        //查询支持状态
+        if (null != smap && smap.size() > 0) {
+            for (Map.Entry<Object, Object> obj : smap) {
+                int sStatus = Integer.parseInt(String.valueOf(obj.getKey()));
+                argueVo.setIsSupport(sStatus);
+            }
+        } else {
+            argueVo.setIsSupport(2);
+        }
+        //查询加入状态
+        if (null != jmap && jmap.size() > 0) {
+            for (Map.Entry<Object, Object> obj : jmap) {
+                int jStatus = Integer.parseInt(String.valueOf(obj.getKey()));
+                argueVo.setIsJoin(jStatus);
+            }
+        } else {
+            argueVo.setIsSupport(2);
+        }
+
+        return argueVo;
+    }
+
 }
