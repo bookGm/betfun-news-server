@@ -128,6 +128,7 @@ public class InActivityController {
         return R.ok().put("activity", activity);
     }
 
+
     /**
      * 获取报名活动的用户
      */

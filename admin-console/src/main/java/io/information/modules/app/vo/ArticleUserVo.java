@@ -2,11 +2,15 @@ package io.information.modules.app.vo;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 import java.util.List;
 
 @ApiModel(value = "社区 -- 用户文章数据", description = "用户信息和文章信息")
+@AllArgsConstructor
+@NoArgsConstructor
 public class ArticleUserVo implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -37,6 +41,12 @@ public class ArticleUserVo implements Serializable {
      */
     @ApiModelProperty(value = "用户文章数量", name = "articleNumber")
     private Integer articleNumber;
+
+    /**
+     * 用户获赞数量
+     */
+    @ApiModelProperty(value = "用户获赞数量", name = "likeNumber")
+    private Long likeNumber;
 
     /**
      * 用户文章推荐信息
@@ -91,5 +101,13 @@ public class ArticleUserVo implements Serializable {
 
     public void setArticleVos(List<ArticleVo> articleVos) {
         this.articleVos = articleVos;
+    }
+
+    public Long getLikeNumber() {
+        return likeNumber;
+    }
+
+    public void setLikeNumber(Long likeNumber) {
+        this.likeNumber = likeNumber;
     }
 }

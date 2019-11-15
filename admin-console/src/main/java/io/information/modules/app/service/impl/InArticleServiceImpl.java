@@ -110,20 +110,34 @@ public class InArticleServiceImpl extends ServiceImpl<InArticleDao, InArticle> i
         if (null != map.get("uId") && StringUtil.isNotBlank(map.get("uId"))) {
             long uId = Long.parseLong(String.valueOf(map.get("uId")));
             InUser user = userService.getById(uId);
-            ArticleUserVo articleUserVo = BeanHelper.copyProperties(user, ArticleUserVo.class);
-            if (null != articleUserVo) {
-                LambdaQueryWrapper<InArticle> queryWrapper = new LambdaQueryWrapper<>();
-                queryWrapper.eq(InArticle::getuId, uId);
-                int articleNumber = this.count(queryWrapper);
-                if (articleNumber > 0) {
-                    articleUserVo.setArticleNumber(articleNumber);
-                    List<ArticleVo> articleVos = this.baseMapper.searchTitleAndId(uId, currPage, pageSize);
-                    articleUserVo.setArticleVos(articleVos);
-                } else {
-                    articleUserVo.setArticleNumber(0);
-                    articleUserVo.setArticleVos(null);
+            if (null != user) {
+                ArticleUserVo articleUserVo = DataUtils.copyData(user, ArticleUserVo.class);
+                if (null != articleUserVo) {
+                    LambdaQueryWrapper<InArticle> queryWrapper = new LambdaQueryWrapper<>();
+                    queryWrapper.eq(InArticle::getuId, uId);
+                    int articleNumber = this.count(queryWrapper);
+                    if (articleNumber > 0) {
+                        List<InArticle> list = this.list(queryWrapper);
+                        long likeNumber = list.stream().mapToLong(InArticle::getaLike).sum();
+                        articleUserVo.setArticleNumber(articleNumber);
+                        articleUserVo.setLikeNumber(likeNumber);
+                        List<ArticleVo> articleVos = this.baseMapper.searchTitleAndId(uId, currPage, pageSize);
+                        if (null != articleVos && !articleVos.isEmpty()) {
+                            for (ArticleVo articleVo : articleVos) {
+                                articleVo.setaSimpleTime(DateUtils.getSimpleTime(articleVo.getaCreateTime()));
+                            }
+                            articleUserVo.setArticleVos(articleVos);
+                        } else {
+                            articleUserVo.setLikeNumber(0L);
+                            articleUserVo.setArticleVos(null);
+                        }
+                    } else {
+                        articleUserVo.setArticleNumber(0);
+                        articleUserVo.setLikeNumber(0L);
+                        articleUserVo.setArticleVos(null);
+                    }
+                    return articleUserVo;
                 }
-                return articleUserVo;
             }
             return null;
         }
@@ -142,11 +156,25 @@ public class InArticleServiceImpl extends ServiceImpl<InArticleDao, InArticle> i
                 switch (type) {
                     case 0:
                         List<InArticle> inArticles = this.baseMapper.searchArticleInTagByLike(status, currPage, pageSize);
-                        arrayList.addAll(inArticles);
+                        if (null != inArticles && !inArticles.isEmpty()) {
+                            for (InArticle inArticle : inArticles) {
+                                inArticle.setaSimpleTime(DateUtils.getSimpleTime(inArticle.getaCreateTime()));
+                            }
+                            arrayList.addAll(inArticles);
+                        } else {
+                            arrayList.addAll(null);
+                        }
                         break;
                     case 1:
                         List<InArticle> inArticleList = this.baseMapper.searchArticleInTagByTime(status, currPage, pageSize);
-                        arrayList.addAll(inArticleList);
+                        if (null != inArticleList && !inArticleList.isEmpty()) {
+                            for (InArticle inArticle : inArticleList) {
+                                inArticle.setaSimpleTime(DateUtils.getSimpleTime(inArticle.getaCreateTime()));
+                            }
+                            arrayList.addAll(inArticleList);
+                        } else {
+                            arrayList.addAll(null);
+                        }
                         break;
                 }
                 return arrayList;
@@ -210,10 +238,16 @@ public class InArticleServiceImpl extends ServiceImpl<InArticleDao, InArticle> i
             Long tId = Long.parseLong(String.valueOf(map.get("tId")));
             InTag tag = tagService.getById(tId);
             List<InArticle> articles = this.baseMapper.searchArticleByTag(tag.gettName(), currPage, pageSize);
-            TagArticleVo vo = new TagArticleVo();
-            vo.setTag(tag);
-            vo.setArticleList(articles);
-            return vo;
+            if (null != articles) {
+                for (InArticle article : articles) {
+                    article.setaSimpleTime(DateUtils.getSimpleTime(article.getaCreateTime()));
+                }
+                TagArticleVo vo = new TagArticleVo();
+                vo.setTag(tag);
+                vo.setArticleList(articles);
+                return vo;
+            }
+            return null;
         }
         return null;
     }

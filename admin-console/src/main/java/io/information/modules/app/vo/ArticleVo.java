@@ -4,6 +4,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 import java.io.Serializable;
+import java.util.Date;
 
 @ApiModel(value = "文章部分信息", description = "文章部分信息")
 public class ArticleVo implements Serializable {
@@ -20,7 +21,10 @@ public class ArticleVo implements Serializable {
     private String aCover;
 
     @ApiModelProperty(value = "文章创建时间", name = "aCreateTime", required = true)
-    private String aCreateTime;
+    private Date aCreateTime;
+
+    @ApiModelProperty(value = "文章创建简单时间", name = "aSimpleTime", required = true)
+    private String aSimpleTime;
 
     public Long getaId() {
         return aId;
@@ -46,11 +50,19 @@ public class ArticleVo implements Serializable {
         this.aCover = aCover;
     }
 
-    public String getaCreateTime() {
+    public Date getaCreateTime() {
         return aCreateTime;
     }
 
-    public void setaCreateTime(String aCreateTime) {
+    public void setaCreateTime(Date aCreateTime) {
         this.aCreateTime = aCreateTime;
+    }
+
+    public String getaSimpleTime() {
+        return aSimpleTime;
+    }
+
+    public void setaSimpleTime(String aSimpleTime) {
+        this.aSimpleTime = aSimpleTime;
     }
 }
