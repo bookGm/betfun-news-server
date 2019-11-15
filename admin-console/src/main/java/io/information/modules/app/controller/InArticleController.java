@@ -55,6 +55,8 @@ public class InArticleController {
     private RabbitTemplate rabbitTemplate;
     @Autowired
     private StringRedisTemplate redisTemplate;
+    @Autowired
+    RedisUtils redisUtils;
 
 
     /**
@@ -206,6 +208,33 @@ public class InArticleController {
         }
         return R.ok().put("time", articleService.giveALike(id, user.getuId(), type, tid));
     }
+
+
+    /**
+     * 取消点赞
+     */
+    @Login
+    @PostMapping("/delALike")
+    @ApiOperation(value = "取消点赞", httpMethod = "POST", notes = "根据ID取消点赞")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "id", value = "id", required = true),
+            @ApiImplicitParam(name = "type", value = "(0：文章 1：帖子 2：活动)", required = true)
+    })
+    public ResultUtil delALike(@RequestParam("id") Long id, @RequestParam("type") int type, @ApiIgnore @LoginUser InUser user) {
+        //#id-#uid-#tId-#type"
+        Long tid = filterId(id, type);
+        if (StringUtil.isBlank(tid)) {
+            return ResultUtil.error("取消点赞失败");
+        }
+        String key = id + "-" + user.getuId() + "-" + type + "-" + tid;
+        Long r = redisUtils.hremove(RedisKeys.LIKE, key);
+        if (r > 0) {
+            return ResultUtil.ok();
+        } else {
+            return ResultUtil.error("取消点赞失败，请重试");
+        }
+    }
+
 
     /**
      * 收藏

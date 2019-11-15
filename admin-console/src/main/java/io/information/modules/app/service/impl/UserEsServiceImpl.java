@@ -1,11 +1,14 @@
-package io.elasticsearch.service.impl;
+package io.information.modules.app.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.guansuo.common.StringUtil;
 import io.elasticsearch.dao.EsUserDao;
 import io.elasticsearch.entity.EsUserEntity;
-import io.elasticsearch.service.EsUserService;
 import io.elasticsearch.utils.PageUtils;
 import io.elasticsearch.utils.SearchRequest;
+import io.information.modules.app.entity.InArticle;
+import io.information.modules.app.service.IInArticleService;
+import io.information.modules.app.service.UserEsService;
 import org.elasticsearch.index.query.Operator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -20,27 +23,66 @@ import java.util.List;
 import static org.elasticsearch.index.query.QueryBuilders.multiMatchQuery;
 
 @Service
-public class EsUserServiceImpl implements EsUserService {
+public class UserEsServiceImpl implements UserEsService {
     @Autowired
     private EsUserDao userDao;
+    @Autowired
+    private ElasticsearchTemplate elasticsearchTemplate;
+    @Autowired
+    private IInArticleService articleService;
 
 
     @Override
-    public void saveUser(EsUserEntity userEntity) {
-        userDao.save(userEntity);
-    }
-
-    @Override
-    public void removeUser(Long[] uIds) {
-        for (Long uId : uIds) {
-            userDao.deleteById(uId);
+    public PageUtils search(SearchRequest request) {
+        if (null != request.getKey() && StringUtil.isNotBlank(request.getKey())) {
+            String key = request.getKey();
+            Integer size = request.getPageSize();
+            Integer page = request.getCurrPage();
+            //多字段匹配[昵称，简介，企业名称，姓名？]
+            SearchQuery searchQuery = new NativeSearchQueryBuilder()
+                    .withQuery(multiMatchQuery(key, "uName", "uIntro", "uNick", "uCompanyName")
+                            .operator(Operator.OR) /*.minimumShouldMatch("30%")*/)
+                    .withPageable(PageRequest.of(page, size))
+                    .build();
+            AggregatedPage<EsUserEntity> esUserEntities =
+                    elasticsearchTemplate.queryForPage(searchQuery, EsUserEntity.class);
+            if (null != esUserEntities && !esUserEntities.getContent().isEmpty()) {
+                List<EsUserEntity> list = esUserEntities.getContent();
+                long totalCount = esUserEntities.getTotalElements();
+                //文章数 浏览数 获赞数
+                for (EsUserEntity entity : list) {
+                    LambdaQueryWrapper<InArticle> queryWrapper = new LambdaQueryWrapper<>();
+                    if (null != entity && null != entity.getuId()) {
+                        queryWrapper.eq(InArticle::getuId, entity.getuId());
+                        int articleNumber = articleService.count(queryWrapper);
+                        entity.setArticleNumber(articleNumber);
+                        List<InArticle> articles = articleService.list(queryWrapper);
+                        long readNumber = articles.stream().mapToLong(InArticle::getaReadNumber).sum();
+                        long likeNumber = articles.stream().mapToLong(InArticle::getaLike).sum();
+                        entity.setReadNumber(readNumber);
+                        entity.setLikeNUmber(likeNumber);
+                    }
+                }
+                //列表数据 总记录数 每页记录数 当前页数
+                return new PageUtils(list, totalCount, size, page);
+            }
+            return null;
         }
+        return null;
     }
 
-    @Override
-    public void updatedUser(EsUserEntity userEntity) {
-        userDao.deleteById(userEntity.getuId());
-        userDao.save(userEntity);
+    /**
+     * 拼接在某属性的 set方法
+     */
+    private static String parSetName(String fieldName) {
+        if (null == fieldName || "".equals(fieldName)) {
+            return null;
+        }
+        int startIndex = 0;
+        if (fieldName.charAt(0) == '_')
+            startIndex = 1;
+        return "set" + fieldName.substring(startIndex, startIndex + 1).toUpperCase()
+                + fieldName.substring(startIndex + 1);
     }
 
 

@@ -13,6 +13,4 @@ public interface EsUserService {
     void removeUser(Long[] uIds);
 
     void updatedUser(EsUserEntity userEntity);
-
-    PageUtils search(SearchRequest request);
 }

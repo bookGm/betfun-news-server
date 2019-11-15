@@ -10,6 +10,4 @@ public interface EsArticleService {
     void removeArticle(Long[] aIds);
 
     void updatedArticle(EsArticleEntity articleEntity);
-
-    PageUtils searchInfo(SearchRequest request);
 }

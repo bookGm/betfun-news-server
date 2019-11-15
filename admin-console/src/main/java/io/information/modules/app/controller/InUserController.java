@@ -188,8 +188,28 @@ public class InUserController extends AbstractController {
     @ApiImplicitParam(value = "用户id", name = "uId", required = true)
     public R focus(@RequestBody Long uId, @ApiIgnore @LoginUser InUser user) {
         InUser inUser = userService.getById(uId);
-        userService.focus(user.getuId(), inUser.getuPotential(),uId);
+        userService.focus(user.getuId(), inUser.getuPotential(), uId);
         return R.ok();
+    }
+
+
+    /**
+     * 取消关注用户
+     */
+    @Login
+    @PostMapping("/delFocus")
+    @ApiOperation(value = "取消关注用户", httpMethod = "POST", notes = "关注的用户id")
+    @ApiImplicitParam(value = "用户id", name = "uId", required = true)
+    public ResultUtil delFocus(@RequestBody Long uId, @ApiIgnore @LoginUser InUser user) {
+        //#uId-#status-#fId
+        InUser inUser = userService.getById(uId);
+        String key = user.getuId() + "-" + inUser.getuPotential() + "-" + uId;
+        Long r = redisUtils.hremove(RedisKeys.FOCUS, key);
+        if (r > 0) {
+            return ResultUtil.ok();
+        } else {
+            return ResultUtil.error("取消关注失败，请重试");
+        }
     }
 
 
@@ -216,7 +236,8 @@ public class InUserController extends AbstractController {
             @ApiImplicitParam(value = "目标[文章，帖子，活动]ID", name = "tId", required = true),
             @ApiImplicitParam(value = "目标类型(0：文章 1：帖子 2：活动)", name = "type", required = true)
     })
-    public ResultUtil<UserBoolVo> userNumber(@RequestParam Long uId, @RequestParam Long tId, @RequestParam Integer type, @ApiIgnore @LoginUser InUser user) {
+    public ResultUtil<UserBoolVo> userNumber(@RequestParam Long uId, @RequestParam Long tId, @RequestParam Integer
+            type, @ApiIgnore @LoginUser InUser user) {
         UserBoolVo boolVo = userService.userNumber(uId, tId, type, user);
         return ResultUtil.ok(boolVo);
     }
@@ -272,7 +293,8 @@ public class InUserController extends AbstractController {
             @ApiImplicitParam(value = "每页显示条数", name = "pageSize", required = true),
             @ApiImplicitParam(value = "当前页数", name = "currPage", required = true)
     })
-    public ResultUtil<PageUtils<InCommonReply>> comment(@RequestParam Map<String, Object> map, @ApiIgnore @LoginUser InUser user) {
+    public ResultUtil<PageUtils<InCommonReply>> comment
+    (@RequestParam Map<String, Object> map, @ApiIgnore @LoginUser InUser user) {
         map.put("uId", user.getuId());
         PageUtils<InCommonReply> page = userService.comment(map);
         return ResultUtil.ok(page);
@@ -289,7 +311,8 @@ public class InUserController extends AbstractController {
             @ApiImplicitParam(value = "每页显示条数", name = "pageSize", required = true),
             @ApiImplicitParam(value = "当前页数", name = "currPage", required = true)
     })
-    public ResultUtil<PageUtils<InCommonReply>> commentUser(@RequestParam Map<String, Object> map, @ApiIgnore @LoginUser InUser user) {
+    public ResultUtil<PageUtils<InCommonReply>> commentUser
+    (@RequestParam Map<String, Object> map, @ApiIgnore @LoginUser InUser user) {
         map.put("uId", user.getuId());
         PageUtils<InCommonReply> page = userService.commentUser(map);
         return ResultUtil.ok(page);
@@ -306,7 +329,8 @@ public class InUserController extends AbstractController {
             @ApiImplicitParam(value = "每页显示条数", name = "pageSize", required = true),
             @ApiImplicitParam(value = "当前页数", name = "currPage", required = true)
     })
-    public ResultUtil<PageUtils<InLikeVo>> like(@RequestParam Map<String, Object> map, @ApiIgnore @LoginUser InUser user) {
+    public ResultUtil<PageUtils<InLikeVo>> like
+    (@RequestParam Map<String, Object> map, @ApiIgnore @LoginUser InUser user) {
         PageUtils<InLikeVo> page = userService.like(map, user.getuId());
         return ResultUtil.ok(page);
     }
@@ -335,7 +359,8 @@ public class InUserController extends AbstractController {
             @ApiImplicitParam(value = "每页显示条数", name = "pageSize", required = true),
             @ApiImplicitParam(value = "当前页数", name = "currPage", required = true)
     })
-    public ResultUtil<PageUtils<UserCardVo>> card(@RequestParam Map<String, Object> map, @ApiIgnore @LoginUser InUser user) {
+    public ResultUtil<PageUtils<UserCardVo>> card
+    (@RequestParam Map<String, Object> map, @ApiIgnore @LoginUser InUser user) {
         map.put("uId", user.getuId());
         PageUtils page = userService.card(map);
         return ResultUtil.ok(page);
@@ -352,7 +377,8 @@ public class InUserController extends AbstractController {
             @ApiImplicitParam(value = "每页显示条数", name = "pageSize", required = true),
             @ApiImplicitParam(value = "当前页数", name = "currPage", required = true)
     })
-    public ResultUtil<PageUtils<InCommonReply>> reply(@RequestParam Map<String, Object> map, @ApiIgnore @LoginUser InUser user) {
+    public ResultUtil<PageUtils<InCommonReply>> reply
+    (@RequestParam Map<String, Object> map, @ApiIgnore @LoginUser InUser user) {
         map.put("uId", user.getuId());
         PageUtils<InCommonReply> page = userService.reply(map);
         return ResultUtil.ok(page);
@@ -370,7 +396,8 @@ public class InUserController extends AbstractController {
             @ApiImplicitParam(value = "当前页数", name = "currPage", required = true),
             @ApiImplicitParam(value = "0：未开始 1：进行中 2：已结束", name = "type", required = true)
     })
-    public ResultUtil<PageUtils<InActivity>> active(@RequestParam Map<String, Object> map, @ApiIgnore @LoginUser InUser user) {
+    public ResultUtil<PageUtils<InActivity>> active
+    (@RequestParam Map<String, Object> map, @ApiIgnore @LoginUser InUser user) {
         map.put("uId", user.getuId());
         PageUtils<InActivity> page = userService.active(map);
         return ResultUtil.ok(page);
@@ -387,7 +414,8 @@ public class InUserController extends AbstractController {
             @ApiImplicitParam(value = "每页显示条数", name = "pageSize", required = true),
             @ApiImplicitParam(value = "当前页数", name = "currPage", required = true)
     })
-    public ResultUtil<PageUtils<InUser>> fansWriter(@RequestParam Map<String, Object> map, @ApiIgnore @LoginUser InUser user) {
+    public ResultUtil<PageUtils<InUser>> fansWriter
+    (@RequestParam Map<String, Object> map, @ApiIgnore @LoginUser InUser user) {
         map.put("uId", user.getuId());
         PageUtils page = userService.fansWriter(map);
         return ResultUtil.ok(page);
@@ -404,7 +432,8 @@ public class InUserController extends AbstractController {
             @ApiImplicitParam(value = "每页显示条数", name = "pageSize", required = true),
             @ApiImplicitParam(value = "当前页数", name = "currPage", required = true)
     })
-    public ResultUtil<PageUtils<InNode>> fansNode(@RequestParam Map<String, Object> map, @ApiIgnore @LoginUser InUser user) {
+    public ResultUtil<PageUtils<InNode>> fansNode
+    (@RequestParam Map<String, Object> map, @ApiIgnore @LoginUser InUser user) {
         map.put("uId", user.getuId());
         PageUtils page = userService.fansNode(map);
         return ResultUtil.ok(page);
@@ -421,7 +450,8 @@ public class InUserController extends AbstractController {
             @ApiImplicitParam(value = "每页显示条数", name = "pageSize", required = true),
             @ApiImplicitParam(value = "当前页数", name = "currPage", required = true)
     })
-    public ResultUtil<PageUtils<InUser>> fansPerson(@RequestParam Map<String, Object> map, @ApiIgnore @LoginUser InUser user) {
+    public ResultUtil<PageUtils<InUser>> fansPerson
+    (@RequestParam Map<String, Object> map, @ApiIgnore @LoginUser InUser user) {
         map.put("uId", user.getuId());
         PageUtils page = userService.fansPerson(map);
         return ResultUtil.ok(page);
@@ -437,7 +467,8 @@ public class InUserController extends AbstractController {
             @ApiImplicitParam(value = "每页显示条数", name = "pageSize", required = true),
             @ApiImplicitParam(value = "当前页数", name = "currPage", required = true)
     })
-    public ResultUtil<PageUtils<InUser>> follower(@RequestParam Map<String, Object> map, @ApiIgnore @LoginUser InUser user) {
+    public ResultUtil<PageUtils<InUser>> follower
+    (@RequestParam Map<String, Object> map, @ApiIgnore @LoginUser InUser user) {
         map.put("uId", user.getuId());
         PageUtils page = userService.follower(map);
         return ResultUtil.ok(page);
@@ -455,7 +486,8 @@ public class InUserController extends AbstractController {
             @ApiImplicitParam(value = "当前页数", name = "currPage", required = true),
             @ApiImplicitParam(value = "0：文章 1：帖子 2：活动", name = "type", required = true)
     })
-    public ResultUtil<PageUtils<InCard>> favorite(@RequestParam Map<String, Object> map, @ApiIgnore @LoginUser InUser user) {
+    public ResultUtil<PageUtils<InCard>> favorite
+    (@RequestParam Map<String, Object> map, @ApiIgnore @LoginUser InUser user) {
         map.put("uId", user.getuId());
         PageUtils page = userService.favorite(map);
         return ResultUtil.ok(page);
@@ -471,7 +503,8 @@ public class InUserController extends AbstractController {
             @ApiImplicitParam(value = "文章、帖子、活动id", name = "id", required = true),
             @ApiImplicitParam(value = "id类型 0：文章 1：帖子 2：活动", name = "type", required = true),
     })
-    public ResultUtil delFavorite(@RequestParam String id, @RequestParam String type, @ApiIgnore @LoginUser InUser user) {
+    public ResultUtil delFavorite(@RequestParam String id, @RequestParam String type, @ApiIgnore @LoginUser InUser
+            user) {
         Long uId = -1L;
         if (NewsEnum.收藏_文章.getCode().equals(type)) {
             uId = articleService.getById(id).getuId();

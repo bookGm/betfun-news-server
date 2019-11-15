@@ -1,6 +1,5 @@
 package io.elasticsearch.entity;
 
-import com.baomidou.mybatisplus.annotation.TableField;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.elasticsearch.annotations.DateFormat;
@@ -11,7 +10,7 @@ import org.springframework.data.elasticsearch.annotations.FieldType;
 import java.io.Serializable;
 import java.util.Date;
 
-@Document(indexName = "users", type = "user", shards = 5, replicas = 1,refreshInterval = "-1")
+@Document(indexName = "users", type = "user", shards = 5, replicas = 1, refreshInterval = "-1")
 public class EsUserEntity implements Serializable {
     private static final Long serialVersionUID = 1L;
     /**
@@ -49,7 +48,7 @@ public class EsUserEntity implements Serializable {
     /**
      * 用户昵称
      */
-    @Field(type = FieldType.Keyword, analyzer = "ik_max_word",searchAnalyzer="ik_max_word")
+    @Field(type = FieldType.Keyword, analyzer = "ik_max_word", searchAnalyzer = "ik_max_word")
     private String uNick;
     /**
      * 用户头像
@@ -59,7 +58,7 @@ public class EsUserEntity implements Serializable {
     /**
      * 用户简介
      */
-    @Field(type = FieldType.Keyword, analyzer = "ik_max_word",searchAnalyzer="ik_max_word")
+    @Field(type = FieldType.Keyword, analyzer = "ik_max_word", searchAnalyzer = "ik_max_word")
     private String uIntro;
     /**
      * 用户关注
@@ -89,7 +88,7 @@ public class EsUserEntity implements Serializable {
     /**
      * 企业名称
      */
-    @Field(type = FieldType.Keyword, analyzer = "ik_max_word",searchAnalyzer="ik_max_word")
+    @Field(type = FieldType.Keyword, analyzer = "ik_max_word", searchAnalyzer = "ik_max_word")
     private String uCompanyName;
     /**
      * 身份证号
@@ -124,7 +123,7 @@ public class EsUserEntity implements Serializable {
     /**
      * 注册时间
      */
-    @Field(type = FieldType.Date,format= DateFormat.custom,pattern = "yyyy-MM-dd HH:mm:ss")
+    @Field(type = FieldType.Date, format = DateFormat.custom, pattern = "yyyy-MM-dd HH:mm:ss")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date uCreateTime;
     /**
@@ -132,6 +131,18 @@ public class EsUserEntity implements Serializable {
      */
     @Field(index = false)
     private Integer uPotential;
+
+    //文章数
+    @Field(index = false)
+    private Integer articleNumber;
+
+    //浏览数
+    @Field(index = false)
+    private Long readNumber;
+
+    @Field(index = false)
+    //获赞数
+    private Long likeNUmber;
 
     public Long getuId() {
         return uId;
@@ -315,5 +326,29 @@ public class EsUserEntity implements Serializable {
 
     public void setuPotential(Integer uPotential) {
         this.uPotential = uPotential;
+    }
+
+    public Integer getArticleNumber() {
+        return articleNumber;
+    }
+
+    public void setArticleNumber(Integer articleNumber) {
+        this.articleNumber = articleNumber;
+    }
+
+    public Long getReadNumber() {
+        return readNumber;
+    }
+
+    public void setReadNumber(Long readNumber) {
+        this.readNumber = readNumber;
+    }
+
+    public Long getLikeNUmber() {
+        return likeNUmber;
+    }
+
+    public void setLikeNUmber(Long likeNUmber) {
+        this.likeNUmber = likeNUmber;
     }
 }

@@ -1,8 +1,6 @@
 package io.information.modules.app.controller;
 
-import io.information.common.utils.PageUtils;
-import io.information.common.utils.R;
-import io.information.common.utils.ResultUtil;
+import io.information.common.utils.*;
 import io.information.modules.app.annotation.Login;
 import io.information.modules.app.annotation.LoginUser;
 import io.information.modules.app.entity.InCard;
@@ -33,6 +31,8 @@ import java.util.Map;
 public class InNodeController {
     @Autowired
     private IInNodeService nodeService;
+    @Autowired
+    RedisUtils redisUtils;
 
     /**
      * 查询
@@ -77,12 +77,19 @@ public class InNodeController {
      */
     @Login
     @PostMapping("/delFocus")
-    @ApiOperation(value = "取消关注节点", httpMethod = "POST", notes = "被关注的节点id")
+    @ApiOperation(value = "取消关注节点", httpMethod = "POST", notes = "关注的节点id")
     @ApiImplicitParam(value = "节点id", name = "noId", required = true)
-    public R delFocus(@RequestBody Long noId, @ApiIgnore @LoginUser InUser user) {
+    public ResultUtil delFocus(@RequestBody Long noId, @ApiIgnore @LoginUser InUser user) {
+        //#uId-#type-#noId
         InNode node = nodeService.getById(noId);
         nodeService.focus(user.getuId(), noId, node.getNoType());
-        return R.ok();
+        String key = user.getuId() + "-" + node.getNoType() + "-" + noId;
+        Long r = redisUtils.hremove(RedisKeys.NODES, key);
+        if (r > 0) {
+            return ResultUtil.ok();
+        } else {
+            return ResultUtil.error("取消关注失败，请重试");
+        }
     }
 
 

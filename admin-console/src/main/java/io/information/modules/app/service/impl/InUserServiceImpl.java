@@ -377,10 +377,9 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
             InUserDTO userDTO = new InUserDTO();
             String[] str = String.valueOf(obj.getKey()).split("-");
             Long id = Long.valueOf(str[2]);
-            //TODO
 //            Object oUser = redisTemplate.opsForHash().get(RedisKeys.INUSER, String.valueOf(id));
-            InUser user = this.getById(id);
 //            InUser user = (InUser) oUser;
+            InUser user = this.getById(id);
             if (null != user) {
                 userDTO.setuNick(user.getuNick());
                 userDTO.setuPhoto(user.getuPhoto());
@@ -422,7 +421,6 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
             InUserDTO userDTO = new InUserDTO();
             String[] str = String.valueOf(obj.getKey()).split("-");
             Long id = Long.valueOf(str[2]);
-            //TODO
 //            Object oUser = redisTemplate.opsForHash().get(RedisKeys.INUSER, String.valueOf(id));
 //            InUser user = (InUser) oUser;
             InUser user = this.getById(id);

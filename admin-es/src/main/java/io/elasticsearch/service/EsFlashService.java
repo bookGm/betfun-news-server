@@ -10,6 +10,4 @@ public interface EsFlashService {
     void removeFlash(Long[] nIds);
 
     void updatedFlash(EsFlashEntity flashEntity);
-
-    PageUtils searchFlash(SearchRequest request);
 }
