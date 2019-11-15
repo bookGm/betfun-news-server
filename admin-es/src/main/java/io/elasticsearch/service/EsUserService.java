@@ -10,7 +10,7 @@ import java.util.Map;
 public interface EsUserService {
     void saveUser(EsUserEntity userEntity);
 
-    void removeUser(Long[] uIds);
+    void removeUser(String[] uIds);
 
     void updatedUser(EsUserEntity userEntity);
 }

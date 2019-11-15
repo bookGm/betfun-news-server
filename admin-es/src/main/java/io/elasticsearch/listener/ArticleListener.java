@@ -37,8 +37,11 @@ public class ArticleListener {
             exchange = @Exchange(name = Constants.articleExchange),
             key = Constants.article_Delete_RouteKey
     ))
-    public void remove(Long[] aIds) {
-        articleService.removeArticle(aIds);
+    public void remove(String aIds) {
+        if (null != aIds) {
+            articleService.removeArticle(aIds.split(","));
+
+        }
     }
 
 

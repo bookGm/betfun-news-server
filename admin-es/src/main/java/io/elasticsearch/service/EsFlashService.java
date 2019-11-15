@@ -7,7 +7,7 @@ import io.elasticsearch.utils.SearchRequest;
 public interface EsFlashService {
     void saveFlash(EsFlashEntity flashEntity);
 
-    void removeFlash(Long[] nIds);
+    void removeFlash(String[] nIds);
 
     void updatedFlash(EsFlashEntity flashEntity);
 }

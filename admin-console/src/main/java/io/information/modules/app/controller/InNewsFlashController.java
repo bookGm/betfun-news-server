@@ -1,6 +1,7 @@
 package io.information.modules.app.controller;
 
 
+import com.guansuo.common.StringUtil;
 import io.elasticsearch.entity.EsFlashEntity;
 import io.information.common.utils.BeanHelper;
 import io.information.common.utils.IdGenerator;
@@ -16,6 +17,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -93,12 +95,13 @@ public class InNewsFlashController {
     /**
      * 删除
      */
-    @DeleteMapping("/delete")
+    @PostMapping("/delete")
     @ApiOperation(value = "删除单个或多个快讯", httpMethod = "DELETE", notes = "快讯ID数组")
     public R delete(@RequestBody Long[] nIds) {
         newsFlashService.removeByIds(Arrays.asList(nIds));
+        String join = StringUtils.join(nIds,",");
         rabbitTemplate.convertAndSend(Constants.flashExchange,
-                Constants.flash_Delete_RouteKey, nIds);
+                Constants.flash_Delete_RouteKey, join);
         return R.ok();
     }
 

@@ -32,9 +32,9 @@ public class EsFlashServiceImpl implements EsFlashService {
     }
 
     @Override
-    public void removeFlash(Long[] nIds) {
-        for (Long nId : nIds) {
-            flashDao.deleteById(nId);
+    public void removeFlash(String[] nIds) {
+        for (String nId : nIds) {
+            flashDao.deleteById(Long.parseLong(nId));
         }
     }
 

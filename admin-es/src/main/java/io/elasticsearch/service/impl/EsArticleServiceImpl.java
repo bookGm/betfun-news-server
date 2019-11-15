@@ -11,7 +11,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.amqp.support.AmqpHeaders;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
 import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.stereotype.Service;
 
@@ -34,9 +33,9 @@ public class EsArticleServiceImpl implements EsArticleService {
     }
 
     @Override
-    public void removeArticle(Long[] aIds) {
-        for (Long aId : aIds) {
-            articleDao.deleteById(aId);
+    public void removeArticle(String[] aIds) {
+        for (String aId : aIds) {
+            articleDao.deleteById(Long.parseLong(aId));
         }
     }
 

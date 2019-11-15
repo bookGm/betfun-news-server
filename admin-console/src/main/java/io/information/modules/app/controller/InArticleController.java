@@ -21,6 +21,7 @@ import io.information.modules.app.vo.InArticleUserDetailVo;
 import io.information.modules.app.vo.TagArticleVo;
 import io.mq.utils.Constants;
 import io.swagger.annotations.*;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -106,8 +107,9 @@ public class InArticleController {
     public R delete(@RequestParam Long[] aIds, @ApiIgnore @LoginUser InUser user) {
         if (user.getuAuthStatus() == 2) {
             articleService.removeByIds(Arrays.asList(aIds));
+            String join = StringUtils.join(aIds,",");
             rabbitTemplate.convertAndSend(Constants.articleExchange,
-                    Constants.article_Delete_RouteKey, aIds);
+                    Constants.article_Delete_RouteKey, join);
             return R.ok();
         }
         return R.error("此操作需要认证通过");

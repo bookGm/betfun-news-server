@@ -24,7 +24,7 @@ public class FlashListener {
             exchange = @Exchange(name = Constants.flashExchange),
             key = Constants.flash_Save_RouteKey
     ))
-    public void created(EsFlashEntity esFlash){
+    public void created(EsFlashEntity esFlash) {
         flashService.saveFlash(esFlash);
     }
 
@@ -37,8 +37,10 @@ public class FlashListener {
             exchange = @Exchange(name = Constants.flashExchange),
             key = Constants.flash_Delete_RouteKey
     ))
-    public void remove(Long[] nIds){
-        flashService.removeFlash(nIds);
+    public void remove(String nIds) {
+        if (null != nIds) {
+            flashService.removeFlash(nIds.split(","));
+        }
     }
 
 
@@ -50,7 +52,7 @@ public class FlashListener {
             exchange = @Exchange(name = Constants.flashExchange),
             key = Constants.flash_Update_RouteKey
     ))
-    public void update(EsFlashEntity esFlash){
+    public void update(EsFlashEntity esFlash) {
         flashService.updatedFlash(esFlash);
     }
 }

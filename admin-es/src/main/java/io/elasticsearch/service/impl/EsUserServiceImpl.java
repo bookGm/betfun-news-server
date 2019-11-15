@@ -31,9 +31,9 @@ public class EsUserServiceImpl implements EsUserService {
     }
 
     @Override
-    public void removeUser(Long[] uIds) {
-        for (Long uId : uIds) {
-            userDao.deleteById(uId);
+    public void removeUser(String[] uIds) {
+        for (String uId : uIds) {
+            userDao.deleteById(Long.parseLong(uId));
         }
     }
 

@@ -26,7 +26,6 @@ import java.util.Map;
 public class InCardArgueServiceImpl extends ServiceImpl<InCardArgueDao, InCardArgue> implements IInCardArgueService {
 
 
-
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
         IPage<InCardArgue> page = this.page(
@@ -44,17 +43,18 @@ public class InCardArgueServiceImpl extends ServiceImpl<InCardArgueDao, InCardAr
         switch (sIndex) {
             case 0:
                 //正方
-                argue.setCaFsideNumber(argue.getCaFsideNumber() + 1);
+                int fNumber = argue.getCaFsideNumber() == null ? 0 : argue.getCaFsideNumber();
+                argue.setCaFsideNumber(fNumber + 1);
                 break;
             case 1:
                 //反方
-                argue.setCaRsideNumber(argue.getCaRsideNumber() + 1);
+                int rNumber = argue.getCaRsideNumber() == null ? 0 : argue.getCaFsideNumber();
+                argue.setCaRsideNumber(rNumber + 1);
                 break;
         }
         this.updateById(argue);
         return String.valueOf(sIndex);
     }
-
 
 
     @Override

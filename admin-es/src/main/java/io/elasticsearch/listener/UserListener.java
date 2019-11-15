@@ -38,8 +38,10 @@ public class UserListener {
             exchange = @Exchange(name = Constants.userExchange),
             key = Constants.user_Delete_RouteKey
     ))
-    public void remove(Long[] uIds) {
-        userService.removeUser(uIds);
+    public void remove(String uIds) {
+        if (null != uIds) {
+            userService.removeUser(uIds.split(","));
+        }
     }
 
 
