@@ -44,123 +44,124 @@ public class CardVoteEntity implements Serializable {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date cvCloseTime;
 
-    private Integer cv_0;
+    @TableField("cv_0")
+    private Integer cv0;
     @TableField(exist = false)
     private String info0;
-
-    private Integer cv_1;
+    @TableField("cv_1")
+    private Integer cv1;
     @TableField(exist = false)
     private String info1;
-
-    private Integer cv_2;
+    @TableField("cv_2")
+    private Integer cv2;
     @TableField(exist = false)
     private String info2;
-
-    private Integer cv_3;
+    @TableField("cv_3")
+    private Integer cv3;
     @TableField(exist = false)
     private String info3;
-
-    private Integer cv_4;
+    @TableField("cv_4")
+    private Integer cv4;
     @TableField(exist = false)
     private String info4;
-
-    private Integer cv_5;
+    @TableField("cv_5")
+    private Integer cv5;
     @TableField(exist = false)
     private String info5;
-
-    private Integer cv_6;
+    @TableField("cv_6")
+    private Integer cv6;
     @TableField(exist = false)
     private String info6;
-
-    private Integer cv_7;
+    @TableField("cv_7")
+    private Integer cv7;
     @TableField(exist = false)
     private String info7;
-
-    private Integer cv_8;
+    @TableField("cv_8")
+    private Integer cv8;
     @TableField(exist = false)
     private String info8;
-
-    private Integer cv_9;
+    @TableField("cv_9")
+    private Integer cv9;
     @TableField(exist = false)
     private String info9;
-
-    private Integer cv_10;
+    @TableField("cv_10")
+    private Integer cv10;
     @TableField(exist = false)
     private String info10;
-
-    private Integer cv_11;
+    @TableField("cv_11")
+    private Integer cv11;
     @TableField(exist = false)
     private String info11;
-
-    private Integer cv_12;
+    @TableField("cv_12")
+    private Integer cv12;
     @TableField(exist = false)
     private String info12;
-
-    private Integer cv_13;
+    @TableField("cv_13")
+    private Integer cv13;
     @TableField(exist = false)
     private String info13;
-
-    private Integer cv_14;
+    @TableField("cv_14")
+    private Integer cv14;
     @TableField(exist = false)
     private String info14;
-
-    private Integer cv_15;
+    @TableField("cv_15")
+    private Integer cv15;
     @TableField(exist = false)
     private String info15;
-
-    private Integer cv_16;
+    @TableField("cv_16")
+    private Integer cv16;
     @TableField(exist = false)
     private String info16;
-
-    private Integer cv_17;
+    @TableField("cv_17")
+    private Integer cv17;
     @TableField(exist = false)
     private String info17;
-
-    private Integer cv_18;
+    @TableField("cv_18")
+    private Integer cv18;
     @TableField(exist = false)
     private String info18;
-
-    private Integer cv_19;
+    @TableField("cv_19")
+    private Integer cv19;
     @TableField(exist = false)
     private String info19;
-
-    private Integer cv_20;
+    @TableField("cv_20")
+    private Integer cv20;
     @TableField(exist = false)
     private String info20;
-
-    private Integer cv_21;
+    @TableField("cv_21")
+    private Integer cv21;
     @TableField(exist = false)
     private String info21;
-
-    private Integer cv_22;
+    @TableField("cv_22")
+    private Integer cv22;
     @TableField(exist = false)
     private String info22;
-
-    private Integer cv_23;
+    @TableField("cv_23")
+    private Integer cv23;
     @TableField(exist = false)
     private String info23;
-
-    private Integer cv_24;
+    @TableField("cv_24")
+    private Integer cv24;
     @TableField(exist = false)
     private String info24;
-
-    private Integer cv_25;
+    @TableField("cv_25")
+    private Integer cv25;
     @TableField(exist = false)
     private String info25;
-
-    private Integer cv_26;
+    @TableField("cv_26")
+    private Integer cv26;
     @TableField(exist = false)
     private String info26;
-
-    private Integer cv_27;
+    @TableField("cv_27")
+    private Integer cv27;
     @TableField(exist = false)
     private String info27;
-
-    private Integer cv_28;
+    @TableField("cv_28")
+    private Integer cv28;
     @TableField(exist = false)
     private String info28;
-
-    private Integer cv_29;
+    @TableField("cv_29")
+    private Integer cv29;
     @TableField(exist = false)
     private String info29;
 
@@ -196,244 +197,244 @@ public class CardVoteEntity implements Serializable {
         this.cvCloseTime = cvCloseTime;
     }
 
-    public Integer getCv_0() {
-        return cv_0;
+    public Integer getCv0() {
+        return cv0;
     }
 
-    public void setCv_0(Integer cv_0) {
-        this.cv_0 = cv_0;
+    public void setCv0(Integer cv0) {
+        this.cv0 = cv0;
     }
 
-    public Integer getCv_1() {
-        return cv_1;
+    public Integer getCv1() {
+        return cv1;
     }
 
-    public void setCv_1(Integer cv_1) {
-        this.cv_1 = cv_1;
+    public void setCv1(Integer cv1) {
+        this.cv1 = cv1;
     }
 
-    public Integer getCv_2() {
-        return cv_2;
+    public Integer getCv2() {
+        return cv2;
     }
 
-    public void setCv_2(Integer cv_2) {
-        this.cv_2 = cv_2;
+    public void setCv2(Integer cv2) {
+        this.cv2 = cv2;
     }
 
-    public Integer getCv_3() {
-        return cv_3;
+    public Integer getCv3() {
+        return cv3;
     }
 
-    public void setCv_3(Integer cv_3) {
-        this.cv_3 = cv_3;
+    public void setCv3(Integer cv3) {
+        this.cv3 = cv3;
     }
 
-    public Integer getCv_4() {
-        return cv_4;
+    public Integer getCv4() {
+        return cv4;
     }
 
-    public void setCv_4(Integer cv_4) {
-        this.cv_4 = cv_4;
+    public void setCv4(Integer cv4) {
+        this.cv4 = cv4;
     }
 
-    public Integer getCv_5() {
-        return cv_5;
+    public Integer getCv5() {
+        return cv5;
     }
 
-    public void setCv_5(Integer cv_5) {
-        this.cv_5 = cv_5;
+    public void setCv5(Integer cv5) {
+        this.cv5 = cv5;
     }
 
-    public Integer getCv_6() {
-        return cv_6;
+    public Integer getCv6() {
+        return cv6;
     }
 
-    public void setCv_6(Integer cv_6) {
-        this.cv_6 = cv_6;
+    public void setCv6(Integer cv6) {
+        this.cv6 = cv6;
     }
 
-    public Integer getCv_7() {
-        return cv_7;
+    public Integer getCv7() {
+        return cv7;
     }
 
-    public void setCv_7(Integer cv_7) {
-        this.cv_7 = cv_7;
+    public void setCv7(Integer cv7) {
+        this.cv7 = cv7;
     }
 
-    public Integer getCv_8() {
-        return cv_8;
+    public Integer getCv8() {
+        return cv8;
     }
 
-    public void setCv_8(Integer cv_8) {
-        this.cv_8 = cv_8;
+    public void setCv8(Integer cv8) {
+        this.cv8 = cv8;
     }
 
-    public Integer getCv_9() {
-        return cv_9;
+    public Integer getCv9() {
+        return cv9;
     }
 
-    public void setCv_9(Integer cv_9) {
-        this.cv_9 = cv_9;
+    public void setCv9(Integer cv9) {
+        this.cv9 = cv9;
     }
 
-    public Integer getCv_10() {
-        return cv_10;
+    public Integer getCv10() {
+        return cv10;
     }
 
-    public void setCv_10(Integer cv_10) {
-        this.cv_10 = cv_10;
+    public void setCv10(Integer cv10) {
+        this.cv10 = cv10;
     }
 
-    public Integer getCv_11() {
-        return cv_11;
+    public Integer getCv11() {
+        return cv11;
     }
 
-    public void setCv_11(Integer cv_11) {
-        this.cv_11 = cv_11;
+    public void setCv11(Integer cv11) {
+        this.cv11 = cv11;
     }
 
-    public Integer getCv_12() {
-        return cv_12;
+    public Integer getCv12() {
+        return cv12;
     }
 
-    public void setCv_12(Integer cv_12) {
-        this.cv_12 = cv_12;
+    public void setCv12(Integer cv12) {
+        this.cv12 = cv12;
     }
 
-    public Integer getCv_13() {
-        return cv_13;
+    public Integer getCv13() {
+        return cv13;
     }
 
-    public void setCv_13(Integer cv_13) {
-        this.cv_13 = cv_13;
+    public void setCv13(Integer cv13) {
+        this.cv13 = cv13;
     }
 
-    public Integer getCv_14() {
-        return cv_14;
+    public Integer getCv14() {
+        return cv14;
     }
 
-    public void setCv_14(Integer cv_14) {
-        this.cv_14 = cv_14;
+    public void setCv14(Integer cv14) {
+        this.cv14 = cv14;
     }
 
-    public Integer getCv_15() {
-        return cv_15;
+    public Integer getCv15() {
+        return cv15;
     }
 
-    public void setCv_15(Integer cv_15) {
-        this.cv_15 = cv_15;
+    public void setCv15(Integer cv15) {
+        this.cv15 = cv15;
     }
 
-    public Integer getCv_16() {
-        return cv_16;
+    public Integer getCv16() {
+        return cv16;
     }
 
-    public void setCv_16(Integer cv_16) {
-        this.cv_16 = cv_16;
+    public void setCv16(Integer cv16) {
+        this.cv16 = cv16;
     }
 
-    public Integer getCv_17() {
-        return cv_17;
+    public Integer getCv17() {
+        return cv17;
     }
 
-    public void setCv_17(Integer cv_17) {
-        this.cv_17 = cv_17;
+    public void setCv17(Integer cv17) {
+        this.cv17 = cv17;
     }
 
-    public Integer getCv_18() {
-        return cv_18;
+    public Integer getCv18() {
+        return cv18;
     }
 
-    public void setCv_18(Integer cv_18) {
-        this.cv_18 = cv_18;
+    public void setCv18(Integer cv18) {
+        this.cv18 = cv18;
     }
 
-    public Integer getCv_19() {
-        return cv_19;
+    public Integer getCv19() {
+        return cv19;
     }
 
-    public void setCv_19(Integer cv_19) {
-        this.cv_19 = cv_19;
+    public void setCv19(Integer cv19) {
+        this.cv19 = cv19;
     }
 
-    public Integer getCv_20() {
-        return cv_20;
+    public Integer getCv20() {
+        return cv20;
     }
 
-    public void setCv_20(Integer cv_20) {
-        this.cv_20 = cv_20;
+    public void setCv20(Integer cv20) {
+        this.cv20 = cv20;
     }
 
-    public Integer getCv_21() {
-        return cv_21;
+    public Integer getCv21() {
+        return cv21;
     }
 
-    public void setCv_21(Integer cv_21) {
-        this.cv_21 = cv_21;
+    public void setCv21(Integer cv21) {
+        this.cv21 = cv21;
     }
 
-    public Integer getCv_22() {
-        return cv_22;
+    public Integer getCv22() {
+        return cv22;
     }
 
-    public void setCv_22(Integer cv_22) {
-        this.cv_22 = cv_22;
+    public void setCv22(Integer cv22) {
+        this.cv22 = cv22;
     }
 
-    public Integer getCv_23() {
-        return cv_23;
+    public Integer getCv23() {
+        return cv23;
     }
 
-    public void setCv_23(Integer cv_23) {
-        this.cv_23 = cv_23;
+    public void setCv23(Integer cv23) {
+        this.cv23 = cv23;
     }
 
-    public Integer getCv_24() {
-        return cv_24;
+    public Integer getCv24() {
+        return cv24;
     }
 
-    public void setCv_24(Integer cv_24) {
-        this.cv_24 = cv_24;
+    public void setCv24(Integer cv24) {
+        this.cv24 = cv24;
     }
 
-    public Integer getCv_25() {
-        return cv_25;
+    public Integer getCv25() {
+        return cv25;
     }
 
-    public void setCv_25(Integer cv_25) {
-        this.cv_25 = cv_25;
+    public void setCv25(Integer cv25) {
+        this.cv25 = cv25;
     }
 
-    public Integer getCv_26() {
-        return cv_26;
+    public Integer getCv26() {
+        return cv26;
     }
 
-    public void setCv_26(Integer cv_26) {
-        this.cv_26 = cv_26;
+    public void setCv26(Integer cv26) {
+        this.cv26 = cv26;
     }
 
-    public Integer getCv_27() {
-        return cv_27;
+    public Integer getCv27() {
+        return cv27;
     }
 
-    public void setCv_27(Integer cv_27) {
-        this.cv_27 = cv_27;
+    public void setCv27(Integer cv27) {
+        this.cv27 = cv27;
     }
 
-    public Integer getCv_28() {
-        return cv_28;
+    public Integer getCv28() {
+        return cv28;
     }
 
-    public void setCv_28(Integer cv_28) {
-        this.cv_28 = cv_28;
+    public void setCv28(Integer cv28) {
+        this.cv28 = cv28;
     }
 
-    public Integer getCv_29() {
-        return cv_29;
+    public Integer getCv29() {
+        return cv29;
     }
 
-    public void setCv_29(Integer cv_29) {
-        this.cv_29 = cv_29;
+    public void setCv29(Integer cv29) {
+        this.cv29 = cv29;
     }
 
     public void setInfo(Integer index, String info) {

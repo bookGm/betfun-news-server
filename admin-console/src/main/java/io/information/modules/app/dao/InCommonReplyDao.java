@@ -2,7 +2,6 @@ package io.information.modules.app.dao;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import io.information.modules.app.entity.InCommonReply;
-import io.information.modules.app.vo.DynamicReplyVo;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Component;
 

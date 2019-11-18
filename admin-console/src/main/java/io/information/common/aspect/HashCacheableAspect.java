@@ -59,6 +59,9 @@ public class HashCacheableAspect {
             return redisTemplate.opsForHash().get(key,filed);
 		}else{
 			Object result=invokeMethod(point);
+			if(StringUtil.isBlank(result)){
+				return null;
+			}
 			redisTemplate.opsForHash().put(key,filed, DataUtils.objToString(result));
 			return result;
 		}

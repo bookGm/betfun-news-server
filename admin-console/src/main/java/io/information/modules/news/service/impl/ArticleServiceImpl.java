@@ -210,6 +210,8 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleDao, ArticleEntity> i
         if (lock) {
             for (BbtcListVo b : getBbtcList(page)) {
                 Long bid = b.getId();
+                LOG.info("文章id----------------------------："+bid);
+                LOG.info("文章标题--------------------------："+b.getTitle());
                 if (redisUtils.hasKey(RedisKeys.ARTICLE + bid)) {
                     continue;
                 }

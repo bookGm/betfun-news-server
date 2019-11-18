@@ -57,6 +57,21 @@ public class InCardVote implements Serializable {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @ApiModelProperty(value = "结束日期", name = "cvCloseTime", required = true)
     private Date cvCloseTime;
+
+    /**
+     * 是否已经投票
+     */
+    @ApiModelProperty(value = "是否已经投票", name = "isVote", required = false)
+    @TableField(exist = false)
+    private Boolean isVote;
+
+    /**
+     * 投票选项
+     */
+    @ApiModelProperty(value = "投票选项", name = "optIndexs", required = false)
+    @TableField(exist = false)
+    private String optIndexs;
+
     @TableField("cv_0")
     private Integer cv0;
     @TableField("cv_1")
@@ -396,5 +411,21 @@ public class InCardVote implements Serializable {
 
     public void setInCardBase(InCardBase inCardBase) {
         this.inCardBase = inCardBase;
+    }
+
+    public Boolean getVote() {
+        return isVote;
+    }
+
+    public void setVote(Boolean vote) {
+        isVote = vote;
+    }
+
+    public String getOptIndexs() {
+        return optIndexs;
+    }
+
+    public void setOptIndexs(String optIndexs) {
+        this.optIndexs = optIndexs;
     }
 }

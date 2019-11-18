@@ -3,7 +3,6 @@ package io.information.modules.app.dao;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import io.information.modules.app.entity.InCardBase;
 import io.information.modules.app.vo.CardBaseVo;
-import io.information.modules.app.vo.DynamicCardVo;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Component;

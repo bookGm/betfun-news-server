@@ -1,5 +1,7 @@
 package io.information.modules.app.controller;
 
+import com.guansuo.common.JsonUtil;
+import com.guansuo.newsenum.NewsEnum;
 import io.information.common.utils.IdGenerator;
 import io.information.common.utils.PageUtils;
 import io.information.common.utils.R;
@@ -7,10 +9,12 @@ import io.information.modules.app.annotation.Login;
 import io.information.modules.app.annotation.LoginUser;
 import io.information.modules.app.entity.*;
 import io.information.modules.app.service.*;
+import io.mq.utils.Constants;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.web.bind.annotation.*;
@@ -43,6 +47,8 @@ public class InCommonReplyController {
     private IInActivityService activityService;
     @Autowired
     IInUserService iInUserService;
+    @Autowired
+    RabbitTemplate rabbitTemplate;
 
     /**
      * 信息
@@ -70,7 +76,24 @@ public class InCommonReplyController {
         commonReply.setcName(user.getuNick());
         commonReply.setcPhoto(user.getuPhoto());
         commonReply.setCrSimpleTime("刚刚");
+        if(commonReply.gettType().equals(NewsEnum.评论_帖子)){
+            logOperate(user.getuId(), commonReply.gettId(),commonReply.gettName(), NewsEnum.操作_评论);
+        }
         return R.ok().put("crObj", commonReply);
+    }
+
+    /**
+     * 记录操作日志
+     */
+    void logOperate(Long uId, Long tId,String tName, NewsEnum e) {
+        InLog log = new InLog();
+        log.setlOperateId(uId);
+        log.setlTargetId(tId);
+        log.setlTargetType(1);
+        log.setlTargetName(tName);
+        log.setlDo(Integer.parseInt(e.getCode()));
+        log.setlTime(new Date());
+        rabbitTemplate.convertAndSend(Constants.logExchange, Constants.log_Save_RouteKey, JsonUtil.toJSONString(log));
     }
 
     //添加评论数量

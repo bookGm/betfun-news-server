@@ -35,6 +35,8 @@ public class InCardServiceImpl extends ServiceImpl<InCardBaseDao, InCardBase> im
     RabbitTemplate rabbitTemplate;
     @Autowired
     RedisUtils redisUtils;
+    @Autowired
+    IInCardVoteService iInCardVoteService;
 
 
     @Override
@@ -56,18 +58,19 @@ public class InCardServiceImpl extends ServiceImpl<InCardBaseDao, InCardBase> im
         base.setuId(user.getuId());
         base.setcCreateTime(new Date());
         baseService.save(base);
-        logOperate(user.getuId(), cId, NewsEnum.操作_发布);
+        logOperate(user.getuId(), cId,card.getBase().getcTitle(), NewsEnum.操作_发布);
     }
 
 
     /**
      * 记录操作日志
      */
-    void logOperate(Long uId, Long tId, NewsEnum e) {
+    void logOperate(Long uId, Long tId,String tName, NewsEnum e) {
         InLog log = new InLog();
         log.setlOperateId(uId);
         log.setlTargetId(tId);
         log.setlTargetType(1);
+        log.setlTargetName(tName);
         log.setlDo(Integer.parseInt(e.getCode()));
         log.setlTime(new Date());
         rabbitTemplate.convertAndSend(Constants.logExchange, Constants.log_Save_RouteKey, JsonUtil.toJSONString(log));
@@ -75,7 +78,7 @@ public class InCardServiceImpl extends ServiceImpl<InCardBaseDao, InCardBase> im
 
 
     @Override
-    public InCard details(Long cId) {
+    public InCard details(Long cId,Object uId) {
         InCard card = new InCard();
         InCardBase base = baseService.getById(cId);
         if (null != base) {
@@ -90,6 +93,17 @@ public class InCardServiceImpl extends ServiceImpl<InCardBaseDao, InCardBase> im
                 if (2 == category) {
                     //投票帖子
                     InCardVote vote = voteService.getById(base.getcId());
+                    if(StringUtil.isBlank(uId)){
+                        vote.setVote(false);
+                    }else{
+                        String optIndexs=iInCardVoteService.vote(cId,Long.parseLong(String.valueOf(uId)),null);
+                        if(StringUtil.isBlank(optIndexs)){
+                            vote.setVote(false);
+                        }else{
+                            vote.setOptIndexs(optIndexs);
+                            vote.setVote(true);
+                        }
+                    }
                     card.setVote(vote);
                 }
             }
