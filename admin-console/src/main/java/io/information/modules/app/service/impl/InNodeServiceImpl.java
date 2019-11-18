@@ -10,6 +10,7 @@ import io.information.common.annotation.HashCacheable;
 import io.information.common.utils.*;
 import io.information.modules.app.dao.InCardBaseDao;
 import io.information.modules.app.dao.InCommonReplyDao;
+import io.information.modules.app.dao.InLogDao;
 import io.information.modules.app.dao.InNodeDao;
 import io.information.modules.app.entity.*;
 import io.information.modules.app.service.*;
@@ -45,6 +46,8 @@ public class InNodeServiceImpl extends ServiceImpl<InNodeDao, InNode> implements
     IInDicService dicService;
     @Autowired
     RedisUtils redisUtils;
+    @Autowired
+    InLogDao logDao;
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
@@ -87,36 +90,38 @@ public class InNodeServiceImpl extends ServiceImpl<InNodeDao, InNode> implements
 
 
     @Override
-    public Map<String, Object> special(Map<String, Object> map) {
+    public PageUtils<List<UserNodeVo>> special(Map<String, Object> map) {
         //寻找通过任何认证的用户
         LambdaQueryWrapper<InUser> queryWrapper = new LambdaQueryWrapper<>();
+        Integer pageSize = StringUtil.isBlank(map.get("pageSize")) ? 10 : Integer.parseInt(String.valueOf(map.get("pageSize")));
+        Integer currPage = StringUtil.isBlank(map.get("currPage")) ? 0 : Integer.parseInt(String.valueOf(map.get("currPage")));
         queryWrapper.eq(InUser::getuAuthStatus, 2);
         IPage<InUser> page = userService.page(
                 new Query<InUser>().getPage(map),
                 queryWrapper
         );
-        List<InUser> users = page.getRecords();
         //拼装 文章 浏览量 获赞数
-        Map<String, Object> rm = new HashMap<>();
-        for (InUser user : users) {
-            List<InArticle> list = articleService.list(new LambdaQueryWrapper<InArticle>().eq(InArticle::getuId, user.getuId()));
-            //累计文章数
-            rm.put("aCount", list.size());
-            //累计阅读量
-            LongSummaryStatistics readNumber = list.stream().collect(Collectors.summarizingLong((n) -> n.getaReadNumber() == null ? 0L : n.getaReadNumber()));
-            rm.put("rCount", readNumber == null ? 0L : readNumber.getSum());
-            //累计点赞数
-            LongSummaryStatistics likeNumber = list.stream().collect(Collectors.summarizingLong((n) -> n.getaLike() == null ? 0L : n.getaLike()));
-            rm.put("kCount", likeNumber == null ? 0L : likeNumber.getSum());
-            //用户信息
-            rm.put("user", user);
-            //分页数据
-            rm.put("pageSize", page.getSize());    //显示条数
-            rm.put("currPage", page.getCurrent());    //当前页数
-            rm.put("totalCount", page.getTotal());   //总条数
-            rm.put("totalPage", page.getPages());  //总页数
+        ArrayList<UserNodeVo> vos = new ArrayList<>();
+        for (InUser user : page.getRecords()) {
+            UserNodeVo vo = BeanHelper.copyProperties(user, UserNodeVo.class);
+            if (null != vo) {
+                List<InArticle> list = articleService.list(new LambdaQueryWrapper<InArticle>().eq(InArticle::getuId, user.getuId()));
+                //累计文章数
+                vo.setArticleNumber(list.size());
+                //累计浏览量
+                LongSummaryStatistics readNumber = list.stream().collect(Collectors.summarizingLong((n) -> n.getaReadNumber() == null ? 0L : n.getaReadNumber()));
+                vo.setReadNumber(readNumber == null ? 0L : readNumber.getSum());
+                //累计点赞数
+                LongSummaryStatistics likeNumber = list.stream().collect(Collectors.summarizingLong((n) -> n.getaLike() == null ? 0L : n.getaLike()));
+                vo.setLikeNumber(likeNumber == null ? 0L : likeNumber.getSum());
+                //添加
+                vos.add(vo);
+            } else {
+                vos.add(null);
+            }
         }
-        return rm;
+        int total = (int) page.getTotal();
+        return new PageUtils(vos, total, pageSize, currPage);
     }
 
     @Override
@@ -159,14 +164,14 @@ public class InNodeServiceImpl extends ServiceImpl<InNodeDao, InNode> implements
             UserCardVo cardVo = new UserCardVo();
             Long id = base.getuId();
             InUser user = userService.getById(base.getuId() == null ? 0 : base.getuId());
-            if(null!=user){
+            if (null != user) {
                 cardVo.setuId(id);
                 cardVo.setuName(user.getuName());
                 cardVo.setuPhoto(user.getuPhoto());
                 String simpleTime = DateUtils.getSimpleTime(base.getcCreateTime() == null ? new Date() : base.getcCreateTime());
                 cardVo.setTime(simpleTime);
                 InDic dic = dicService.getById(base.getcNodeCategory() == null ? 0 : base.getcNodeCategory());
-                if(null!=dic){
+                if (null != dic) {
                     cardVo.setType(dic.getdName());
                     cardVo.setcId(base.getcId());
                     cardVo.setcTitle(base.getcTitle());
@@ -175,6 +180,23 @@ public class InNodeServiceImpl extends ServiceImpl<InNodeDao, InNode> implements
                     cardVo.setReplyNumber(base.getcCritic());
                     list.add(cardVo);
                 }
+            }
+            if (null != user) {
+                cardVo.setuId(id);
+                cardVo.setuName(user.getuName() == null ? "" : user.getuName());
+                cardVo.setuPhoto(user.getuPhoto());
+                String simpleTime = DateUtils.getSimpleTime(base.getcCreateTime() == null ? new Date() : base.getcCreateTime());
+                cardVo.setTime(simpleTime);
+                InDic dic = dicService.getById(base.getcNodeCategory() == null ? 0 : base.getcNodeCategory());
+                if (null != dic) {
+                    cardVo.setType(dic.getdName() == null ? "" : dic.getdName());
+                    cardVo.setcId(base.getcId());
+                    cardVo.setcTitle(base.getcTitle());
+                    cardVo.setcId(base.getcId());
+                    cardVo.setReadNumber(base.getcReadNumber());
+                    cardVo.setReplyNumber(base.getcCritic());
+                }
+                list.add(cardVo);
             }
         }
         int total = (int) page.getTotal();
@@ -251,27 +273,30 @@ public class InNodeServiceImpl extends ServiceImpl<InNodeDao, InNode> implements
 
 
     @Override
-    public NewDynamicVo newDynamic() {
-        List<DynamicCardVo> base = baseDao.searchBaseByTime();
-        List<DynamicReplyVo> reply = replyDao.searchReplyByTime();
-        //List<String> collect = base.stream().map(DynamicCardVo::getcCreateTime).collect(Collectors.toList());
-        //List<String> list = reply.stream().map(DynamicReplyVo::getCrTime).collect(Collectors.toList());
-        //collect.addAll(list);
-        //TODO  动态显示五条数据 <帖子信息 和 评论信息>
-        NewDynamicVo newDynamicVo = new NewDynamicVo();
-        if (null != reply && reply.size() >= 5) {
-            List<DynamicReplyVo> replyVos = reply.subList(0, 3);    //3
-            newDynamicVo.setDynamicReplyVos(replyVos);
-        } else {
-            newDynamicVo.setDynamicReplyVos(reply);
+    public List<DynamicVo> newDynamic() {
+        List<InLog> logs = logDao.newDynamic();
+        if (null != logs) {
+            ArrayList<DynamicVo> vos = new ArrayList<>();
+            for (InLog log : logs) {
+                DynamicVo vo = new DynamicVo();
+                vo.setuId(log.getlOperateId());
+                vo.settId(log.getlTargetId());
+                vo.setuName(log.getlOperateName());
+                vo.settName(log.getlTargetName());
+                vo.setSimpleDate(DateUtils.getSimpleTime(log.getlTime()));
+                switch (log.getlDo()) {
+                    case 3:
+                        vo.setdType("评论");
+                        break;
+                    case 4:
+                        vo.setdType("发布");
+                        break;
+                }
+                vos.add(vo);
+            }
+            return vos;
         }
-        if (null != base && base.size() >= 5) {
-            List<DynamicCardVo> cardVos = base.subList(0, 2);    //2
-            newDynamicVo.setDynamicCardVos(cardVos);
-        } else {
-            newDynamicVo.setDynamicCardVos(base);
-        }
-        return newDynamicVo;
+        return null;
     }
 
     @Override

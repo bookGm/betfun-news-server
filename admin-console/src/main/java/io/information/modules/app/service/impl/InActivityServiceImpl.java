@@ -75,19 +75,16 @@ public class InActivityServiceImpl extends ServiceImpl<InActivityDao, InActivity
     public PageUtils queryPage(Map<String, Object> params) {
         LambdaQueryWrapper<InActivity> queryWrapper = new LambdaQueryWrapper<>();
         if (params.containsKey("type") && StringUtil.isNotBlank(params.get("type"))) {
+            int type = Integer.parseInt(String.valueOf(params.containsKey("type")));
             switch (Integer.parseInt(String.valueOf(params.get("type")))) {
-                case 0: //最新发布
+                case -1: //最新发布
                     queryWrapper.orderByDesc(InActivity::getActCreateTime);
                     break;
-                case 1: //全部
+                case 0: //全部
                     queryWrapper.orderByDesc(InActivity::getActStartTime);
                     break;
-                case 2: //峰会
-                    break;
-                case 3: //线上活动
-                    break;
-                case 4: //其他
-                    queryWrapper.orderByAsc(InActivity::getActCloseTime);
+                default: //峰会 线上活动 其他
+                    queryWrapper.eq(InActivity::getActCategory, type);
                     break;
             }
         }

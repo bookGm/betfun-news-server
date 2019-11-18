@@ -16,7 +16,7 @@ import org.springframework.stereotype.Service;
 import java.util.Map;
 
 
-@Service("userService")
+@Service
 public class UserServiceImpl extends ServiceImpl<UserDao, UserEntity> implements UserService {
 
     @Override
@@ -38,7 +38,7 @@ public class UserServiceImpl extends ServiceImpl<UserDao, UserEntity> implements
         LambdaQueryWrapper<UserEntity> queryWrapper = new LambdaQueryWrapper<>();
         if (null != params.get("uNick") && StringUtil.isNotBlank(params.get("uNick"))) {
             String uNick = String.valueOf(params.get("uNick"));
-            queryWrapper.like(UserEntity::getuNick,uNick);
+            queryWrapper.like(UserEntity::getuNick,uNick).or().like(UserEntity::getuName,uNick);
         }
         queryWrapper.eq(UserEntity::getuAuthStatus,1);
         IPage<UserEntity> page = this.page(

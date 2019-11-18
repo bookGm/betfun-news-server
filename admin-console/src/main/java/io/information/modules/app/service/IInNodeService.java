@@ -25,7 +25,7 @@ public interface IInNodeService extends IService<InNode> {
 
     Map<Long, List<InNode>> query(Map<String, Object> map);
 
-    Map<String, Object> special(Map<String, Object> map);
+    PageUtils<List<UserNodeVo>> special(Map<String, Object> map);
 
     PageUtils<UserCardVo> cardList(Map<String, Object> map);
 
@@ -39,7 +39,7 @@ public interface IInNodeService extends IService<InNode> {
 
     List<NodeVo> recommendNode();
 
-    NewDynamicVo newDynamic();
+    List<DynamicVo> newDynamic();
 
     UserArticleVo articleList(Map<String, Object> map);
 

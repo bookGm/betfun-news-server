@@ -33,6 +33,7 @@ public class InActivityFields implements Serializable {
 	/**
 	 * 活动id
 	 */
+	@ApiModelProperty(value = "活动id", name = "actId", required = true)
 	private Long actId;
 	/**
 	 * 属性键

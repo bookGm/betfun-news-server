@@ -85,14 +85,16 @@ public class InCommonReplyServiceImpl extends ServiceImpl<InCommonReplyDao, InCo
             );
             for (InCommonReply r : page.getRecords()) {
                 InUser u = iInUserService.getById(r.getcId());
-                r.setcName(u.getuNick());
-                r.setcPhoto(u.getuPhoto());
-                r.setCrSimpleTime(DateUtils.getSimpleTime(r.getCrTime()));
-                LambdaQueryWrapper<InCommonReply> query = new LambdaQueryWrapper<>();
-                //根据根ID查询回复数量
-                query.eq(InCommonReply::getCrTId, r.getCrId());
-                int count = this.count(query);
-                r.setCrCount(count);
+                if (null != u) {
+                    r.setcName(u.getuNick());
+                    r.setcPhoto(u.getuPhoto());
+                    r.setCrSimpleTime(DateUtils.getSimpleTime(r.getCrTime()));
+                    LambdaQueryWrapper<InCommonReply> query = new LambdaQueryWrapper<>();
+                    //根据根ID查询回复数量
+                    query.eq(InCommonReply::getCrTId, r.getCrId());
+                    int count = this.count(query);
+                    r.setCrCount(count);
+                }
             }
             return new PageUtils<InCommonReply>(page);
         }

@@ -2,6 +2,7 @@ package io.information.modules.app.controller;
 
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.guansuo.common.StringUtil;
 import com.guansuo.newsenum.NewsEnum;
 import io.elasticsearch.entity.EsUserEntity;
 import io.information.common.utils.*;
@@ -186,10 +187,17 @@ public class InUserController extends AbstractController {
     @PostMapping("/focus")
     @ApiOperation(value = "关注用户", httpMethod = "POST", notes = "被关注的用户id")
     @ApiImplicitParam(value = "用户id", name = "uId", required = true)
-    public R focus(@RequestBody Long uId, @ApiIgnore @LoginUser InUser user) {
-        InUser inUser = userService.getById(uId);
-        userService.focus(user.getuId(), inUser.getuPotential(), uId);
-        return R.ok();
+    public R focus(@RequestBody Map map, @ApiIgnore @LoginUser InUser user) {
+        if (null != map.get("uId") && StringUtil.isNotBlank(map.get("uId"))) {
+            long uId = Long.parseLong(String.valueOf(map.get("uId")));
+            InUser inUser = userService.getById(uId);
+            if (null != inUser) {
+                userService.focus(user.getuId(), inUser.getuPotential(), uId);
+                return R.ok();
+            }
+            return R.error("用户不存在");
+        }
+        return R.error("必要参数不能为空");
     }
 
 
@@ -200,16 +208,22 @@ public class InUserController extends AbstractController {
     @PostMapping("/delFocus")
     @ApiOperation(value = "取消关注用户", httpMethod = "POST", notes = "关注的用户id")
     @ApiImplicitParam(value = "用户id", name = "uId", required = true)
-    public ResultUtil delFocus(@RequestBody Long uId, @ApiIgnore @LoginUser InUser user) {
+    public ResultUtil delFocus(@RequestBody Map map, @ApiIgnore @LoginUser InUser user) {
         //#uId-#status-#fId
-        InUser inUser = userService.getById(uId);
-        String key = user.getuId() + "-" + inUser.getuPotential() + "-" + uId;
-        Long r = redisUtils.hremove(RedisKeys.FOCUS, key);
-        if (r > 0) {
-            return ResultUtil.ok();
-        } else {
-            return ResultUtil.error("取消关注失败，请重试");
+        if (null != map.get("uId") && StringUtil.isNotBlank(map.get("uId"))) {
+            long uId = Long.parseLong(String.valueOf(map.get("uId")));
+            InUser inUser = userService.getById(uId);
+            if (null != inUser) {
+                String key = user.getuId() + "-" + inUser.getuPotential() + "-" + uId;
+                Long r = redisUtils.hremove(RedisKeys.FOCUS, key);
+                if (r > 0) {
+                    return ResultUtil.ok();
+                } else {
+                    return ResultUtil.error("取消关注失败，请重试");
+                }
+            }
         }
+        return ResultUtil.error("必要参数不能为空");
     }
 
 

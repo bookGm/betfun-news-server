@@ -48,7 +48,7 @@ public class InCardArgueController {
     @GetMapping("/join")
     @ApiOperation(value = "加入辩论方", httpMethod = "GET", notes = "0：正方  1：反方")
     public R join(Long cid, Integer joinSide, @ApiIgnore @LoginUser InUser user) {
-        return R.ok().put("joinSide", argueService.support(cid, user.getuId(), joinSide));
+        return R.ok().put("joinSide", argueService.join(cid, user.getuId(), joinSide));
     }
 
 }

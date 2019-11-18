@@ -51,11 +51,12 @@ public class InActivityDatas implements Serializable {
 	/**
 	 * 报名用户id
 	 */
+	@ApiModelProperty(value = "报名用户id", name = "uId", required = true)
 	private Long uId;
 	/**
 	 * 参加时间
 	 */
-	@ApiModelProperty(value = "参加时间", name = "dTime", required = true)
+	@ApiModelProperty(value = "参加时间", name = "dTime", required = false)
 	private Date dTime;
 
 

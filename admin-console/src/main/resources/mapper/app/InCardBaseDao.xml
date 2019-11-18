@@ -13,9 +13,6 @@
     <select id="searchBaseByLike" resultType="io.information.modules.app.vo.CardBaseVo">
         SELECT * FROM (SELECT c_id,c_title FROM in_card_base ORDER BY c_like DESC) AS base LIMIT 5
     </select>
-    <select id="searchBaseByTime" resultType="io.information.modules.app.vo.DynamicCardVo">
-        SELECT * FROM (SELECT c_id,c_title,c_create_time FROM in_card_base ORDER BY c_create_time DESC) AS base LIMIT 5
-    </select>
     <update id="addReadNumber" parameterType="java.lang.Long">
          update in_card_base set c_read_number=#{number} where c_id=#{cId}
     </update>

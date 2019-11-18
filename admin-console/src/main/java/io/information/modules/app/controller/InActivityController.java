@@ -4,6 +4,7 @@ package io.information.modules.app.controller;
 import io.information.common.utils.IdGenerator;
 import io.information.common.utils.PageUtils;
 import io.information.common.utils.R;
+import io.information.common.utils.ResultUtil;
 import io.information.modules.app.annotation.Login;
 import io.information.modules.app.annotation.LoginUser;
 import io.information.modules.app.entity.InActivity;
@@ -52,14 +53,14 @@ public class InActivityController {
      */
     @Login
     @PostMapping("/save")
-    @ApiOperation(value = "新增咨讯活动", httpMethod = "POST")
-    public R save(@RequestBody InActivity activity, @ApiIgnore @LoginUser InUser user) {
+    @ApiOperation(value = "新增咨讯活动", httpMethod = "POST", response = InActivity.class)
+    public ResultUtil<InActivity> save(@RequestBody InActivity activity, @ApiIgnore @LoginUser InUser user) {
         activity.setActId(IdGenerator.getId());
         activity.setActCreateTime(new Date());
         activity.setuId(user.getuId());
         activity.setActStatus(1);
         activityService.saveActivity(activity);
-        return R.ok();
+        return ResultUtil.ok();
     }
 
 
@@ -95,7 +96,8 @@ public class InActivityController {
     @ApiOperation(value = "获取已审核的咨讯活动", httpMethod = "GET", notes = "分页数据")
     @ApiImplicitParams({
             @ApiImplicitParam(value = "每页显示条数", name = "pageSize", required = true),
-            @ApiImplicitParam(value = "当前页数", name = "currPage", required = true)
+            @ApiImplicitParam(value = "当前页数", name = "currPage", required = true),
+            @ApiImplicitParam(value = "分类（-1：最新 0：全部 1：峰会 2：线上 3:其他", name = "type", required = true)
     })
     public R listOk(@RequestParam Map<String, Object> map) {
         PageUtils page = activityService.queryPage(map);
@@ -160,9 +162,9 @@ public class InActivityController {
      */
     @ApiOperation(value = "所有地区信息", httpMethod = "GET")
     @GetMapping("/listAll")
-    public R list(){
+    public R list() {
         Map<String, List<SysCitysEntity>> listAll = sysCitysService.getListAll("citys");
-        return R.ok().put("citys",listAll );
+        return R.ok().put("citys", listAll);
     }
 
 
@@ -170,7 +172,7 @@ public class InActivityController {
      * 活动报名
      */
     @Login
-    @ApiOperation(value = "活动报名", httpMethod = "POST", notes = "活动数据集合[datasList]")
+    @ApiOperation(value = "活动报名", httpMethod = "POST", notes = "活动数据集合[datasList]", response = InActivityDatas.class)
     @PostMapping("/join")
     public R join(@RequestBody List<InActivityDatas> datasList, @ApiIgnore @LoginUser InUser user) {
         InActivityDatas data = datasList.get(0);

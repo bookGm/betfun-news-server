@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="io.information.modules.app.dao.InLogDao">
+    <select id="newDynamic" resultType="io.information.modules.app.entity.InLog">
+        SELECT * FROM in_log WHERE l_target_type = 1 AND l_do IN(3,4) ORDER BY l_time DESC LIMIT 5
+    </select>
+</mapper>

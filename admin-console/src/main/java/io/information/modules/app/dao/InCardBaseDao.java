@@ -48,12 +48,6 @@ public interface InCardBaseDao extends BaseMapper<InCardBase> {
     List<CardBaseVo> searchBaseByLike();
 
     /**
-     * 查询帖子ID、标题和创建时间
-     * 取前5条
-     */
-    List<DynamicCardVo> searchBaseByTime();
-
-    /**
      * 增加访问量
      *
      */

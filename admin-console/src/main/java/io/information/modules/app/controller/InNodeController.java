@@ -3,7 +3,6 @@ package io.information.modules.app.controller;
 import io.information.common.utils.*;
 import io.information.modules.app.annotation.Login;
 import io.information.modules.app.annotation.LoginUser;
-import io.information.modules.app.entity.InCard;
 import io.information.modules.app.entity.InNode;
 import io.information.modules.app.entity.InUser;
 import io.information.modules.app.service.IInNodeService;
@@ -208,7 +207,7 @@ public class InNodeController {
      * 专栏社区
      */
     @GetMapping("/special")
-    @ApiOperation(value = "专栏社区列表", httpMethod = "GET", response = InUser.class)
+    @ApiOperation(value = "专栏社区列表", httpMethod = "GET", response = UserNodeVo.class)
     @ApiImplicitParams({
             @ApiImplicitParam(value = "每页显示条数", name = "pageSize", required = true),
             @ApiImplicitParam(value = "当前页数", name = "currPage", required = true),
@@ -222,9 +221,9 @@ public class InNodeController {
             "    \"totalCount\": \"总条数\",\r\n" +
             "    \"totalPage\": \"总页数\"\r\n" +
             "  }"))
-    public R special(@RequestParam Map<String, Object> map) {
-        Map<String, Object> userMap = nodeService.special(map);
-        return R.ok().put("userMap", userMap);
+    public ResultUtil special(@RequestParam Map<String, Object> map) {
+        PageUtils<List<UserNodeVo>> page = nodeService.special(map);
+        return ResultUtil.ok(page);
     }
 
 
@@ -265,16 +264,13 @@ public class InNodeController {
     }
 
 
-    //最新动态 TODO
-    //获取5条回复  获取5条发布帖子  按时间排序  再取前5条
-
     /**
      * 最新动态
      */
-    @GetMapping("/newDynamic")
-    @ApiOperation(value = "社区 -- 最新动态[5条]", httpMethod = "GET", response = NewDynamicVo.class)
-    public ResultUtil<NewDynamicVo> newDynamic() {
-        NewDynamicVo newDynamicVo = nodeService.newDynamic();
-        return ResultUtil.ok(newDynamicVo);
+    @GetMapping("/dynamic")
+    @ApiOperation(value = "社区 -- 最新动态[5条]", httpMethod = "GET",response = DynamicVo.class)
+    public ResultUtil newDynamic() {
+        List<DynamicVo> list = nodeService.newDynamic();
+        return ResultUtil.ok(list);
     }
 }

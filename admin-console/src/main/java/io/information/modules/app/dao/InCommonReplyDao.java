@@ -19,9 +19,4 @@ import java.util.List;
 @Mapper
 public interface InCommonReplyDao extends BaseMapper<InCommonReply> {
 
-    /**
-     * 查询评论ID、评论目标名称和评论时间
-     * 根据创建时间排序
-     */
-	List<DynamicReplyVo> searchReplyByTime();
 }
