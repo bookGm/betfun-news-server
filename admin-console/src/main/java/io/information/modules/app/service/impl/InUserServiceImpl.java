@@ -1,5 +1,7 @@
 package io.information.modules.app.service.impl;
 
+import com.alibaba.druid.support.json.JSONUtils;
+import com.alibaba.fastjson.JSONArray;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -88,18 +90,20 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
     }
 
     @Override
-    //status为0则不是人物
     @HashCacheable(key = RedisKeys.FOCUS, keyField = "#uId-#status-#fId")
     public String focus(Long uId, Integer status,Long fId) {
         this.baseMapper.addFans(uId);
         this.baseMapper.addFocus(fId);
-        return String.valueOf(fId);
+        return String.valueOf(status);
     }
-
 
     @Override
     public Boolean isFocus(Long tId, Long uId) {
-        return redisUtils.hashHasKey(RedisKeys.FOCUS, uId + "-*-" + tId);
+        Object obj = redisUtils.hfget(RedisKeys.FOCUS, uId + "-*-" + tId);
+        return null != obj && ((List) obj).size() > 0;
+//        JSONArray array = JsonUtil.parseJSONArray(JsonUtil.toJSONString(obj));
+//        String flag = array.getJSONObject(0).getString("value");
+//        return "true".equalsIgnoreCase(flag);
     }
 
     @Override

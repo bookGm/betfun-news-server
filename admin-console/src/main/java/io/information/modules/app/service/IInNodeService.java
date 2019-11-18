@@ -31,7 +31,7 @@ public interface IInNodeService extends IService<InNode> {
 
     Map<Integer, List<InUser>> star(Map<String, Object> map);
 
-    Long focus(Long uId, Long noId, Long type);
+    String focus(Long uId, Long noId, Long type);
 
     CardUserVo cardRecommended(Map<String, Object> map);
 

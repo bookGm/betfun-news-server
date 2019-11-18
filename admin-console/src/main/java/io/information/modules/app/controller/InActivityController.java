@@ -93,15 +93,15 @@ public class InActivityController {
      * 列表
      */
     @GetMapping("/list")
-    @ApiOperation(value = "获取已审核的咨讯活动", httpMethod = "GET", notes = "分页数据")
+    @ApiOperation(value = "获取已审核的咨讯活动", httpMethod = "GET", notes = "分页数据", response = InActivity.class)
     @ApiImplicitParams({
             @ApiImplicitParam(value = "每页显示条数", name = "pageSize", required = true),
             @ApiImplicitParam(value = "当前页数", name = "currPage", required = true),
             @ApiImplicitParam(value = "分类（-1：最新 0：全部 1：峰会 2：线上 3:其他", name = "type", required = true)
     })
-    public R listOk(@RequestParam Map<String, Object> map) {
+    public ResultUtil listOk(@RequestParam Map<String, Object> map) {
         PageUtils page = activityService.queryPage(map);
-        return R.ok().put("page", page);
+        return ResultUtil.ok(page);
     }
 
     /**

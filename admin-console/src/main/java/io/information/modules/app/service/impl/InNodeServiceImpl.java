@@ -1,5 +1,6 @@
 package io.information.modules.app.service.impl;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -134,23 +135,30 @@ public class InNodeServiceImpl extends ServiceImpl<InNodeDao, InNode> implements
             queryWrapper.eq(InCardBase::getNoId, noId);
         }
         if (null != map.get("cCategory") && StringUtil.isNotBlank(map.get("cCategory"))) {
-            int type = Integer.parseInt(String.valueOf(map.get("cCategory")));
-            switch (type) {
-                case 0: //投票
-                    queryWrapper.eq(InCardBase::getcCategory, 2);
+            int cCategory = Integer.parseInt(String.valueOf(map.get("cCategory")));
+//            queryWrapper.eq(InCardBase::getcCategory, cCategory);
+            switch (cCategory) {
+                case 0: //全部
+                    queryWrapper.orderByDesc(InCardBase::getcReadNumber);
                     break;
-                case 1: //辩论
-                    queryWrapper.eq(InCardBase::getcCategory, 1);
+                case 1: //投票
+                    queryWrapper.eq(InCardBase::getcCategory, cCategory);
+                    break;
+                case 2: //辩论
+                    queryWrapper.eq(InCardBase::getcCategory, cCategory);
                     break;
             }
         }
         if (null != map.get("type") && StringUtil.isNotBlank(map.get("type"))) {
             int type = Integer.parseInt(String.valueOf(map.get("type")));
             switch (type) {
-                case 0: //最新
+                case 0: //默认
+                    queryWrapper.orderByDesc(InCardBase::getcReadNumber);
+                    break;
+                case 1: //最新
                     queryWrapper.orderByDesc(InCardBase::getcCreateTime);
                     break;
-                case 1: //最热
+                case 2: //最热
                     queryWrapper.orderByDesc(InCardBase::getcLike);
                     break;
             }
@@ -216,14 +224,15 @@ public class InNodeServiceImpl extends ServiceImpl<InNodeDao, InNode> implements
 
     @Override
     @HashCacheable(key = RedisKeys.NODES, keyField = "#uId-#type-#noId")
-    public Long focus(Long uId, Long noId, Long type) {
+    public String focus(Long uId, Long noId, Long type) {
         this.baseMapper.increaseFocus(noId);
-        return noId;
+        return String.valueOf(type);
     }
 
     @Override
     public Boolean isFocus(Long uId, Long noId) {
-        return redisUtils.hashHasKey(RedisKeys.NODES, uId + "-*-" + noId);
+        Object obj = redisUtils.hfget(RedisKeys.NODES, uId + "-*-" + noId);
+        return null != obj && ((List) obj).size() > 0;
     }
 
     @Override

@@ -162,8 +162,8 @@ public class InNodeController {
     @ApiImplicitParams({
             @ApiImplicitParam(value = "每页显示条数", name = "pageSize", required = true),
             @ApiImplicitParam(value = "当前页数", name = "currPage", required = true),
-            @ApiImplicitParam(value = "帖子类型（0：投票 1：辩论）", name = "cCategory", required = false),
-            @ApiImplicitParam(value = "拍讯方式（0：最新 1：最热）", name = "type", required = false)
+            @ApiImplicitParam(value = "帖子类型（0：全部 1：投票 2：辩论）", name = "cCategory", required = false),
+            @ApiImplicitParam(value = "拍讯方式（0：默认 1：最新 2：最热）", name = "type", required = false)
     })
     public ResultUtil<PageUtils<UserCardVo>> list(@RequestParam Map<String, Object> map) {
         PageUtils<UserCardVo> page = nodeService.cardList(map);

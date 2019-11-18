@@ -74,7 +74,7 @@ public class InActivityServiceImpl extends ServiceImpl<InActivityDao, InActivity
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
         LambdaQueryWrapper<InActivity> queryWrapper = new LambdaQueryWrapper<>();
-        if (params.containsKey("type") && StringUtil.isNotBlank(params.get("type"))) {
+        if (null != params.get("type") && StringUtil.isNotBlank(params.get("type"))) {
             int type = Integer.parseInt(String.valueOf(params.get("type")));
             switch (Integer.parseInt(String.valueOf(params.get("type")))) {
                 case -1: //最新发布
