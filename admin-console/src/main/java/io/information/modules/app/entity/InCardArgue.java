@@ -78,6 +78,11 @@ public class InCardArgue implements Serializable {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date caCloseTime;
 
+    /**
+     * 裁判
+     */
+    @ApiModelProperty(value = "裁判", name = "caReferee", required = false)
+    private String caReferee;
 
     public Long getcId() {
         return cId;
@@ -149,5 +154,13 @@ public class InCardArgue implements Serializable {
 
     public void setCaRsideDebater(Integer caRsideDebater) {
         this.caRsideDebater = caRsideDebater;
+    }
+
+    public String getCaReferee() {
+        return caReferee;
+    }
+
+    public void setCaReferee(String caReferee) {
+        this.caReferee = caReferee;
     }
 }

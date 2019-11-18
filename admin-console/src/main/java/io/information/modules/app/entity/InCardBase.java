@@ -39,6 +39,14 @@ public class InCardBase implements Serializable {
     private Long uId;
 
     /**
+     * 用户昵称
+     */
+    @TableField(exist = false)
+    @ApiModelProperty(value = "用户昵称", name = "uNick", required = false)
+    private String uNick;
+
+
+    /**
      * 节点id
      */
     @ApiModelProperty(value = "节点id", name = "noId")
@@ -55,6 +63,14 @@ public class InCardBase implements Serializable {
      */
     @ApiModelProperty(value = "节点分类", name = "cNodeCategory", required = true)
     private Integer cNodeCategory;
+
+    /**
+     * 帖子节点分类
+     */
+    @TableField(exist = false)
+    @ApiModelProperty(value = "节点分类值", name = "cNodeCategoryValue", required = false)
+    private String cNodeCategoryValue;
+
     /**
      * 帖子标题
      */
@@ -219,5 +235,21 @@ public class InCardBase implements Serializable {
 
     public void setcSimpleTime(String cSimpleTime) {
         this.cSimpleTime = cSimpleTime;
+    }
+
+    public String getuNick() {
+        return uNick;
+    }
+
+    public void setuNick(String uNick) {
+        this.uNick = uNick;
+    }
+
+    public String getcNodeCategoryValue() {
+        return cNodeCategoryValue;
+    }
+
+    public void setcNodeCategoryValue(String cNodeCategoryValue) {
+        this.cNodeCategoryValue = cNodeCategoryValue;
     }
 }

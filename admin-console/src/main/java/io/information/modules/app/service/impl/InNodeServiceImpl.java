@@ -166,7 +166,7 @@ public class InNodeServiceImpl extends ServiceImpl<InNodeDao, InNode> implements
             InUser user = userService.getById(base.getuId() == null ? 0 : base.getuId());
             if (null != user) {
                 cardVo.setuId(id);
-                cardVo.setuName(user.getuName());
+                cardVo.setuName(user.getuNick());
                 cardVo.setuPhoto(user.getuPhoto());
                 String simpleTime = DateUtils.getSimpleTime(base.getcCreateTime() == null ? new Date() : base.getcCreateTime());
                 cardVo.setTime(simpleTime);
@@ -183,7 +183,7 @@ public class InNodeServiceImpl extends ServiceImpl<InNodeDao, InNode> implements
             }
             if (null != user) {
                 cardVo.setuId(id);
-                cardVo.setuName(user.getuName() == null ? "" : user.getuName());
+                cardVo.setuName(user.getuNick());
                 cardVo.setuPhoto(user.getuPhoto());
                 String simpleTime = DateUtils.getSimpleTime(base.getcCreateTime() == null ? new Date() : base.getcCreateTime());
                 cardVo.setTime(simpleTime);

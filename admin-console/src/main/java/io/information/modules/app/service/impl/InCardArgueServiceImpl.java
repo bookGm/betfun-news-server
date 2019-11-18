@@ -37,7 +37,7 @@ public class InCardArgueServiceImpl extends ServiceImpl<InCardArgueDao, InCardAr
 
 
     @Override
-    @HashCacheable(key = RedisKeys.SUPPORT, keyField = "#cid-#uid-#sIndex")
+    @HashCacheable(key = RedisKeys.SUPPORT, keyField = "#cid-#uid")
     public String support(Long cid, Long uid, Integer sIndex) {
         InCardArgue argue = this.getById(cid);
         switch (sIndex) {
@@ -58,7 +58,7 @@ public class InCardArgueServiceImpl extends ServiceImpl<InCardArgueDao, InCardAr
 
 
     @Override
-    @HashCacheable(key = RedisKeys.JOIN, keyField = "#cid-#uid-#jIndex")
+    @HashCacheable(key = RedisKeys.JOIN, keyField = "#cid-#uid")
     public String join(Long cid, Long uid, Integer jIndex) {
         InCardArgue argue = this.getById(cid);
         switch (jIndex) {

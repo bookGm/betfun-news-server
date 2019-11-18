@@ -9,10 +9,7 @@ import com.guansuo.newsenum.NewsEnum;
 import io.information.common.utils.*;
 import io.information.modules.app.dao.InCardBaseDao;
 import io.information.modules.app.entity.*;
-import io.information.modules.app.service.IInCardArgueService;
-import io.information.modules.app.service.IInCardBaseService;
-import io.information.modules.app.service.IInCardService;
-import io.information.modules.app.service.IInCardVoteService;
+import io.information.modules.app.service.*;
 import io.information.modules.app.vo.CardArgueVo;
 import io.mq.utils.Constants;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -37,6 +34,10 @@ public class InCardServiceImpl extends ServiceImpl<InCardBaseDao, InCardBase> im
     RedisUtils redisUtils;
     @Autowired
     IInCardVoteService iInCardVoteService;
+    @Autowired
+    DicHelper dicHelper;
+    @Autowired
+    IInUserService iInUserService;
 
 
     @Override
@@ -81,6 +82,14 @@ public class InCardServiceImpl extends ServiceImpl<InCardBaseDao, InCardBase> im
     public InCard details(Long cId,Object uId) {
         InCard card = new InCard();
         InCardBase base = baseService.getById(cId);
+        if(null!=base.getcNodeCategory()){
+            base.setcNodeCategoryValue(dicHelper.getDicName(base.getcNodeCategory().longValue()));
+        }
+        Long uid=0L;
+        if(StringUtil.isNotBlank(uId)){
+            uid=Long.parseLong(String.valueOf(uId));
+            base.setuNick(iInUserService.getById(uid).getuNick());;
+        }
         if (null != base) {
             card.setBase(base);
             if (null != base.getcCategory()) {
@@ -93,16 +102,12 @@ public class InCardServiceImpl extends ServiceImpl<InCardBaseDao, InCardBase> im
                 if (2 == category) {
                     //投票帖子
                     InCardVote vote = voteService.getById(base.getcId());
-                    if(StringUtil.isBlank(uId)){
+                    String optIndexs=iInCardVoteService.vote(cId,uid,null);
+                    if(StringUtil.isBlank(optIndexs)){
                         vote.setVote(false);
                     }else{
-                        String optIndexs=iInCardVoteService.vote(cId,Long.parseLong(String.valueOf(uId)),null);
-                        if(StringUtil.isBlank(optIndexs)){
-                            vote.setVote(false);
-                        }else{
-                            vote.setOptIndexs(optIndexs);
-                            vote.setVote(true);
-                        }
+                        vote.setOptIndexs(optIndexs);
+                        vote.setVote(true);
                     }
                     card.setVote(vote);
                 }
@@ -178,12 +183,12 @@ public class InCardServiceImpl extends ServiceImpl<InCardBaseDao, InCardBase> im
     public CardArgueVo loginArgue(Long cId, Long uId) {
         //模糊查询出某类的key  #cid-#uid-#sIndex
         CardArgueVo argueVo = new CardArgueVo();
-        List<Map.Entry<Object, Object>> smap = redisUtils.hfget(RedisKeys.SUPPORT, cId + "-" + uId + "-*");
-        List<Map.Entry<Object, Object>> jmap = redisUtils.hfget(RedisKeys.JOIN, cId + "-" + uId + "-*");
+        List<Map.Entry<Object, Object>> smap = redisUtils.hfget(RedisKeys.SUPPORT, cId + "-" + uId);
+        List<Map.Entry<Object, Object>> jmap = redisUtils.hfget(RedisKeys.JOIN, cId + "-" + uId);
         //查询支持状态
         if (null != smap && smap.size() > 0) {
             for (Map.Entry<Object, Object> obj : smap) {
-                int sStatus = Integer.parseInt(String.valueOf(obj.getKey()));
+                int sStatus = Integer.parseInt(String.valueOf(obj.getValue()));
                 argueVo.setIsSupport(sStatus);
             }
         } else {
@@ -192,11 +197,11 @@ public class InCardServiceImpl extends ServiceImpl<InCardBaseDao, InCardBase> im
         //查询加入状态
         if (null != jmap && jmap.size() > 0) {
             for (Map.Entry<Object, Object> obj : jmap) {
-                int jStatus = Integer.parseInt(String.valueOf(obj.getKey()));
+                int jStatus = Integer.parseInt(String.valueOf(obj.getValue()));
                 argueVo.setIsJoin(jStatus);
             }
         } else {
-            argueVo.setIsSupport(2);
+            argueVo.setIsJoin(2);
         }
 
         return argueVo;

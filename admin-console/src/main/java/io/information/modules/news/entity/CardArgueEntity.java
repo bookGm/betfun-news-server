@@ -52,6 +52,11 @@ public class CardArgueEntity implements Serializable {
 	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
 	private Date caCloseTime;
 
+	/**
+	 * 裁判
+	 */
+	private String caReferee;
+
 
 	public Long getcId() {
 		return cId;
@@ -107,5 +112,13 @@ public class CardArgueEntity implements Serializable {
 
 	public void setBaseCard(CardBaseEntity baseCard) {
 		this.baseCard = baseCard;
+	}
+
+	public String getCaReferee() {
+		return caReferee;
+	}
+
+	public void setCaReferee(String caReferee) {
+		this.caReferee = caReferee;
 	}
 }
