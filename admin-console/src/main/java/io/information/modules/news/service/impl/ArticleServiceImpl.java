@@ -155,7 +155,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleDao, ArticleEntity> i
      *
      * @param author
      */
-    void saveAuthor(AuthorInfoVo author, Long uId) {
+    void saveAuthor(AuthorInfoVo author) {
         //用户id
         String authorId = author.getId();
         if (redisUtils.isFuzzyEmpty(RedisKeys.AUTHORID)) {
@@ -171,7 +171,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleDao, ArticleEntity> i
         }
         redisUtils.set(RedisKeys.AUTHORID + authorId, authorId);
         UserEntity user = new UserEntity();
-        user.setuId(uId);
+        user.setuId(Long.parseLong(authorId));
         user.setuAccount(authorId);
         user.setuAuthStatus(Integer.parseInt(NewsEnum.用户认证状态_审核通过.getCode()));
         user.setuAuthType(Integer.parseInt(NewsEnum.用户认证类型_个人.getCode()));
@@ -221,11 +221,10 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleDao, ArticleEntity> i
                 try {
                     if (null != list && list.size() > 0) {
                         v = list.get(0);
-                        Long uid = IdGenerator.getId();
                         //保存文章
-                        saveArticle(v, b, hashSet, uid);
+                        saveArticle(v, b, hashSet, Long.parseLong(b.getAuthor_info().getId()));
                         //保存作者
-                        saveAuthor(b.getAuthor_info(), uid);
+                        saveAuthor(b.getAuthor_info());
                     }
                 } catch (Exception e) {
                     LOG.error("同步文章异常：---------------------", e.getMessage());

@@ -1,5 +1,6 @@
 package io.information.listener;
 
+import com.guansuo.common.JsonUtil;
 import io.information.common.utils.IdGenerator;
 import io.information.modules.app.entity.InCardBase;
 import io.information.modules.app.entity.InLog;
@@ -33,7 +34,8 @@ public class LogListener {
             exchange = @Exchange(name = Constants.logExchange),
             key = Constants.log_Save_RouteKey
     ))
-    public void created(InLog log) {
+    public void created(String l) {
+        InLog log=JsonUtil.parseObject(l,InLog.class);
         InUser u=iInUserService.getById(log.getlOperateId());
         if(1==log.getlTargetType()){
             InCardBase c=iInCardService.getById(log.getlTargetId());
@@ -44,7 +46,6 @@ public class LogListener {
             log.setlTargetName(tu.getuNick());
         }
         log.setlOperateName(u.getuNick());
-
         iInLogService.save(log);
     }
 

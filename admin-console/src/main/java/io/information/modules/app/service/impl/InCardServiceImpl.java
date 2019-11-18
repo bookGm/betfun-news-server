@@ -3,6 +3,7 @@ package io.information.modules.app.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.guansuo.common.JsonUtil;
 import com.guansuo.common.StringUtil;
 import com.guansuo.newsenum.NewsEnum;
 import io.information.common.utils.*;
@@ -69,7 +70,7 @@ public class InCardServiceImpl extends ServiceImpl<InCardBaseDao, InCardBase> im
         log.setlTargetType(1);
         log.setlDo(Integer.parseInt(e.getCode()));
         log.setlTime(new Date());
-        rabbitTemplate.convertAndSend(Constants.logExchange, Constants.log_Save_RouteKey, log);
+        rabbitTemplate.convertAndSend(Constants.logExchange, Constants.log_Save_RouteKey, JsonUtil.toJSONString(log));
     }
 
 

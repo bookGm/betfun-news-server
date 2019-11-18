@@ -159,19 +159,23 @@ public class InNodeServiceImpl extends ServiceImpl<InNodeDao, InNode> implements
             UserCardVo cardVo = new UserCardVo();
             Long id = base.getuId();
             InUser user = userService.getById(base.getuId() == null ? 0 : base.getuId());
-            cardVo.setuId(id);
-            cardVo.setuName(user.getuName());
-            cardVo.setuPhoto(user.getuPhoto());
-            String simpleTime = DateUtils.getSimpleTime(base.getcCreateTime() == null ? new Date() : base.getcCreateTime());
-            cardVo.setTime(simpleTime);
-            InDic dic = dicService.getById(base.getcNodeCategory() == null ? 0 : base.getcNodeCategory());
-            cardVo.setType(dic.getdName());
-            cardVo.setcId(base.getcId());
-            cardVo.setcTitle(base.getcTitle());
-            cardVo.setcId(base.getcId());
-            cardVo.setReadNumber(base.getcReadNumber());
-            cardVo.setReplyNumber(base.getcCritic());
-            list.add(cardVo);
+            if(null!=user){
+                cardVo.setuId(id);
+                cardVo.setuName(user.getuName());
+                cardVo.setuPhoto(user.getuPhoto());
+                String simpleTime = DateUtils.getSimpleTime(base.getcCreateTime() == null ? new Date() : base.getcCreateTime());
+                cardVo.setTime(simpleTime);
+                InDic dic = dicService.getById(base.getcNodeCategory() == null ? 0 : base.getcNodeCategory());
+                if(null!=dic){
+                    cardVo.setType(dic.getdName());
+                    cardVo.setcId(base.getcId());
+                    cardVo.setcTitle(base.getcTitle());
+                    cardVo.setcId(base.getcId());
+                    cardVo.setReadNumber(base.getcReadNumber());
+                    cardVo.setReplyNumber(base.getcCritic());
+                    list.add(cardVo);
+                }
+            }
         }
         int total = (int) page.getTotal();
         return new PageUtils(list, total, pageSize, currPage);

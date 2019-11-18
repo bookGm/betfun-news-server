@@ -27,8 +27,8 @@ import java.util.Map;
 public class InCardVoteServiceImpl extends ServiceImpl<InCardVoteDao, InCardVote> implements IInCardVoteService {
 
     @Override
-    @HashCacheable(key = RedisKeys.VOTE, keyField = "#cid-#uid")
-    public String vote(Long cid, Long uid, List<Integer> optIndex) {
+//    @HashCacheable(key = RedisKeys.VOTE, keyField = "#cid-#uid")
+    public String vote(Long cid, Long uid, Integer[] optIndex) {
         for (int index : optIndex) {
             this.baseMapper.addVote(cid, index);
         }

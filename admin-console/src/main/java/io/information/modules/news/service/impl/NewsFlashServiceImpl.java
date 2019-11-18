@@ -91,7 +91,7 @@ public class NewsFlashServiceImpl extends ServiceImpl<NewsFlashDao, NewsFlash> i
                  n.setnCreateTime(new Date(se.getCreated_at()*1000));
                  this.save(n);
                  rabbitTemplate.convertAndSend(Constants.flashExchange,
-                         Constants.flash_Delete_RouteKey, DataUtils.copyData(n, EsFlashEntity.class));
+                         Constants.flash_Save_RouteKey, DataUtils.copyData(n, EsFlashEntity.class));
              }
              jinse=null;
              jinseList=null;
