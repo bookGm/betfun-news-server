@@ -352,13 +352,13 @@ public class InUserController extends AbstractController {
 
     /**
      * 个人消息 -- 系统
-     * TODO
      */
     @Login
     @GetMapping("/system")
 //    @ApiOperation(value = "个人消息 -- 系统", httpMethod = "GET", notes = "分页数据")
     public R system(@RequestParam Map<String, Object> params, @ApiIgnore @LoginUser InUser user) {
         params.put("uId", user.getuId());
+        //TODO 未完成
         return R.ok();
     }
 
@@ -536,5 +536,18 @@ public class InUserController extends AbstractController {
         } else {
             return ResultUtil.error("收藏删除失败，请重试");
         }
+    }
+
+    @GetMapping("/esSave")
+    public R esSave(){
+        List<InUser> users = userService.all();
+        List<EsUserEntity> uEsList = BeanHelper.copyWithCollection(users, EsUserEntity.class);
+       if(null != uEsList){
+           for (EsUserEntity esUser : uEsList) {
+               rabbitTemplate.convertAndSend(Constants.userExchange,
+                       Constants.user_Save_RouteKey, esUser);
+           }
+       }
+        return R.ok();
     }
 }

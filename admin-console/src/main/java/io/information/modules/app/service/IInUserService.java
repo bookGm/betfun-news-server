@@ -58,4 +58,7 @@ public interface IInUserService extends IService<InUser> {
     Boolean isFocus(Long tId, Long uId);
 
     PageUtils<InCommonReply> commentUser(Map<String, Object> map);
+
+    List<InUser> all();
+
 }

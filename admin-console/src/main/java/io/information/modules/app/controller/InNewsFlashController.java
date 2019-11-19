@@ -1,7 +1,6 @@
 package io.information.modules.app.controller;
 
 
-import com.guansuo.common.StringUtil;
 import io.elasticsearch.entity.EsFlashEntity;
 import io.information.common.utils.BeanHelper;
 import io.information.common.utils.IdGenerator;
@@ -25,6 +24,7 @@ import springfox.documentation.annotations.ApiIgnore;
 
 import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -117,6 +117,19 @@ public class InNewsFlashController {
     })
     public R attitude(@RequestParam("nId") Long nId, @RequestParam("bId") Integer bId, @ApiIgnore @LoginUser InUser user) {
         newsFlashService.attitude(nId, user.getuId(), bId);
+        return R.ok();
+    }
+
+    @GetMapping("/esSave")
+    public R esSave(){
+        List<InNewsFlash> users = newsFlashService.all();
+        List<EsFlashEntity> fEsList = BeanHelper.copyWithCollection(users, EsFlashEntity.class);
+        if(null != fEsList){
+            for (EsFlashEntity esFlash : fEsList) {
+                rabbitTemplate.convertAndSend(Constants.flashExchange,
+                        Constants.flash_Save_RouteKey, esFlash);
+            }
+        }
         return R.ok();
     }
 }

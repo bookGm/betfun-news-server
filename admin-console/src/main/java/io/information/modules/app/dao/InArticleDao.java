@@ -81,4 +81,9 @@ public interface InArticleDao extends BaseMapper<InArticle> {
      * 获取用户所有文章ID
      */
     List<Long> allAId(@Param("uId") Long uId);
+
+    /**
+     * 查询所有文章
+     */
+    List<InArticle> all();
 }

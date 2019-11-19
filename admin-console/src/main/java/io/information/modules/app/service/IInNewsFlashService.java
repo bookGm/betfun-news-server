@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import io.information.common.utils.PageUtils;
 import io.information.modules.app.entity.InNewsFlash;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -26,4 +27,7 @@ public interface IInNewsFlashService extends IService<InNewsFlash> {
      * @return
      */
     String attitude(Long nId,Long uId,Integer bId);
+
+    List<InNewsFlash> all();
+
 }

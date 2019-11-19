@@ -12,8 +12,8 @@ public class UserCardVo implements Serializable {
     @ApiModelProperty(value = "用户ID", name = "uId")
     private Long uId;
 
-    @ApiModelProperty(value = "用户昵称", name = "uName")
-    private String uName;
+    @ApiModelProperty(value = "用户昵称", name = "uNick")
+    private String uNick;
 
     @ApiModelProperty(value = "用户头像", name = "uPhoto")
     private String uPhoto;
@@ -44,12 +44,12 @@ public class UserCardVo implements Serializable {
         this.uId = uId;
     }
 
-    public String getuName() {
-        return uName;
+    public String getuNick() {
+        return uNick;
     }
 
-    public void setuName(String uName) {
-        this.uName = uName;
+    public void setuNick(String uNick) {
+        this.uNick = uNick;
     }
 
     public String getuPhoto() {

@@ -4,6 +4,8 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import io.information.modules.app.entity.InUser;
 import org.apache.ibatis.annotations.Mapper;
 
+import java.util.List;
+
 /**
  * <p>
  * 资讯用户表 Mapper 接口
@@ -25,4 +27,9 @@ public interface InUserDao extends BaseMapper<InUser> {
      * @param uId
      */
      void addFocus(Long uId);
+
+    /**
+     * 查詢所有用戶
+     */
+    List<InUser> all();
 }

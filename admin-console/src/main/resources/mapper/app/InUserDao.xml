@@ -8,4 +8,7 @@
     <update id="addFocus" parameterType="java.lang.Long">
          update in_user set u_focus=u_focus+1 where u_id=#{uId}
     </update>
+    <select id="all" resultType="io.information.modules.app.entity.InUser">
+        select * from in_user
+    </select>
 </mapper>

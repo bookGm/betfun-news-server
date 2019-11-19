@@ -91,7 +91,7 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
 
     @Override
     @HashCacheable(key = RedisKeys.FOCUS, keyField = "#uId-#status-#fId")
-    public String focus(Long uId, Integer status,Long fId) {
+    public String focus(Long uId, Integer status, Long fId) {
         this.baseMapper.addFans(uId);
         this.baseMapper.addFocus(fId);
         return String.valueOf(status);
@@ -233,22 +233,24 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
             );
             ArrayList<UserCardVo> list = new ArrayList<>();
             for (InCardBase base : page.getRecords()) {
-                UserCardVo cardVo = new UserCardVo();
-                Long id = base.getuId();
-                InUser user = this.getById(base.getuId() == null ? 0 : base.getuId());
-                cardVo.setuId(id);
-                cardVo.setuName(user.getuName());
-                cardVo.setuPhoto(user.getuPhoto());
-                String simpleTime = DateUtils.getSimpleTime(base.getcCreateTime() == null ? new Date() : base.getcCreateTime());
-                cardVo.setTime(simpleTime);
-                InDic dic = dicService.getById(base.getcNodeCategory() == null ? 0 : base.getcNodeCategory());
-                cardVo.setType(dic.getdName());
-                cardVo.setcId(base.getcId());
-                cardVo.setcTitle(base.getcTitle());
-                cardVo.setcId(base.getcId());
-                cardVo.setReadNumber(base.getcReadNumber());
-                cardVo.setReplyNumber(base.getcCritic());
-                list.add(cardVo);
+                if (null != base.getuId() && StringUtil.isNotBlank(base.getuId())) {
+                    InUser user = this.getById(base.getuId());
+                    UserCardVo cardVo = BeanHelper.copyProperties(user, UserCardVo.class);
+                    if (null != cardVo) {
+                        String simpleTime = DateUtils.getSimpleTime(base.getcCreateTime() == null ? new Date() : base.getcCreateTime());
+                        cardVo.setTime(simpleTime);
+                        InDic dic = dicService.getById(base.getcNodeCategory() == null ? 0 : base.getcNodeCategory());
+                        if (null != dic) {
+                            cardVo.setType(dic.getdName());
+                            cardVo.setcId(base.getcId());
+                            cardVo.setcTitle(base.getcTitle());
+                            cardVo.setcId(base.getcId());
+                            cardVo.setReadNumber(base.getcReadNumber());
+                            cardVo.setReplyNumber(base.getcCritic());
+                        }
+                        list.add(cardVo);
+                    }
+                }
             }
             int total = (int) page.getTotal();
             return new PageUtils(list, total, pageSize, currPage);
@@ -535,4 +537,9 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
         return null;
     }
 
+
+    @Override
+    public List<InUser> all() {
+        return this.baseMapper.all();
+    }
 }

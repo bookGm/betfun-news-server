@@ -3,6 +3,7 @@ package io.information.modules.app.controller;
 
 import io.information.common.utils.PageUtils;
 import io.information.common.utils.R;
+import io.information.common.utils.ResultUtil;
 import io.information.modules.app.service.IInCardBaseService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -44,6 +45,16 @@ public class InCardBaseController {
     public R status(@RequestParam Map<String, Object> map) {
         PageUtils page = cardBaseService.queryPage(map);
         return R.ok().put("page", page);
+    }
+
+
+    /**
+     * 最新动态
+     */
+    @GetMapping("/text")
+    public ResultUtil text(@RequestParam Map<String,Object> map) {
+        PageUtils page = cardBaseService.text(map);
+        return ResultUtil.ok(page);
     }
 
 }

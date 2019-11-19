@@ -45,4 +45,6 @@ public interface IInArticleService extends IService<InArticle> {
     String collect(Long id,Long tId,int type, Long uid);
 
     TagArticleVo tagArticle(Map<String, Object> map);
+
+    List<InArticle> all();
 }

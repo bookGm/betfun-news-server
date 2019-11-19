@@ -38,4 +38,14 @@ public class InCardBaseServiceImpl extends ServiceImpl<InCardBaseDao, InCardBase
     public void updateReadNumber(long number, Long cId) {
         this.baseMapper.addReadNumber(number, cId);
     }
+
+    @Override
+    public PageUtils text(Map<String, Object> map) {
+        LambdaQueryWrapper<InCardBase> queryWrapper = new LambdaQueryWrapper<>();
+        IPage<InCardBase> page = this.page(
+                new Query<InCardBase>().getPage(map),
+                queryWrapper
+        );
+        return new PageUtils(page);
+    }
 }

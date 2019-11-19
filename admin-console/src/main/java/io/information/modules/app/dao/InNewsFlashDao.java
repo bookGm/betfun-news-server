@@ -5,6 +5,8 @@ import io.information.modules.app.entity.InNewsFlash;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.List;
+
 /**
  * <p>
  * 资讯快讯表 Mapper 接口
@@ -25,4 +27,6 @@ public interface InNewsFlashDao extends BaseMapper<InNewsFlash> {
      * @param nId
      */
     void addNBad (@Param("nId")Long nId);
+
+    List<InNewsFlash> all();
 }

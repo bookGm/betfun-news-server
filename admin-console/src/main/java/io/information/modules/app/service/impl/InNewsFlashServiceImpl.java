@@ -15,6 +15,7 @@ import io.information.modules.app.entity.InNewsFlash;
 import io.information.modules.app.service.IInNewsFlashService;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Map;
 
 
@@ -54,5 +55,10 @@ public class InNewsFlashServiceImpl extends ServiceImpl<InNewsFlashDao, InNewsFl
             this.baseMapper.addNBull(nId);
         }
         return String.valueOf(bId);
+    }
+
+    @Override
+    public List<InNewsFlash> all() {
+        return this.baseMapper.all();
     }
 }

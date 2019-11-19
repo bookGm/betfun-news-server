@@ -252,4 +252,9 @@ public class InArticleServiceImpl extends ServiceImpl<InArticleDao, InArticle> i
         }
         return null;
     }
+
+    @Override
+    public List<InArticle> all() {
+        return this.baseMapper.all();
+    }
 }

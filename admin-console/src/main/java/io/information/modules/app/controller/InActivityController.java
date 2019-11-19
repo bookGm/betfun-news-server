@@ -97,7 +97,7 @@ public class InActivityController {
     @ApiImplicitParams({
             @ApiImplicitParam(value = "每页显示条数", name = "pageSize", required = true),
             @ApiImplicitParam(value = "当前页数", name = "currPage", required = true),
-            @ApiImplicitParam(value = "分类（-1：最新 0：全部 1：峰会 2：线上 3:其他", name = "type", required = true)
+            @ApiImplicitParam(value = "分类（-1：最新 0：全部 1：峰会 2：线上 3:其他）", name = "type", required = true)
     })
     public ResultUtil listOk(@RequestParam Map<String, Object> map) {
         PageUtils page = activityService.queryPage(map);
@@ -127,6 +127,14 @@ public class InActivityController {
     @ApiOperation(value = "查询单个活动信息", httpMethod = "GET", notes = "活动ID[actId]")
     public R info(@PathVariable("actId") Long actId) {
         InActivity activity = activityService.getById(actId);
+        String[] split = activity.getActAddr().split("-");
+        StringBuilder actAddName = new StringBuilder();
+        for (String s : split) {
+            long id = Long.parseLong(s);
+            String name = sysCitysService.getById(id).getName();
+            actAddName.append(name).append("-");
+        }
+        activity.setActAddrName(actAddName.toString());
         return R.ok().put("activity", activity);
     }
 

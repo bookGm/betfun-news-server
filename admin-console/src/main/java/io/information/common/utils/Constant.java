@@ -15,9 +15,17 @@ public class Constant {
      */
     public static final String PAGE = "page";
     /**
+     * 当前页码2
+     */
+    public static final String PAGESIZE = "pageSize";
+    /**
      * 每页显示记录数
      */
     public static final String LIMIT = "limit";
+    /**
+     * 每页显示记录数2
+     */
+    public static final String CURRPAGE = "currPage";
     /**
      * 排序字段
      */

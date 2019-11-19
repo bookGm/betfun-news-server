@@ -25,8 +25,6 @@ import static org.elasticsearch.index.query.QueryBuilders.multiMatchQuery;
 @Service
 public class UserEsServiceImpl implements UserEsService {
     @Autowired
-    private EsUserDao userDao;
-    @Autowired
     private ElasticsearchTemplate elasticsearchTemplate;
     @Autowired
     private IInArticleService articleService;

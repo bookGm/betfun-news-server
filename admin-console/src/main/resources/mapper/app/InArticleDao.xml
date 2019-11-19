@@ -32,4 +32,7 @@
     <select id="allAId" resultType="java.lang.Long" parameterType="java.lang.Long">
         select a_id from in_article where u_id = #{uId} ORDER BY a_create_time DESC
     </select>
+    <select id="all" resultType="io.information.modules.app.entity.InArticle">
+        select * from in_article
+    </select>
 </mapper>

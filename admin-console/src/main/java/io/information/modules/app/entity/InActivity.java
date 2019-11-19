@@ -63,11 +63,15 @@ public class InActivity implements Serializable {
     @ApiModelProperty(value = "活动分类", name = "actCategory", required = true, example = "0")
     private Integer actCategory;
 
+
     /**
      * 活动地址（省市县编码横线分隔）
      */
     @ApiModelProperty(value = "活动地址（省市县编码横线分隔）", name = "actAddr", required = true, example = "0-0-0")
     private String actAddr;
+    @ApiModelProperty(value = "活动分类字符串", name = "actAddrName")
+    @TableField(exist = false)
+    private String actAddrName;
 
     /**
      * 活动地址详情
@@ -104,7 +108,9 @@ public class InActivity implements Serializable {
      */
     @ApiModelProperty(value = "活动开始时间(yyyy-MM-dd HH:mm:ss)", name = "actStartTime", required = true)
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    @TableField(value = "act_start_time")
     private Date actStartTime;
+    //actStartTime
 
     /**
      * 活动结束时间
@@ -144,6 +150,15 @@ public class InActivity implements Serializable {
      */
     @TableField(exist = false)
     private String aSimpleTime;
+
+
+    public String getActAddrName() {
+        return actAddrName;
+    }
+
+    public void setActAddrName(String actAddrName) {
+        this.actAddrName = actAddrName;
+    }
 
     public Long getActId() {
         return actId;

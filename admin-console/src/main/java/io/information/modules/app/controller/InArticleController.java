@@ -107,7 +107,7 @@ public class InArticleController {
     public R delete(@RequestParam Long[] aIds, @ApiIgnore @LoginUser InUser user) {
         if (user.getuAuthStatus() == 2) {
             articleService.removeByIds(Arrays.asList(aIds));
-            String join = StringUtils.join(aIds,",");
+            String join = StringUtils.join(aIds, ",");
             rabbitTemplate.convertAndSend(Constants.articleExchange,
                     Constants.article_Delete_RouteKey, join);
             return R.ok();
@@ -375,5 +375,21 @@ public class InArticleController {
         return ResultUtil.ok(tagArticleVo);
     }
 
+
+    /**
+     * 添加ES -- 文章 使用一次
+     */
+    @GetMapping("/esSave")
+    public R esSave() {
+        List<InArticle> articles = articleService.all();
+        List<EsArticleEntity> aEsList = BeanHelper.copyWithCollection(articles, EsArticleEntity.class);
+        if (null != aEsList) {
+            for (EsArticleEntity esArticle : aEsList) {
+                rabbitTemplate.convertAndSend(Constants.articleExchange,
+                        Constants.article_Save_RouteKey, esArticle);
+            }
+        }
+        return R.ok();
+    }
 
 }

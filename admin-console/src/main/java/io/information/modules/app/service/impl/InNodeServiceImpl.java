@@ -1,6 +1,5 @@
 package io.information.modules.app.service.impl;
 
-import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -136,27 +135,15 @@ public class InNodeServiceImpl extends ServiceImpl<InNodeDao, InNode> implements
         }
         if (null != map.get("cCategory") && StringUtil.isNotBlank(map.get("cCategory"))) {
             int cCategory = Integer.parseInt(String.valueOf(map.get("cCategory")));
-//            queryWrapper.eq(InCardBase::getcCategory, cCategory);
-            switch (cCategory) {
-                case 0: //全部
-                    queryWrapper.orderByDesc(InCardBase::getcReadNumber);
-                    break;
-                case 1: //投票
-                    queryWrapper.eq(InCardBase::getcCategory, cCategory);
-                    break;
-                case 2: //辩论
-                    queryWrapper.eq(InCardBase::getcCategory, cCategory);
-                    break;
+            if (cCategory != 0) {
+                queryWrapper.eq(InCardBase::getcCategory, cCategory);
             }
         }
         if (null != map.get("type") && StringUtil.isNotBlank(map.get("type"))) {
             int type = Integer.parseInt(String.valueOf(map.get("type")));
             switch (type) {
-                case 0: //默认
-                    queryWrapper.orderByDesc(InCardBase::getcReadNumber);
-                    break;
                 case 1: //最新
-                    queryWrapper.orderByDesc(InCardBase::getcCreateTime);
+                    queryWrapper.orderByDesc(InCardBase::getcCreateTime).orderByDesc(InCardBase::getcReadNumber);
                     break;
                 case 2: //最热
                     queryWrapper.orderByDesc(InCardBase::getcLike);
@@ -169,42 +156,25 @@ public class InNodeServiceImpl extends ServiceImpl<InNodeDao, InNode> implements
         );
         ArrayList<UserCardVo> list = new ArrayList<>();
         for (InCardBase base : page.getRecords()) {
-            UserCardVo cardVo = new UserCardVo();
-            Long id = base.getuId();
-            InUser user = userService.getById(base.getuId() == null ? 0 : base.getuId());
-            if (null != user) {
-                cardVo.setuId(id);
-                cardVo.setuName(user.getuNick());
-                cardVo.setuPhoto(user.getuPhoto());
-                String simpleTime = DateUtils.getSimpleTime(base.getcCreateTime() == null ? new Date() : base.getcCreateTime());
-                cardVo.setTime(simpleTime);
-                InDic dic = dicService.getById(base.getcNodeCategory() == null ? 0 : base.getcNodeCategory());
-                if (null != dic) {
-                    cardVo.setType(dic.getdName());
-                    cardVo.setcId(base.getcId());
-                    cardVo.setcTitle(base.getcTitle());
-                    cardVo.setcId(base.getcId());
-                    cardVo.setReadNumber(base.getcReadNumber());
-                    cardVo.setReplyNumber(base.getcCritic());
-                    list.add(cardVo);
+            if (null != base.getuId() && StringUtil.isNotBlank(base.getuId())) {
+                InUser user = userService.getById(base.getuId());
+                if (null != user) {
+                    UserCardVo cardVo = BeanHelper.copyProperties(user, UserCardVo.class);
+                    if (null != cardVo) {
+                        String simpleTime = DateUtils.getSimpleTime(base.getcCreateTime() == null ? new Date() : base.getcCreateTime());
+                        cardVo.setTime(simpleTime);
+                        InDic dic = dicService.getById(base.getcNodeCategory() == null ? 0 : base.getcNodeCategory());
+                        if (null != dic) {
+                            cardVo.setType(dic.getdName());
+                            cardVo.setcId(base.getcId());
+                            cardVo.setcTitle(base.getcTitle());
+                            cardVo.setcId(base.getcId());
+                            cardVo.setReadNumber(base.getcReadNumber());
+                            cardVo.setReplyNumber(base.getcCritic());
+                        }
+                        list.add(cardVo);
+                    }
                 }
-            }
-            if (null != user) {
-                cardVo.setuId(id);
-                cardVo.setuName(user.getuNick());
-                cardVo.setuPhoto(user.getuPhoto());
-                String simpleTime = DateUtils.getSimpleTime(base.getcCreateTime() == null ? new Date() : base.getcCreateTime());
-                cardVo.setTime(simpleTime);
-                InDic dic = dicService.getById(base.getcNodeCategory() == null ? 0 : base.getcNodeCategory());
-                if (null != dic) {
-                    cardVo.setType(dic.getdName() == null ? "" : dic.getdName());
-                    cardVo.setcId(base.getcId());
-                    cardVo.setcTitle(base.getcTitle());
-                    cardVo.setcId(base.getcId());
-                    cardVo.setReadNumber(base.getcReadNumber());
-                    cardVo.setReplyNumber(base.getcCritic());
-                }
-                list.add(cardVo);
             }
         }
         int total = (int) page.getTotal();
