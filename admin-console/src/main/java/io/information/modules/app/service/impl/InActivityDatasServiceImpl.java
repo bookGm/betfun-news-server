@@ -1,5 +1,6 @@
 package io.information.modules.app.service.impl;
 
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -10,10 +11,13 @@ import io.information.common.utils.Query;
 import io.information.modules.app.dao.InActivityDatasDao;
 import io.information.modules.app.entity.InActivityDatas;
 import io.information.modules.app.service.IInActivityDatasService;
+import io.information.modules.app.vo.PassUserVo;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -38,7 +42,9 @@ public class InActivityDatasServiceImpl extends ServiceImpl<InActivityDatasDao, 
     }
 
     @Override
-    public PageUtils pass(Map<String, Object> map) {
+    public PassUserVo pass(Map<String, Object> map) {
+        Integer currPage = StringUtil.isBlank(map.get("currPage")) ? 0 : Integer.parseInt(String.valueOf(map.get("currPage")));
+        Integer pageSize = StringUtil.isBlank(map.get("pageSize")) ? 10 : Integer.parseInt(String.valueOf(map.get("pageSize")));
         if (null != map.get("actId") && StringUtil.isNotBlank(map.get("actId"))) {
             String actId = (String) map.get("actId");
             LambdaQueryWrapper<InActivityDatas> queryWrapper = new LambdaQueryWrapper<>();
@@ -47,19 +53,26 @@ public class InActivityDatasServiceImpl extends ServiceImpl<InActivityDatasDao, 
                     new Query<InActivityDatas>().getPage(map),
                     queryWrapper
             );
-//            List<InActivityDatas> list = page.getRecords();
-//            Map<Long, List<InActivityDatas>> m = list.stream().collect(Collectors.groupingBy(InActivityDatas::getuId));
-//            Map<Long, Object> hashMap = new HashMap<>();
-//            for (Map.Entry<Long, List<InActivityDatas>> longListEntry : m.entrySet()) {
-//                JSONObject obj = new JSONObject();
-//                obj.put("id", longListEntry.getKey());
-//                for (InActivityDatas k : longListEntry.getValue()) {
-//                    obj.put(k.getfName() == null ? "" : k.getfName(),
-//                            k.getdValue() == null ? "" : k.getdValue());
-//                }
-//                hashMap.put(longListEntry.getKey(), obj);
-//            }
-            return new PageUtils(page);
+
+            List<InActivityDatas> list = page.getRecords();
+            Map<Long, List<InActivityDatas>> m = list.stream().collect(Collectors.groupingBy(InActivityDatas::getuId));
+            Map<Long, Object> hashMap = new HashMap<>();
+            for (Map.Entry<Long, List<InActivityDatas>> longListEntry : m.entrySet()) {
+                JSONObject obj = new JSONObject();
+                obj.put("id", longListEntry.getKey());
+                for (InActivityDatas k : longListEntry.getValue()) {
+                    obj.put(k.getfName(),
+                            k.getdValue() == null ? "" : k.getdValue());
+                }
+                hashMap.put(longListEntry.getKey(), obj);
+            }
+            int total = (int) page.getTotal();
+            PassUserVo userVo = new PassUserVo();
+            userVo.setUserMap(hashMap);
+            userVo.setTotalCount(total);
+            userVo.setCurrPage(currPage);
+            userVo.setPageSize(pageSize);
+            return userVo;
         }
         return null;
     }

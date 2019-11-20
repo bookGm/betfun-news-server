@@ -11,6 +11,7 @@ import io.information.modules.app.entity.InUser;
 import io.information.modules.app.service.IInActivityDatasService;
 import io.information.modules.app.service.IInActivityService;
 import io.information.modules.app.vo.ActivityDataVo;
+import io.information.modules.app.vo.PassUserVo;
 import io.information.modules.sys.entity.SysCitysEntity;
 import io.information.modules.sys.service.SysCitysService;
 import io.swagger.annotations.Api;
@@ -143,15 +144,15 @@ public class InActivityController {
      * 获取报名活动的用户
      */
     @GetMapping("/pass")
-    @ApiOperation(value = "获取报名活动的用户", httpMethod = "GET", notes = "分页数据，活动ID")
+    @ApiOperation(value = "获取报名活动的用户", httpMethod = "GET", notes = "分页数据，活动ID", response = PassUserVo.class)
     @ApiImplicitParams({
             @ApiImplicitParam(value = "每页显示条数", name = "pageSize", required = true),
             @ApiImplicitParam(value = "当前页数", name = "currPage", required = true),
             @ApiImplicitParam(value = "活动ID", name = "actId", required = true)
     })
-    public R pass(@RequestParam Map<String, Object> map) {
-        PageUtils page = datasService.pass(map);
-        return R.ok().put("page", page);
+    public ResultUtil<PassUserVo> pass(@RequestParam Map<String, Object> map) {
+        PassUserVo pass = datasService.pass(map);
+        return ResultUtil.ok(pass);
     }
 
 

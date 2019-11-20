@@ -3,6 +3,7 @@ package io.information.modules.app.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import io.information.common.utils.PageUtils;
 import io.information.modules.app.entity.InActivityDatas;
+import io.information.modules.app.vo.PassUserVo;
 
 import java.util.List;
 import java.util.Map;
@@ -20,6 +21,6 @@ public interface IInActivityDatasService extends IService<InActivityDatas> {
 
     List<InActivityDatas> queryByActId(Long uId);
 
-    PageUtils pass(Map<String, Object> map);
+    PassUserVo pass(Map<String, Object> map);
 }
 
