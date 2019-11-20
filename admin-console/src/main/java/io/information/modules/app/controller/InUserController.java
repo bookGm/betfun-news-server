@@ -169,13 +169,20 @@ public class InUserController extends AbstractController {
     @PutMapping("/redactData")
     @ApiOperation(value = "编辑资料", httpMethod = "PUT")
     public R redactData(@RequestBody RedactDataDTO redactDataDTO, @ApiIgnore @LoginUser InUser user) {
-        InUser u = DataUtils.copyData(redactDataDTO, InUser.class);
-        u.setuId(user.getuId());
-        userService.updateById(u);
-        InUser inUser = userService.getById(u.getuId());
-        EsUserEntity esUser = BeanHelper.copyProperties(inUser, EsUserEntity.class);
-        rabbitTemplate.convertAndSend(Constants.userExchange,
-                Constants.user_Update_RouteKey, esUser);
+        InUser u = new InUser();
+        if (null != redactDataDTO) {
+            u.setuId(user.getuId());
+            u.setuNick(redactDataDTO.getuNick());
+            u.setuIntro(redactDataDTO.getuIntro());
+            if (null != redactDataDTO.getuPhoto() && !redactDataDTO.getuPhoto().isEmpty()) {
+                u.setuPhone(redactDataDTO.getuPhoto());
+            }
+            userService.updateById(u);
+            InUser inUser = userService.getById(u.getuId());
+            EsUserEntity esUser = BeanHelper.copyProperties(inUser, EsUserEntity.class);
+            rabbitTemplate.convertAndSend(Constants.userExchange,
+                    Constants.user_Update_RouteKey, esUser);
+        }
         return R.ok();
     }
 
@@ -539,15 +546,15 @@ public class InUserController extends AbstractController {
     }
 
     @GetMapping("/esSave")
-    public R esSave(){
+    public R esSave() {
         List<InUser> users = userService.all();
         List<EsUserEntity> uEsList = BeanHelper.copyWithCollection(users, EsUserEntity.class);
-       if(null != uEsList){
-           for (EsUserEntity esUser : uEsList) {
-               rabbitTemplate.convertAndSend(Constants.userExchange,
-                       Constants.user_Save_RouteKey, esUser);
-           }
-       }
+        if (null != uEsList) {
+            for (EsUserEntity esUser : uEsList) {
+                rabbitTemplate.convertAndSend(Constants.userExchange,
+                        Constants.user_Save_RouteKey, esUser);
+            }
+        }
         return R.ok();
     }
 }

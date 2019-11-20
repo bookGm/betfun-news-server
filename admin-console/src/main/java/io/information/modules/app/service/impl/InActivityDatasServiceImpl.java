@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.guansuo.common.StringUtil;
 import io.information.common.utils.PageUtils;
 import io.information.common.utils.Query;
 import io.information.modules.app.dao.InActivityDatasDao;
@@ -32,20 +33,35 @@ public class InActivityDatasServiceImpl extends ServiceImpl<InActivityDatasDao, 
     @Override
     public List<InActivityDatas> queryByActId(Long actId) {
         LambdaQueryWrapper<InActivityDatas> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.in(InActivityDatas::getActId,actId);
+        queryWrapper.in(InActivityDatas::getActId, actId);
         return this.list(queryWrapper);
     }
 
     @Override
     public PageUtils pass(Map<String, Object> map) {
-        String actId = (String)map.get("actId");
-        LambdaQueryWrapper<InActivityDatas> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(InActivityDatas::getActId,actId);
-        IPage<InActivityDatas> page = this.page(
-                new Query<InActivityDatas>().getPage(map),
-                queryWrapper
-        );
-        return new PageUtils(page);
+        if (null != map.get("actId") && StringUtil.isNotBlank(map.get("actId"))) {
+            String actId = (String) map.get("actId");
+            LambdaQueryWrapper<InActivityDatas> queryWrapper = new LambdaQueryWrapper<>();
+            queryWrapper.eq(InActivityDatas::getActId, actId);
+            IPage<InActivityDatas> page = this.page(
+                    new Query<InActivityDatas>().getPage(map),
+                    queryWrapper
+            );
+//            List<InActivityDatas> list = page.getRecords();
+//            Map<Long, List<InActivityDatas>> m = list.stream().collect(Collectors.groupingBy(InActivityDatas::getuId));
+//            Map<Long, Object> hashMap = new HashMap<>();
+//            for (Map.Entry<Long, List<InActivityDatas>> longListEntry : m.entrySet()) {
+//                JSONObject obj = new JSONObject();
+//                obj.put("id", longListEntry.getKey());
+//                for (InActivityDatas k : longListEntry.getValue()) {
+//                    obj.put(k.getfName() == null ? "" : k.getfName(),
+//                            k.getdValue() == null ? "" : k.getdValue());
+//                }
+//                hashMap.put(longListEntry.getKey(), obj);
+//            }
+            return new PageUtils(page);
+        }
+        return null;
     }
 
 }

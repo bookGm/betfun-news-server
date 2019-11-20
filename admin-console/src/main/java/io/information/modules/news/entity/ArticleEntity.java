@@ -94,6 +94,20 @@ public class ArticleEntity implements Serializable {
 	@TableField(exist = false)
 	private String aSimpleTime;
 
+	/**
+	 * 是否主页展示
+	 */
+	private Integer aBanner;
+
+
+	public Integer getaBanner() {
+		return aBanner;
+	}
+
+	public void setaBanner(Integer aBanner) {
+		this.aBanner = aBanner;
+	}
+
 	public Long getaId() {
 		return aId;
 	}

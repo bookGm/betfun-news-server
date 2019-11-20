@@ -71,7 +71,20 @@ public class ArticleController extends AbstractController {
     @RequiresPermissions("news:article:update")
     public R update(@RequestBody ArticleEntity article) {
         articleService.updateById(article);
+        return R.ok();
+    }
 
+
+    /**
+     * 文章是否主页展示
+     */
+    @PostMapping("/isBanner")
+    @RequiresPermissions("news:article:update")
+    public R isBanner(Long aId, Integer aBanner) {
+        ArticleEntity article = new ArticleEntity();
+        article.setaId(aId);
+        article.setaBanner(aBanner);
+        articleService.updateById(article);
         return R.ok();
     }
 

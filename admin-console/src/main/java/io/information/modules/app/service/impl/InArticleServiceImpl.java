@@ -19,6 +19,7 @@ import io.information.modules.app.entity.InUser;
 import io.information.modules.app.service.IInArticleService;
 import io.information.modules.app.service.IInTagService;
 import io.information.modules.app.service.IInUserService;
+import io.information.modules.app.vo.ArticleBannerVo;
 import io.information.modules.app.vo.ArticleUserVo;
 import io.information.modules.app.vo.ArticleVo;
 import io.information.modules.app.vo.TagArticleVo;
@@ -256,5 +257,17 @@ public class InArticleServiceImpl extends ServiceImpl<InArticleDao, InArticle> i
     @Override
     public List<InArticle> all() {
         return this.baseMapper.all();
+    }
+
+    @Override
+    public List<ArticleBannerVo> banner() {
+        LambdaQueryWrapper<InArticle> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(InArticle::getaBanner, 1).eq(InArticle::getaStatus,2);
+        List<InArticle> inArticles = this.list(queryWrapper);
+        List<ArticleBannerVo> bannerVos = BeanHelper.copyWithCollection(inArticles, ArticleBannerVo.class);
+        if (null != bannerVos && !bannerVos.isEmpty()) {
+            return bannerVos;
+        }
+        return null;
     }
 }

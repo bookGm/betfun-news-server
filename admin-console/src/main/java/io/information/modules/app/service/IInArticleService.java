@@ -3,10 +3,7 @@ package io.information.modules.app.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import io.information.common.utils.PageUtils;
 import io.information.modules.app.entity.InArticle;
-import io.information.modules.app.vo.ArticleUserVo;
-import io.information.modules.app.vo.ArticleVo;
-import io.information.modules.app.vo.CardUserVo;
-import io.information.modules.app.vo.TagArticleVo;
+import io.information.modules.app.vo.*;
 
 import java.util.Date;
 import java.util.List;
@@ -47,4 +44,6 @@ public interface IInArticleService extends IService<InArticle> {
     TagArticleVo tagArticle(Map<String, Object> map);
 
     List<InArticle> all();
+
+    List<ArticleBannerVo> banner();
 }

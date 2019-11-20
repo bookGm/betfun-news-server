@@ -7,9 +7,6 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.EqualsAndHashCode;
-import lombok.experimental.Accessors;
-import org.springframework.data.elasticsearch.annotations.Field;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -121,6 +118,20 @@ public class InArticle implements Serializable {
     @TableField(exist = false)
     private String aSimpleTime;
 
+    /**
+     * 是否主页展示
+     */
+    @ApiModelProperty(value = "是否主页展示(0：否 1：是)", name = "aBenner")
+    private InActivity aBanner;
+
+
+    public InActivity getaBanner() {
+        return aBanner;
+    }
+
+    public void setaBanner(InActivity aBanner) {
+        this.aBanner = aBanner;
+    }
 
     public Long getaId() {
         return aId;

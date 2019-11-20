@@ -15,10 +15,7 @@ import io.information.modules.app.service.IInActivityService;
 import io.information.modules.app.service.IInArticleService;
 import io.information.modules.app.service.IInCardBaseService;
 import io.information.modules.app.service.IInUserService;
-import io.information.modules.app.vo.ArticleUserVo;
-import io.information.modules.app.vo.ArticleVo;
-import io.information.modules.app.vo.InArticleUserDetailVo;
-import io.information.modules.app.vo.TagArticleVo;
+import io.information.modules.app.vo.*;
 import io.mq.utils.Constants;
 import io.swagger.annotations.*;
 import org.apache.commons.lang.StringUtils;
@@ -132,6 +129,16 @@ public class InArticleController {
             return R.ok();
         }
         return R.error("此操作需要认证通过");
+    }
+
+    /**
+     * 主页横幅图片
+     */
+    @GetMapping("/banner")
+    @ApiOperation(value = "主页横幅图片", httpMethod = "GET", response = ArticleBannerVo.class)
+    public ResultUtil<List<ArticleBannerVo>> banner() {
+        List<ArticleBannerVo> bannerVos = articleService.banner();
+        return ResultUtil.ok(bannerVos);
     }
 
 

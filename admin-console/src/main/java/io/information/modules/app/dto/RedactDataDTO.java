@@ -16,14 +16,26 @@ public class RedactDataDTO implements Serializable {
     /**
      * 用户昵称
      */
-    @ApiModelProperty(value = "用户昵称", name = "uNick", required = true)
+    @ApiModelProperty(value = "用户昵称", name = "uNick", required = false)
     private String uNick;
 
     /**
      * 用户简介
      */
-    @ApiModelProperty(value = "用户简介", name = "uIntro", required = true)
+    @ApiModelProperty(value = "用户简介", name = "uIntro", required = false)
     private String uIntro;
+
+    @ApiModelProperty(value = "用户头像", name = "uPhoto", required = false)
+    private String uPhoto;
+
+
+    public String getuPhoto() {
+        return uPhoto;
+    }
+
+    public void setuPhoto(String uPhoto) {
+        this.uPhoto = uPhoto;
+    }
 
     public String getuNick() {
         return uNick;

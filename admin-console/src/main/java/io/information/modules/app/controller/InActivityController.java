@@ -1,10 +1,7 @@
 package io.information.modules.app.controller;
 
 
-import io.information.common.utils.IdGenerator;
-import io.information.common.utils.PageUtils;
-import io.information.common.utils.R;
-import io.information.common.utils.ResultUtil;
+import io.information.common.utils.*;
 import io.information.modules.app.annotation.Login;
 import io.information.modules.app.annotation.LoginUser;
 import io.information.modules.app.entity.InActivity;
@@ -13,6 +10,7 @@ import io.information.modules.app.entity.InActivityFields;
 import io.information.modules.app.entity.InUser;
 import io.information.modules.app.service.IInActivityDatasService;
 import io.information.modules.app.service.IInActivityService;
+import io.information.modules.app.vo.ActivityDataVo;
 import io.information.modules.sys.entity.SysCitysEntity;
 import io.information.modules.sys.service.SysCitysService;
 import io.swagger.annotations.Api;
@@ -104,6 +102,7 @@ public class InActivityController {
         return ResultUtil.ok(page);
     }
 
+
     /**
      * 列表
      */
@@ -119,6 +118,7 @@ public class InActivityController {
         PageUtils page = activityService.queryPage(map);
         return R.ok().put("page", page);
     }
+
 
     /**
      * 查询
@@ -165,6 +165,7 @@ public class InActivityController {
         return R.ok().put("fieldsList", fieldsList);
     }
 
+
     /**
      * 获取所有地区信息
      */
@@ -180,24 +181,28 @@ public class InActivityController {
      * 活动报名
      */
     @Login
-    @ApiOperation(value = "活动报名", httpMethod = "POST", notes = "活动数据集合[datasList]", response = InActivityDatas.class)
+    @ApiOperation(value = "活动报名", httpMethod = "POST", notes = "活动数据集合[datasList]", response = ActivityDataVo.class)
     @PostMapping("/join")
-    public R join(@RequestBody List<InActivityDatas> datasList, @ApiIgnore @LoginUser InUser user) {
-        InActivityDatas data = datasList.get(0);
-        Long actId = data.getActId();
-        InActivity activity = activityService.getById(actId);
-        if (activity.getActInNum() >= activity.getActNum()) {
-            return R.error("报名失败，报名人数已达上限");
-        } else {
-            activityService.signUp(actId,user.getuId());
-            for (InActivityDatas datas : datasList) {
-                datas.setdId(IdGenerator.getId());
-                datas.setuId(user.getuId());
-                datas.setdTime(new Date());
-                datasService.save(datas);
+    public R join(@RequestBody List<ActivityDataVo> datasList, @ApiIgnore @LoginUser InUser user) {
+        List<InActivityDatas> datas = BeanHelper.copyWithCollection(datasList, InActivityDatas.class);
+        if (null != datas && !datas.isEmpty()) {
+            InActivityDatas data = datas.get(0);
+            Long actId = data.getActId();
+            InActivity activity = activityService.getById(actId);
+            if (activity.getActInNum() >= activity.getActNum()) {
+                return R.error("报名失败，报名人数已达上限");
+            } else {
+                activityService.signUp(actId, user.getuId());
+                for (InActivityDatas aData : datas) {
+                    aData.setdId(IdGenerator.getId());
+                    aData.setuId(user.getuId());
+                    aData.setdTime(new Date());
+                    datasService.save(aData);
+                }
+                return R.ok();
             }
-            return R.ok();
         }
+        return R.error("必要的参数不存在");
     }
 
 
