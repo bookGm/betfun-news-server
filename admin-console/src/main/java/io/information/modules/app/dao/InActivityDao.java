@@ -29,6 +29,11 @@ public interface InActivityDao extends BaseMapper<InActivity> {
      * @param actid
      */
     void addACollect (Long actid);
+    /**
+     * 增加报名数
+     * @param actid
+     */
+    void addApply (Long actid);
 
     /**
      * 获取用户所有活动ID

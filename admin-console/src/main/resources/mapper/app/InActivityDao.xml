@@ -7,6 +7,9 @@
     <update id="addACollect" parameterType="java.lang.Long">
          update in_activity set act_collect=act_collect+1 where act_id=#{actid}
     </update>
+    <update id="addApply" parameterType="java.lang.Long">
+         update in_activity set act_in_num=act_in_num+1 where act_id=#{actid}
+    </update>
     <select id="allActId" resultType="java.lang.Long" parameterType="java.lang.Long">
         SELECT act_id FROM in_activity WHERE u_id = #{uId} ORDER BY act_create_time DESC
     </select>

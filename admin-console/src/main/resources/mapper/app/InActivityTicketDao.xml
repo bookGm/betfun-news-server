@@ -12,5 +12,8 @@
         <result property="tNum" column="t_num"/>
     </resultMap>
 
+    <select id="searchByActId" resultType="io.information.modules.app.entity.InActivityTicket" parameterType="java.lang.Long">
+        SELECT * FROM in_activity_ticket WHERE act_id = #{actId}
+    </select>
 
 </mapper>

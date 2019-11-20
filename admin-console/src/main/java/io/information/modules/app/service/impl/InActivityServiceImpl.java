@@ -3,11 +3,14 @@ package io.information.modules.app.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.guansuo.common.DateUtils;
 import com.guansuo.common.StringUtil;
-import io.information.common.utils.IdGenerator;
-import io.information.common.utils.PageUtils;
-import io.information.common.utils.Query;
+import io.information.common.annotation.HashCacheable;
+import io.information.common.utils.*;
 import io.information.modules.app.dao.InActivityDao;
+import io.information.modules.app.dao.InActivityDatasDao;
+import io.information.modules.app.dao.InActivityFieldsDao;
+import io.information.modules.app.dao.InActivityTicketDao;
 import io.information.modules.app.entity.InActivity;
 import io.information.modules.app.entity.InActivityDatas;
 import io.information.modules.app.entity.InActivityFields;
@@ -22,6 +25,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -42,6 +46,14 @@ public class InActivityServiceImpl extends ServiceImpl<InActivityDao, InActivity
     IInActivityFieldsService fieldsService;
     @Autowired
     IInActivityDatasService datasService;
+    @Autowired
+    InActivityFieldsDao fieldsDao;
+    @Autowired
+    InActivityTicketDao ticketDao;
+    @Autowired
+    InActivityDatasDao datasDao;
+    @Autowired
+    RedisUtils redisUtils;
 
 
     @Override
@@ -98,7 +110,57 @@ public class InActivityServiceImpl extends ServiceImpl<InActivityDao, InActivity
                 new Query<InActivity>().getPage(params),
                 queryWrapper
         );
+        String actTimeType = "";
+        Long currDate = new Date().getTime();
+        for (InActivity activity : page.getRecords()) {
+            Long startTime = activity.getActStartTime().getTime();
+            Long closeTime = activity.getActCloseTime().getTime();
+            if (startTime > currDate) {
+                if (closeTime > currDate) {
+                    actTimeType = "已结束";
+                } else {
+                    actTimeType = "进行中";
+                }
+            } else {
+                if (closeTime > currDate) {
+                    actTimeType = "已结束";
+                } else {
+                    actTimeType = "未开始";
+                }
+            }
+            activity.setActTimeType(actTimeType);
+        }
         return new PageUtils(page);
+    }
+
+    @Override
+    public InActivity details(Long actId) {
+        InActivity activity = this.getById(actId);
+        List<InActivityFields> fields = fieldsDao.searchByActId(actId);
+        List<InActivityTicket> tickets = ticketDao.searchByActId(actId);
+        List<InActivityDatas> datas = datasDao.searchByActId(actId);
+        if (null != fields && !fields.isEmpty()) {
+            activity.setFieldsList(fields);
+        }
+        if (null != tickets && !tickets.isEmpty()) {
+            activity.setTicketList(tickets);
+        }
+        if (null != datas && !datas.isEmpty()) {
+            activity.setDatasList(datas);
+        }
+        return activity;
+    }
+
+    @Override
+    @HashCacheable(key = RedisKeys.APPLY, keyField = "#actId-#uId")
+    public String signUp(Long actId, Long uId) {
+        this.baseMapper.allActId(actId);
+        return DateUtils.format(new Date());
+    }
+
+    @Override
+    public boolean isApply(Long uId, Long actId) {
+        return redisUtils.hashHasKey(RedisKeys.APPLY, actId + "-" + uId);
     }
 
     @Override

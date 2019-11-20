@@ -178,7 +178,7 @@ public class InNodeController {
     @ApiOperation(value = "人物社区列表", httpMethod = "GET", notes = "分页数据", response = InUser.class)
     @ApiImplicitParams({
             @ApiImplicitParam(value = "每页显示条数", name = "pageSize", required = true),
-            @ApiImplicitParam(value = "当前页数", name = "currPage", required = true),
+            @ApiImplicitParam(value = "当前页数", name = "currPage", required = true)
     })
     @ApiResponse(code = 200, message = "list:{数字:{用户数据}  数字：用户类型 1：红人榜 2：黑榜 ")
     public R star(@RequestParam Map<String, Object> map) {

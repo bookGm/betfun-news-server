@@ -7,8 +7,6 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.EqualsAndHashCode;
-import lombok.experimental.Accessors;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -131,6 +129,13 @@ public class InActivity implements Serializable {
     private Integer actStatus;
 
     /**
+     * 活动时间状态
+     */
+    @ApiModelProperty(value = "活动时间状态", name = "actTimeType")
+    @TableField(exist = false)
+    private String actTimeType;
+
+    /**
      * 点赞数
      */
     private Long actLike;
@@ -151,6 +156,14 @@ public class InActivity implements Serializable {
     @TableField(exist = false)
     private String aSimpleTime;
 
+
+    public String getActTimeType() {
+        return actTimeType;
+    }
+
+    public void setActTimeType(String actTimeType) {
+        this.actTimeType = actTimeType;
+    }
 
     public String getActAddrName() {
         return actAddrName;

@@ -5,6 +5,7 @@ import io.information.common.utils.PageUtils;
 import io.information.modules.app.entity.InActivity;
 import io.information.modules.app.entity.InActivityFields;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -27,4 +28,10 @@ public interface IInActivityService extends IService<InActivity> {
     List<InActivityFields> apply(Long actId);
 
     PageUtils queryPage(Map<String, Object> params);
+
+    InActivity details(Long actId);
+
+    String signUp(Long actId, Long getuId);
+
+    boolean isApply(Long uId, Long actId);
 }

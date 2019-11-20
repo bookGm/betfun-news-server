@@ -126,7 +126,7 @@ public class InActivityController {
     @GetMapping("/info/{actId}")
     @ApiOperation(value = "查询单个活动信息", httpMethod = "GET", notes = "活动ID[actId]")
     public R info(@PathVariable("actId") Long actId) {
-        InActivity activity = activityService.getById(actId);
+        InActivity activity = activityService.details(actId);
         String[] split = activity.getActAddr().split("-");
         StringBuilder actAddName = new StringBuilder();
         for (String s : split) {
@@ -186,13 +186,10 @@ public class InActivityController {
         InActivityDatas data = datasList.get(0);
         Long actId = data.getActId();
         InActivity activity = activityService.getById(actId);
-        Long actNum = activity.getActNum();
-        Long actInNum = activity.getActInNum();
-        if (actInNum >= actNum) {
+        if (activity.getActInNum() >= activity.getActNum()) {
             return R.error("报名失败，报名人数已达上限");
         } else {
-            activity.setActInNum(activity.getActInNum() + 1);
-            activityService.updateById(activity);
+            activityService.signUp(actId,user.getuId());
             for (InActivityDatas datas : datasList) {
                 datas.setdId(IdGenerator.getId());
                 datas.setuId(user.getuId());
@@ -203,4 +200,15 @@ public class InActivityController {
         }
     }
 
+
+    /**
+     * 是否已报名活动
+     */
+    @Login
+    @GetMapping("/isApply")
+    @ApiOperation(value = "是否已报名活动", httpMethod = "GET", notes = "true：已报名  false：未报名")
+    @ApiImplicitParam(value = "目标活动id", name = "actId", required = true)
+    public boolean isApply(@RequestParam Long actId, @ApiIgnore @LoginUser InUser user) {
+        return activityService.isApply(user.getuId(), actId);
+    }
 }

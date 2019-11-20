@@ -13,5 +13,9 @@
         <result property="fNotnull" column="f_notnull"/>
     </resultMap>
 
+    <select id="searchByActId" resultType="io.information.modules.app.entity.InActivityFields" parameterType="java.lang.Long">
+        SELECT * FROM in_activity_fields WHERE act_id = #{actId}
+    </select>
+
 
 </mapper>

@@ -3,7 +3,7 @@
 
 <mapper namespace="io.information.modules.app.dao.InActivityDatasDao">
 
-	<!-- 可根据自己的需求，是否要使用 -->
+    <!-- 可根据自己的需求，是否要使用 -->
     <resultMap type="io.information.modules.app.entity.InActivityDatas" id="activityDatasMap">
         <result property="dId" column="d_id"/>
         <result property="fKey" column="f_key"/>
@@ -13,5 +13,9 @@
         <result property="d_time" column="dTime"/>
     </resultMap>
 
+    <select id="searchByActId" resultType="io.information.modules.app.entity.InActivityDatas"
+            parameterType="java.lang.Long">
+        SELECT * FROM in_activity_datas WHERE act_id = #{actId}
+    </select>
 
 </mapper>

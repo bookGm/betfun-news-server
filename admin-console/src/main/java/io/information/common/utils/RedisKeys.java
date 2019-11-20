@@ -22,6 +22,8 @@ public class RedisKeys {
     public static final String LIKE = BASEKEY + "like";
     //收藏
     public static final String COLLECT = BASEKEY + "collect";
+    //报名
+    public static final String APPLY = BASEKEY + "apply";
     //app用户
     public static final String INUSER = BASEKEY + "inuser";
     //投票
