@@ -67,12 +67,7 @@ public class InActivityDatasServiceImpl extends ServiceImpl<InActivityDatasDao, 
                 hashMap.put(longListEntry.getKey(), obj);
             }
             int total = (int) page.getTotal();
-            PassUserVo userVo = new PassUserVo();
-            userVo.setUserMap(hashMap);
-            userVo.setTotalCount(total);
-            userVo.setCurrPage(currPage);
-            userVo.setPageSize(pageSize);
-            return userVo;
+            return new PassUserVo(hashMap, total, pageSize, currPage);
         }
         return null;
     }

@@ -35,6 +35,14 @@ public class PassUserVo implements Serializable {
     private int currPage;
 
 
+    public PassUserVo(Map<Long, Object> userMap, int totalCount, int pageSize, int currPage) {
+        this.userMap = userMap;
+        this.totalCount = totalCount;
+        this.pageSize = pageSize;
+        this.totalPage = (int) Math.ceil((double) totalCount / pageSize);
+        this.currPage = currPage;
+    }
+
     public Map<Long, Object> getUserMap() {
         return userMap;
     }
@@ -64,7 +72,7 @@ public class PassUserVo implements Serializable {
     }
 
     public void setTotalPage(int totalPage) {
-        this.totalPage = (int) Math.ceil((double) totalCount / pageSize);
+        this.totalPage = totalPage;
     }
 
     public int getCurrPage() {
