@@ -210,12 +210,18 @@ public class InArticleController {
             @ApiImplicitParam(name = "id", value = "id", required = true),
             @ApiImplicitParam(name = "type", value = "(0：文章 1：帖子 2：活动)", required = true)
     })
-    public R giveALike(@RequestParam("id") Long id, @RequestParam("type") int type, @ApiIgnore @LoginUser InUser user) {
-        Long tid = filterId(id, type);
-        if (StringUtil.isBlank(tid)) {
-            return R.error("点赞失败");
+    public R giveALike(@RequestBody Map<String, Object> map, @ApiIgnore @LoginUser InUser user) {
+        if ((null != map.get("id") && StringUtil.isNotBlank(map.get("id")))
+                || (null != map.get("type") && StringUtil.isNotBlank(map.get("type")))) {
+            long id = Long.parseLong(String.valueOf(map.get("id")));
+            int type = Integer.parseInt(String.valueOf(map.get("type")));
+            Long tid = filterId(id, type);
+            if (StringUtil.isBlank(tid)) {
+                return R.error("点赞失败");
+            }
+            return R.ok().put("time", articleService.giveALike(id, user.getuId(), type, tid));
         }
-        return R.ok().put("time", articleService.giveALike(id, user.getuId(), type, tid));
+        return R.error("点赞失败");
     }
 
 
@@ -229,19 +235,26 @@ public class InArticleController {
             @ApiImplicitParam(name = "id", value = "id", required = true),
             @ApiImplicitParam(name = "type", value = "(0：文章 1：帖子 2：活动)", required = true)
     })
-    public ResultUtil delALike(@RequestParam("id") Long id, @RequestParam("type") int type, @ApiIgnore @LoginUser InUser user) {
-        //#id-#uid-#tId-#type"
-        Long tid = filterId(id, type);
-        if (StringUtil.isBlank(tid)) {
-            return ResultUtil.error("取消点赞失败");
+    public ResultUtil delALike(@RequestBody Map<String, Object> map, @ApiIgnore @LoginUser InUser user) {
+        if ((null != map.get("id") && StringUtil.isNotBlank(map.get("id")))
+                || (null != map.get("type") && StringUtil.isNotBlank(map.get("type")))) {
+            long id = Long.parseLong(String.valueOf(map.get("id")));
+            int type = Integer.parseInt(String.valueOf(map.get("type")));
+            //#id-#uid-#tId-#type"
+            Long tid = filterId(id, type);
+            if (StringUtil.isBlank(tid)) {
+                return ResultUtil.error("取消点赞失败");
+            }
+            String key = id + "-" + user.getuId() + "-" + tid + "-" + type;
+            System.out.println(key);
+            Long r = redisUtils.hremove(RedisKeys.LIKE, key);
+            if (r > 0) {
+                return ResultUtil.ok();
+            } else {
+                return ResultUtil.error("取消点赞失败，请重试");
+            }
         }
-        String key = id + "-" + user.getuId() + "-" + type + "-" + tid;
-        Long r = redisUtils.hremove(RedisKeys.LIKE, key);
-        if (r > 0) {
-            return ResultUtil.ok();
-        } else {
-            return ResultUtil.error("取消点赞失败，请重试");
-        }
+        return ResultUtil.error("必要参数为空");
     }
 
 
@@ -255,13 +268,51 @@ public class InArticleController {
             @ApiImplicitParam(name = "id", value = "id", required = true),
             @ApiImplicitParam(name = "type", value = "(0：文章 1：帖子 2：活动)", required = true)
     })
-    public R collect(@RequestParam("id") Long id, @RequestParam("type") int type, @ApiIgnore @LoginUser InUser user) {
-        Long tid = filterId(id, type);
-        if (StringUtil.isBlank(tid)) {
-            return R.error("收藏失败");
+    public R collect(@RequestBody Map<String, Object> map, @ApiIgnore @LoginUser InUser user) {
+        if ((null != map.get("id") && StringUtil.isNotBlank(map.get("id")))
+                || (null != map.get("type") && StringUtil.isNotBlank(map.get("type")))) {
+            long id = Long.parseLong(String.valueOf(map.get("id")));
+            int type = Integer.parseInt(String.valueOf(map.get("type")));
+            Long tid = filterId(id, type);
+            if (StringUtil.isBlank(tid)) {
+                return R.error("收藏失败");
+            }
+            return R.ok().put("time", articleService.collect(id, user.getuId(), type, tid));
         }
-        return R.ok().put("time", articleService.collect(id, user.getuId(), type, tid));
+        return R.error("必要参数为空");
     }
+
+
+    /**
+     * 取消收藏
+     */
+    @Login
+    @PostMapping("/delCollect")
+    @ApiOperation(value = "取消收藏", httpMethod = "POST", notes = "根据ID取消收藏")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "id", value = "id", required = true),
+            @ApiImplicitParam(name = "type", value = "(0：文章 1：帖子 2：活动)", required = true)
+    })
+    public ResultUtil delCollect(@RequestBody Map<String, Object> map, @ApiIgnore @LoginUser InUser user) {
+        if ((null != map.get("id") && StringUtil.isNotBlank(map.get("id")))
+                || (null != map.get("type") && StringUtil.isNotBlank(map.get("type")))) {
+            long id = Long.parseLong(String.valueOf(map.get("id")));
+            int type = Integer.parseInt(String.valueOf(map.get("type")));
+            Long tid = filterId(id, type);
+            if (StringUtil.isBlank(tid)) {
+                return ResultUtil.error("取消收藏失败");
+            }
+            String key = id + "-" + user.getuId() + "-" + tid + "-" + type;
+            Long r = redisUtils.hremove(RedisKeys.FOCUS, key);
+            if (r > 0) {
+                return ResultUtil.ok();
+            } else {
+                return ResultUtil.error("取消收藏失败，请重试");
+            }
+        }
+        return ResultUtil.error("必要参数为空");
+    }
+
 
     /**
      * 专栏主页文章统计
@@ -326,7 +377,7 @@ public class InArticleController {
     }
 
     @GetMapping("/articleUserDetail")
-    @ApiOperation(value = "查询文章作者及详情", httpMethod = "GET", notes = "文章id")
+    @ApiOperation(value = "查询文章作者及详情", httpMethod = "GET", notes = "文章id", response = InArticleUserDetailVo.class)
     @ApiImplicitParams({
             @ApiImplicitParam(value = "文章id", name = "aId", required = true),
             @ApiImplicitParam(value = "文章所属用户id", name = "uId", required = true),
@@ -386,7 +437,7 @@ public class InArticleController {
     /**
      * 添加ES -- 文章 使用一次
      */
-    @GetMapping("/esSave")
+//    @GetMapping("/esSave")
     public R esSave() {
         List<InArticle> articles = articleService.all();
         List<EsArticleEntity> aEsList = BeanHelper.copyWithCollection(articles, EsArticleEntity.class);

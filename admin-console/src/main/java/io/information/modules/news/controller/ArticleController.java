@@ -4,6 +4,7 @@ import com.guansuo.common.StringUtil;
 import io.information.common.utils.PageUtils;
 import io.information.common.utils.R;
 import io.information.modules.app.config.IdWorker;
+import io.information.modules.news.dto.ArticleDTO;
 import io.information.modules.news.entity.ArticleEntity;
 import io.information.modules.news.service.ArticleService;
 import io.information.modules.sys.controller.AbstractController;
@@ -80,13 +81,14 @@ public class ArticleController extends AbstractController {
      */
     @PostMapping("/isBanner")
     @RequiresPermissions("news:article:update")
-    public R isBanner(Long aId, Integer aBanner) {
+    public R isBanner(@RequestBody ArticleDTO dto) {
         ArticleEntity article = new ArticleEntity();
-        article.setaId(aId);
-        article.setaBanner(aBanner);
+        article.setaId(dto.getaId());
+        article.setaBanner(dto.getaBanner());
         articleService.updateById(article);
         return R.ok();
     }
+
 
     /**
      * 删除
@@ -95,7 +97,6 @@ public class ArticleController extends AbstractController {
     @RequiresPermissions("news:article:delete")
     public R delete(@RequestBody Long[] aIds) {
         articleService.removeByIds(Arrays.asList(aIds));
-
         return R.ok();
     }
 

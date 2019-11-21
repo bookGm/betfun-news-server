@@ -20,12 +20,6 @@ public class InArticleUserDetailVo implements Serializable {
     private String uNick;
 
     /**
-     * 是否关注
-     */
-    @ApiModelProperty(value = "是否关注", name = "isFocus", dataType = "boolean")
-    private boolean isFocused;
-
-    /**
      * 是否点赞
      */
     @ApiModelProperty(value = "是否点赞", name = "isLiked", dataType = "boolean")
@@ -63,14 +57,6 @@ public class InArticleUserDetailVo implements Serializable {
 
     public void setuNick(String uNick) {
         this.uNick = uNick;
-    }
-
-    public boolean isFocused() {
-        return isFocused;
-    }
-
-    public void setFocused(boolean focused) {
-        isFocused = focused;
     }
 
     public boolean isLiked() {

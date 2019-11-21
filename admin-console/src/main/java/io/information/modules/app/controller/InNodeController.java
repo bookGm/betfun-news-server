@@ -79,7 +79,6 @@ public class InNodeController {
     @ApiOperation(value = "取消关注节点", httpMethod = "POST", notes = "关注的节点id")
     @ApiImplicitParam(value = "节点id", name = "noId", required = true)
     public ResultUtil delFocus(@RequestBody Long noId, @ApiIgnore @LoginUser InUser user) {
-        //#uId-#type-#noId
         InNode node = nodeService.getById(noId);
         nodeService.focus(user.getuId(), noId, node.getNoType());
         String key = user.getuId() + "-" + node.getNoType() + "-" + noId;

@@ -194,7 +194,7 @@ public class InUserController extends AbstractController {
     @PostMapping("/focus")
     @ApiOperation(value = "关注用户", httpMethod = "POST", notes = "被关注的用户id")
     @ApiImplicitParam(value = "用户id", name = "uId", required = true)
-    public R focus(@RequestBody Map map, @ApiIgnore @LoginUser InUser user) {
+    public R focus(@RequestBody Map<String, Object> map, @ApiIgnore @LoginUser InUser user) {
         if (null != map.get("uId") && StringUtil.isNotBlank(map.get("uId"))) {
             long uId = Long.parseLong(String.valueOf(map.get("uId")));
             InUser inUser = userService.getById(uId);
@@ -215,7 +215,7 @@ public class InUserController extends AbstractController {
     @PostMapping("/delFocus")
     @ApiOperation(value = "取消关注用户", httpMethod = "POST", notes = "关注的用户id")
     @ApiImplicitParam(value = "用户id", name = "uId", required = true)
-    public ResultUtil delFocus(@RequestBody Map map, @ApiIgnore @LoginUser InUser user) {
+    public ResultUtil delFocus(@RequestBody Map<String, Object> map, @ApiIgnore @LoginUser InUser user) {
         //#uId-#status-#fId
         if (null != map.get("uId") && StringUtil.isNotBlank(map.get("uId"))) {
             long uId = Long.parseLong(String.valueOf(map.get("uId")));
