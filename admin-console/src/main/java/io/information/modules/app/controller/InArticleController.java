@@ -212,7 +212,7 @@ public class InArticleController {
     })
     public R giveALike(@RequestBody Map<String, Object> map, @ApiIgnore @LoginUser InUser user) {
         if ((null != map.get("id") && StringUtil.isNotBlank(map.get("id")))
-                || (null != map.get("type") && StringUtil.isNotBlank(map.get("type")))) {
+                && (null != map.get("type") && StringUtil.isNotBlank(map.get("type")))) {
             long id = Long.parseLong(String.valueOf(map.get("id")));
             int type = Integer.parseInt(String.valueOf(map.get("type")));
             Long tid = filterId(id, type);
@@ -237,7 +237,7 @@ public class InArticleController {
     })
     public ResultUtil delALike(@RequestBody Map<String, Object> map, @ApiIgnore @LoginUser InUser user) {
         if ((null != map.get("id") && StringUtil.isNotBlank(map.get("id")))
-                || (null != map.get("type") && StringUtil.isNotBlank(map.get("type")))) {
+                && (null != map.get("type") && StringUtil.isNotBlank(map.get("type")))) {
             long id = Long.parseLong(String.valueOf(map.get("id")));
             int type = Integer.parseInt(String.valueOf(map.get("type")));
             //#id-#uid-#tId-#type"
@@ -270,7 +270,7 @@ public class InArticleController {
     })
     public R collect(@RequestBody Map<String, Object> map, @ApiIgnore @LoginUser InUser user) {
         if ((null != map.get("id") && StringUtil.isNotBlank(map.get("id")))
-                || (null != map.get("type") && StringUtil.isNotBlank(map.get("type")))) {
+                && (null != map.get("type") && StringUtil.isNotBlank(map.get("type")))) {
             long id = Long.parseLong(String.valueOf(map.get("id")));
             int type = Integer.parseInt(String.valueOf(map.get("type")));
             Long tid = filterId(id, type);
@@ -295,7 +295,7 @@ public class InArticleController {
     })
     public ResultUtil delCollect(@RequestBody Map<String, Object> map, @ApiIgnore @LoginUser InUser user) {
         if ((null != map.get("id") && StringUtil.isNotBlank(map.get("id")))
-                || (null != map.get("type") && StringUtil.isNotBlank(map.get("type")))) {
+                && (null != map.get("type") && StringUtil.isNotBlank(map.get("type")))) {
             long id = Long.parseLong(String.valueOf(map.get("id")));
             int type = Integer.parseInt(String.valueOf(map.get("type")));
             Long tid = filterId(id, type);

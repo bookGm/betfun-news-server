@@ -30,7 +30,7 @@ public class DicController {
      * 所有字典列表
      */
     @GetMapping("/listAll")
-    public R listAll(){
+    public R listAll() {
         Map<String, List<DicEntity>> listAll = dicService.getListAll("dics");
         return R.ok().put("dict", listAll);
     }
@@ -40,7 +40,7 @@ public class DicController {
      */
     @GetMapping("/list")
     @RequiresPermissions("news:dic:list")
-    public List<DicEntity> list(){
+    public List<DicEntity> list() {
         List<DicEntity> dicList = dicService.list();
         return dicList;
     }
@@ -51,7 +51,7 @@ public class DicController {
      */
     @GetMapping("/select")
     @RequiresPermissions("news:dic:select")
-    public R select(){
+    public R select() {
         //查询列表数据
         List<DicEntity> dicList = dicService.queryDidAscList();
 
@@ -72,8 +72,8 @@ public class DicController {
      */
     @GetMapping("/info/{dId}")
     @RequiresPermissions("news:dic:info")
-    public R info(@PathVariable("dId") Long dId){
-		DicEntity dic = dicService.getById(dId);
+    public R info(@PathVariable("dId") Long dId) {
+        DicEntity dic = dicService.getById(dId);
 
         return R.ok().put("dic", dic);
     }
@@ -83,9 +83,9 @@ public class DicController {
      */
     @PostMapping("/save")
     @RequiresPermissions("news:dic:save")
-    public R save(@RequestBody DicEntity dic){
+    public R save(@RequestBody DicEntity dic) {
         dic.setdId(new IdWorker().nextId());
-		dicService.save(dic);
+        dicService.save(dic);
 
         return R.ok();
     }
@@ -95,17 +95,17 @@ public class DicController {
      */
     @PostMapping("/update")
     @RequiresPermissions("news:dic:update")
-    public R update(@RequestBody DicEntity dic){
-		dicService.updateDic(dic);
+    public R update(@RequestBody DicEntity dic) {
+        dicService.updateDic(dic);
         return R.ok();
     }
 
     /**
      * 删除
      */
-    @PostMapping("/delete/{dId}")
+    @PostMapping("/delete")
     @RequiresPermissions("news:dic:delete")
-    public R delete(@PathVariable("dId") Long[] dIds){
+    public R delete(@RequestBody Long[] dIds) {
         dicService.deleteDic(dIds);
         return R.ok();
     }

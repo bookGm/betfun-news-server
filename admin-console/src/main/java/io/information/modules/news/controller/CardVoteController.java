@@ -12,7 +12,6 @@ import java.util.Arrays;
 import java.util.Map;
 
 
-
 /**
  * 资讯投票帖详情（最多30个投票选项）
  *
@@ -32,7 +31,7 @@ CardVoteController {
      */
     @GetMapping("/list")
     @RequiresPermissions("news:cardvote:list")
-    public R list(@RequestParam Map<String, Object> params){
+    public R list(@RequestParam Map<String, Object> params) {
         PageUtils page = cardVoteService.queryPage(params);
 
         return R.ok().put("page", page);
@@ -44,8 +43,8 @@ CardVoteController {
      */
     @GetMapping("/info/{cId}")
     @RequiresPermissions("news:cardvote:info")
-    public R info(@PathVariable("cId") Long cId){
-		CardVoteEntity cardVote = cardVoteService.getById(cId);
+    public R info(@PathVariable("cId") Long cId) {
+        CardVoteEntity cardVote = cardVoteService.getById(cId);
 
         return R.ok().put("cardVote", cardVote);
     }
@@ -55,9 +54,8 @@ CardVoteController {
      */
     @PostMapping("/save")
     @RequiresPermissions("news:cardvote:save")
-    public R save(@RequestBody CardVoteEntity cardVote){
-		cardVoteService.save(cardVote);
-
+    public R save(@RequestBody CardVoteEntity cardVote) {
+        cardVoteService.save(cardVote);
         return R.ok();
     }
 
@@ -66,8 +64,8 @@ CardVoteController {
      */
     @PostMapping("/update")
     @RequiresPermissions("news:cardvote:update")
-    public R update(@RequestBody CardVoteEntity cardVote){
-		cardVoteService.updateById(cardVote);
+    public R update(@RequestBody CardVoteEntity cardVote) {
+        cardVoteService.updateById(cardVote);
 
         return R.ok();
     }
@@ -77,8 +75,8 @@ CardVoteController {
      */
     @PostMapping("/delete")
     @RequiresPermissions("news:cardvote:delete")
-    public R delete(@RequestBody Long[] cIds){
-		cardVoteService.removeByIds(Arrays.asList(cIds));
+    public R delete(@RequestBody Long[] cIds) {
+        cardVoteService.removeByIds(Arrays.asList(cIds));
 
         return R.ok();
     }

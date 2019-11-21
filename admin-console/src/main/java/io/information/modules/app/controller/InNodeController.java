@@ -1,5 +1,6 @@
 package io.information.modules.app.controller;
 
+import com.guansuo.common.StringUtil;
 import io.information.common.utils.*;
 import io.information.modules.app.annotation.Login;
 import io.information.modules.app.annotation.LoginUser;
@@ -64,10 +65,17 @@ public class InNodeController {
     @PostMapping("/focus")
     @ApiOperation(value = "关注节点", httpMethod = "POST", notes = "被关注的节点id")
     @ApiImplicitParam(value = "节点id", name = "noId", required = true)
-    public R focus(@RequestBody Long noId, @ApiIgnore @LoginUser InUser user) {
-        InNode node = nodeService.getById(noId);
-        nodeService.focus(user.getuId(), noId, node.getNoType());
-        return R.ok();
+    public R focus(@RequestBody Map<String, Object> map, @ApiIgnore @LoginUser InUser user) {
+        if (null != map.get("noId") && StringUtil.isNotBlank(map.get("noId"))) {
+            long noId = Long.parseLong(String.valueOf(map.get("noId")));
+            InNode node = nodeService.getById(noId);
+            if (null != node) {
+                nodeService.focus(user.getuId(), noId, node.getNoType());
+                return R.ok();
+            }
+            return R.error("不存在该节点");
+        }
+        return R.error("必要参数不存在");
     }
 
 
@@ -78,16 +86,23 @@ public class InNodeController {
     @PostMapping("/delFocus")
     @ApiOperation(value = "取消关注节点", httpMethod = "POST", notes = "关注的节点id")
     @ApiImplicitParam(value = "节点id", name = "noId", required = true)
-    public ResultUtil delFocus(@RequestBody Long noId, @ApiIgnore @LoginUser InUser user) {
-        InNode node = nodeService.getById(noId);
-        nodeService.focus(user.getuId(), noId, node.getNoType());
-        String key = user.getuId() + "-" + node.getNoType() + "-" + noId;
-        Long r = redisUtils.hremove(RedisKeys.NODES, key);
-        if (r > 0) {
-            return ResultUtil.ok();
-        } else {
-            return ResultUtil.error("取消关注失败，请重试");
+    public ResultUtil delFocus(@RequestBody Map<String, Object> map, @ApiIgnore @LoginUser InUser user) {
+        if (null != map.get("noId") && StringUtil.isNotBlank(map.get("noId"))) {
+            long noId = Long.parseLong(String.valueOf(map.get("noId")));
+            InNode node = nodeService.getById(noId);
+            if (null != node) {
+                nodeService.focus(user.getuId(), noId, node.getNoType());
+                String key = user.getuId() + "-" + node.getNoType() + "-" + noId;
+                Long r = redisUtils.hremove(RedisKeys.NODES, key);
+                if (r > 0) {
+                    return ResultUtil.ok();
+                } else {
+                    return ResultUtil.error("取消关注失败，请重试");
+                }
+            }
+            return ResultUtil.error("不存在该节点");
         }
+        return ResultUtil.error("必要参数不存在");
     }
 
 
@@ -267,7 +282,7 @@ public class InNodeController {
      * 最新动态
      */
     @GetMapping("/dynamic")
-    @ApiOperation(value = "社区 -- 最新动态[5条]", httpMethod = "GET",response = DynamicVo.class)
+    @ApiOperation(value = "社区 -- 最新动态[5条]", httpMethod = "GET", response = DynamicVo.class)
     public ResultUtil newDynamic() {
         List<DynamicVo> list = nodeService.newDynamic();
         return ResultUtil.ok(list);

@@ -1,6 +1,7 @@
 package io.information.modules.app.controller;
 
 
+import com.guansuo.common.StringUtil;
 import io.elasticsearch.entity.EsFlashEntity;
 import io.information.common.utils.BeanHelper;
 import io.information.common.utils.IdGenerator;
@@ -99,7 +100,7 @@ public class InNewsFlashController {
     @ApiOperation(value = "删除单个或多个快讯", httpMethod = "DELETE", notes = "快讯ID数组")
     public R delete(@RequestBody Long[] nIds) {
         newsFlashService.removeByIds(Arrays.asList(nIds));
-        String join = StringUtils.join(nIds,",");
+        String join = StringUtils.join(nIds, ",");
         rabbitTemplate.convertAndSend(Constants.flashExchange,
                 Constants.flash_Delete_RouteKey, join);
         return R.ok();
@@ -115,16 +116,22 @@ public class InNewsFlashController {
             @ApiImplicitParam(name = "nId", value = "资讯id", required = true),
             @ApiImplicitParam(name = "bId", value = "0：利空 1：利好", required = true)
     })
-    public R attitude(@RequestParam("nId") Long nId, @RequestParam("bId") Integer bId, @ApiIgnore @LoginUser InUser user) {
-        newsFlashService.attitude(nId, user.getuId(), bId);
-        return R.ok();
+    public R attitude(@RequestBody Map<String, Object> map, @ApiIgnore @LoginUser InUser user) {
+        if ((null != map.get("nId") && StringUtil.isNotBlank(map.get("nId")))
+                && (null != map.get("bId") && StringUtil.isNotBlank(map.get("bId")))) {
+            long nId = Long.parseLong(String.valueOf(map.get("nId")));
+            int bId = Integer.parseInt(String.valueOf(map.get("bId")));
+            newsFlashService.attitude(nId, user.getuId(), bId);
+            return R.ok();
+        }
+        return R.error("缺少必要的参数");
     }
 
     @GetMapping("/esSave")
-    public R esSave(){
+    public R esSave() {
         List<InNewsFlash> users = newsFlashService.all();
         List<EsFlashEntity> fEsList = BeanHelper.copyWithCollection(users, EsFlashEntity.class);
-        if(null != fEsList){
+        if (null != fEsList) {
             for (EsFlashEntity esFlash : fEsList) {
                 rabbitTemplate.convertAndSend(Constants.flashExchange,
                         Constants.flash_Save_RouteKey, esFlash);
