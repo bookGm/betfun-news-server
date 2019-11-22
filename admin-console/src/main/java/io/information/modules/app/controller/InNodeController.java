@@ -1,5 +1,6 @@
 package io.information.modules.app.controller;
 
+import com.guansuo.common.JsonUtil;
 import com.guansuo.common.StringUtil;
 import io.information.common.utils.*;
 import io.information.modules.app.annotation.Login;
@@ -92,7 +93,7 @@ public class InNodeController {
             InNode node = nodeService.getById(noId);
             if (null != node) {
                 nodeService.focus(user.getuId(), noId, node.getNoType());
-                String key = user.getuId() + "-" + node.getNoType() + "-" + noId;
+                String key = user.getuId() + "-" + node.getNoType() +  "-" + noId;
                 Long r = redisUtils.hremove(RedisKeys.NODES, key);
                 if (r > 0) {
                     return ResultUtil.ok();
@@ -130,7 +131,7 @@ public class InNodeController {
     @ApiResponse(code = 200, message = "list:{数字：{节点社区数据}}  数字：节点类型  2：项目 3：社区 4：平台 5：资本 ")
     public R nodeList(@RequestParam Map<String, Object> map) {
         Map<Long, List<InNode>> list = nodeService.query(map);
-        return R.ok().put("list", list);
+        return R.ok().put("list", JsonUtil.toJSONString(list));
     }
 
 

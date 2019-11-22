@@ -80,7 +80,7 @@ public class InNodeServiceImpl extends ServiceImpl<InNodeDao, InNode> implements
         if (!nodes.isEmpty()) {
             for (InNode node : nodes) {
                 //获取节点对应的帖子集合求出总数(size)
-                int cardNumber = baseService.count(new LambdaQueryWrapper<InCardBase>().eq(InCardBase::getNoId, node.getNoId()));
+                int cardNumber = baseService.count(new LambdaQueryWrapper<InCardBase>().eq(InCardBase::getNoId, node.getNoType()));
                 //将节点和对应帖子的总数放入集合
                 node.setCardNumber(cardNumber);
             }
