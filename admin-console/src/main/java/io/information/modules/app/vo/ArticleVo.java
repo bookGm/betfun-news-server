@@ -1,5 +1,6 @@
 package io.information.modules.app.vo;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -21,6 +22,7 @@ public class ArticleVo implements Serializable {
     private String aCover;
 
     @ApiModelProperty(value = "文章创建时间", name = "aCreateTime", required = true)
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date aCreateTime;
 
     @ApiModelProperty(value = "文章创建简单时间", name = "aSimpleTime", required = true)

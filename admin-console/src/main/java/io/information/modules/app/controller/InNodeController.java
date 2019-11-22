@@ -1,6 +1,5 @@
 package io.information.modules.app.controller;
 
-import com.guansuo.common.JsonUtil;
 import com.guansuo.common.StringUtil;
 import io.information.common.utils.*;
 import io.information.modules.app.annotation.Login;
@@ -14,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -93,7 +93,7 @@ public class InNodeController {
             InNode node = nodeService.getById(noId);
             if (null != node) {
                 nodeService.focus(user.getuId(), noId, node.getNoType());
-                String key = user.getuId() + "-" + node.getNoType() +  "-" + noId;
+                String key = user.getuId() + "-" + node.getNoType() + "-" + noId;
                 Long r = redisUtils.hremove(RedisKeys.NODES, key);
                 if (r > 0) {
                     return ResultUtil.ok();
@@ -131,7 +131,11 @@ public class InNodeController {
     @ApiResponse(code = 200, message = "list:{数字：{节点社区数据}}  数字：节点类型  2：项目 3：社区 4：平台 5：资本 ")
     public R nodeList(@RequestParam Map<String, Object> map) {
         Map<Long, List<InNode>> list = nodeService.query(map);
-        return R.ok().put("list", JsonUtil.toJSONString(list));
+//        HashMap<Integer, List<InNode>> hashMap = new HashMap<>();
+//        for (Map.Entry<Long, List<InNode>> entry : list.entrySet()) {
+//            hashMap.put(entry.getKey().intValue(), entry.getValue());
+//        }
+        return R.ok().put("list", list);
     }
 
 
@@ -203,7 +207,7 @@ public class InNodeController {
 
 
     /**
-     * 人物社区内部文章列表
+     * 人物社区 -- 详情
      */
     @GetMapping("/articleList")
     @ApiOperation(value = "人物社区 -- 详情", httpMethod = "GET", notes = "分页数据", response = UserArticleVo.class)

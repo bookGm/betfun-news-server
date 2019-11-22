@@ -4,14 +4,14 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 import java.io.Serializable;
-import java.util.Map;
+import java.util.List;
 
 @ApiModel(value = "活动用户", description = "报名数据")
 public class PassUserVo implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @ApiModelProperty(value = "报名数据(fName:上 dValue:下)")
-    private Map<Long, Object> userMap;
+    private List userMap;
 
     /**
      * 总记录数
@@ -35,7 +35,7 @@ public class PassUserVo implements Serializable {
     private int currPage;
 
 
-    public PassUserVo(Map<Long, Object> userMap, int totalCount, int pageSize, int currPage) {
+    public PassUserVo(List userMap, int totalCount, int pageSize, int currPage) {
         this.userMap = userMap;
         this.totalCount = totalCount;
         this.pageSize = pageSize;
@@ -43,11 +43,11 @@ public class PassUserVo implements Serializable {
         this.currPage = currPage;
     }
 
-    public Map<Long, Object> getUserMap() {
+    public List getUserMap() {
         return userMap;
     }
 
-    public void setUserMap(Map<Long, Object> userMap) {
+    public void setUserMap(List userMap) {
         this.userMap = userMap;
     }
 

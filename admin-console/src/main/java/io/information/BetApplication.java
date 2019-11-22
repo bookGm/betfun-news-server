@@ -68,7 +68,6 @@ public class BetApplication extends SpringBootServletInitializer {
                 SerializeWriter out = serializer.getWriter();
                 out.writeString(Objects.toString(object, null));
             }
-
         });
         fastJsonConfig.setSerializeConfig(serializeConfig);
         //附加：处理中文乱码

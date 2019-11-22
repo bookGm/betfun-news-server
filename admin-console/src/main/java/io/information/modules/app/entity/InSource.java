@@ -1,6 +1,7 @@
 package io.information.modules.app.entity;
 
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 
@@ -49,11 +50,13 @@ public class InSource implements Serializable {
     /**
      * 更新时间
      */
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date sUpdateTime;
 
     /**
      * 资源创建时间
      */
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date sCreateTime;
     /**
      * 是否菜单资源（0：否 1：是）

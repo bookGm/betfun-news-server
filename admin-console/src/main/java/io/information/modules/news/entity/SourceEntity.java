@@ -2,6 +2,7 @@ package io.information.modules.news.entity;
 
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -41,10 +42,12 @@ public class SourceEntity implements Serializable {
 	/**
 	 * 更新时间
 	 */
+	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
 	private Date sUpdateTime;
 	/**
 	 * 资源创建时间
 	 */
+	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
 	private Date sCreateTime;
 	/**
 	 * 是否菜单资源（0：否 1：是）

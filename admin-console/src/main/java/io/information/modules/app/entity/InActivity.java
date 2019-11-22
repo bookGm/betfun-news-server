@@ -120,6 +120,7 @@ public class InActivity implements Serializable {
     /**
      * 活动创建时间
      */
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date actCreateTime;
 
     /**

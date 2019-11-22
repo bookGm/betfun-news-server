@@ -1,5 +1,6 @@
 package io.information.modules.app.vo;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -40,6 +41,7 @@ public class InLikeVo implements Serializable {
      * 点赞时间
      */
     @ApiModelProperty(value = "点赞时间", name = "nick", dataType = "Date")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date time;
 
     public String getNick() {

@@ -14,7 +14,7 @@ import io.information.modules.app.service.IInActivityDatasService;
 import io.information.modules.app.vo.PassUserVo;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -56,7 +56,7 @@ public class InActivityDatasServiceImpl extends ServiceImpl<InActivityDatasDao, 
 
             List<InActivityDatas> list = page.getRecords();
             Map<Long, List<InActivityDatas>> m = list.stream().collect(Collectors.groupingBy(InActivityDatas::getuId));
-            Map<Long, Object> hashMap = new HashMap<>();
+            List list1 = new ArrayList();
             for (Map.Entry<Long, List<InActivityDatas>> longListEntry : m.entrySet()) {
                 JSONObject obj = new JSONObject();
                 obj.put("id", longListEntry.getKey());
@@ -64,10 +64,10 @@ public class InActivityDatasServiceImpl extends ServiceImpl<InActivityDatasDao, 
                     obj.put(k.getfName(),
                             k.getdValue() == null ? "" : k.getdValue());
                 }
-                hashMap.put(longListEntry.getKey(), obj);
+                list1.add(obj);
             }
             int total = (int) page.getTotal();
-            return new PassUserVo(hashMap, total, pageSize, currPage);
+            return new PassUserVo(list1, total, pageSize, currPage);
         }
         return null;
     }
