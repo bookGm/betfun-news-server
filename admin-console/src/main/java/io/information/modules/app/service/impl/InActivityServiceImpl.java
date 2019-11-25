@@ -19,6 +19,7 @@ import io.information.modules.app.service.IInActivityDatasService;
 import io.information.modules.app.service.IInActivityFieldsService;
 import io.information.modules.app.service.IInActivityService;
 import io.information.modules.app.service.IInActivityTicketService;
+import io.information.modules.sys.service.SysCitysService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -54,6 +55,8 @@ public class InActivityServiceImpl extends ServiceImpl<InActivityDao, InActivity
     InActivityDatasDao datasDao;
     @Autowired
     RedisUtils redisUtils;
+    @Autowired
+    SysCitysService sysCitysService;
 
 
     @Override
@@ -129,6 +132,16 @@ public class InActivityServiceImpl extends ServiceImpl<InActivityDao, InActivity
                 }
             }
             activity.setActTimeType(actTimeType);
+            if (null != activity.getActAddr()) {
+                String[] split = activity.getActAddr().split("-");
+                StringBuilder actAddName = new StringBuilder();
+                for (String s : split) {
+                    long id = Long.parseLong(s);
+                    String name = sysCitysService.getById(id).getName();
+                    actAddName.append(name).append("-");
+                }
+                activity.setActAddrName(actAddName.toString());
+            }
         }
         return new PageUtils(page);
     }
@@ -147,6 +160,16 @@ public class InActivityServiceImpl extends ServiceImpl<InActivityDao, InActivity
         }
         if (null != datas && !datas.isEmpty()) {
             activity.setDatasList(datas);
+        }
+        if (null != activity.getActAddr()) {
+            String[] split = activity.getActAddr().split("-");
+            StringBuilder actAddName = new StringBuilder();
+            for (String s : split) {
+                long id = Long.parseLong(s);
+                String name = sysCitysService.getById(id).getName();
+                actAddName.append(name).append("-");
+            }
+            activity.setActAddrName(actAddName.toString());
         }
         return activity;
     }

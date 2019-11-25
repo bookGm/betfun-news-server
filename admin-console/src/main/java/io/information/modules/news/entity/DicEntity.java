@@ -1,5 +1,6 @@
 package io.information.modules.news.entity;
 
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
@@ -21,7 +22,7 @@ public class DicEntity implements Serializable {
 	/**
 	 * 字典id(值)
 	 */
-	@TableId
+	@TableId(type = IdType.INPUT)
 	private Long dId;
 	/**
 	 * 字典父编码

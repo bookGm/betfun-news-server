@@ -43,6 +43,11 @@ public interface InArticleDao extends BaseMapper<InArticle> {
     void addReadNumber(@Param("aReadNumber") Long aReadNumber, @Param("aId") Long aId);
 
     /**
+     * 下一篇
+     */
+    InArticle next(@Param("uId") Long uId);
+
+    /**
      * 查询文章ID和标题
      * 根据用户ID和分页
      */
@@ -58,7 +63,6 @@ public interface InArticleDao extends BaseMapper<InArticle> {
      * 1：行业要闻  2：技术前沿
      */
     List<InArticle> searchArticleInTag(@Param("status") Integer status, @Param("currPage") Integer currPage, @Param("pageSize") Integer pageSize);
-
 
     /**
      * 1：行业要闻  2：技术前沿
@@ -81,6 +85,11 @@ public interface InArticleDao extends BaseMapper<InArticle> {
      * 获取用户所有文章ID
      */
     List<Long> allAId(@Param("uId") Long uId);
+
+    /**
+     * 感兴趣的文章
+     */
+    List<InArticle> interested();
 
     /**
      * 查询所有文章

@@ -13,6 +13,11 @@ public class InUserDTO implements Serializable {
     private static final long serialVersionUID = 1L;
 
     /**
+     * 用户ID
+     */
+    private Long uId;
+
+    /**
      * 用户昵称
      */
     private String uNick;
@@ -32,10 +37,14 @@ public class InUserDTO implements Serializable {
      */
     private Long uFans;
 
-    /**
-     * 用户关注的ID
-     */
-//    private List<Long> uFIds;
+    public Long getuId() {
+        return uId;
+    }
+
+    public void setuId(Long uId) {
+        this.uId = uId;
+    }
+
     public String getuNick() {
         return uNick;
     }
@@ -67,12 +76,4 @@ public class InUserDTO implements Serializable {
     public void setuFans(Long uFans) {
         this.uFans = uFans;
     }
-
-//    public List<Long> getuFIds() {
-//        return uFIds;
-//    }
-
-//    public void setuFIds(List<Long> uFIds) {
-//        this.uFIds = uFIds;
-//    }
 }

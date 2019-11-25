@@ -201,6 +201,29 @@ public class InArticleController {
 
 
     /**
+     * 下一篇
+     */
+    @GetMapping("/next")
+    @ApiOperation(value = "文章内容 -- 下一篇", httpMethod = "GET", response = InArticle.class)
+    @ApiImplicitParam(value = "当前文章的作者ID", name = "uId", required = true)
+    public ResultUtil next(@RequestParam Long uId) {
+        InArticle article = articleService.next(uId);
+        return ResultUtil.ok(article);
+    }
+
+
+    /**
+     * 感兴趣
+     */
+    @GetMapping("/interested")
+    @ApiOperation(value = "文章内容 -- 感兴趣", httpMethod = "GET", response = InArticle.class)
+    public ResultUtil interested() {
+        List<InArticle> articles = articleService.interested();
+        return ResultUtil.ok(articles);
+    }
+
+
+    /**
      * 点赞
      */
     @Login

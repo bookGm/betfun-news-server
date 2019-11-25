@@ -1,4 +1,4 @@
-package io.information.modules.app.config;
+package io.information.init;
 
 import io.elasticsearch.dao.EsArticleDao;
 import io.elasticsearch.entity.EsArticleEntity;
@@ -13,7 +13,7 @@ import java.util.Date;
 import java.util.List;
 
 @Component
-public class Init {
+public class InitArticleEs {
     @Autowired
     EsArticleDao articleDao;
 

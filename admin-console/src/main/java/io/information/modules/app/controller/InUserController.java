@@ -12,10 +12,7 @@ import io.information.modules.app.dto.IdentifyCompanyDTO;
 import io.information.modules.app.dto.IdentifyPersonalDTO;
 import io.information.modules.app.dto.RedactDataDTO;
 import io.information.modules.app.entity.*;
-import io.information.modules.app.service.IInActivityService;
-import io.information.modules.app.service.IInArticleService;
-import io.information.modules.app.service.IInCardService;
-import io.information.modules.app.service.IInUserService;
+import io.information.modules.app.service.*;
 import io.information.modules.app.vo.InLikeVo;
 import io.information.modules.app.vo.UserBoolVo;
 import io.information.modules.app.vo.UserCardVo;
@@ -47,6 +44,8 @@ import java.util.stream.Collectors;
 public class InUserController extends AbstractController {
     @Autowired
     private IInUserService userService;
+    @Autowired
+    private IInMessageService messageService;
     @Autowired
     private RabbitTemplate rabbitTemplate;
     @Autowired
@@ -362,11 +361,15 @@ public class InUserController extends AbstractController {
      */
     @Login
     @GetMapping("/system")
-//    @ApiOperation(value = "个人消息 -- 系统", httpMethod = "GET", notes = "分页数据")
+    @ApiOperation(value = "获取系统消息列表", httpMethod = "GET", notes = "分页数据", response = InMessage.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(value = "每页显示条数", name = "pageSize", required = true),
+            @ApiImplicitParam(value = "当前页数", name = "currPage", required = true)
+    })
     public R system(@RequestParam Map<String, Object> params, @ApiIgnore @LoginUser InUser user) {
         params.put("uId", user.getuId());
-        //TODO 未完成
-        return R.ok();
+        PageUtils page = messageService.queryPage(params);
+        return R.ok().put("page", page);
     }
 
 
@@ -380,7 +383,7 @@ public class InUserController extends AbstractController {
             @ApiImplicitParam(value = "每页显示条数", name = "pageSize", required = true),
             @ApiImplicitParam(value = "当前页数", name = "currPage", required = true)
     })
-    public ResultUtil<PageUtils<UserCardVo>> card
+    public ResultUtil card
     (@RequestParam Map<String, Object> map, @ApiIgnore @LoginUser InUser user) {
         map.put("uId", user.getuId());
         PageUtils page = userService.card(map);

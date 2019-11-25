@@ -1,12 +1,18 @@
 package io.information.modules.news.controller;
 
+import com.guansuo.common.JsonUtil;
 import com.guansuo.common.StringUtil;
+import io.information.common.utils.IdGenerator;
 import io.information.common.utils.PageUtils;
 import io.information.common.utils.R;
 import io.information.modules.news.entity.ActivityEntity;
+import io.information.modules.news.entity.MessageEntity;
 import io.information.modules.news.service.ActivityService;
+import io.information.modules.news.service.MessageService;
 import io.information.modules.sys.controller.AbstractController;
+import io.mq.utils.Constants;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,6 +33,10 @@ import java.util.Map;
 public class ActivityController extends AbstractController {
     @Autowired
     private ActivityService activityService;
+    @Autowired
+    private MessageService messageService;
+    @Autowired
+    private RabbitTemplate rabbitTemplate;
 
     /**
      * 列表
@@ -58,10 +68,18 @@ public class ActivityController extends AbstractController {
     public R auditOk(@RequestBody Map<String, Object> map) {
         if (null != map.get("actId") && StringUtil.isNotBlank(map.get("actId"))) {
             long actId = Long.parseLong(String.valueOf(map.get("actId")));
-            ActivityEntity activityEntity = new ActivityEntity();
-            activityEntity.setActId(actId);
-            activityEntity.setActStatus(2);
-            activityService.updateById(activityEntity);
+            ActivityEntity activity = new ActivityEntity();
+            activity.setActId(actId);
+            activity.setActStatus(2);
+            activityService.updateById(activity);
+            MessageEntity message = new MessageEntity();
+            message.setmId(IdGenerator.getId());
+            message.setmContent("恭喜，您发布的活动《" + activity.getActTitle() + "》已通过审核");
+            message.settId(activity.getuId());
+            message.setmCreateTime(new Date());
+            messageService.save(message);
+            rabbitTemplate.convertAndSend(Constants.systemExchange,
+                    Constants.system_Save_RouteKey, JsonUtil.toJSONString(message));
             return R.ok();
         }
         return R.error("缺少必要的参数");
@@ -76,10 +94,18 @@ public class ActivityController extends AbstractController {
     public R auditNo(@RequestBody Map<String, Object> map) {
         if (null != map.get("actId") && StringUtil.isNotBlank(map.get("actId"))) {
             long actId = Long.parseLong(String.valueOf(map.get("actId")));
-            ActivityEntity activityEntity = new ActivityEntity();
-            activityEntity.setActId(actId);
-            activityEntity.setActStatus(0);
-            activityService.updateById(activityEntity);
+            ActivityEntity activity = new ActivityEntity();
+            activity.setActId(actId);
+            activity.setActStatus(0);
+            activityService.updateById(activity);
+            MessageEntity message = new MessageEntity();
+            message.setmId(IdGenerator.getId());
+            message.setmContent("很遗憾，您发布的活动《" + activity.getActTitle() + "》未通过审核");
+            message.settId(activity.getuId());
+            message.setmCreateTime(new Date());
+            messageService.save(message);
+            rabbitTemplate.convertAndSend(Constants.systemExchange,
+                    Constants.system_Save_RouteKey, JsonUtil.toJSONString(message));
             return R.ok();
         }
         return R.error("缺少必要的参数");

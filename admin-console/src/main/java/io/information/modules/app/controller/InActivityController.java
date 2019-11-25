@@ -128,14 +128,6 @@ public class InActivityController {
     @ApiOperation(value = "查询单个活动信息", httpMethod = "GET", notes = "活动ID[actId]")
     public R info(@PathVariable("actId") Long actId) {
         InActivity activity = activityService.details(actId);
-        String[] split = activity.getActAddr().split("-");
-        StringBuilder actAddName = new StringBuilder();
-        for (String s : split) {
-            long id = Long.parseLong(s);
-            String name = sysCitysService.getById(id).getName();
-            actAddName.append(name).append("-");
-        }
-        activity.setActAddrName(actAddName.toString());
         return R.ok().put("activity", activity);
     }
 

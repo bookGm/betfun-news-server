@@ -1,5 +1,6 @@
 package io.information.modules.news.entity;
 
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -22,7 +23,7 @@ public class NodeEntity implements Serializable {
 	/**
 	 * 节点表ID
 	 */
-	@TableId
+	@TableId(type = IdType.INPUT)
 	private Long noId;
 	/**
 	 * 节点名称

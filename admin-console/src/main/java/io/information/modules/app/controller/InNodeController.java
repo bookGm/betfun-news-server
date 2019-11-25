@@ -131,11 +131,12 @@ public class InNodeController {
     @ApiResponse(code = 200, message = "list:{数字：{节点社区数据}}  数字：节点类型  2：项目 3：社区 4：平台 5：资本 ")
     public R nodeList(@RequestParam Map<String, Object> map) {
         Map<Long, List<InNode>> list = nodeService.query(map);
-//        HashMap<Integer, List<InNode>> hashMap = new HashMap<>();
-//        for (Map.Entry<Long, List<InNode>> entry : list.entrySet()) {
-//            hashMap.put(entry.getKey().intValue(), entry.getValue());
-//        }
-        return R.ok().put("list", list);
+        //TODO
+        HashMap<Integer, List<InNode>> hashMap = new HashMap<>();
+        for (Map.Entry<Long, List<InNode>> entry : list.entrySet()) {
+            hashMap.put(entry.getKey().intValue(), entry.getValue());
+        }
+        return R.ok().put("list", hashMap);
     }
 
 

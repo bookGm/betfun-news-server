@@ -1,5 +1,6 @@
 package io.information.modules.news.entity;
 
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
@@ -21,7 +22,7 @@ public class MenuEntity implements Serializable {
     /**
      * 菜单id
      */
-    @TableId
+    @TableId(type = IdType.INPUT)
     private Long mId;
     /**
      * 菜单名称

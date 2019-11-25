@@ -114,4 +114,34 @@ public class Constants {
      * 快讯修改
      */
     public static final String flash_Update_RouteKey="update_news_flash";
+
+
+    /**
+     * 系统交换机
+     */
+    public static final String systemExchange="exchangeSystem";
+    /**
+     * 系统新增队列
+     */
+    public static final String system_Save_Queue="news_system_save";
+    /**
+     * 系统删除队列
+     */
+    public static final String system_Delete_Queue="news_system_delete";
+    /**
+     * 系统修改队列
+     */
+    public static final String system_Update_Queue="news_system_update";
+    /**
+     * 系统新增
+     */
+    public static final String system_Delete_RouteKey="save_news_system";
+    /**
+     * 系统删除
+     */
+    public static final String system_Save_RouteKey="delete_news_system";
+    /**
+     * 系统修改
+     */
+    public static final String system_Update_RouteKey="update_news_system";
 }

@@ -35,4 +35,10 @@
     <select id="all" resultType="io.information.modules.app.entity.InArticle">
         select * from in_article
     </select>
+    <select id="interested" resultType="io.information.modules.app.entity.InArticle">
+        SELECT * FROM in_article WHERE a_status = 2 ORDER BY a_like DESC,a_read_number DESC LIMIT 3
+    </select>
+    <select id="next" resultType="io.information.modules.app.entity.InArticle" parameterType="java.lang.Long">
+        SELECT * FROM in_article WHERE u_id = #{uId} AND a_status = 2 ORDER BY a_type DESC,a_like DESC,a_read_number DESC LIMIT 1
+    </select>
 </mapper>

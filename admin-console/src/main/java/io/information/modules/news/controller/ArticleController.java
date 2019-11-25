@@ -1,14 +1,20 @@
 package io.information.modules.news.controller;
 
+import com.guansuo.common.JsonUtil;
 import com.guansuo.common.StringUtil;
+import io.information.common.utils.IdGenerator;
 import io.information.common.utils.PageUtils;
 import io.information.common.utils.R;
 import io.information.modules.app.config.IdWorker;
 import io.information.modules.news.dto.ArticleDTO;
 import io.information.modules.news.entity.ArticleEntity;
+import io.information.modules.news.entity.MessageEntity;
 import io.information.modules.news.service.ArticleService;
+import io.information.modules.news.service.MessageService;
 import io.information.modules.sys.controller.AbstractController;
+import io.mq.utils.Constants;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,6 +35,10 @@ import java.util.Map;
 public class ArticleController extends AbstractController {
     @Autowired
     private ArticleService articleService;
+    @Autowired
+    private MessageService messageService;
+    @Autowired
+    private RabbitTemplate rabbitTemplate;
 
     /**
      * 列表
@@ -120,10 +130,18 @@ public class ArticleController extends AbstractController {
     public R auditOk(@RequestBody Map<String, Object> params) {
         if (null != params.get("aId") && StringUtil.isNotBlank(params.get("aId"))) {
             long aId = Long.parseLong(String.valueOf(params.get("aId")));
-            ArticleEntity articleEntity = new ArticleEntity();
-            articleEntity.setaId(aId);
-            articleEntity.setaStatus(2);
-            articleService.updateById(articleEntity);
+            ArticleEntity article = new ArticleEntity();
+            article.setaId(aId);
+            article.setaStatus(2);
+            articleService.updateById(article);
+            MessageEntity message = new MessageEntity();
+            message.setmId(IdGenerator.getId());
+            message.setmContent("恭喜，您发布的文章《" + article.getaTitle() + "》已通过审核");
+            message.settId(article.getuId());
+            message.setmCreateTime(new Date());
+            messageService.save(message);
+            rabbitTemplate.convertAndSend(Constants.systemExchange,
+                    Constants.system_Save_RouteKey, JsonUtil.toJSONString(message));
             return R.ok();
         }
         return R.error("缺少必要的参数");
@@ -138,10 +156,18 @@ public class ArticleController extends AbstractController {
     public R auditNo(@RequestBody Map<String, Object> params) {
         if (null != params.get("aId") && StringUtil.isNotBlank(params.get("aId"))) {
             long aId = Long.parseLong(String.valueOf(params.get("aId")));
-            ArticleEntity articleEntity = new ArticleEntity();
-            articleEntity.setaId(aId);
-            articleEntity.setaStatus(0);
-            articleService.updateById(articleEntity);
+            ArticleEntity article = new ArticleEntity();
+            article.setaId(aId);
+            article.setaStatus(0);
+            articleService.updateById(article);
+            MessageEntity message = new MessageEntity();
+            message.setmId(IdGenerator.getId());
+            message.setmContent("很遗憾，您发布的文章《" + article.getaTitle() + "》未通过审核");
+            message.settId(article.getuId());
+            message.setmCreateTime(new Date());
+            messageService.save(message);
+            rabbitTemplate.convertAndSend(Constants.systemExchange,
+                    Constants.system_Save_RouteKey, JsonUtil.toJSONString(message));
             return R.ok();
         }
         return R.error("缺少必要的参数");

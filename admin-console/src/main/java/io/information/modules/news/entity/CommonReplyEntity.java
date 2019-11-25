@@ -1,5 +1,6 @@
 package io.information.modules.news.entity;
 
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -23,7 +24,7 @@ public class CommonReplyEntity implements Serializable {
     /**
      * 评论或回复id
      */
-    @TableId
+    @TableId(type = IdType.INPUT)
     private Long crId;
     /**
      * id

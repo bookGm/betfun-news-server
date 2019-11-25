@@ -2,6 +2,7 @@ package io.information.modules.app.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import io.information.common.utils.PageUtils;
+import io.information.modules.app.entity.InActivity;
 import io.information.modules.app.entity.InCommonReply;
 import io.information.modules.app.entity.InUser;
 import io.information.modules.app.vo.InLikeVo;
@@ -39,7 +40,7 @@ public interface IInUserService extends IService<InUser> {
 
     PageUtils<InLikeVo> like(Map<String, Object> params, Long uId);
 
-    PageUtils active(Map<String, Object> map);
+    PageUtils<InActivity> active(Map<String, Object> map);
 
     PageUtils fansWriter(Map<String, Object> map);
 

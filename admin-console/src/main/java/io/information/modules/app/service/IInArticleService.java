@@ -46,4 +46,8 @@ public interface IInArticleService extends IService<InArticle> {
     List<InArticle> all();
 
     List<ArticleBannerVo> banner();
+
+    List<InArticle> interested();
+
+    InArticle next(Long uId);
 }

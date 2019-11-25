@@ -1,7 +1,5 @@
 package io.information.modules.app.service.impl;
 
-import com.alibaba.druid.support.json.JSONUtils;
-import com.alibaba.fastjson.JSONArray;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -330,7 +328,7 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
     }
 
     @Override
-    public PageUtils active(Map<String, Object> map) {
+    public PageUtils<InActivity> active(Map<String, Object> map) {
         LambdaQueryWrapper<InActivity> queryWrapper = new LambdaQueryWrapper<>();
         if (null != map.get("type") && StringUtil.isNotBlank(map.get("type"))) {
             int type = Integer.parseInt(String.valueOf(map.get("type")));
@@ -413,7 +411,7 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
         } else if (cmap == null && cmap2 != null) {
             cmap = cmap2;
         }
-//        List<Map.Entry<Object, Object>> slist = null;
+
         //关注目标信息
         if (null != cmap && cmap.size() > 0) {
             newsFocus = new ArrayList<>();
@@ -424,16 +422,11 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
             return new PageUtils(newsFocus, 0, size, page);
         }
         for (Map.Entry<Object, Object> obj : cmap) {
-            InUserDTO userDTO = new InUserDTO();
             String[] str = String.valueOf(obj.getKey()).split("-");
             Long id = Long.valueOf(str[2]);
-//            Object oUser = redisTemplate.opsForHash().get(RedisKeys.INUSER, String.valueOf(id));
-//            InUser user = (InUser) oUser;
             InUser user = this.getById(id);
             if (null != user) {
-                userDTO.setuPhoto(user.getuPhoto());
-                userDTO.setuIntro(user.getuIntro());
-                userDTO.setuNick(user.getuNick());
+                InUserDTO userDTO = BeanHelper.copyProperties(user, InUserDTO.class);
                 newsFocus.add(userDTO);
             }
         }
@@ -449,7 +442,7 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
         //以uId为目标查询粉丝  #uId-#type-#fId
         ArrayList<InUserDTO> newsFans = null;
         List<Map.Entry<Object, Object>> cmap = redisUtils.hfget(RedisKeys.FOCUS, "*-*-" + uId);
-//        List<Map.Entry<Object, Object>> slist = null;
+
         //关注目标信息
         if (null != cmap && cmap.size() > 0) {
             newsFans = new ArrayList<>();
@@ -464,8 +457,6 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
             String[] str = String.valueOf(obj.getKey()).split("-");
             Long id = Long.valueOf(str[0]);
             InUser user = this.getById(id);
-//            Object oUser = redisTemplate.opsForHash().get(RedisKeys.INUSER, String.valueOf(id));
-//            InUser user = (InUser) oUser;
             if (null != user) {
                 userDTO.setuPhoto(user.getuPhoto());
                 userDTO.setuIntro(user.getuIntro());

@@ -262,12 +262,22 @@ public class InArticleServiceImpl extends ServiceImpl<InArticleDao, InArticle> i
     @Override
     public List<ArticleBannerVo> banner() {
         LambdaQueryWrapper<InArticle> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(InArticle::getaBanner, 1).eq(InArticle::getaStatus,2);
+        queryWrapper.eq(InArticle::getaBanner, 1).eq(InArticle::getaStatus, 2);
         List<InArticle> inArticles = this.list(queryWrapper);
         List<ArticleBannerVo> bannerVos = BeanHelper.copyWithCollection(inArticles, ArticleBannerVo.class);
         if (null != bannerVos && !bannerVos.isEmpty()) {
             return bannerVos;
         }
         return null;
+    }
+
+    @Override
+    public List<InArticle> interested() {
+        return this.baseMapper.interested();
+    }
+
+    @Override
+    public InArticle next(Long uId) {
+        return this.baseMapper.next(uId);
     }
 }
