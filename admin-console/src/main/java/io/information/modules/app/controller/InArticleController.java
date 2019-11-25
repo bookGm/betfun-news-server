@@ -39,7 +39,7 @@ import java.util.stream.Collectors;
  */
 @RestController
 @RequestMapping("/app/article")
-@Api(value = "/app/article", tags = "APP咨讯文章接口")
+@Api(value = "/app/article", tags = "APP资讯文章接口")
 public class InArticleController {
     @Autowired
     private IInArticleService articleService;
@@ -99,7 +99,7 @@ public class InArticleController {
      */
     @Login
     @DeleteMapping("/delete")
-    @ApiOperation(value = "单个或批量删除咨讯文章", httpMethod = "DELETE", notes = "根据aId[数组]删除活动")
+    @ApiOperation(value = "单个或批量删除资讯文章", httpMethod = "DELETE", notes = "根据aId[数组]删除活动")
     @ApiImplicitParam(value = "文章ID[数组]", name = "aIds", required = true)
     public R delete(@RequestParam Long[] aIds, @ApiIgnore @LoginUser InUser user) {
         if (user.getuAuthStatus() == 2) {
@@ -118,7 +118,7 @@ public class InArticleController {
      */
     @Login
     @PutMapping("/update")
-    @ApiOperation(value = "修改咨讯文章", httpMethod = "PUT")
+    @ApiOperation(value = "修改资讯文章", httpMethod = "PUT")
     public R update(@RequestBody InArticle article, @ApiIgnore @LoginUser InUser user) {
         if (user.getuAuthStatus() == 2) {
             articleService.updateById(article);
@@ -181,7 +181,7 @@ public class InArticleController {
      * 查询
      */
     @GetMapping("/info/{aId}")
-    @ApiOperation(value = "查询单个咨讯文章", httpMethod = "GET", notes = "文章ID[aId]")
+    @ApiOperation(value = "查询单个资讯文章", httpMethod = "GET", notes = "文章ID[aId]")
     public R queryArticle(@PathVariable("aId") String aId, @ApiIgnore HttpServletRequest request) {
         String ip = IPUtils.getIpAddr(request);
         InArticle article = articleService.getById(aId);

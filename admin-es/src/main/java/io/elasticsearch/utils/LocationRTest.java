@@ -34,30 +34,31 @@ public class LocationRTest {
 
     @Test
     //导入数据
-    public void testAdd(){
+    public void testAdd() {
         List<EsArticleEntity> employees = new ArrayList<>();
-        for(int i=0;i<10;i++){
+        for (int i = 0; i < 10; i++) {
             EsArticleEntity location = new EsArticleEntity();
             location.setuId(0L);
-            location.setaBrief("摘要"+i);
+            location.setaBrief("摘要" + i);
             location.setaId((long) i);
-            location.setaContent("内容"+i);
+            location.setaContent("内容" + i);
             location.setaCreateTime(new Date());
-            location.setaTitle("标题"+i);
+            location.setaTitle("标题" + i);
             employees.add(location);
         }
-    articleDao.saveAll(employees);
+        articleDao.saveAll(employees);
     }
 
 
     /**
      * 地理搜索方法
-     * @param lat latitude 纬度
-     * @param lon longitude 经度
+     *
+     * @param lat      latitude 纬度cl
+     * @param lon      longitude 经度
      * @param distance 距离
      * @param pageable 分页
      */
-    public Page<LocationEntity> findPage(double lat, double lon, String distance, Pageable pageable){
+    public Page<LocationEntity> findPage(double lat, double lon, String distance, Pageable pageable) {
         //实现了SearchQuery接口，用于组装QueryBuilder和SortBuilder以及Pageable等
         NativeSearchQueryBuilder builder = new NativeSearchQueryBuilder();
         //分页
@@ -66,7 +67,7 @@ public class LocationRTest {
         BoolQueryBuilder boolQueryBuilder = new BoolQueryBuilder();
         //以点为中心，搜索指定范围
         GeoDistanceQueryBuilder distanceQueryBuilder = new GeoDistanceQueryBuilder("geo");
-        distanceQueryBuilder.point(lat,lon);
+        distanceQueryBuilder.point(lat, lon);
         //定义查询的距离单位：千米
         distanceQueryBuilder.distance(distance, DistanceUnit.KILOMETERS);
         boolQueryBuilder.filter(distanceQueryBuilder);
@@ -82,7 +83,7 @@ public class LocationRTest {
     }
 
     @Test
-    public void search(){
+    public void search() {
         Page<LocationEntity> page = findPage(11.71, 13.25, "50000000", new PageRequest(0, 5));
         for (LocationEntity location : page) {
             double distance = GeoDistance.ARC.calculate(
@@ -91,7 +92,7 @@ public class LocationRTest {
                     location.getGeo().getLat(),
                     location.getGeo().getLon(),
                     DistanceUnit.KILOMETERS);
-            System.out.println("距离："+location+"目标,"+distance+"千米");
+            System.out.println("距离：" + location + "目标," + distance + "千米");
         }
     }
 }

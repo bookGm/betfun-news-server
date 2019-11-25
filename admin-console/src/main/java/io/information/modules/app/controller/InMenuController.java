@@ -137,7 +137,7 @@ public class InMenuController {
     }
 
     /**
-     * 获取所有咨讯菜单
+     * 获取所有资讯菜单
      * @return
      */
     @GetMapping("getAllMenu")

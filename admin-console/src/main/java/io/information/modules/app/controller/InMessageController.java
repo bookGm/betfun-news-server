@@ -28,7 +28,7 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("app/message")
-@Api(value = "/app/message", tags = "APP咨讯消息 -- 系统")
+@Api(value = "/app/message", tags = "APP资讯消息 -- 系统")
 public class InMessageController {
     @Autowired
     private IInMessageService messageService;

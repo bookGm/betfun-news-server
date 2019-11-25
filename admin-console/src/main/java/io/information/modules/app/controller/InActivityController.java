@@ -37,7 +37,7 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("/app/activity")
-@Api(value = "/app/activity", tags = "APP咨讯活动接口")
+@Api(value = "/app/activity", tags = "APP资讯活动接口")
 public class InActivityController {
     @Autowired
     private IInActivityService activityService;
@@ -52,7 +52,7 @@ public class InActivityController {
      */
     @Login
     @PostMapping("/save")
-    @ApiOperation(value = "新增咨讯活动", httpMethod = "POST", response = InActivity.class)
+    @ApiOperation(value = "新增资讯活动", httpMethod = "POST", response = InActivity.class)
     public ResultUtil<InActivity> save(@RequestBody InActivity activity, @ApiIgnore @LoginUser InUser user) {
         activity.setActId(IdGenerator.getId());
         activity.setActCreateTime(new Date());
@@ -67,7 +67,7 @@ public class InActivityController {
      * 删除
      */
     @Login
-    @ApiOperation(value = "删除咨讯活动", httpMethod = "DELETE", notes = "根据actId[数组]删除活动")
+    @ApiOperation(value = "删除资讯活动", httpMethod = "DELETE", notes = "根据actId[数组]删除活动")
     @ApiImplicitParam(value = "活动ID[数组]", name = "actIds", required = true)
     @DeleteMapping("/delete")
     public R delete(@RequestParam Long[] actIds) {
@@ -81,7 +81,7 @@ public class InActivityController {
      */
     @Login
     @PutMapping("/update")
-    @ApiOperation(value = "修改咨讯活动", httpMethod = "PUT")
+    @ApiOperation(value = "修改资讯活动", httpMethod = "PUT")
     public R update(@RequestBody InActivity activity) {
         activityService.updateActivity(activity);
         return R.ok();
@@ -92,7 +92,7 @@ public class InActivityController {
      * 列表
      */
     @GetMapping("/list")
-    @ApiOperation(value = "获取已审核的咨讯活动", httpMethod = "GET", notes = "分页数据", response = InActivity.class)
+    @ApiOperation(value = "获取已审核的资讯活动", httpMethod = "GET", notes = "分页数据", response = InActivity.class)
     @ApiImplicitParams({
             @ApiImplicitParam(value = "每页显示条数", name = "pageSize", required = true),
             @ApiImplicitParam(value = "当前页数", name = "currPage", required = true),

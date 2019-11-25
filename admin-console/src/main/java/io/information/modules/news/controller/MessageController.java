@@ -36,7 +36,6 @@ public class MessageController {
     @RequiresPermissions("news:message:list")
     public R list(@RequestParam Map<String, Object> params) {
         PageUtils page = messageService.queryPage(params);
-
         return R.ok().put("page", page);
     }
 

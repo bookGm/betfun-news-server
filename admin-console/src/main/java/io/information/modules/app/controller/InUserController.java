@@ -40,7 +40,7 @@ import java.util.stream.Collectors;
  */
 @RestController
 @RequestMapping("/app/user")
-@Api(value = "/app/user", tags = "APP咨讯用户接口")
+@Api(value = "/app/user", tags = "APP资讯用户接口")
 public class InUserController extends AbstractController {
     @Autowired
     private IInUserService userService;

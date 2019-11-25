@@ -18,7 +18,7 @@ import java.util.Map;
 
 /**
  * <p>
- * 咨讯标签表 前端控制器
+ * 资讯标签表 前端控制器
  * </p>
  *
  * @author ZXS
@@ -26,7 +26,7 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("/app/tag")
-@Api(value = "/app/tag", tags = "APP咨讯标签接口")
+@Api(value = "/app/tag", tags = "APP资讯标签接口")
 public class InTagController {
     @Autowired
     private IInTagService tagService;
@@ -68,7 +68,7 @@ public class InTagController {
      * 查询
      */
     @GetMapping("/info/{tId}")
-    @ApiOperation(value = "查询单个咨讯标签", httpMethod = "GET")
+    @ApiOperation(value = "查询单个资讯标签", httpMethod = "GET")
     @ApiImplicitParam(name = "tId", value = "标签ID", required = true)
     public R queryTag(@PathVariable("tId") Long tId) {
         InTag tag = tagService.getById(tId);

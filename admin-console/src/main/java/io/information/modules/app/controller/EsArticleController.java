@@ -16,16 +16,16 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequestMapping("/app/es/article")
-@Api(value = "/app/es/article", tags = "es搜索咨讯")
+@Api(value = "/app/es/article", tags = "es搜索资讯")
 public class EsArticleController {
     @Autowired
     private ArticleEsService articleService;
 
     /**
-     * 搜索咨讯 -- 文章
+     * 搜索资讯 -- 文章
      */
     @PostMapping("/search")
-    @ApiOperation(value = "搜索咨讯", httpMethod = "POST")
+    @ApiOperation(value = "搜索资讯", httpMethod = "POST")
     public PageUtils searchInfo(@RequestBody SearchRequest request) {
         return articleService.searchInfo(request);
     }
