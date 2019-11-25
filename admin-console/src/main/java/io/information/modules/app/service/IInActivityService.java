@@ -34,4 +34,7 @@ public interface IInActivityService extends IService<InActivity> {
     String signUp(Long actId, Long getuId);
 
     boolean isApply(Long uId, Long actId);
+
+    List<InActivity> interested();
+
 }

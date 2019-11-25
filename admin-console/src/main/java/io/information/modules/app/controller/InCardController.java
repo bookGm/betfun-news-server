@@ -56,12 +56,12 @@ public class InCardController {
             @ApiImplicitParam(value = "用户id", name = "uId", required = false),
     })
     public R details(@RequestParam Map<String, Object> map, @ApiIgnore HttpServletRequest request) {
-        if(StringUtil.isBlank(map.containsKey("cId"))){
+        if (StringUtil.isBlank(map.containsKey("cId"))) {
             return R.error("缺少帖子id");
         }
-        Long cId=Long.parseLong(String.valueOf(map.get("cId")));
+        Long cId = Long.parseLong(String.valueOf(map.get("cId")));
         String ip = IPUtils.getIpAddr(request);
-        InCard card = cardService.details(cId,map.get("uId"));
+        InCard card = cardService.details(cId, map.get("uId"));
         Boolean aBoolean = redisTemplate.hasKey(RedisKeys.CARDBROWSEIP + ip + String.valueOf(cId));
         if (!aBoolean) {
             redisTemplate.opsForValue().set(RedisKeys.CARDBROWSEIP + ip + String.valueOf(cId), String.valueOf(cId), 60 * 60 * 2);

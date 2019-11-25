@@ -268,4 +268,40 @@ public class InActivityServiceImpl extends ServiceImpl<InActivityDao, InActivity
         return null;
     }
 
+
+    @Override
+    public List<InActivity> interested() {
+        List<InActivity> activityList = this.baseMapper.interested();
+        String actTimeType = "";
+        Long currDate = new Date().getTime();
+        for (InActivity activity : activityList) {
+            Long startTime = activity.getActStartTime().getTime();
+            Long closeTime = activity.getActCloseTime().getTime();
+            if (startTime > currDate) {
+                if (closeTime > currDate) {
+                    actTimeType = "已结束";
+                } else {
+                    actTimeType = "进行中";
+                }
+            } else {
+                if (closeTime > currDate) {
+                    actTimeType = "已结束";
+                } else {
+                    actTimeType = "未开始";
+                }
+            }
+            activity.setActTimeType(actTimeType);
+            if (null != activity.getActAddr()) {
+                String[] split = activity.getActAddr().split("-");
+                StringBuilder actAddName = new StringBuilder();
+                for (String s : split) {
+                    long id = Long.parseLong(s);
+                    String name = sysCitysService.getById(id).getName();
+                    actAddName.append(name).append("-");
+                }
+                activity.setActAddrName(actAddName.toString());
+            }
+        }
+        return activityList;
+    }
 }

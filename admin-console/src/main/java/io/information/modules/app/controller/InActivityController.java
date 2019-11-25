@@ -4,10 +4,7 @@ package io.information.modules.app.controller;
 import io.information.common.utils.*;
 import io.information.modules.app.annotation.Login;
 import io.information.modules.app.annotation.LoginUser;
-import io.information.modules.app.entity.InActivity;
-import io.information.modules.app.entity.InActivityDatas;
-import io.information.modules.app.entity.InActivityFields;
-import io.information.modules.app.entity.InUser;
+import io.information.modules.app.entity.*;
 import io.information.modules.app.service.IInActivityDatasService;
 import io.information.modules.app.service.IInActivityService;
 import io.information.modules.app.vo.ActivityDataVo;
@@ -129,6 +126,17 @@ public class InActivityController {
     public R info(@PathVariable("actId") Long actId) {
         InActivity activity = activityService.details(actId);
         return R.ok().put("activity", activity);
+    }
+
+
+    /**
+     * 感兴趣 -- 活动
+     */
+    @GetMapping("/interested")
+    @ApiOperation(value = "感兴趣 -- 活动", httpMethod = "GET", response = InArticle.class)
+    public ResultUtil interested() {
+        List<InActivity> activities = activityService.interested();
+        return ResultUtil.ok(activities);
     }
 
 

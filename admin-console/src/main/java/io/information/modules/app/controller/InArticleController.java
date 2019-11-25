@@ -213,10 +213,10 @@ public class InArticleController {
 
 
     /**
-     * 感兴趣
+     * 感兴趣 -- 文章
      */
     @GetMapping("/interested")
-    @ApiOperation(value = "文章内容 -- 感兴趣", httpMethod = "GET", response = InArticle.class)
+    @ApiOperation(value = "感兴趣 -- 文章", httpMethod = "GET", response = InArticle.class)
     public ResultUtil interested() {
         List<InArticle> articles = articleService.interested();
         return ResultUtil.ok(articles);

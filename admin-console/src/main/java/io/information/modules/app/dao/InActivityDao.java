@@ -39,4 +39,9 @@ public interface InActivityDao extends BaseMapper<InActivity> {
      * 获取用户所有活动ID
      */
     List<Long> allActId(@Param("uId") Long uId);
+
+    /**
+     * 感兴趣
+     */
+    List<InActivity> interested();
 }
