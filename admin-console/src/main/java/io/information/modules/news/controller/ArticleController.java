@@ -140,8 +140,8 @@ public class ArticleController extends AbstractController {
             message.settId(article.getuId());
             message.setmCreateTime(new Date());
             messageService.save(message);
-            rabbitTemplate.convertAndSend(Constants.systemExchange,
-                    Constants.system_Save_RouteKey, JsonUtil.toJSONString(message));
+//            rabbitTemplate.convertAndSend(Constants.systemExchange,
+//                    Constants.system_Save_RouteKey, JsonUtil.toJSONString(message));
             return R.ok();
         }
         return R.error("缺少必要的参数");
@@ -166,8 +166,8 @@ public class ArticleController extends AbstractController {
             message.settId(article.getuId());
             message.setmCreateTime(new Date());
             messageService.save(message);
-            rabbitTemplate.convertAndSend(Constants.systemExchange,
-                    Constants.system_Save_RouteKey, JsonUtil.toJSONString(message));
+//            rabbitTemplate.convertAndSend(Constants.systemExchange,
+//                    Constants.system_Save_RouteKey, JsonUtil.toJSONString(message));
             return R.ok();
         }
         return R.error("缺少必要的参数");

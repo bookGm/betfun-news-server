@@ -53,25 +53,25 @@ public class LogListener {
     }
 
 
-    /**
-     * 系统消息
-     */
-    @RabbitListener(bindings = @QueueBinding(
-            value = @Queue(name = Constants.system_Save_Queue),
-            exchange = @Exchange(name = Constants.systemExchange),
-            key = Constants.system_Save_RouteKey
-    ))
-    public void system(String m) {
-        //TODO
-        InMessage message = JsonUtil.parseObject(m, InMessage.class);
-        //接收到新消息&&内容
-        if(message.gettId() == -1){
-            //内部消息  推送全部
-
-        }else {
-            //用户消息  推送单个
-
-        }
-    }
+//    /**
+//     * 系统消息
+//     */
+//    @RabbitListener(bindings = @QueueBinding(
+//            value = @Queue(name = Constants.system_Save_Queue),
+//            exchange = @Exchange(name = Constants.systemExchange),
+//            key = Constants.system_Save_RouteKey
+//    ))
+//    public void system(String m) {
+//        //TODO
+//        InMessage message = JsonUtil.parseObject(m, InMessage.class);
+//        //接收到新消息&&内容
+//        if(message.gettId() == -1){
+//            //内部消息  推送全部
+//
+//        }else {
+//            //用户消息  推送单个
+//
+//        }
+//    }
 
 }

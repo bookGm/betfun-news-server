@@ -42,7 +42,9 @@ import java.util.stream.Collectors;
 public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements IInUserService {
     private static final Logger LOG = LoggerFactory.getLogger(InUserServiceImpl.class);
     @Autowired
-    RedisUtils redisUtils;
+    IInCommonReplyService commonReplyService;
+    @Autowired
+    IInActivityService activityService;
     @Autowired
     StringRedisTemplate redisTemplate;
     @Autowired
@@ -50,17 +52,15 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
     @Autowired
     IInCardBaseService baseService;
     @Autowired
-    IInCommonReplyService commonReplyService;
-    @Autowired
-    IInActivityService activityService;
-    @Autowired
     IInNodeService nodeService;
-    @Autowired
-    IInDicService dicService;
     @Autowired
     InActivityDao activityDao;
     @Autowired
+    IInDicService dicService;
+    @Autowired
     InArticleDao articleDao;
+    @Autowired
+    RedisUtils redisUtils;
 
 
     @Override
@@ -116,7 +116,7 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
             list.addAll(actIds);
             list.addAll(aIds);
             if (null != list && !list.isEmpty()) {
-                queryWrapper.in(InCommonReply::gettId, list);
+                queryWrapper.ne(InCommonReply::gettType, 3).in(InCommonReply::gettId, list);
                 IPage<InCommonReply> page = commonReplyService.page(
                         new Query<InCommonReply>().getPage(map),
                         queryWrapper
@@ -126,6 +126,23 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
                     record.setcName(user.getuName());
                     record.setcPhoto(user.getuPhoto());
                     record.setCrSimpleTime(DateUtils.getSimpleTime(record.getCrTime()));
+                    String typeNmae = "";
+                    switch (record.gettType()) {
+                        //0文章，1帖子，2活动，3用户
+                        case 0:
+                            typeNmae = "文章";
+                            break;
+                        case 1:
+                            typeNmae = "帖子";
+                            break;
+                        case 2:
+                            typeNmae = "活动";
+                            break;
+                        case 3:
+                            typeNmae = "用户";
+                            break;
+                    }
+                    record.settTypeName(typeNmae);
                 }
                 return new PageUtils<>(page);
             }
@@ -433,15 +450,16 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
         return new PageUtils(newsFocus, cmap.size(), size, page);
     }
 
+
     @Override
     public PageUtils follower(Map<String, Object> map) {
         Long uId = Long.parseLong(String.valueOf(map.get("uId")));
         Integer page = StringUtil.isBlank(map.get("currPage")) ? 0 : Integer.parseInt(String.valueOf(map.get("currPage")));
         Integer size = StringUtil.isBlank(map.get("pageSize")) ? 10 : Integer.parseInt(String.valueOf(map.get("pageSize")));
         Integer bindex = page * size;
-        //以uId为目标查询粉丝  #uId-#type-#fId
-        ArrayList<InUserDTO> newsFans = null;
+        //以uId为目标查询粉丝  #uId-#status-#fId
         List<Map.Entry<Object, Object>> cmap = redisUtils.hfget(RedisKeys.FOCUS, "*-*-" + uId);
+        ArrayList<InUserDTO> newsFans = null;
 
         //关注目标信息
         if (null != cmap && cmap.size() > 0) {
@@ -453,15 +471,12 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
             return new PageUtils(newsFans, 0, size, page);
         }
         for (Map.Entry<Object, Object> obj : cmap) {
-            InUserDTO userDTO = new InUserDTO();
             String[] str = String.valueOf(obj.getKey()).split("-");
             Long id = Long.valueOf(str[0]);
             InUser user = this.getById(id);
             if (null != user) {
-                userDTO.setuPhoto(user.getuPhoto());
-                userDTO.setuIntro(user.getuIntro());
-                userDTO.setuNick(user.getuNick());
-                userDTO.setuFans(user.getuFans());
+                InUserDTO userDTO = BeanHelper.copyProperties(user, InUserDTO.class);
+                newsFans.add(userDTO);
             }
         }
         return new PageUtils(newsFans, cmap.size(), size, page);

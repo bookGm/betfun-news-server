@@ -30,7 +30,6 @@ public class CommonReplyServiceImpl extends ServiceImpl<CommonReplyDao, CommonRe
     @Override
     public List<CommonReplyEntity> search(Long crIds) {
         CommonReplyEntity commonReplyEntity = this.getById(crIds);
-
         return null;
     }
 

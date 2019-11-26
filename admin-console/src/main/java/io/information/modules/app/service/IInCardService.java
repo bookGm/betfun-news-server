@@ -12,7 +12,7 @@ import java.util.Map;
 public interface IInCardService extends IService<InCardBase> {
     void issueCard(InCard card, InUser user);
 
-    InCard details(Long cId,Object uId);
+    InCard details(Map<String, Object> map);
 
     void delete(Long[] cIds);
 

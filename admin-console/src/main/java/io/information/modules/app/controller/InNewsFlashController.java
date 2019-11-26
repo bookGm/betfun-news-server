@@ -93,18 +93,6 @@ public class InNewsFlashController {
         return R.ok();
     }
 
-    /**
-     * 删除
-     */
-    @PostMapping("/delete")
-    @ApiOperation(value = "删除单个或多个快讯", httpMethod = "DELETE", notes = "快讯ID数组")
-    public R delete(@RequestBody Long[] nIds) {
-        newsFlashService.removeByIds(Arrays.asList(nIds));
-        String join = StringUtils.join(nIds, ",");
-        rabbitTemplate.convertAndSend(Constants.flashExchange,
-                Constants.flash_Delete_RouteKey, join);
-        return R.ok();
-    }
 
     /**
      * 利好利空

@@ -119,16 +119,12 @@ public class InActivityServiceImpl extends ServiceImpl<InActivityDao, InActivity
             Long startTime = activity.getActStartTime().getTime();
             Long closeTime = activity.getActCloseTime().getTime();
             if (startTime > currDate) {
-                if (closeTime > currDate) {
+                actTimeType = "未开始";
+            } else if (startTime <= currDate) {  //活动开始
+                if (closeTime < currDate) {
                     actTimeType = "已结束";
-                } else {
+                } else if ((closeTime > currDate)) {
                     actTimeType = "进行中";
-                }
-            } else {
-                if (closeTime > currDate) {
-                    actTimeType = "已结束";
-                } else {
-                    actTimeType = "未开始";
                 }
             }
             activity.setActTimeType(actTimeType);
@@ -171,6 +167,20 @@ public class InActivityServiceImpl extends ServiceImpl<InActivityDao, InActivity
             }
             activity.setActAddrName(actAddName.toString());
         }
+        Long startTime = activity.getActStartTime().getTime();
+        Long closeTime = activity.getActCloseTime().getTime();
+        String actTimeType = "";
+        Long currDate = new Date().getTime();
+        if (startTime > currDate) {
+            actTimeType = "未开始";
+        } else {
+            if (closeTime < currDate) {
+                actTimeType = "已结束";
+            } else if ((closeTime > currDate)) {
+                actTimeType = "进行中";
+            }
+        }
+        activity.setActTimeType(actTimeType);
         return activity;
     }
 
@@ -278,16 +288,12 @@ public class InActivityServiceImpl extends ServiceImpl<InActivityDao, InActivity
             Long startTime = activity.getActStartTime().getTime();
             Long closeTime = activity.getActCloseTime().getTime();
             if (startTime > currDate) {
-                if (closeTime > currDate) {
+                actTimeType = "未开始";
+            } else if (startTime <= currDate) {  //活动开始
+                if (closeTime < currDate) {
                     actTimeType = "已结束";
-                } else {
+                } else if ((closeTime > currDate)) {
                     actTimeType = "进行中";
-                }
-            } else {
-                if (closeTime > currDate) {
-                    actTimeType = "已结束";
-                } else {
-                    actTimeType = "未开始";
                 }
             }
             activity.setActTimeType(actTimeType);

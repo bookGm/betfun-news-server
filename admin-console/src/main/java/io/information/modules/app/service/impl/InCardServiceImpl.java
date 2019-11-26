@@ -23,21 +23,21 @@ import java.util.Map;
 @Service
 public class InCardServiceImpl extends ServiceImpl<InCardBaseDao, InCardBase> implements IInCardService {
     @Autowired
-    IInCardBaseService baseService;
+    IInCardVoteService iInCardVoteService;
     @Autowired
     IInCardArgueService argueService;
+    @Autowired
+    IInCardBaseService baseService;
     @Autowired
     IInCardVoteService voteService;
     @Autowired
     RabbitTemplate rabbitTemplate;
     @Autowired
+    IInUserService iInUserService;
+    @Autowired
     RedisUtils redisUtils;
     @Autowired
-    IInCardVoteService iInCardVoteService;
-    @Autowired
     DicHelper dicHelper;
-    @Autowired
-    IInUserService iInUserService;
 
 
     @Override
@@ -59,14 +59,14 @@ public class InCardServiceImpl extends ServiceImpl<InCardBaseDao, InCardBase> im
         base.setuId(user.getuId());
         base.setcCreateTime(new Date());
         baseService.save(base);
-        logOperate(user.getuId(), cId,card.getBase().getcTitle(), NewsEnum.操作_发布);
+        logOperate(user.getuId(), cId, card.getBase().getcTitle(), NewsEnum.操作_发布);
     }
 
 
     /**
      * 记录操作日志
      */
-    void logOperate(Long uId, Long tId,String tName, NewsEnum e) {
+    void logOperate(Long uId, Long tId, String tName, NewsEnum e) {
         InLog log = new InLog();
         log.setlOperateId(uId);
         log.setlTargetId(tId);
@@ -79,41 +79,51 @@ public class InCardServiceImpl extends ServiceImpl<InCardBaseDao, InCardBase> im
 
 
     @Override
-    public InCard details(Long cId,Object uId) {
-        InCard card = new InCard();
-        InCardBase base = baseService.getById(cId);
-        if(null!=base.getcNodeCategory()){
-            base.setcNodeCategoryValue(dicHelper.getDicName(base.getcNodeCategory().longValue()));
-        }
-        Long uid=0L;
-        if(StringUtil.isNotBlank(uId)){
-            uid=Long.parseLong(String.valueOf(uId));
-            base.setuNick(iInUserService.getById(uid).getuNick());;
-        }
-        if (null != base) {
-            card.setBase(base);
-            if (null != base.getcCategory()) {
-                Integer category = base.getcCategory();
-                if (1 == category) {
-                    //辩论帖子
-                    InCardArgue argue = argueService.getById(base.getcId());
-                    card.setArgue(argue);
+    public InCard details(Map<String, Object> map) {
+        if (null != map.get("cId") && StringUtil.isNotBlank(map.get("cId"))) {
+            long cId = Long.parseLong(String.valueOf(map.get("cId")));
+            InCard card = new InCard();
+            InCardBase base = baseService.getById(cId);
+            if (null != base) {
+                if (null != base.getcNodeCategory()) {
+                    base.setcNodeCategoryValue(dicHelper.getDicName(base.getcNodeCategory().longValue()));
                 }
-                if (2 == category) {
-                    //投票帖子
-                    InCardVote vote = voteService.getById(base.getcId());
-                    String optIndexs=iInCardVoteService.vote(cId,uid,null);
-                    if(StringUtil.isBlank(optIndexs)){
-                        vote.setVote(false);
-                    }else{
-                        vote.setOptIndexs(optIndexs);
-                        vote.setVote(true);
+                if (null != map.get("uId") && StringUtil.isNotBlank(map.get("uId"))) {
+                    long uId = Long.parseLong(String.valueOf(map.get("uId")));
+                    base.setuNick(iInUserService.getById(uId).getuNick());
+                }
+                card.setBase(base);
+                if (null != base.getcCategory()) {
+                    switch (base.getcCategory()) {
+                        case 1:
+                            //辩论帖子
+                            InCardArgue argue = argueService.getById(base.getcId());
+                            if (null != argue) {
+                                card.setArgue(argue);
+                            }
+                            break;
+                        case 2:
+                            //投票帖子
+                            InCardVote vote = voteService.getById(base.getcId());
+                            if (null != vote) {
+                                if (null != map.get("uId") && StringUtil.isNotBlank(map.get("uId"))) {
+                                    long uId = Long.parseLong(String.valueOf(map.get("uId")));
+                                    String optIndexs = iInCardVoteService.vote(cId, uId, null);
+                                    if (StringUtil.isBlank(optIndexs)) {
+                                        vote.setVote(false);
+                                    } else {
+                                        vote.setOptIndexs(optIndexs);
+                                        vote.setVote(true);
+                                    }
+                                }
+                                card.setVote(vote);
+                            }
+                            break;
                     }
-                    card.setVote(vote);
                 }
+                return card;
             }
-            //基础帖子
-            return card;
+            return null;
         }
         return null;
     }
@@ -123,15 +133,16 @@ public class InCardServiceImpl extends ServiceImpl<InCardBaseDao, InCardBase> im
         if (null != cIds && cIds.length > 0) {
             for (Long cId : cIds) {
                 InCardBase base = baseService.getById(cId);
-                Integer category = base.getcCategory();
-                if (null != category) {
-                    if (1 == category) {
-                        //辩论帖子
-                        argueService.removeById(cId);
-                    }
-                    if (2 == category) {
-                        //投票帖子
-                        voteService.removeById(cId);
+                if (null != base.getcCategory()) {
+                    switch (base.getcCategory()) {
+                        case 1:
+                            //辩论帖子
+                            argueService.removeById(cId);
+                            break;
+                        case 2:
+                            //投票帖子
+                            voteService.removeById(cId);
+                            break;
                     }
                 }
                 //基础帖子

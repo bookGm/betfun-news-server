@@ -129,19 +129,6 @@ public class InCommonReplyController {
 
 
     /**
-     * 删除
-     */
-    @Login
-    @DeleteMapping("/delete")
-    @ApiOperation(value = "删除评论信息", httpMethod = "DELETE", notes = "删除评论")
-    @ApiImplicitParam(value = "评论ID[数组]", name = "crIds", required = true)
-    public R delete(@RequestParam Long[] crIds) {
-        commonReplyService.removeByIds(Arrays.asList(crIds));
-        return R.ok();
-    }
-
-
-    /**
      * 评论列表
      */
     @GetMapping("/discuss")

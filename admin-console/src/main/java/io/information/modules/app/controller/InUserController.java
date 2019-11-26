@@ -43,15 +43,15 @@ import java.util.stream.Collectors;
 @Api(value = "/app/user", tags = "APP资讯用户接口")
 public class InUserController extends AbstractController {
     @Autowired
-    private IInUserService userService;
+    private IInActivityService activityService;
+    @Autowired
+    private IInArticleService articleService;
     @Autowired
     private IInMessageService messageService;
     @Autowired
     private RabbitTemplate rabbitTemplate;
     @Autowired
-    private IInArticleService articleService;
-    @Autowired
-    private IInActivityService activityService;
+    private IInUserService userService;
     @Autowired
     private IInCardService cardService;
     @Autowired
@@ -198,10 +198,14 @@ public class InUserController extends AbstractController {
             long uId = Long.parseLong(String.valueOf(map.get("uId")));
             InUser inUser = userService.getById(uId);
             if (null != inUser) {
-                userService.focus(user.getuId(), inUser.getuPotential(), uId);
-                return R.ok();
+                if (uId == user.getuId()) {
+                    return R.error("您不能关注自己");
+                } else {
+                    userService.focus(user.getuId(), inUser.getuPotential(), uId);
+                    return R.ok();
+                }
             }
-            return R.error("用户不存在");
+            return R.error("关注的用户不存在");
         }
         return R.error("必要参数不能为空");
     }

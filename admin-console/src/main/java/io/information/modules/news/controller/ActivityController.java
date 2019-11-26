@@ -78,8 +78,8 @@ public class ActivityController extends AbstractController {
             message.settId(activity.getuId());
             message.setmCreateTime(new Date());
             messageService.save(message);
-            rabbitTemplate.convertAndSend(Constants.systemExchange,
-                    Constants.system_Save_RouteKey, JsonUtil.toJSONString(message));
+//            rabbitTemplate.convertAndSend(Constants.systemExchange,
+//                    Constants.system_Save_RouteKey, JsonUtil.toJSONString(message));
             return R.ok();
         }
         return R.error("缺少必要的参数");
@@ -104,8 +104,8 @@ public class ActivityController extends AbstractController {
             message.settId(activity.getuId());
             message.setmCreateTime(new Date());
             messageService.save(message);
-            rabbitTemplate.convertAndSend(Constants.systemExchange,
-                    Constants.system_Save_RouteKey, JsonUtil.toJSONString(message));
+//            rabbitTemplate.convertAndSend(Constants.systemExchange,
+//                    Constants.system_Save_RouteKey, JsonUtil.toJSONString(message));
             return R.ok();
         }
         return R.error("缺少必要的参数");

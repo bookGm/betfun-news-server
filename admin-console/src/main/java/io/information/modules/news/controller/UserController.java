@@ -134,8 +134,8 @@ public class UserController {
             message.settId(uId);
             message.setmCreateTime(new Date());
             messageService.save(message);
-            rabbitTemplate.convertAndSend(Constants.systemExchange,
-                    Constants.system_Save_RouteKey, message);
+//            rabbitTemplate.convertAndSend(Constants.systemExchange,
+//                    Constants.system_Save_RouteKey, message);
             return R.ok();
         }
         return R.error("缺少必要的参数");
@@ -174,8 +174,8 @@ public class UserController {
             message.settId(uId);
             message.setmCreateTime(new Date());
             messageService.save(message);
-            rabbitTemplate.convertAndSend(Constants.systemExchange,
-                    Constants.system_Save_RouteKey, message);
+//            rabbitTemplate.convertAndSend(Constants.systemExchange,
+//                    Constants.system_Save_RouteKey, message);
             return R.ok();
         }
         return R.error("缺少必要的参数");
