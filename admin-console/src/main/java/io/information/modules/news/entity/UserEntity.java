@@ -78,6 +78,10 @@ public class UserEntity implements Serializable {
 	 * 用户令牌
 	 */
 	private String uToken;
+    /**
+     * 用户封面
+     */
+    private String uCover;
 	/**
 	 * 身份证号
 	 */
@@ -299,5 +303,13 @@ public class UserEntity implements Serializable {
 
     public void setuPotential(Integer uPotential) {
         this.uPotential = uPotential;
+    }
+
+    public String getuCover() {
+        return uCover;
+    }
+
+    public void setuCover(String uCover) {
+        this.uCover = uCover;
     }
 }

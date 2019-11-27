@@ -107,6 +107,11 @@ public class InUser implements Serializable {
     @ApiModelProperty(value = "用户令牌", name = "uToken", hidden = true)
     private String uToken;
     /**
+     * 用户封面
+     */
+    @ApiModelProperty(value = "用户封面", name = "uCover", hidden = true)
+    private String uCover;
+    /**
      * 身份证号
      */
     @ApiModelProperty(value = "身份证号", name = "uIdcard", required = false)
@@ -336,5 +341,13 @@ public class InUser implements Serializable {
 
     public void setuPotential(Integer uPotential) {
         this.uPotential = uPotential;
+    }
+
+    public String getuCover() {
+        return uCover;
+    }
+
+    public void setuCover(String uCover) {
+        this.uCover = uCover;
     }
 }

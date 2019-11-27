@@ -90,15 +90,16 @@ public class InUserController extends AbstractController {
 
 
     /**
-     * 上传用户头像
+     * 上传用户封面
      */
-//    @Login
-//    @PutMapping("/photo")
-//    @ApiOperation(value = "上传用户头像", httpMethod = "PUT")
-    public ResultUtil photo(@RequestBody String uPhoto, @ApiIgnore @LoginUser InUser user) {
+    @Login
+    @PutMapping("/cover")
+    @ApiOperation(value = "用户上传封面", httpMethod = "PUT")
+    @ApiImplicitParam(value = "封面地址", name = "uCover", required = true)
+    public ResultUtil cover(@RequestParam String uCover, @ApiIgnore @LoginUser InUser user) {
         InUser inUser = new InUser();
         inUser.setuId(user.getuId());
-        inUser.setuPhone(uPhoto);
+        inUser.setuCover(uCover);
         userService.updateById(inUser);
         return ResultUtil.ok();
     }
