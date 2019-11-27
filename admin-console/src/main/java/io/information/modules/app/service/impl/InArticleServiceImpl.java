@@ -108,7 +108,7 @@ public class InArticleServiceImpl extends ServiceImpl<InArticleDao, InArticle> i
     @Override
     public ArticleUserVo articleRecommended(Map<String, Object> map) {
         Integer pageSize = StringUtil.isBlank(map.get("pageSize")) ? 10 : Integer.parseInt(String.valueOf(map.get("pageSize")));
-        Integer currPage = StringUtil.isBlank(map.get("currPage")) ? 0 : Integer.parseInt(String.valueOf(map.get("currPage")));
+        Integer currPage = StringUtil.isBlank(map.get("currPage")) ? 1 : Integer.parseInt(String.valueOf(map.get("currPage")));
         if (null != map.get("uId") && StringUtil.isNotBlank(map.get("uId"))) {
             long uId = Long.parseLong(String.valueOf(map.get("uId")));
             InUser user = userService.getById(uId);
@@ -149,7 +149,7 @@ public class InArticleServiceImpl extends ServiceImpl<InArticleDao, InArticle> i
     @Override
     public List<InArticle> doubleArticle(Map<String, Object> map) {
         Integer pageSize = StringUtil.isBlank(map.get("pageSize")) ? 10 : Integer.parseInt(String.valueOf(map.get("pageSize")));
-        Integer currPage = StringUtil.isBlank(map.get("currPage")) ? 0 : Integer.parseInt(String.valueOf(map.get("currPage")));
+        Integer currPage = StringUtil.isBlank(map.get("currPage")) ? 1 : Integer.parseInt(String.valueOf(map.get("currPage")));
         ArrayList<InArticle> arrayList = new ArrayList<>();
         if (null != map.get("status") && StringUtil.isNotBlank(map.get("status"))) {
             int status = Integer.parseInt(String.valueOf(map.get("status")));
@@ -235,7 +235,7 @@ public class InArticleServiceImpl extends ServiceImpl<InArticleDao, InArticle> i
     @Override
     public TagArticleVo tagArticle(Map<String, Object> map) {
         Integer pageSize = StringUtil.isBlank(map.get("pageSize")) ? 10 : Integer.parseInt(String.valueOf(map.get("pageSize")));
-        Integer currPage = StringUtil.isBlank(map.get("currPage")) ? 0 : Integer.parseInt(String.valueOf(map.get("currPage")));
+        Integer currPage = StringUtil.isBlank(map.get("currPage")) ? 1 : Integer.parseInt(String.valueOf(map.get("currPage")));
         if (null != map.get("tId") && StringUtil.isNotBlank(map.get("tId"))) {
             Long tId = Long.parseLong(String.valueOf(map.get("tId")));
             InTag tag = tagService.getById(tId);

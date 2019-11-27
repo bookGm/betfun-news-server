@@ -94,7 +94,7 @@ public class InNodeServiceImpl extends ServiceImpl<InNodeDao, InNode> implements
         //寻找通过任何认证的用户
         LambdaQueryWrapper<InUser> queryWrapper = new LambdaQueryWrapper<>();
         Integer pageSize = StringUtil.isBlank(map.get("pageSize")) ? 10 : Integer.parseInt(String.valueOf(map.get("pageSize")));
-        Integer currPage = StringUtil.isBlank(map.get("currPage")) ? 0 : Integer.parseInt(String.valueOf(map.get("currPage")));
+        Integer currPage = StringUtil.isBlank(map.get("currPage")) ? 1 : Integer.parseInt(String.valueOf(map.get("currPage")));
         queryWrapper.eq(InUser::getuAuthStatus, 2);
         IPage<InUser> page = userService.page(
                 new Query<InUser>().getPage(map),
@@ -128,7 +128,7 @@ public class InNodeServiceImpl extends ServiceImpl<InNodeDao, InNode> implements
     public PageUtils<UserCardVo> cardList(Map<String, Object> map) {
         LambdaQueryWrapper<InCardBase> queryWrapper = new LambdaQueryWrapper<>();
         Integer pageSize = StringUtil.isBlank(map.get("pageSize")) ? 10 : Integer.parseInt(String.valueOf(map.get("pageSize")));
-        Integer currPage = StringUtil.isBlank(map.get("currPage")) ? 0 : Integer.parseInt(String.valueOf(map.get("currPage")));
+        Integer currPage = StringUtil.isBlank(map.get("currPage")) ? 1 : Integer.parseInt(String.valueOf(map.get("currPage")));
         if (null != map.get("noId") && StringUtil.isNotBlank(map.get("noId"))) {
             Long noId = Long.parseLong(String.valueOf(map.get("noId")));
             queryWrapper.eq(InCardBase::getNoId, noId);
@@ -208,7 +208,7 @@ public class InNodeServiceImpl extends ServiceImpl<InNodeDao, InNode> implements
     @Override
     public CardUserVo cardRecommended(Map<String, Object> map) {
         Integer pageSize = StringUtil.isBlank(map.get("pageSize")) ? 10 : Integer.parseInt(String.valueOf(map.get("pageSize")));
-        Integer currPage = StringUtil.isBlank(map.get("currPage")) ? 0 : Integer.parseInt(String.valueOf(map.get("currPage")));
+        Integer currPage = StringUtil.isBlank(map.get("currPage")) ? 1 : Integer.parseInt(String.valueOf(map.get("currPage")));
         if (null != map.get("uId") && StringUtil.isNotBlank(map.get("uId"))) {
             long uId = Long.parseLong(String.valueOf(map.get("uId")));
             InUser user = userService.getById(uId);
@@ -282,7 +282,7 @@ public class InNodeServiceImpl extends ServiceImpl<InNodeDao, InNode> implements
     public UserArticleVo articleList(Map<String, Object> map) {
         LambdaQueryWrapper<InArticle> queryWrapper = new LambdaQueryWrapper<>();
         Integer pageSize = StringUtil.isBlank(map.get("pageSize")) ? 10 : Integer.parseInt(String.valueOf(map.get("pageSize")));
-        Integer currPage = StringUtil.isBlank(map.get("currPage")) ? 0 : Integer.parseInt(String.valueOf(map.get("currPage")));
+        Integer currPage = StringUtil.isBlank(map.get("currPage")) ? 1 : Integer.parseInt(String.valueOf(map.get("currPage")));
         if (null != map.get("uId") && StringUtil.isNotBlank(map.get("uId"))) {
             long uId = Long.parseLong(String.valueOf(map.get("uId")));
             InUser user = userService.getById(uId);
@@ -319,7 +319,7 @@ public class InNodeServiceImpl extends ServiceImpl<InNodeDao, InNode> implements
     public UserSpecialVo specialList(Map<String, Object> map) {
         LambdaQueryWrapper<InArticle> queryWrapper = new LambdaQueryWrapper<>();
         Integer pageSize = StringUtil.isBlank(map.get("pageSize")) ? 10 : Integer.parseInt(String.valueOf(map.get("pageSize")));
-        Integer currPage = StringUtil.isBlank(map.get("currPage")) ? 0 : Integer.parseInt(String.valueOf(map.get("currPage")));
+        Integer currPage = StringUtil.isBlank(map.get("currPage")) ? 1 : Integer.parseInt(String.valueOf(map.get("currPage")));
         if (null != map.get("uId") && StringUtil.isNotBlank(map.get("uId"))) {
             long uId = Long.parseLong(String.valueOf(map.get("uId")));
             InUser user = userService.getById(uId);

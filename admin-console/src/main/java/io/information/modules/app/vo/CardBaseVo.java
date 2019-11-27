@@ -13,6 +13,9 @@ public class CardBaseVo implements Serializable {
     @ApiModelProperty(value = "帖子ID", name = "cId", required = true)
     private Long cId;
 
+    @ApiModelProperty(value = "发布者ID", name = "uId", required = true)
+    private Long uId;
+
     @ApiModelProperty(value = "帖子标题", name = "cTitle", required = true)
     private String cTitle;
 
@@ -41,5 +44,13 @@ public class CardBaseVo implements Serializable {
 
     public void setcLike(Long cLike) {
         this.cLike = cLike;
+    }
+
+    public Long getuId() {
+        return uId;
+    }
+
+    public void setuId(Long uId) {
+        this.uId = uId;
     }
 }

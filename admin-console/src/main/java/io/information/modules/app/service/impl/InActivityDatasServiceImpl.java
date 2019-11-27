@@ -43,7 +43,7 @@ public class InActivityDatasServiceImpl extends ServiceImpl<InActivityDatasDao, 
 
     @Override
     public PassUserVo pass(Map<String, Object> map) {
-        Integer currPage = StringUtil.isBlank(map.get("currPage")) ? 0 : Integer.parseInt(String.valueOf(map.get("currPage")));
+        Integer currPage = StringUtil.isBlank(map.get("currPage")) ? 1 : Integer.parseInt(String.valueOf(map.get("currPage")));
         Integer pageSize = StringUtil.isBlank(map.get("pageSize")) ? 10 : Integer.parseInt(String.valueOf(map.get("pageSize")));
         if (null != map.get("actId") && StringUtil.isNotBlank(map.get("actId"))) {
             String actId = (String) map.get("actId");

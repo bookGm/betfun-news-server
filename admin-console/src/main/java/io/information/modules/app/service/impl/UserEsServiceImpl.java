@@ -89,7 +89,7 @@ public class UserEsServiceImpl implements UserEsService {
 //    @Override
 //    public PageUtils search(Map<String, Object> map) {
 //        Integer size = StringUtil.isBlank(map.get("pageSize")) ? 10 : Integer.parseInt(String.valueOf(map.get("pageSize")));
-//        Integer page = StringUtil.isBlank(map.get("currPage")) ? 0 : Integer.parseInt(String.valueOf(map.get("currPage")));
+//        Integer page = StringUtil.isBlank(map.get("currPage")) ? 1 : Integer.parseInt(String.valueOf(map.get("currPage")));
 //        if (null != map.get("key") && StringUtil.isNotBlank(map.get("key"))) {
 //            String key = String.valueOf(map.get("key"));
 //            //根据昵称匹配用户

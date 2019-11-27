@@ -154,7 +154,7 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
     @Override
     public PageUtils fansNode(Map<String, Object> map) {
         Integer size = StringUtil.isBlank(map.get("pageSize")) ? 10 : Integer.parseInt(String.valueOf(map.get("pageSize")));
-        Integer page = StringUtil.isBlank(map.get("currPage")) ? 0 : Integer.parseInt(String.valueOf(map.get("currPage")));
+        Integer page = StringUtil.isBlank(map.get("currPage")) ? 1 : Integer.parseInt(String.valueOf(map.get("currPage")));
         Integer bindex = page * size;
         //模糊查询出某类的key  #uId-#type-#noId
         Long uId = Long.parseLong(String.valueOf(map.get("uId")));
@@ -237,7 +237,7 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
     @Override
     public PageUtils card(Map<String, Object> map) {
         Integer pageSize = StringUtil.isBlank(map.get("pageSize")) ? 10 : Integer.parseInt(String.valueOf(map.get("pageSize")));
-        Integer currPage = StringUtil.isBlank(map.get("currPage")) ? 0 : Integer.parseInt(String.valueOf(map.get("currPage")));
+        Integer currPage = StringUtil.isBlank(map.get("currPage")) ? 1 : Integer.parseInt(String.valueOf(map.get("currPage")));
         LambdaQueryWrapper<InCardBase> queryWrapper = new LambdaQueryWrapper<>();
         if (null != map.get("uId") && StringUtil.isNotBlank(map.get("uId"))) {
             long uId = Long.parseLong(String.valueOf(map.get("uId")));
@@ -312,7 +312,7 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
     @Override
     public PageUtils<InLikeVo> like(Map<String, Object> map, Long uId) {
         Integer size = StringUtil.isBlank(map.get("pageSize")) ? 10 : Integer.parseInt(String.valueOf(map.get("pageSize")));
-        Integer page = StringUtil.isBlank(map.get("currPage")) ? 0 : Integer.parseInt(String.valueOf(map.get("currPage")));
+        Integer page = StringUtil.isBlank(map.get("currPage")) ? 1 : Integer.parseInt(String.valueOf(map.get("currPage")));
         Integer bindex = page * size;
         //模糊查询出某类的key  #id-#uid-#tId-#type
         List<Map.Entry<Object, Object>> cmap = redisUtils.hfget(RedisKeys.LIKE, "*-*-" + uId + "-*");
@@ -381,7 +381,7 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
         //#uId-#status-#fId
         Long uId = Long.parseLong(String.valueOf(map.get("uId")));
         Integer size = StringUtil.isBlank(map.get("pageSize")) ? 10 : Integer.parseInt(String.valueOf(map.get("pageSize")));
-        Integer page = StringUtil.isBlank(map.get("currPage")) ? 0 : Integer.parseInt(String.valueOf(map.get("currPage")));
+        Integer page = StringUtil.isBlank(map.get("currPage")) ? 1 : Integer.parseInt(String.valueOf(map.get("currPage")));
         Integer bindex = page * size;
         //根据uId查询用户关注的目标
         List<Map.Entry<Object, Object>> cmap = redisUtils.hfget(RedisKeys.FOCUS, uId + "-*-*");
@@ -414,7 +414,7 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
 
     @Override
     public PageUtils fansPerson(Map<String, Object> map) {
-        Integer page = StringUtil.isBlank(map.get("currPage")) ? 0 : Integer.parseInt(String.valueOf(map.get("currPage")));
+        Integer page = StringUtil.isBlank(map.get("currPage")) ? 1 : Integer.parseInt(String.valueOf(map.get("currPage")));
         Integer size = StringUtil.isBlank(map.get("pageSize")) ? 10 : Integer.parseInt(String.valueOf(map.get("pageSize")));
         Integer bindex = page * size;
         Long uId = Long.parseLong(String.valueOf(map.get("uId")));
@@ -455,7 +455,7 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
     @Override
     public PageUtils follower(Map<String, Object> map) {
         Long uId = Long.parseLong(String.valueOf(map.get("uId")));
-        Integer page = StringUtil.isBlank(map.get("currPage")) ? 0 : Integer.parseInt(String.valueOf(map.get("currPage")));
+        Integer page = StringUtil.isBlank(map.get("currPage")) ? 1 : Integer.parseInt(String.valueOf(map.get("currPage")));
         Integer size = StringUtil.isBlank(map.get("pageSize")) ? 10 : Integer.parseInt(String.valueOf(map.get("pageSize")));
         Integer bindex = page * size;
         //以uId为目标查询粉丝  #uId-#status-#fId
@@ -488,7 +488,7 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
         if (null != map.get("type") && StringUtil.isNotBlank(map.get("type"))) {
             int type = Integer.parseInt(String.valueOf(map.get("type")));
             Long uId = Long.parseLong(String.valueOf(map.get("uId")));
-            Integer page = StringUtil.isBlank(map.get("currPage")) ? 0 : Integer.parseInt(String.valueOf(map.get("currPage")));
+            Integer page = StringUtil.isBlank(map.get("currPage")) ? 1 : Integer.parseInt(String.valueOf(map.get("currPage")));
             Integer size = StringUtil.isBlank(map.get("pageSize")) ? 10 : Integer.parseInt(String.valueOf(map.get("pageSize")));
             Integer bindex = page * size;
             //查询用户的收藏   #id-#uid-#tId-#type

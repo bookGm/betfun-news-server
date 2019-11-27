@@ -102,6 +102,12 @@ public class InActivity implements Serializable {
     private String actDetail;
 
     /**
+     * 联系方式
+     */
+    @ApiModelProperty(value = "联系方式", name = "actContact", required = true)
+    private String actContact;
+
+    /**
      * 活动开始时间
      */
     @ApiModelProperty(value = "活动开始时间(yyyy-MM-dd HH:mm:ss)", name = "actStartTime", required = true)
@@ -340,5 +346,13 @@ public class InActivity implements Serializable {
 
     public void setaSimpleTime(String aSimpleTime) {
         this.aSimpleTime = aSimpleTime;
+    }
+
+    public String getActContact() {
+        return actContact;
+    }
+
+    public void setActContact(String actContact) {
+        this.actContact = actContact;
     }
 }
