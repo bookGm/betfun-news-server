@@ -349,16 +349,17 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
         LambdaQueryWrapper<InActivity> queryWrapper = new LambdaQueryWrapper<>();
         if (null != map.get("type") && StringUtil.isNotBlank(map.get("type"))) {
             int type = Integer.parseInt(String.valueOf(map.get("type")));
+            Date currTime = new Date();
             switch (type) {
                 case 0:  //获取未开始活动    开始时间 gt> 当前时间
-                    queryWrapper.gt(InActivity::getActStartTime, new Date());
+                    queryWrapper.gt(InActivity::getActStartTime, currTime);
                     break;
-                case 1:  //获取进行中活动    开始时间 it 当前时间  &&  结束时间 gt 当前时间
-                    queryWrapper.lt(InActivity::getActStartTime, new Date())
-                            .gt(InActivity::getActCloseTime, new Date());
+                case 1:  //获取进行中活动    开始时间 it< 当前时间  &&  结束时间 gt> 当前时间
+                    queryWrapper.lt(InActivity::getActStartTime, currTime)
+                            .gt(InActivity::getActCloseTime, currTime);
                     break;
                 case 2:  //获取已结束活动    结束时间 it< 当前时间
-                    queryWrapper.lt(InActivity::getActCloseTime, new Date());
+                    queryWrapper.lt(InActivity::getActCloseTime, currTime);
                     break;
             }
         }

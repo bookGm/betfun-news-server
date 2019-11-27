@@ -92,9 +92,9 @@ public class InUserController extends AbstractController {
     /**
      * 上传用户头像
      */
-    @Login
-    @PutMapping("/photo")
-    @ApiOperation(value = "上传用户头像", httpMethod = "PUT")
+//    @Login
+//    @PutMapping("/photo")
+//    @ApiOperation(value = "上传用户头像", httpMethod = "PUT")
     public ResultUtil photo(@RequestBody String uPhoto, @ApiIgnore @LoginUser InUser user) {
         InUser inUser = new InUser();
         inUser.setuId(user.getuId());

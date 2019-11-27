@@ -136,7 +136,8 @@ public class InActivityServiceImpl extends ServiceImpl<InActivityDao, InActivity
                     String name = sysCitysService.getById(id).getName();
                     actAddName.append(name).append("-");
                 }
-                activity.setActAddrName(actAddName.toString());
+                String newAddName = actAddName.substring(0,actAddName.length() - 1);
+                activity.setActAddrName(newAddName);
             }
         }
         return new PageUtils(page);
@@ -165,7 +166,8 @@ public class InActivityServiceImpl extends ServiceImpl<InActivityDao, InActivity
                 String name = sysCitysService.getById(id).getName();
                 actAddName.append(name).append("-");
             }
-            activity.setActAddrName(actAddName.toString());
+            String newAddName = actAddName.substring(0,actAddName.length() - 1);
+            activity.setActAddrName(newAddName);
         }
         Long startTime = activity.getActStartTime().getTime();
         Long closeTime = activity.getActCloseTime().getTime();
@@ -305,7 +307,8 @@ public class InActivityServiceImpl extends ServiceImpl<InActivityDao, InActivity
                     String name = sysCitysService.getById(id).getName();
                     actAddName.append(name).append("-");
                 }
-                activity.setActAddrName(actAddName.toString());
+                String newAddName = actAddName.substring(0,actAddName.length() - 1);
+                activity.setActAddrName(newAddName);
             }
         }
         return activityList;
