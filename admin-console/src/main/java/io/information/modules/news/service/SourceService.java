@@ -15,7 +15,6 @@ import java.util.Map;
  * @date 2019-09-26 12:06:25
  */
 public interface SourceService extends IService<SourceEntity> {
-
     PageUtils queryPage(Map<String, Object> params);
 
     SourceEntity getByUrl(String sUrl);

@@ -7,7 +7,7 @@ import io.information.modules.app.entity.InActivityTicket;
 import java.util.Map;
 
 /**
- *  活动票
+ * 活动票
  *
  * @author zxs
  * @email zhangxiaos@163.com

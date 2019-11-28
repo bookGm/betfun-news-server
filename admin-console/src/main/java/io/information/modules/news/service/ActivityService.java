@@ -14,7 +14,6 @@ import java.util.Map;
  * @date 2019-09-26 12:06:25
  */
 public interface ActivityService extends IService<ActivityEntity> {
-
     PageUtils queryPage(Map<String, Object> params);
 
     PageUtils audit(Map<String, Object> params);

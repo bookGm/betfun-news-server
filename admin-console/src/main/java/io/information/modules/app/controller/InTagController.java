@@ -93,6 +93,6 @@ public class InTagController {
     @GetMapping("/getAllList")
     @ApiOperation(value = "获取全部资讯标签", httpMethod = "GET")
     public R getAllList() {
-        return R.ok().put("tags",tagService.list());
+        return R.ok().put("tags", tagService.list());
     }
 }

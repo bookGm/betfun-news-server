@@ -16,7 +16,5 @@ import java.util.Map;
  * @author Mark sunlightcs@gmail.com
  */
 public interface SysLogService extends IService<SysLogEntity> {
-
     PageUtils queryPage(Map<String, Object> params);
-
 }

@@ -8,7 +8,6 @@ import io.information.modules.news.entity.MessageEntity;
 import io.information.modules.news.entity.UserEntity;
 import io.information.modules.news.service.MessageService;
 import io.information.modules.news.service.UserService;
-import io.mq.utils.Constants;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;

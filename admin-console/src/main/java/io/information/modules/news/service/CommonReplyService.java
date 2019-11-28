@@ -15,7 +15,6 @@ import java.util.Map;
  * @date 2019-10-08 15:11:28
  */
 public interface CommonReplyService extends IService<CommonReplyEntity> {
-
     PageUtils queryPage(Map<String, Object> params);
 
     List<CommonReplyEntity> search(Long crIds);

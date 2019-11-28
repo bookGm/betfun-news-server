@@ -1,16 +1,15 @@
 package io.information.modules.news.controller;
 
-import com.guansuo.common.JsonUtil;
 import com.guansuo.common.StringUtil;
 import io.information.common.utils.IdGenerator;
 import io.information.common.utils.PageUtils;
 import io.information.common.utils.R;
+import io.information.modules.news.dto.ActivityDTO;
 import io.information.modules.news.entity.ActivityEntity;
 import io.information.modules.news.entity.MessageEntity;
 import io.information.modules.news.service.ActivityService;
 import io.information.modules.news.service.MessageService;
 import io.information.modules.sys.controller.AbstractController;
-import io.mq.utils.Constants;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -123,6 +122,7 @@ public class ActivityController extends AbstractController {
         return R.ok().put("activity", activity);
     }
 
+
     /**
      * 保存
      */
@@ -136,6 +136,7 @@ public class ActivityController extends AbstractController {
         return R.ok();
     }
 
+
     /**
      * 修改
      */
@@ -146,6 +147,21 @@ public class ActivityController extends AbstractController {
 
         return R.ok();
     }
+
+
+    /**
+     * 活动是否主页展示
+     */
+    @PostMapping("/isBanner")
+    @RequiresPermissions("news:activity:update")
+    public R isBanner(@RequestBody ActivityDTO dto) {
+        ActivityEntity activity = new ActivityEntity();
+        activity.setActId(dto.getActId());
+        activity.setActBanner(dto.getActBanner());
+        activityService.updateById(activity);
+        return R.ok();
+    }
+
 
     /**
      * 删除

@@ -5,15 +5,12 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonFormat;
-import io.swagger.annotations.ApiModel;
 
 import java.io.Serializable;
 import java.util.Date;
 
 /**
- *
  * 日志表
- *
  */
 @TableName("in_log")
 public class LogEntity implements Serializable {

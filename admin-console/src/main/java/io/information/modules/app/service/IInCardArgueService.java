@@ -16,6 +16,8 @@ import java.util.Map;
  */
 public interface IInCardArgueService extends IService<InCardArgue> {
     PageUtils queryPage(Map<String, Object> params);
-    String support(Long cid,Long uid,Integer sIndex);
-    String join(Long cid,Long uid,Integer jIndex);
+
+    String support(Long cid, Long uid, Integer sIndex);
+
+    String join(Long cid, Long uid, Integer jIndex);
 }

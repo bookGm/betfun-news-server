@@ -5,15 +5,15 @@ import io.swagger.annotations.ApiModelProperty;
 
 import java.io.Serializable;
 
-@ApiModel(value = "主页文章展示数据", description = "文章部分信息")
+@ApiModel(value = "文章轮播图", description = "文章部分信息")
 public class ArticleBannerVo implements Serializable {
     private static final long serialVersionUID = 1L;
 
 
-    @ApiModelProperty(value = "文章ID",name = "aId")
+    @ApiModelProperty(value = "文章ID", name = "aId")
     private Long aId;
 
-    @ApiModelProperty(value = "文章封面URL",name = "aCover")
+    @ApiModelProperty(value = "文章封面URL", name = "aCover")
     private String aCover;
 
 

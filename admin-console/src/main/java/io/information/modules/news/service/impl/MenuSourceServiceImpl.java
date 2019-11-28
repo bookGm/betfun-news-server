@@ -31,14 +31,14 @@ public class MenuSourceServiceImpl extends ServiceImpl<MenuSourceDao, MenuSource
     @Override
     public MenuSourceEntity infoUrl(String sUrl) {
         LambdaQueryWrapper<MenuSourceEntity> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(MenuSourceEntity::getsUrl,sUrl);
+        queryWrapper.eq(MenuSourceEntity::getsUrl, sUrl);
         return this.getOne(queryWrapper);
     }
 
     @Override
     public void updatesUrl(MenuSourceEntity menuSource) {
         LambdaUpdateWrapper<MenuSourceEntity> updateWrapper = new LambdaUpdateWrapper<>();
-        updateWrapper.eq(MenuSourceEntity::getsUrl,menuSource.getsUrl());
+        updateWrapper.eq(MenuSourceEntity::getsUrl, menuSource.getsUrl());
         this.update(updateWrapper);
     }
 

@@ -14,9 +14,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 public interface BbtcService {
     /**
      * 获取文章列表
+     *
      * @return
      */
-    @RequestMapping(value = "/news/list", method = RequestMethod.GET,produces = "application/json;charset=UTF-8")
-    FeignRes getPageList(@RequestParam("num")int num,@RequestParam("page")int page);
+    @RequestMapping(value = "/news/list", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
+    FeignRes getPageList(@RequestParam("num") int num, @RequestParam("page") int page);
 
 }

@@ -11,7 +11,6 @@ import java.util.Date;
  * <p>
  * 点赞信息前端
  * </p>
- *
  */
 @ApiModel(value = "点赞信息", description = "点赞信息对象")
 public class InLikeVo implements Serializable {
@@ -47,30 +46,39 @@ public class InLikeVo implements Serializable {
     public String getNick() {
         return nick;
     }
+
     public void setNick(String nick) {
         this.nick = nick;
     }
+
     public String getPhoto() {
         return photo;
     }
+
     public void setPhoto(String photo) {
         this.photo = photo;
     }
+
     public String getType() {
         return type;
     }
+
     public void setType(String type) {
         this.type = type;
     }
+
     public String getData() {
         return data;
     }
+
     public void setData(String data) {
         this.data = data;
     }
+
     public Date getTime() {
         return time;
     }
+
     public void setTime(Date time) {
         this.time = time;
     }

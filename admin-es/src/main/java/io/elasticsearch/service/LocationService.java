@@ -3,8 +3,7 @@ package io.elasticsearch.service;
 import io.elasticsearch.entity.LocationEntity;
 import io.elasticsearch.utils.PageUtils;
 
-public interface LocationService{
-
+public interface LocationService {
     //保存
     boolean save(LocationEntity entity);
 
@@ -18,6 +17,6 @@ public interface LocationService{
     Iterable<LocationEntity> findAll();
 
     // 分页查询
-    PageUtils findPage(String params,int currentPage,int size);
+    PageUtils findPage(String params, int currentPage, int size);
 
 }

@@ -16,5 +16,4 @@ public class SysLoginForm {
     private String captcha;
     private String uuid;
 
-
 }

@@ -22,7 +22,7 @@ public class InMessageServiceImpl extends ServiceImpl<InMessageDao, InMessage> i
         if (null != params.get("uId") && StringUtil.isNotBlank(params.get("uId"))) {
             LambdaQueryWrapper<InMessage> queryWrapper = new LambdaQueryWrapper<>();
             long uId = Long.parseLong(String.valueOf(params.get("uId")));
-            queryWrapper.eq(InMessage::gettId, uId).or().eq(InMessage::gettId,-1);
+            queryWrapper.eq(InMessage::gettId, uId).or().eq(InMessage::gettId, -1);
             queryWrapper.orderByDesc(InMessage::getmCreateTime);
             IPage<InMessage> page = this.page(
                     new Query<InMessage>().getPage(params),

@@ -12,7 +12,6 @@ import java.util.Arrays;
 import java.util.Map;
 
 
-
 /**
  * 资讯菜单资源关系表
  *
@@ -31,7 +30,7 @@ public class MenuSourceController {
      */
     @GetMapping("/list")
     @RequiresPermissions("news:menusource:list")
-    public R list(@RequestParam Map<String, Object> params){
+    public R list(@RequestParam Map<String, Object> params) {
         PageUtils page = menuSourceService.queryPage(params);
 
         return R.ok().put("page", page);
@@ -43,8 +42,8 @@ public class MenuSourceController {
      */
     @GetMapping("/info/{msId}")
     @RequiresPermissions("news:menusource:info")
-    public R info(@PathVariable("msId") Long msId){
-		MenuSourceEntity menuSource = menuSourceService.getById(msId);
+    public R info(@PathVariable("msId") Long msId) {
+        MenuSourceEntity menuSource = menuSourceService.getById(msId);
 
         return R.ok().put("menuSource", menuSource);
     }
@@ -54,7 +53,7 @@ public class MenuSourceController {
      */
     @GetMapping("/infoUrl/{sUrl}")
     @RequiresPermissions("news:menusource:info")
-    public R infoUrl(@PathVariable("sUrl") String sUrl){
+    public R infoUrl(@PathVariable("sUrl") String sUrl) {
         MenuSourceEntity menuSource = menuSourceService.infoUrl(sUrl);
 
         return R.ok().put("menuSource", menuSource);
@@ -65,8 +64,8 @@ public class MenuSourceController {
      */
     @PostMapping("/save")
     @RequiresPermissions("news:menusource:save")
-    public R save(@RequestBody MenuSourceEntity menuSource){
-		menuSourceService.save(menuSource);
+    public R save(@RequestBody MenuSourceEntity menuSource) {
+        menuSourceService.save(menuSource);
 
         return R.ok();
     }
@@ -76,8 +75,8 @@ public class MenuSourceController {
      */
     @PostMapping("/update")
     @RequiresPermissions("news:menusource:update")
-    public R update(@RequestBody MenuSourceEntity menuSource){
-		menuSourceService.updateById(menuSource);
+    public R update(@RequestBody MenuSourceEntity menuSource) {
+        menuSourceService.updateById(menuSource);
 
         return R.ok();
     }
@@ -87,8 +86,8 @@ public class MenuSourceController {
      */
     @PostMapping("/delete")
     @RequiresPermissions("news:menusource:delete")
-    public R delete(@RequestBody Long[] msIds){
-		menuSourceService.removeByIds(Arrays.asList(msIds));
+    public R delete(@RequestBody Long[] msIds) {
+        menuSourceService.removeByIds(Arrays.asList(msIds));
 
         return R.ok();
     }

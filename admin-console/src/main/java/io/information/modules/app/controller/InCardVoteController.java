@@ -1,7 +1,6 @@
 package io.information.modules.app.controller;
 
 
-import com.guansuo.common.JsonUtil;
 import io.information.common.utils.R;
 import io.information.modules.app.annotation.Login;
 import io.information.modules.app.annotation.LoginUser;
@@ -13,10 +12,11 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import springfox.documentation.annotations.ApiIgnore;
-
-import java.util.List;
 
 /**
  * <p>
@@ -43,7 +43,7 @@ public class InCardVoteController {
             @ApiImplicitParam(value = "帖子ID", name = "cId", required = true),
             @ApiImplicitParam(value = "投票选项索引", name = "optIndexs", dataType = "int[]", required = true)
     })
-    public R vote(@RequestBody VoteVo v ,@ApiIgnore @LoginUser InUser user) {
+    public R vote(@RequestBody VoteVo v, @ApiIgnore @LoginUser InUser user) {
         voteService.vote(v.getcId(), user.getuId(), v.getOptIndexs());
         return R.ok();
     }

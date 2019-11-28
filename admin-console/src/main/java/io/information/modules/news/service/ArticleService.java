@@ -14,16 +14,17 @@ import java.util.Map;
  * @date 2019-09-26 12:06:25
  */
 public interface ArticleService extends IService<ArticleEntity> {
-
     PageUtils queryPage(Map<String, Object> params);
 
     PageUtils audit(Map<String, Object> params);
 
     /**
      * 抓取文章（全量）
+     *
      * @param page
      */
     void catchArticles(int page);
+
     /**
      * 抓取文章（增量）
      */

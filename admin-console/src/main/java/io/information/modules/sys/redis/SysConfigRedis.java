@@ -4,7 +4,6 @@ package io.information.modules.sys.redis;
 
 
 import com.guansuo.common.JsonUtil;
-import io.information.common.utils.JsonUtils;
 import io.information.common.utils.RedisKeys;
 import io.information.common.utils.RedisUtils;
 import io.information.modules.sys.entity.SysConfigEntity;
@@ -22,8 +21,8 @@ public class SysConfigRedis {
     private RedisUtils redisUtils;
 
     public void saveOrUpdate(SysConfigEntity config) {
-        if(config == null){
-            return ;
+        if (config == null) {
+            return;
         }
         String key = RedisKeys.getSysConfigKey(config.getParamKey());
         redisUtils.set(key, JsonUtil.toJSONString(config));
@@ -34,8 +33,8 @@ public class SysConfigRedis {
         redisUtils.remove(key);
     }
 
-    public SysConfigEntity get(String configKey){
+    public SysConfigEntity get(String configKey) {
         String key = RedisKeys.getSysConfigKey(configKey);
-        return JsonUtil.parseObject(JsonUtil.toJSONString(redisUtils.get(key)),SysConfigEntity.class);
+        return JsonUtil.parseObject(JsonUtil.toJSONString(redisUtils.get(key)), SysConfigEntity.class);
     }
 }

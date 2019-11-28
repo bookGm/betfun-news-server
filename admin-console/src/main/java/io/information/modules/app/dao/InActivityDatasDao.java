@@ -10,7 +10,7 @@ import java.util.List;
 
 /**
  * 资讯活动动态表单数据
- * 
+ *
  * @author zxs
  * @email zhangxiaos@163.com
  * @date 2019-10-24 11:03:00

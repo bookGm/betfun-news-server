@@ -12,7 +12,6 @@ import java.util.Arrays;
 import java.util.Map;
 
 
-
 /**
  * 评论回复表
  *
@@ -31,7 +30,7 @@ public class CommonReplyController {
      */
     @RequestMapping("/list")
     @RequiresPermissions("news:commonreply:list")
-    public R list(@RequestParam Map<String, Object> params){
+    public R list(@RequestParam Map<String, Object> params) {
         PageUtils page = commonReplyService.queryPage(params);
 
         return R.ok().put("page", page);
@@ -43,8 +42,8 @@ public class CommonReplyController {
      */
     @RequestMapping("/info/{crId}")
     @RequiresPermissions("news:commonreply:info")
-    public R info(@PathVariable("crId") Long crId){
-		CommonReplyEntity commonReply = commonReplyService.getById(crId);
+    public R info(@PathVariable("crId") Long crId) {
+        CommonReplyEntity commonReply = commonReplyService.getById(crId);
 
         return R.ok().put("commonReply", commonReply);
     }
@@ -54,8 +53,8 @@ public class CommonReplyController {
      */
     @RequestMapping("/save")
     @RequiresPermissions("news:commonreply:save")
-    public R save(@RequestBody CommonReplyEntity commonReply){
-		commonReplyService.save(commonReply);
+    public R save(@RequestBody CommonReplyEntity commonReply) {
+        commonReplyService.save(commonReply);
 
         return R.ok();
     }
@@ -65,8 +64,8 @@ public class CommonReplyController {
      */
     @RequestMapping("/update")
     @RequiresPermissions("news:commonreply:update")
-    public R update(@RequestBody CommonReplyEntity commonReply){
-		commonReplyService.updateById(commonReply);
+    public R update(@RequestBody CommonReplyEntity commonReply) {
+        commonReplyService.updateById(commonReply);
 
         return R.ok();
     }
@@ -76,8 +75,8 @@ public class CommonReplyController {
      */
     @RequestMapping("/delete")
     @RequiresPermissions("news:commonreply:delete")
-    public R delete(@RequestBody Long[] crIds){
-		commonReplyService.removeByIds(Arrays.asList(crIds));
+    public R delete(@RequestBody Long[] crIds) {
+        commonReplyService.removeByIds(Arrays.asList(crIds));
 
         return R.ok();
     }
@@ -86,7 +85,7 @@ public class CommonReplyController {
     /**
      * 查询
      */
-    public R search(Long crIds){
+    public R search(Long crIds) {
         commonReplyService.search(crIds);
         return R.ok();
     }

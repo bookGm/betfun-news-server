@@ -21,9 +21,9 @@ public class NewsFlashController {
      */
     @GetMapping("/list")
     @RequiresPermissions("news:newsflash:list")
-    public R list(@RequestParam Map<String,Object> params){
+    public R list(@RequestParam Map<String, Object> params) {
         PageUtils page = newsFlashService.queryPage(params);
-        return R.ok().put("page",page);
+        return R.ok().put("page", page);
     }
 
     /**
@@ -31,7 +31,7 @@ public class NewsFlashController {
      */
     @PostMapping("/delete")
     @RequiresPermissions("news:newsflash:delete")
-    public R delete(@RequestBody Long[] nIds){
+    public R delete(@RequestBody Long[] nIds) {
         newsFlashService.removeByIds(Arrays.asList(nIds));
         return R.ok();
     }

@@ -19,14 +19,17 @@ import java.util.List;
 public interface InNewsFlashDao extends BaseMapper<InNewsFlash> {
     /**
      * 增加利好
+     *
      * @param nId
      */
-    void addNBull (@Param("nId")Long nId);
+    void addNBull(@Param("nId") Long nId);
+
     /**
      * 增加利空
+     *
      * @param nId
      */
-    void addNBad (@Param("nId")Long nId);
+    void addNBad(@Param("nId") Long nId);
 
     List<InNewsFlash> all();
 }

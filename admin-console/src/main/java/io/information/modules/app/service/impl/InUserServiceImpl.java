@@ -188,6 +188,9 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
         if (null != uId) {
             //用户信息
             InUser inUser = this.getById(uId);
+            if (inUser == null) {
+                return null;
+            }
             UserBoolVo boolVo = BeanHelper.copyProperties(inUser, UserBoolVo.class);
             if (null != boolVo) {
                 //是否收藏
@@ -344,6 +347,7 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
         return new PageUtils(newsLike, cmap.size(), size, page);
     }
 
+
     @Override
     public PageUtils<InActivity> active(Map<String, Object> map) {
         LambdaQueryWrapper<InActivity> queryWrapper = new LambdaQueryWrapper<>();
@@ -371,6 +375,7 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
                 queryWrapper
         );
         for (InActivity act : page.getRecords()) {
+            act.setuName(String.valueOf(map.get("uName") == null ? "" : map.get("uName")));
             act.setaSimpleTime(DateUtils.getSimpleTime(act.getActCreateTime()));
         }
         return new PageUtils(page);
@@ -483,6 +488,7 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
         return new PageUtils(newsFans, cmap.size(), size, page);
     }
 
+
     @Override
     public PageUtils favorite(Map<String, Object> map) {
         if (null != map.get("type") && StringUtil.isNotBlank(map.get("type"))) {
@@ -534,6 +540,12 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
                         Long id = Long.valueOf(str[0]);
                         InActivity activity = activityService.getById(id);//目标信息
                         activity.setaSimpleTime(DateUtils.getSimpleTime(String.valueOf(obj.getValue())));
+                        if (null != activity.getuId()) {
+                            InUser user = this.getById(activity.getuId());
+                            if (null != user) {
+                                activity.setuName(user.getuName() == null ? "" : user.getuName());
+                            }
+                        }
                         dto.setActivity(activity);
                         collects.add(dto);
                     }

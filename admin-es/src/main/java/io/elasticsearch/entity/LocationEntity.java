@@ -12,10 +12,9 @@ import java.io.Serializable;
 
 /**
  * 测试Es地址数据
- *
  */
 @Data
-@Document(indexName = "pojo",type = "person",shards = 5,replicas = 1,refreshInterval = "-1")
+@Document(indexName = "pojo", type = "person", shards = 5, replicas = 1, refreshInterval = "-1")
 public class LocationEntity implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id

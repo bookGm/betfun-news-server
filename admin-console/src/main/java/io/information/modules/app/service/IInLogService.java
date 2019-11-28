@@ -8,13 +8,12 @@ import java.util.Map;
 
 /**
  * <p>
- *  服务类
+ * 服务类
  * </p>
  *
  * @author LX
  * @since 2019-11-07
  */
 public interface IInLogService extends IService<InLog> {
-
     PageUtils queryPage(Map<String, Object> params);
 }

@@ -13,12 +13,13 @@ import org.slf4j.LoggerFactory;
  * @author Mark sunlightcs@gmail.com
  */
 public abstract class AbstractController {
-	protected Logger logger = LoggerFactory.getLogger(getClass());
-	
-	protected SysUserEntity getUser() {
-		return (SysUserEntity) SecurityUtils.getSubject().getPrincipal();
-	}
-	protected Long getUserId() {
-		return getUser().getUserId();
-	}
+    protected Logger logger = LoggerFactory.getLogger(getClass());
+
+    protected SysUserEntity getUser() {
+        return (SysUserEntity) SecurityUtils.getSubject().getPrincipal();
+    }
+
+    protected Long getUserId() {
+        return getUser().getUserId();
+    }
 }

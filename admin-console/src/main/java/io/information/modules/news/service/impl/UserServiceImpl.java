@@ -1,9 +1,7 @@
 package io.information.modules.news.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.guansuo.common.StringUtil;
 import io.information.common.utils.PageUtils;
@@ -24,7 +22,7 @@ public class UserServiceImpl extends ServiceImpl<UserDao, UserEntity> implements
         LambdaQueryWrapper<UserEntity> queryWrapper = new LambdaQueryWrapper<>();
         if (null != params.get("uNick") && StringUtil.isNotBlank(params.get("uNick"))) {
             String uNick = String.valueOf(params.get("uNick"));
-            queryWrapper.like(UserEntity::getuNick,uNick);
+            queryWrapper.like(UserEntity::getuNick, uNick);
         }
         IPage<UserEntity> page = this.page(
                 new Query<UserEntity>().getPage(params),
@@ -38,9 +36,9 @@ public class UserServiceImpl extends ServiceImpl<UserDao, UserEntity> implements
         LambdaQueryWrapper<UserEntity> queryWrapper = new LambdaQueryWrapper<>();
         if (null != params.get("uNick") && StringUtil.isNotBlank(params.get("uNick"))) {
             String uNick = String.valueOf(params.get("uNick"));
-            queryWrapper.like(UserEntity::getuNick,uNick).or().like(UserEntity::getuName,uNick);
+            queryWrapper.like(UserEntity::getuNick, uNick).or().like(UserEntity::getuName, uNick);
         }
-        queryWrapper.eq(UserEntity::getuAuthStatus,1);
+        queryWrapper.eq(UserEntity::getuAuthStatus, 1);
         IPage<UserEntity> page = this.page(
                 new Query<UserEntity>().getPage(params),
                 queryWrapper

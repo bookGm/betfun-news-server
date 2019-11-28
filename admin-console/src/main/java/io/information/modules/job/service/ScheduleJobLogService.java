@@ -14,7 +14,6 @@ import java.util.Map;
  * @author Mark sunlightcs@gmail.com
  */
 public interface ScheduleJobLogService extends IService<ScheduleJobLogEntity> {
+    PageUtils queryPage(Map<String, Object> params);
 
-	PageUtils queryPage(Map<String, Object> params);
-	
 }

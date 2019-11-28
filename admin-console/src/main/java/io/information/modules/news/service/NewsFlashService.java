@@ -15,15 +15,16 @@ import java.util.Map;
  * @since 2019-10-26
  */
 public interface NewsFlashService extends IService<NewsFlash> {
-
     /**
      * 抓取快讯（全量）
+     *
      * @param start
      * @param pages
      */
-    void catchNewsFlash(int start,int pages);
+    void catchNewsFlash(int start, int pages);
 
     PageUtils queryPage(Map<String, Object> params);
+
     /**
      * 抓取快讯（增量）
      */

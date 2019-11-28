@@ -1,8 +1,6 @@
 package io.information.init;
 
 import io.information.common.utils.CityHelper;
-import io.information.common.utils.RedisKeys;
-import io.information.common.utils.RedisUtils;
 import io.information.modules.sys.entity.SysCitysEntity;
 import io.information.modules.sys.service.SysCitysService;
 import org.slf4j.Logger;
@@ -22,11 +20,12 @@ public class InitCitys {
     SysCitysService sysCitysService;
     @Autowired
     private CityHelper cityHelper;
+
     @PostConstruct
-    void init(){
-        List<SysCitysEntity> citys=sysCitysService.list();
-        Map<String,List<SysCitysEntity>> cs=citys.stream().collect(Collectors.groupingBy(n->{
-            switch(n.getLevel()){
+    void init() {
+        List<SysCitysEntity> citys = sysCitysService.list();
+        Map<String, List<SysCitysEntity>> cs = citys.stream().collect(Collectors.groupingBy(n -> {
+            switch (n.getLevel()) {
                 case 1:
                     return "province";
                 case 2:

@@ -12,7 +12,6 @@ import java.util.Arrays;
 import java.util.Map;
 
 
-
 /**
  * 资讯活动动态表单属性
  *
@@ -31,7 +30,7 @@ public class ActivityFieldsController {
      */
     @RequestMapping("/list")
     @RequiresPermissions("news:actFields:list")
-    public R list(@RequestParam Map<String, Object> params){
+    public R list(@RequestParam Map<String, Object> params) {
         PageUtils page = activityFieldsService.queryPage(params);
 
         return R.ok().put("page", page);
@@ -43,8 +42,8 @@ public class ActivityFieldsController {
      */
     @RequestMapping("/info/{fId}")
     @RequiresPermissions("news:actFields:info")
-    public R info(@PathVariable("fId") Long fId){
-		ActivityFieldsEntity activityFields = activityFieldsService.getById(fId);
+    public R info(@PathVariable("fId") Long fId) {
+        ActivityFieldsEntity activityFields = activityFieldsService.getById(fId);
 
         return R.ok().put("actFields", activityFields);
     }
@@ -54,8 +53,8 @@ public class ActivityFieldsController {
      */
     @RequestMapping("/save")
     @RequiresPermissions("news:actFields:save")
-    public R save(@RequestBody ActivityFieldsEntity activityFields){
-		activityFieldsService.save(activityFields);
+    public R save(@RequestBody ActivityFieldsEntity activityFields) {
+        activityFieldsService.save(activityFields);
 
         return R.ok();
     }
@@ -65,8 +64,8 @@ public class ActivityFieldsController {
      */
     @RequestMapping("/update")
     @RequiresPermissions("news:actFields:update")
-    public R update(@RequestBody ActivityFieldsEntity activityFields){
-		activityFieldsService.updateById(activityFields);
+    public R update(@RequestBody ActivityFieldsEntity activityFields) {
+        activityFieldsService.updateById(activityFields);
 
         return R.ok();
     }
@@ -76,8 +75,8 @@ public class ActivityFieldsController {
      */
     @RequestMapping("/delete")
     @RequiresPermissions("news:actFields:delete")
-    public R delete(@RequestBody Long[] fIds){
-		activityFieldsService.removeByIds(Arrays.asList(fIds));
+    public R delete(@RequestBody Long[] fIds) {
+        activityFieldsService.removeByIds(Arrays.asList(fIds));
 
         return R.ok();
     }

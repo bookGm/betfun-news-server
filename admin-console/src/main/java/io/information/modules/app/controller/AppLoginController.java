@@ -24,7 +24,10 @@ import org.apache.shiro.crypto.hash.Sha256Hash;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.text.MessageFormat;
 import java.util.Date;
@@ -114,7 +117,7 @@ public class AppLoginController {
             return R.error("" +
                     "手机号或密码不正确");
         }
-        return resultToken(user.getuId(), user.getuAuthStatus(),user.getuNick());
+        return resultToken(user.getuId(), user.getuAuthStatus(), user.getuNick());
     }
 
     @PostMapping("codeLogin")
@@ -132,7 +135,7 @@ public class AppLoginController {
         }
         if (redis.get(rkey).equals(form.getCode())) {
             redis.remove(rkey);
-            return resultToken(user.getuId(), user.getuAuthStatus(),user.getuNick());
+            return resultToken(user.getuId(), user.getuAuthStatus(), user.getuNick());
         } else {
             return R.error("验证码输入错误");
         }
@@ -156,7 +159,7 @@ public class AppLoginController {
             Long uid = IdGenerator.getId();
             String salt = RandomStringUtils.randomAlphanumeric(20);
             String phone = form.getPhone();
-            R r = resultToken(uid, Integer.parseInt(NewsEnum.用户认证状态_未通过.getCode()),phone);
+            R r = resultToken(uid, Integer.parseInt(NewsEnum.用户认证状态_未通过.getCode()), phone);
             user = new InUser();
             user.setuId(uid);
             user.setuAccount(phone);
@@ -179,7 +182,7 @@ public class AppLoginController {
         }
     }
 
-    public R resultToken(Long userid, int authStatus,String nick) {
+    public R resultToken(Long userid, int authStatus, String nick) {
         //生成token
         String token = jwtUtils.generateToken(userid);
         Map<String, Object> map = new HashMap<>();
@@ -187,7 +190,7 @@ public class AppLoginController {
         map.put("expire", jwtUtils.getExpire());
         map.put("authStatus", authStatus);
         map.put("uId", userid);
-        map.put("uName",nick);
+        map.put("uName", nick);
         return R.ok(map);
     }
 

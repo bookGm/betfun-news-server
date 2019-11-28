@@ -4,7 +4,6 @@ package io.information.modules.app.resolver;
 
 import io.information.modules.app.annotation.LoginUser;
 import io.information.modules.app.entity.InUser;
-import io.information.modules.app.entity.UserEntity;
 import io.information.modules.app.interceptor.AuthorizationInterceptor;
 import io.information.modules.app.service.IInUserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,12 +35,12 @@ public class LoginUserHandlerMethodArgumentResolver implements HandlerMethodArgu
                                   NativeWebRequest request, WebDataBinderFactory factory) throws Exception {
         //获取用户ID
         Object object = request.getAttribute(AuthorizationInterceptor.USER_KEY, RequestAttributes.SCOPE_REQUEST);
-        if(object == null){
+        if (object == null) {
             return null;
         }
 
         //获取用户信息
-        InUser user = iInUserService.getById((Long)object);
+        InUser user = iInUserService.getById((Long) object);
         return user;
     }
 }

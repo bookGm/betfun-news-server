@@ -26,6 +26,7 @@ public class LocationServiceImpl implements LocationService {
 
     /**
      * 新增索引
+     *
      * @param entity
      * @return
      */
@@ -37,6 +38,7 @@ public class LocationServiceImpl implements LocationService {
 
     /**
      * 删除索引
+     *
      * @param entity
      */
     @Override
@@ -46,17 +48,19 @@ public class LocationServiceImpl implements LocationService {
 
     /**
      * 根据ID查询
+     *
      * @param id
      * @return
      */
     @Override
     public LocationEntity findById(String id) {
         Optional<LocationEntity> entity = locationDao.findById(id);
-        return entity.isPresent()?entity.get():null;
+        return entity.isPresent() ? entity.get() : null;
     }
 
     /**
      * 查新全部
+     *
      * @return
      */
     @Override
@@ -66,21 +70,22 @@ public class LocationServiceImpl implements LocationService {
 
     /**
      * 分页查询
+     *
      * @param params
      * @param currPage
      * @param pageSize
      * @return
      */
     @Override
-    public PageUtils findPage(String params,int currPage,int pageSize) {
+    public PageUtils findPage(String params, int currPage, int pageSize) {
         Pageable pageable = new PageRequest(currPage, pageSize);
-        MatchQueryBuilder queryBuilder = QueryBuilders.matchQuery("firstName",params);
+        MatchQueryBuilder queryBuilder = QueryBuilders.matchQuery("firstName", params);
 
         Page<LocationEntity> page = locationDao.search(queryBuilder, pageable);
 
-        int totalCount = (int)page.getTotalElements();
+        int totalCount = (int) page.getTotalElements();
         List<LocationEntity> entities = page.getContent();
 
-        return new PageUtils(entities,totalCount,pageSize,currPage);
+        return new PageUtils(entities, totalCount, pageSize, currPage);
     }
 }

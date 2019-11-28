@@ -21,19 +21,24 @@ import java.util.List;
 public interface InActivityDao extends BaseMapper<InActivity> {
     /**
      * 增加点赞数
+     *
      * @param actid
      */
-    void addALike (Long actid);
+    void addALike(Long actid);
+
     /**
      * 增加收藏数
+     *
      * @param actid
      */
-    void addACollect (Long actid);
+    void addACollect(Long actid);
+
     /**
      * 增加报名数
+     *
      * @param actid
      */
-    void addApply (Long actid);
+    void addApply(Long actid);
 
     /**
      * 获取用户所有活动ID

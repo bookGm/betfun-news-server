@@ -33,7 +33,7 @@ public class SourceServiceImpl extends ServiceImpl<SourceDao, SourceEntity> impl
     @Override
     public SourceEntity getByUrl(String sUrl) {
         LambdaQueryWrapper<SourceEntity> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(SourceEntity::getsUrl,sUrl);
+        queryWrapper.eq(SourceEntity::getsUrl, sUrl);
         return this.getOne(queryWrapper);
     }
 
@@ -41,7 +41,7 @@ public class SourceServiceImpl extends ServiceImpl<SourceDao, SourceEntity> impl
     @Transactional(rollbackFor = Exception.class)
     public void updateByUrl(SourceEntity source) {
         LambdaUpdateWrapper<SourceEntity> updateWrapper = new LambdaUpdateWrapper<>();
-        updateWrapper.eq(SourceEntity::getsUrl,source.getsUrl());
+        updateWrapper.eq(SourceEntity::getsUrl, source.getsUrl());
         this.update(updateWrapper);
     }
 
@@ -49,7 +49,7 @@ public class SourceServiceImpl extends ServiceImpl<SourceDao, SourceEntity> impl
     @Transactional(rollbackFor = Exception.class)
     public void removeByUrl(List<String> urlList) {
         LambdaQueryWrapper<SourceEntity> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.in(SourceEntity::getsUrl,urlList);
+        queryWrapper.in(SourceEntity::getsUrl, urlList);
         this.remove(queryWrapper);
     }
 

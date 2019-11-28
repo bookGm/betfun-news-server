@@ -11,114 +11,114 @@ import java.util.Date;
 
 /**
  * 资讯帖子辩论表
- * 
+ *
  * @author zxs
  * @email zhangxiaos@163.com
  * @date 2019-09-26 12:06:25
  */
 @TableName("in_card_argue")
 public class CardArgueEntity implements Serializable {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	/**
-	 * 普通帖子
-	 */
-	@TableField(exist = false)
-	private CardBaseEntity baseCard;
-	/**
-	 * 帖子id
-	 */
-	@TableId(type = IdType.INPUT)
-	private Long cId;
-	/**
-	 * 正方观点
-	 */
-	private String caFside;
-	/**
-	 * 反方观点
-	 */
-	private String caRside;
-	/**
-	 * 正方观点数量
-	 */
-	private String caFsideNumber;
-	/**
-	 * 反方观点数量
-	 */
-	private String caRsideNumber;
-	/**
-	 * 辩论结束日期
-	 */
-	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
-	private Date caCloseTime;
+    /**
+     * 普通帖子
+     */
+    @TableField(exist = false)
+    private CardBaseEntity baseCard;
+    /**
+     * 帖子id
+     */
+    @TableId(type = IdType.INPUT)
+    private Long cId;
+    /**
+     * 正方观点
+     */
+    private String caFside;
+    /**
+     * 反方观点
+     */
+    private String caRside;
+    /**
+     * 正方观点数量
+     */
+    private String caFsideNumber;
+    /**
+     * 反方观点数量
+     */
+    private String caRsideNumber;
+    /**
+     * 辩论结束日期
+     */
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    private Date caCloseTime;
 
-	/**
-	 * 裁判
-	 */
-	private String caReferee;
+    /**
+     * 裁判
+     */
+    private String caReferee;
 
 
-	public Long getcId() {
-		return cId;
-	}
+    public Long getcId() {
+        return cId;
+    }
 
-	public void setcId(Long cId) {
-		this.cId = cId;
-	}
+    public void setcId(Long cId) {
+        this.cId = cId;
+    }
 
-	public String getCaFside() {
-		return caFside;
-	}
+    public String getCaFside() {
+        return caFside;
+    }
 
-	public void setCaFside(String caFside) {
-		this.caFside = caFside;
-	}
+    public void setCaFside(String caFside) {
+        this.caFside = caFside;
+    }
 
-	public String getCaRside() {
-		return caRside;
-	}
+    public String getCaRside() {
+        return caRside;
+    }
 
-	public void setCaRside(String caRside) {
-		this.caRside = caRside;
-	}
+    public void setCaRside(String caRside) {
+        this.caRside = caRside;
+    }
 
-	public String getCaFsideNumber() {
-		return caFsideNumber;
-	}
+    public String getCaFsideNumber() {
+        return caFsideNumber;
+    }
 
-	public void setCaFsideNumber(String caFsideNumber) {
-		this.caFsideNumber = caFsideNumber;
-	}
+    public void setCaFsideNumber(String caFsideNumber) {
+        this.caFsideNumber = caFsideNumber;
+    }
 
-	public String getCaRsideNumber() {
-		return caRsideNumber;
-	}
+    public String getCaRsideNumber() {
+        return caRsideNumber;
+    }
 
-	public void setCaRsideNumber(String caRsideNumber) {
-		this.caRsideNumber = caRsideNumber;
-	}
+    public void setCaRsideNumber(String caRsideNumber) {
+        this.caRsideNumber = caRsideNumber;
+    }
 
-	public Date getCaCloseTime() {
-		return caCloseTime;
-	}
+    public Date getCaCloseTime() {
+        return caCloseTime;
+    }
 
-	public void setCaCloseTime(Date caCloseTime) {
-		this.caCloseTime = caCloseTime;
-	}
+    public void setCaCloseTime(Date caCloseTime) {
+        this.caCloseTime = caCloseTime;
+    }
 
-	public CardBaseEntity getBaseCard() {
-		return baseCard;
-	}
+    public CardBaseEntity getBaseCard() {
+        return baseCard;
+    }
 
-	public void setBaseCard(CardBaseEntity baseCard) {
-		this.baseCard = baseCard;
-	}
+    public void setBaseCard(CardBaseEntity baseCard) {
+        this.baseCard = baseCard;
+    }
 
-	public String getCaReferee() {
-		return caReferee;
-	}
+    public String getCaReferee() {
+        return caReferee;
+    }
 
-	public void setCaReferee(String caReferee) {
-		this.caReferee = caReferee;
-	}
+    public void setCaReferee(String caReferee) {
+        this.caReferee = caReferee;
+    }
 }

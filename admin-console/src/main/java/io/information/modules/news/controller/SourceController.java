@@ -14,7 +14,6 @@ import java.util.List;
 import java.util.Map;
 
 
-
 /**
  * 资讯资源表
  *
@@ -33,7 +32,7 @@ public class SourceController {
      */
     @GetMapping("/list")
     @RequiresPermissions("news:source:list")
-    public R list(@RequestParam Map<String, Object> params){
+    public R list(@RequestParam Map<String, Object> params) {
         PageUtils page = sourceService.queryPage(params);
 
         return R.ok().put("page", page);
@@ -45,7 +44,7 @@ public class SourceController {
      */
     @GetMapping("/select")
     @RequiresPermissions("sys:role:select")
-    public R select(){
+    public R select() {
         Map<String, Object> map = new HashMap<>();
 
         List<SourceEntity> list = (List<SourceEntity>) sourceService.listByMap(map);
@@ -59,8 +58,8 @@ public class SourceController {
      */
     @GetMapping("/info/{sUrl}")
     @RequiresPermissions("news:source:info")
-    public R info(@PathVariable("sUrl") String sUrl){
-		SourceEntity source = sourceService.getByUrl(sUrl);
+    public R info(@PathVariable("sUrl") String sUrl) {
+        SourceEntity source = sourceService.getByUrl(sUrl);
 
         return R.ok().put("source", source);
     }
@@ -70,7 +69,7 @@ public class SourceController {
      */
     @PostMapping("/save")
     @RequiresPermissions("news:source:save")
-    public R save(@RequestBody SourceEntity source){
+    public R save(@RequestBody SourceEntity source) {
         sourceService.save(source);
 
         return R.ok();
@@ -81,8 +80,8 @@ public class SourceController {
      */
     @RequestMapping("/update")
     @RequiresPermissions("news:source:update")
-    public R update(@RequestBody SourceEntity source){
-		sourceService.updateByUrl(source);
+    public R update(@RequestBody SourceEntity source) {
+        sourceService.updateByUrl(source);
 
         return R.ok();
     }
@@ -92,8 +91,8 @@ public class SourceController {
      */
     @PostMapping("/delete")
     @RequiresPermissions("news:source:delete")
-    public R delete(@RequestBody String[] sUrls){
-		sourceService.removeByUrl(Arrays.asList(sUrls));
+    public R delete(@RequestBody String[] sUrls) {
+        sourceService.removeByUrl(Arrays.asList(sUrls));
 
         return R.ok();
     }

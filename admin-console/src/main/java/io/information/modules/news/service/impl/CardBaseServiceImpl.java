@@ -22,7 +22,7 @@ import java.util.Arrays;
 import java.util.Map;
 
 
-@Service("cardBaseService")
+@Service
 public class CardBaseServiceImpl extends ServiceImpl<CardBaseDao, CardBaseEntity> implements CardBaseService {
     @Autowired
     private CardArgueService argueService;

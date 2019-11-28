@@ -3,101 +3,99 @@ package io.information.modules.news.entity;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 import java.io.Serializable;
 import java.util.Date;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import lombok.Data;
-
 /**
  * 资讯用户表
- * 
+ *
  * @author zxs
  * @email zhangxiaos@163.com
  * @date 2019-10-14 09:12:17
  */
 @TableName("in_user")
 public class UserEntity implements Serializable {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	/**
-	 * 用户id
-	 */
-	@TableId(type = IdType.INPUT)
-	private Long uId;
+    /**
+     * 用户id
+     */
+    @TableId(type = IdType.INPUT)
+    private Long uId;
     /**
      * 账号
      */
-	private String uAccount;
-	/**
-	 * 用户姓名
-	 */
-	private String uName;
-	/**
-	 * 密码
-	 */
-	private String uPwd;
-	/**
-	 * 盐
-	 */
-	private String uSalt;
-	/**
-	 * 用户昵称
-	 */
-	private String uNick;
+    private String uAccount;
+    /**
+     * 用户姓名
+     */
+    private String uName;
+    /**
+     * 密码
+     */
+    private String uPwd;
+    /**
+     * 盐
+     */
+    private String uSalt;
+    /**
+     * 用户昵称
+     */
+    private String uNick;
     /**
      * 用户头像
      */
     private String uPhoto;
-	/**
-	 * 用户手机
-	 */
-	private String uPhone;
-	/**
-	 * 用户简介
-	 */
-	private String uIntro;
-	/**
-	 * 用户粉丝
-	 */
-	private Long uFans;
-	/**
-	 * 用户关注
-	 */
-	private Integer uFocus;
-	/**
-	 * 认证状态（0：未通过 1：审核中 1：审核通过 ）
-	 */
-	private Integer uAuthStatus;
+    /**
+     * 用户手机
+     */
+    private String uPhone;
+    /**
+     * 用户简介
+     */
+    private String uIntro;
+    /**
+     * 用户粉丝
+     */
+    private Long uFans;
+    /**
+     * 用户关注
+     */
+    private Integer uFocus;
+    /**
+     * 认证状态（0：未通过 1：审核中 1：审核通过 ）
+     */
+    private Integer uAuthStatus;
     /**
      * 认证类型（0：个人 1：媒体 2：企业）
      */
     private Integer uAuthType;
-	/**
-	 * 用户令牌
-	 */
-	private String uToken;
+    /**
+     * 用户令牌
+     */
+    private String uToken;
     /**
      * 用户封面
      */
     private String uCover;
-	/**
-	 * 身份证号
-	 */
-	private String uIdcard;
-	/**
-	 * 身份证正面
-	 */
-	private String uIdcardA;
-	/**
-	 * 身份证背面
-	 */
-	private String uIdcardB;
-	/**
-	 * 手持身份证照
-	 */
-	private String uIdcardHand;
+    /**
+     * 身份证号
+     */
+    private String uIdcard;
+    /**
+     * 身份证正面
+     */
+    private String uIdcardA;
+    /**
+     * 身份证背面
+     */
+    private String uIdcardB;
+    /**
+     * 手持身份证照
+     */
+    private String uIdcardHand;
     /**
      * 企业名称
      */

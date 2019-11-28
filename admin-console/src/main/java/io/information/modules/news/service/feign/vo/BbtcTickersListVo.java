@@ -10,7 +10,7 @@ public class BbtcTickersListVo implements Serializable {
     String currency_show;
     Integer day5_vol;
     String exchange;
-    Double [] kline;
+    Double[] kline;
     String pair;
     String symbol_show;
     TickerVo ticker;

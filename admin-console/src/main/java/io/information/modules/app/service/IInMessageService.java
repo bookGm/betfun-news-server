@@ -12,7 +12,6 @@ import java.util.Map;
  * @date 2019-11-25 10:56:47
  */
 public interface IInMessageService extends IService<InMessage> {
-
     PageUtils queryPage(Map<String, Object> params);
 }
 

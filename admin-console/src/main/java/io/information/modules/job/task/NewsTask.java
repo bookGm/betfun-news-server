@@ -19,45 +19,43 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
- *
  * TestTask为spring bean的名称
- *
  */
 @Component
-public class NewsTask{
-	private Logger logger = LoggerFactory.getLogger(getClass());
-	@Autowired
-	IInUserService iInUserService;
-	@Autowired
-	RedisUtils redisUtils;
-	@Autowired
-	ArticleService articleService;
-	@Autowired
-	NewsFlashService newsFlashService;
+public class NewsTask {
+    private Logger logger = LoggerFactory.getLogger(getClass());
+    @Autowired
+    IInUserService iInUserService;
+    @Autowired
+    RedisUtils redisUtils;
+    @Autowired
+    ArticleService articleService;
+    @Autowired
+    NewsFlashService newsFlashService;
 
-	/**
-	 * 定时同步app用户
-	 */
-	public void synchronizeInUser(){
-		List<InUser> us=iInUserService.list();
-		Map<Long,InUser> m=us.stream().collect(Collectors.toMap(InUser::getuId, u->u));
-		redisUtils.hmset(RedisKeys.INUSER,m);
-	}
+    /**
+     * 定时同步app用户
+     */
+    public void synchronizeInUser() {
+        List<InUser> us = iInUserService.list();
+        Map<Long, InUser> m = us.stream().collect(Collectors.toMap(InUser::getuId, u -> u));
+        redisUtils.hmset(RedisKeys.INUSER, m);
+    }
 
-	/**
-	 * 增量抓取文章(30分钟一次)
-	 */
-	@Scheduled(cron = "0 */30 * * * ?")
-	public void incrementCatchArticle(){
-		articleService.catchIncrementArticles();
-	}
+    /**
+     * 增量抓取文章(30分钟一次)
+     */
+    @Scheduled(cron = "0 */30 * * * ?")
+    public void incrementCatchArticle() {
+        articleService.catchIncrementArticles();
+    }
 
-	/**
-	 * 增量抓取快讯(10分钟一次)
-	 */
-	@Scheduled(cron = "0 */10 * * * ?")
-	public void catchIncrementsFlash(){
-		newsFlashService.catchIncrementsFlash();
-	}
+    /**
+     * 增量抓取快讯(10分钟一次)
+     */
+    @Scheduled(cron = "0 */10 * * * ?")
+    public void catchIncrementsFlash() {
+        newsFlashService.catchIncrementsFlash();
+    }
 
 }

@@ -50,6 +50,12 @@ public class InActivity implements Serializable {
     private Long uId;
 
     /**
+     * 发布者名称
+     */
+    @TableField(exist = false)
+    private String uName;
+
+    /**
      * 活动标题
      */
     @ApiModelProperty(value = "活动标题", name = "actTitle", required = true)
@@ -60,7 +66,6 @@ public class InActivity implements Serializable {
      */
     @ApiModelProperty(value = "活动分类", name = "actCategory", required = true, example = "0")
     private Integer actCategory;
-
 
     /**
      * 活动地址（省市县编码横线分隔）
@@ -110,7 +115,7 @@ public class InActivity implements Serializable {
     /**
      * 活动开始时间
      */
-    @ApiModelProperty(value = "活动开始时间(yyyy-MM-dd HH:mm:ss)", name = "actStartTime", required = true)
+    @ApiModelProperty(value = "活动开始时间", name = "actStartTime", required = true)
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     @TableField(value = "act_start_time")
     private Date actStartTime;
@@ -119,7 +124,7 @@ public class InActivity implements Serializable {
     /**
      * 活动结束时间
      */
-    @ApiModelProperty(value = "活动结束时间(yyyy-MM-dd HH:mm:ss)", name = "actCloseTime", required = true)
+    @ApiModelProperty(value = "活动结束时间", name = "actCloseTime", required = true)
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date actCloseTime;
 
@@ -158,11 +163,32 @@ public class InActivity implements Serializable {
     private Long actCritic;
 
     /**
+     * 是否主页展示
+     */
+    private Integer actBanner;
+
+    /**
      * 简单时间
      */
     @TableField(exist = false)
     private String aSimpleTime;
 
+
+    public String getuName() {
+        return uName;
+    }
+
+    public void setuName(String uName) {
+        this.uName = uName;
+    }
+
+    public Integer getActBanner() {
+        return actBanner;
+    }
+
+    public void setActBanner(Integer actBanner) {
+        this.actBanner = actBanner;
+    }
 
     public String getActTimeType() {
         return actTimeType;

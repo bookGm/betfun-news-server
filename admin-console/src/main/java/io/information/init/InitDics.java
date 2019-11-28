@@ -1,4 +1,5 @@
 package io.information.init;
+
 import io.information.common.utils.DicHelper;
 import io.information.modules.news.entity.DicEntity;
 import io.information.modules.news.service.DicService;
@@ -17,9 +18,10 @@ public class InitDics {
     DicService dicService;
     @Autowired
     private DicHelper dicHelper;
+
     @PostConstruct
-    void init(){
-        List<DicEntity> dics=dicService.list();
+    void init() {
+        List<DicEntity> dics = dicService.list();
         try {
             dicHelper.init(dics);
         } catch (Exception e) {

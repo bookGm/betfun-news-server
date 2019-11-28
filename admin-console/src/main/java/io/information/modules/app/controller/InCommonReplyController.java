@@ -20,7 +20,6 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
-import java.util.Arrays;
 import java.util.Date;
 import java.util.Map;
 
@@ -76,8 +75,8 @@ public class InCommonReplyController {
         commonReply.setcName(user.getuNick());
         commonReply.setcPhoto(user.getuPhoto());
         commonReply.setCrSimpleTime("刚刚");
-        if(commonReply.gettType().equals(NewsEnum.评论_帖子)){
-            logOperate(user.getuId(), commonReply.gettId(),commonReply.gettName(), NewsEnum.操作_评论);
+        if (commonReply.gettType().equals(NewsEnum.评论_帖子)) {
+            logOperate(user.getuId(), commonReply.gettId(), commonReply.gettName(), NewsEnum.操作_评论);
         }
         return R.ok().put("crObj", commonReply);
     }
@@ -85,7 +84,7 @@ public class InCommonReplyController {
     /**
      * 记录操作日志
      */
-    void logOperate(Long uId, Long tId,String tName, NewsEnum e) {
+    void logOperate(Long uId, Long tId, String tName, NewsEnum e) {
         InLog log = new InLog();
         log.setlOperateId(uId);
         log.setlTargetId(tId);

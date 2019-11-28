@@ -1,6 +1,5 @@
 package io.information.modules.news.controller;
 
-import com.guansuo.common.JsonUtil;
 import com.guansuo.common.StringUtil;
 import io.information.common.utils.IdGenerator;
 import io.information.common.utils.PageUtils;
@@ -12,7 +11,6 @@ import io.information.modules.news.entity.MessageEntity;
 import io.information.modules.news.service.ArticleService;
 import io.information.modules.news.service.MessageService;
 import io.information.modules.sys.controller.AbstractController;
-import io.mq.utils.Constants;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;

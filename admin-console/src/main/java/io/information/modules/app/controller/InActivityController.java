@@ -7,6 +7,7 @@ import io.information.modules.app.annotation.LoginUser;
 import io.information.modules.app.entity.*;
 import io.information.modules.app.service.IInActivityDatasService;
 import io.information.modules.app.service.IInActivityService;
+import io.information.modules.app.vo.ActivityBannerVo;
 import io.information.modules.app.vo.ActivityDataVo;
 import io.information.modules.app.vo.PassUserVo;
 import io.information.modules.sys.entity.SysCitysEntity;
@@ -115,6 +116,17 @@ public class InActivityController {
         map.put("uId", user.getuId());
         PageUtils page = activityService.queryPage(map);
         return R.ok().put("page", page);
+    }
+
+
+    /**
+     * 活动轮播图
+     */
+    @GetMapping("/banner")
+    @ApiOperation(value = "活动轮播图", httpMethod = "GET", response = ActivityBannerVo.class)
+    public ResultUtil<List<ActivityBannerVo>> banner() {
+        List<ActivityBannerVo> vos = activityService.banner();
+        return ResultUtil.ok(vos);
     }
 
 

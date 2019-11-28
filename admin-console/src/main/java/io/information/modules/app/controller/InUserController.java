@@ -428,6 +428,7 @@ public class InUserController extends AbstractController {
     public ResultUtil<PageUtils<InActivity>> active
     (@RequestParam Map<String, Object> map, @ApiIgnore @LoginUser InUser user) {
         map.put("uId", user.getuId());
+        map.put("uName", user.getuName());
         PageUtils<InActivity> page = userService.active(map);
         return ResultUtil.ok(page);
     }

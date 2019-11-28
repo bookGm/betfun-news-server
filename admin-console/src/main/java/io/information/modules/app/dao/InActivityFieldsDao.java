@@ -18,6 +18,5 @@ import java.util.List;
 @Component
 @Mapper
 public interface InActivityFieldsDao extends BaseMapper<InActivityFields> {
-
     List<InActivityFields> searchByActId(@Param("actId") Long actId);
 }

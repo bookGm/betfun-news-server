@@ -19,7 +19,7 @@ public class EsUserController {
      * 搜索作者
      */
     @PostMapping("/search")
-    public PageUtils search(@RequestBody SearchRequest request){
+    public PageUtils search(@RequestBody SearchRequest request) {
         return userService.search(request);
     }
 }

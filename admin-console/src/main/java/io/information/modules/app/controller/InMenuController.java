@@ -98,7 +98,7 @@ public class InMenuController {
     @ApiImplicitParam(name = "mId", value = "菜单信ID", required = true)
     public R info(@PathVariable("mId") Long mId) {
         InMenus menus = menuService.queryMenuById(mId);
-        return R.ok().put("menus",menus);
+        return R.ok().put("menus", menus);
     }
 
     /**
@@ -109,42 +109,44 @@ public class InMenuController {
     @ApiImplicitParam(name = "map", value = "分页数据", required = true)
     public R list(@RequestParam Map<String, Object> map) {
         PageUtils page = menuService.queryPage(map);
-        return R.ok().put("page",page);
+        return R.ok().put("page", page);
     }
 
     /**
      * 递归
+     *
      * @param total
      * @param menu
      */
-    public void getMenuTree(List<InMenu> total,InMenu menu){
-        List<InMenu> tlist= new ArrayList<InMenu>(total);
-        List<InMenu> clist=new ArrayList<InMenu>();
+    public void getMenuTree(List<InMenu> total, InMenu menu) {
+        List<InMenu> tlist = new ArrayList<InMenu>(total);
+        List<InMenu> clist = new ArrayList<InMenu>();
         Iterator<InMenu> iterator = tlist.iterator();
         while (iterator.hasNext()) {
             InMenu m = iterator.next();
             if (m.getmPcode().equals(menu.getmCode())) {
                 clist.add(m);
                 iterator.remove();
-                getMenuTree(tlist,m);
+                getMenuTree(tlist, m);
             }
         }
-        if(clist.size()<1){
-            clist=null;
-        }else{
+        if (clist.size() < 1) {
+            clist = null;
+        } else {
             menu.setChildren(clist);
         }
     }
 
     /**
      * 获取所有资讯菜单
+     *
      * @return
      */
     @GetMapping("getAllMenu")
-    public R getAllMenu(){
-        InMenu menu =new InMenu();
+    public R getAllMenu() {
+        InMenu menu = new InMenu();
         menu.setmCode("0");
-        getMenuTree(menuService.list(new LambdaQueryWrapper<InMenu>().eq(InMenu::getmDisable,0)),menu);
-        return R.ok().put("menus",menu.getChildren());
+        getMenuTree(menuService.list(new LambdaQueryWrapper<InMenu>().eq(InMenu::getmDisable, 0)), menu);
+        return R.ok().put("menus", menu.getChildren());
     }
 }

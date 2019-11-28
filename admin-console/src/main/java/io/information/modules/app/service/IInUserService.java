@@ -26,7 +26,7 @@ public interface IInUserService extends IService<InUser> {
      * @param uId 用户id
      * @param fId 被关注的用户id
      */
-    String focus(Long uId, Integer status,Long fId);
+    String focus(Long uId, Integer status, Long fId);
 
     Boolean saveWithCache(InUser inUser);
 

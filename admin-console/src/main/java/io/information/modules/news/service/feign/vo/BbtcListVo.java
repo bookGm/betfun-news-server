@@ -35,7 +35,7 @@ public class BbtcListVo implements Serializable {
     /**
      * 文章涉及标签
      */
-    Object []tags;
+    Object[] tags;
 
     public Long getId() {
         return id;

@@ -1,7 +1,5 @@
 package io.information.modules.app.dto;
 
-import com.baomidou.mybatisplus.annotation.TableId;
-
 import java.io.Serializable;
 
 public class InNodeDTO implements Serializable {

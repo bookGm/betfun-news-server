@@ -3,9 +3,9 @@
 package io.information.modules.oss.cloud;
 
 
+import com.guansuo.common.SpringContextUtils;
 import io.information.common.utils.ConfigConstant;
 import io.information.common.utils.Constant;
-import com.guansuo.common.SpringContextUtils;
 import io.information.modules.sys.service.SysConfigService;
 
 /**
@@ -20,15 +20,15 @@ public final class OSSFactory {
         OSSFactory.sysConfigService = (SysConfigService) SpringContextUtils.getBean("sysConfigService");
     }
 
-    public static CloudStorageService build(){
+    public static CloudStorageService build() {
         //获取云存储配置信息
         CloudStorageConfig config = sysConfigService.getConfigObject(ConfigConstant.CLOUD_STORAGE_CONFIG_KEY, CloudStorageConfig.class);
 
-        if(config.getType() == Constant.CloudService.QINIU.getValue()){
+        if (config.getType() == Constant.CloudService.QINIU.getValue()) {
             return new QiniuCloudStorageService(config);
-        }else if(config.getType() == Constant.CloudService.ALIYUN.getValue()){
+        } else if (config.getType() == Constant.CloudService.ALIYUN.getValue()) {
             return new AliyunCloudStorageService(config);
-        }else if(config.getType() == Constant.CloudService.QCLOUD.getValue()){
+        } else if (config.getType() == Constant.CloudService.QCLOUD.getValue()) {
             return new QcloudCloudStorageService(config);
         }
 

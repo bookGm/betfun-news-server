@@ -8,21 +8,11 @@ import io.information.modules.app.service.IInSourceService;
 import io.information.modules.news.service.feign.common.FeignBbApp;
 import io.information.modules.news.service.feign.service.BbtcAppService;
 import io.information.modules.news.service.feign.vo.BbtcTickersListVo;
-import io.information.modules.news.service.feign.vo.TickerVo;
 import io.information.modules.sys.controller.AbstractController;
-import me.zhyd.hunter.config.HunterConfig;
-import me.zhyd.hunter.config.HunterConfigContext;
-import me.zhyd.hunter.config.platform.Platform;
-import me.zhyd.hunter.entity.VirtualArticle;
-import me.zhyd.hunter.enums.ExitWayEnum;
-import me.zhyd.hunter.processor.BlogHunterProcessor;
-import me.zhyd.hunter.processor.HunterProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -47,7 +37,7 @@ public class InSourceController extends AbstractController {
     public R list(@RequestParam Map<String, Object> map) {
         PageUtils page = sourceService.queryPage(map);
 
-        return R.ok().put("page",page);
+        return R.ok().put("page", page);
     }
 
 
@@ -60,7 +50,7 @@ public class InSourceController extends AbstractController {
 
         List<InSource> sourceList = (List<InSource>) sourceService.listByMap(map);
 
-        return R.ok().put("sourceList",sourceList);
+        return R.ok().put("sourceList", sourceList);
     }
 
 
@@ -71,7 +61,7 @@ public class InSourceController extends AbstractController {
     public R info(@PathVariable("sUrl") String sUrl) {
         InSource source = sourceService.getByUrl(sUrl);
 
-        return R.ok().put("source",source);
+        return R.ok().put("source", source);
     }
 
     /**
@@ -106,16 +96,17 @@ public class InSourceController extends AbstractController {
 
     /**
      * 获取行情
+     *
      * @return
      */
     @GetMapping("/getPrice")
     public R getPrice() {
-        FeignBbApp bapp=bbtcAppService.getTikerList("huobipro-btc_usd,huobipro-eth_usd,huobipro-btm_usd,huobipro-bch_usd,huobipro-eos_usd");
-        List<BbtcTickersListVo> ts=bapp.getTickers();
-        for(BbtcTickersListVo t:ts){
-            t.getTicker().setSell(t.getTicker().getSell()*7);
+        FeignBbApp bapp = bbtcAppService.getTikerList("huobipro-btc_usd,huobipro-eth_usd,huobipro-btm_usd,huobipro-bch_usd,huobipro-eos_usd");
+        List<BbtcTickersListVo> ts = bapp.getTickers();
+        for (BbtcTickersListVo t : ts) {
+            t.getTicker().setSell(t.getTicker().getSell() * 7);
         }
-        return R.ok().put("price",ts);
+        return R.ok().put("price", ts);
     }
 
 }

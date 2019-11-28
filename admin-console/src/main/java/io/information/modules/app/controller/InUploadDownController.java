@@ -8,10 +8,10 @@ import com.qiniu.storage.UploadManager;
 import com.qiniu.storage.model.DefaultPutRet;
 import com.qiniu.util.Auth;
 import io.information.common.utils.R;
-import org.apache.commons.io.FileUtils;
-import org.springframework.util.ResourceUtils;
 import io.information.config.ServerConfig;
+import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.ResourceUtils;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -53,14 +53,14 @@ public class InUploadDownController {
      */
     @PostMapping("/uploadPic")
     public R upload(@RequestParam("upload") MultipartFile picture, HttpServletRequest request) throws Exception {
-        String contextPath=request.getContextPath();
+        String contextPath = request.getContextPath();
         //获取文件在服务器的储存位置
-        File path = new File(URLDecoder.decode(ResourceUtils.getURL("classpath:").getPath(),"utf-8"));
-        if(!path.exists()) {
+        File path = new File(URLDecoder.decode(ResourceUtils.getURL("classpath:").getPath(), "utf-8"));
+        if (!path.exists()) {
             path = new File("");
         }
 //        String path=ResourceUtils.getURL("classpath:").getPath()+"static/upload/";
-        File filePath = new File(path.getAbsolutePath()+"/static/upload/");
+        File filePath = new File(path.getAbsolutePath() + "/static/upload/");
         if (!filePath.exists() && !filePath.isDirectory()) {
             filePath.mkdirs();
         }
@@ -82,12 +82,12 @@ public class InUploadDownController {
         try {
             picture.transferTo(targetFile);
             //将文件在服务器的存储路径返回
-            return R.ok().put("url",serverConfig.getUrl()+"/upload/" + fileName).put("uploaded",1).put("formUrl","/upload/" + fileName);
+            return R.ok().put("url", serverConfig.getUrl() + "/upload/" + fileName).put("uploaded", 1).put("formUrl", "/upload/" + fileName);
         } catch (IOException e) {
-        e.printStackTrace();
-        return R.error("上传失败").put("uploaded",0);
+            e.printStackTrace();
+            return R.error("上传失败").put("uploaded", 0);
         }
-        }
+    }
 
 
     @PostMapping("/uploadDle")

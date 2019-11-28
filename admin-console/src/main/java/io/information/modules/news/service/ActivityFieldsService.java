@@ -14,7 +14,6 @@ import java.util.Map;
  * @date 2019-10-24 10:53:16
  */
 public interface ActivityFieldsService extends IService<ActivityFieldsEntity> {
-
     PageUtils queryPage(Map<String, Object> params);
 }
 

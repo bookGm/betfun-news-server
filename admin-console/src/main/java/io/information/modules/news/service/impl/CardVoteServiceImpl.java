@@ -18,21 +18,22 @@ import java.util.List;
 import java.util.Map;
 
 
-@Service("cardVoteService")
+@Service
 public class CardVoteServiceImpl extends ServiceImpl<CardVoteDao, CardVoteEntity> implements CardVoteService {
     @Autowired
     CardBaseService cardBaseService;
+
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
         IPage<CardVoteEntity> page = this.page(
                 new Query<CardVoteEntity>().getPage(params),
                 new QueryWrapper<CardVoteEntity>()
         );
-        for(CardVoteEntity v:page.getRecords()){
-            if(StringUtil.isNotBlank(v.getCvInfo())){
-                List<String> list = JSONObject.parseArray(v.getCvInfo(),String.class);
-                for(int i=0;i<list.size();i++){
-                    v.setInfo(i,list.get(i));
+        for (CardVoteEntity v : page.getRecords()) {
+            if (StringUtil.isNotBlank(v.getCvInfo())) {
+                List<String> list = JSONObject.parseArray(v.getCvInfo(), String.class);
+                for (int i = 0; i < list.size(); i++) {
+                    v.setInfo(i, list.get(i));
                 }
             }
             v.setBaseCard(cardBaseService.getById(v.getcId()));

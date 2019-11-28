@@ -19,6 +19,7 @@ import java.util.List;
 public interface InNodeDao extends BaseMapper<InNode> {
     /**
      * 关注+1
+     *
      * @param noId 节点ID
      */
     void increaseFocus(Long noId);

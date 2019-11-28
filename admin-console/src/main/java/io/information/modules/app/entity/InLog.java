@@ -11,9 +11,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 /**
- *
  * 日志表
- *
  */
 @ApiModel(value = "日志", description = "日志字段")
 @TableName("in_log")

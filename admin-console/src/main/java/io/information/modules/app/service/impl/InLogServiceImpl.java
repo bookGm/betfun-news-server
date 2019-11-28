@@ -25,7 +25,7 @@ public class InLogServiceImpl extends ServiceImpl<InLogDao, InLog> implements II
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
-        LambdaQueryWrapper<InLog> qw=new LambdaQueryWrapper<InLog>();
+        LambdaQueryWrapper<InLog> qw = new LambdaQueryWrapper<InLog>();
         IPage<InLog> page = this.page(
                 new Query<InLog>().getPage(params),
                 qw

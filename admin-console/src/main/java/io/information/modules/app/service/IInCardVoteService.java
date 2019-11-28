@@ -4,7 +4,6 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import io.information.common.utils.PageUtils;
 import io.information.modules.app.entity.InCardVote;
 
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -18,6 +17,7 @@ import java.util.Map;
 public interface IInCardVoteService extends IService<InCardVote> {
     /**
      * 投票
+     *
      * @return
      */
     String vote(Long cid, Long uid, Integer[] optIndex);

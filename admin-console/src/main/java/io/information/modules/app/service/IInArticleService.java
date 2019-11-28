@@ -3,9 +3,11 @@ package io.information.modules.app.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import io.information.common.utils.PageUtils;
 import io.information.modules.app.entity.InArticle;
-import io.information.modules.app.vo.*;
+import io.information.modules.app.vo.ArticleBannerVo;
+import io.information.modules.app.vo.ArticleUserVo;
+import io.information.modules.app.vo.ArticleVo;
+import io.information.modules.app.vo.TagArticleVo;
 
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -33,13 +35,13 @@ public interface IInArticleService extends IService<InArticle> {
      * 点赞
      * type(0：文章 1：帖子 2：活动)
      */
-    String giveALike(Long id,Long tId,int type, Long uid);
+    String giveALike(Long id, Long tId, int type, Long uid);
 
     /**
      * 收藏
      * type(0：文章 1：帖子 2：活动)
      */
-    String collect(Long id,Long tId,int type, Long uid);
+    String collect(Long id, Long tId, int type, Long uid);
 
     TagArticleVo tagArticle(Map<String, Object> map);
 

@@ -87,15 +87,16 @@ public class JsonUtils {
         //反序列化
         String json = "{\"name\":\"jack\",\"age\":20}";
         User jackClass = toBean(json, User.class);
-        System.out.println("user="+jackClass);
+        System.out.println("user=" + jackClass);
 
         String jsons = "[{\"name\":\"jack\",\"age\":20},{\"name\":\"rose\",\"age\":19}]";
         List<User> users1 = toList(jsons, User.class);
-        System.out.println("userlist = "+users1);
+        System.out.println("userlist = " + users1);
 
         String mapJsons = "{\"65\":[{\"name\":\"jack\",\"age\":20},{\"name\":\"rose\",\"age\":19}],\"66\":[{\"name\":\"jack\",\"age\":20},{\"name\":\"rose\",\"age\":19}]}";
 
-        Map<String, List<User>> stringListMap = nativeRead(mapJsons, new TypeReference<Map<String, List<User>>>() {});
+        Map<String, List<User>> stringListMap = nativeRead(mapJsons, new TypeReference<Map<String, List<User>>>() {
+        });
         System.out.println(stringListMap);
 
     }
@@ -103,7 +104,7 @@ public class JsonUtils {
     @Data
     @AllArgsConstructor
     @NoArgsConstructor
-    static class User{
+    static class User {
         private String name;
         private int age;
     }

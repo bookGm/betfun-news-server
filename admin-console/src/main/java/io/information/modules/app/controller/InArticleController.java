@@ -132,10 +132,10 @@ public class InArticleController {
     }
 
     /**
-     * 主页横幅图片
+     * 文章轮播图
      */
     @GetMapping("/banner")
-    @ApiOperation(value = "主页横幅图片", httpMethod = "GET", response = ArticleBannerVo.class)
+    @ApiOperation(value = "文章轮播图", httpMethod = "GET", response = ArticleBannerVo.class)
     public ResultUtil<List<ArticleBannerVo>> banner() {
         List<ArticleBannerVo> bannerVos = articleService.banner();
         return ResultUtil.ok(bannerVos);

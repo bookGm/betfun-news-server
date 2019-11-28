@@ -24,15 +24,15 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-@RunWith(SpringRunner.class)
-@SpringBootTest(classes = LocationRTest.class)
+//@RunWith(SpringRunner.class)
+//@SpringBootTest(classes = LocationRTest.class)
 public class LocationRTest {
     @Autowired
     LocationDao employeeDao;
     @Autowired
     EsArticleDao articleDao;
 
-    @Test
+//    @Test
     //导入数据
     public void testAdd() {
         List<EsArticleEntity> employees = new ArrayList<>();

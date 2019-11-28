@@ -43,7 +43,7 @@ public class InCardArgueController {
             @ApiImplicitParam(value = "帖子id", name = "cId", required = true),
             @ApiImplicitParam(value = "支持方（0：正方  1：反方）", name = "supportSide", required = false),
     })
-    public R support(@RequestParam("cId")Long cId, @RequestParam("supportSide")Integer supportSide, @ApiIgnore @LoginUser InUser user) {
+    public R support(@RequestParam("cId") Long cId, @RequestParam("supportSide") Integer supportSide, @ApiIgnore @LoginUser InUser user) {
         return R.ok().put("supportSide", argueService.support(cId, user.getuId(), supportSide));
     }
 
@@ -58,7 +58,7 @@ public class InCardArgueController {
             @ApiImplicitParam(value = "帖子id", name = "cId", required = true),
             @ApiImplicitParam(value = "加入方（0：正方  1：反方）", name = "joinSide", required = false),
     })
-    public R join(@RequestParam("cId")Long cId, @RequestParam("joinSide")Integer joinSide, @ApiIgnore @LoginUser InUser user) {
+    public R join(@RequestParam("cId") Long cId, @RequestParam("joinSide") Integer joinSide, @ApiIgnore @LoginUser InUser user) {
         return R.ok().put("joinSide", argueService.join(cId, user.getuId(), joinSide));
     }
 

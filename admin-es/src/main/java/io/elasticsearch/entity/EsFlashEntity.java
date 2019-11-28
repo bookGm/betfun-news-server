@@ -23,18 +23,18 @@ public class EsFlashEntity implements Serializable {
     /**
      * 快讯标题
      */
-    @Field(type = FieldType.Keyword, analyzer = "ik_max_word",searchAnalyzer="ik_max_word")
+    @Field(type = FieldType.Keyword, analyzer = "ik_max_word", searchAnalyzer = "ik_max_word")
     private String nTitle;
     /**
      * 快讯摘要
      */
-    @Field(type = FieldType.Keyword, analyzer = "ik_max_word",searchAnalyzer="ik_max_word")
+    @Field(type = FieldType.Keyword, analyzer = "ik_max_word", searchAnalyzer = "ik_max_word")
     private String nBrief;
 
     /**
      * 快讯内容
      */
-    @Field(type = FieldType.Keyword, analyzer = "ik_max_word",searchAnalyzer="ik_max_word")
+    @Field(type = FieldType.Keyword, analyzer = "ik_max_word", searchAnalyzer = "ik_max_word")
     private String nContent;
     /**
      * 利好
@@ -49,7 +49,7 @@ public class EsFlashEntity implements Serializable {
     /**
      * 创建时间
      */
-    @Field(type = FieldType.Date,format= DateFormat.custom,pattern = "yyyy-MM-dd HH:mm:ss")
+    @Field(type = FieldType.Date, format = DateFormat.custom, pattern = "yyyy-MM-dd HH:mm:ss")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date nCreateTime;
 

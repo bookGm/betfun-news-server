@@ -3,9 +3,7 @@ package io.information.modules.app.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import io.information.common.utils.PageUtils;
 import io.information.modules.app.entity.InMenu;
-import io.information.modules.app.entity.InMenuSource;
 import io.information.modules.app.entity.InMenus;
-import io.information.modules.app.entity.InSource;
 
 import java.util.Map;
 
@@ -18,7 +16,6 @@ import java.util.Map;
  * @since 2019-09-24
  */
 public interface IInMenuService extends IService<InMenu> {
-
     void addMenu(InMenus menus);
 
     void deleteMenu(Long menuId);

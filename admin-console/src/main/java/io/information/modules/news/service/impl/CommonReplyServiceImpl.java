@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Map;
 
 
-@Service("commonReplyService")
+@Service
 public class CommonReplyServiceImpl extends ServiceImpl<CommonReplyDao, CommonReplyEntity> implements CommonReplyService {
 
     @Override

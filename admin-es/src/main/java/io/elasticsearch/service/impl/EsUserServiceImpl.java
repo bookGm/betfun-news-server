@@ -1,23 +1,10 @@
 package io.elasticsearch.service.impl;
 
-import com.guansuo.common.StringUtil;
 import io.elasticsearch.dao.EsUserDao;
 import io.elasticsearch.entity.EsUserEntity;
 import io.elasticsearch.service.EsUserService;
-import io.elasticsearch.utils.PageUtils;
-import io.elasticsearch.utils.SearchRequest;
-import org.elasticsearch.index.query.Operator;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
-import org.springframework.data.elasticsearch.core.aggregation.AggregatedPage;
-import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
-import org.springframework.data.elasticsearch.core.query.SearchQuery;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
-
-import static org.elasticsearch.index.query.QueryBuilders.multiMatchQuery;
 
 @Service
 public class EsUserServiceImpl implements EsUserService {

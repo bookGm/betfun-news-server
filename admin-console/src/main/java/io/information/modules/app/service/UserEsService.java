@@ -4,6 +4,5 @@ import io.elasticsearch.utils.PageUtils;
 import io.elasticsearch.utils.SearchRequest;
 
 public interface UserEsService {
-
     PageUtils search(SearchRequest request);
 }

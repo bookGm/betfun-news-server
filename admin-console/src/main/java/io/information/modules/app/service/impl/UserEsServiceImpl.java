@@ -2,7 +2,6 @@ package io.information.modules.app.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.guansuo.common.StringUtil;
-import io.elasticsearch.dao.EsUserDao;
 import io.elasticsearch.entity.EsUserEntity;
 import io.elasticsearch.utils.PageUtils;
 import io.elasticsearch.utils.SearchRequest;

@@ -13,7 +13,10 @@ import org.springframework.data.redis.core.types.Expiration;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -31,11 +34,11 @@ public class RedisUtils {
     @Autowired
     private RedisTemplate<String, Object> redisTemplate;
 
-    public boolean isFuzzyEmpty(String key){
+    public boolean isFuzzyEmpty(String key) {
         return getAllFuzzyKeys(key).isEmpty();
     }
 
-    public Set<String> getAllFuzzyKeys(String key){
+    public Set<String> getAllFuzzyKeys(String key) {
         Set<String> keys = redisTemplate.keys(key + "*");
         return keys;
     }
@@ -280,7 +283,7 @@ public class RedisUtils {
     /**
      * 移除key
      *
-     * @param key    键
+     * @param key 键
      * @return
      */
     public void remove(String key) {
@@ -311,55 +314,61 @@ public class RedisUtils {
 
     /**
      * 添加hash
+     *
      * @param key
      * @param hashKey
      * @param value
      */
-    public void hset(String key,Object hashKey,Object value){
-        redisTemplate.opsForHash().put(key,hashKey,value);
+    public void hset(String key, Object hashKey, Object value) {
+        redisTemplate.opsForHash().put(key, hashKey, value);
     }
+
     /**
      * 获取hash
+     *
      * @param key
      * @param hashKey
      * @return Object
      */
-    public Object hget(String key,Object hashKey){
-       return redisTemplate.opsForHash().get(key,hashKey);
+    public Object hget(String key, Object hashKey) {
+        return redisTemplate.opsForHash().get(key, hashKey);
     }
 
     /**
      * 删除hash
+     *
      * @param key
      * @param hashKey
      * @return Object
      */
-    public Long hremove(String key,Object hashKey){
-        return redisTemplate.opsForHash().delete(key,hashKey);
+    public Long hremove(String key, Object hashKey) {
+        return redisTemplate.opsForHash().delete(key, hashKey);
     }
 
     /**
      * 批量添加hash
+     *
      * @param key
      * @param map
      */
-    public void hmset(String key, Map<?,?> map){
-        redisTemplate.opsForHash().putAll(key,map);
+    public void hmset(String key, Map<?, ?> map) {
+        redisTemplate.opsForHash().putAll(key, map);
     }
 
     /**
      * 模糊查询hash
+     *
      * @param key
      * @param pattern
      */
-    public List<Map.Entry<Object,Object>> hfget(String key,String pattern){
-        Cursor<Map.Entry<Object, Object>> cursor= redisTemplate.opsForHash().scan(key, ScanOptions.scanOptions().match(pattern).count(Integer.MAX_VALUE).build());
-        List<Map.Entry<Object,Object>> cmap=null;
+    public List<Map.Entry<Object, Object>> hfget(String key, String pattern) {
+        Cursor<Map.Entry<Object, Object>> cursor = redisTemplate.opsForHash().scan(key, ScanOptions.scanOptions().match(pattern).count(Integer.MAX_VALUE).build());
+        List<Map.Entry<Object, Object>> cmap = null;
         try {
-            while (cursor.hasNext()){
-                Map.Entry<Object,Object> entry = cursor.next();
-                if(null==cmap){
-                    cmap=new ArrayList<>();
+            while (cursor.hasNext()) {
+                Map.Entry<Object, Object> entry = cursor.next();
+                if (null == cmap) {
+                    cmap = new ArrayList<>();
                 }
                 cmap.add(entry);
             }
@@ -370,8 +379,8 @@ public class RedisUtils {
         return cmap;
     }
 
-    public Boolean hashHasKey(String key,String field){
-        return redisTemplate.opsForHash().hasKey(key,field);
+    public Boolean hashHasKey(String key, String field) {
+        return redisTemplate.opsForHash().hasKey(key, field);
     }
 
 }

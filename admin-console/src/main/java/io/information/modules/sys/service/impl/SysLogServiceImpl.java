@@ -16,16 +16,16 @@ import org.springframework.stereotype.Service;
 import java.util.Map;
 
 
-@Service("sysLogService")
+@Service
 public class SysLogServiceImpl extends ServiceImpl<SysLogDao, SysLogEntity> implements SysLogService {
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
-        String key = (String)params.get("key");
+        String key = (String) params.get("key");
 
         IPage<SysLogEntity> page = this.page(
-            new Query<SysLogEntity>().getPage(params),
-            new QueryWrapper<SysLogEntity>().like(StringUtils.isNotBlank(key),"username", key)
+                new Query<SysLogEntity>().getPage(params),
+                new QueryWrapper<SysLogEntity>().like(StringUtils.isNotBlank(key), "username", key)
         );
 
         return new PageUtils(page);

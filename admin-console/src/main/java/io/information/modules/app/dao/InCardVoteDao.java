@@ -18,8 +18,9 @@ public interface InCardVoteDao extends BaseMapper<InCardVote> {
 
     /**
      * 投票
-     * @param cid 帖子id
+     *
+     * @param cid      帖子id
      * @param optIndex 选项id
      */
-    void addVote (@Param("cid")Long cid,@Param("optIndex")Integer optIndex);
+    void addVote(@Param("cid") Long cid, @Param("optIndex") Integer optIndex);
 }

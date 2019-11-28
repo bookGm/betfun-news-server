@@ -14,12 +14,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 public interface JinSeService {
     /**
      * 获取文章列表
+     *
      * @return
      */
-    @RequestMapping(value = "/live/list", method = RequestMethod.GET,produces = "application/json;charset=UTF-8")
+    @RequestMapping(value = "/live/list", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
     FeignResJinSe getPageList(@RequestParam("limit") int limit, @RequestParam("id") int id,
-                              @RequestParam(value = "reading",required = false,defaultValue = "false") String reading,
-                              @RequestParam(value = "source",required = false,defaultValue = "web") String source,
-                              @RequestParam(value = "flag",required = false,defaultValue = "down") String flag);
+                              @RequestParam(value = "reading", required = false, defaultValue = "false") String reading,
+                              @RequestParam(value = "source", required = false, defaultValue = "web") String source,
+                              @RequestParam(value = "flag", required = false, defaultValue = "down") String flag);
 
 }

@@ -17,11 +17,11 @@ import java.util.Map;
  * @author LX
  */
 public interface SysCitysService extends IService<SysCitysEntity> {
-
     PageUtils queryPage(Map<String, Object> params);
 
     /**
      * 获取所有城市
+     *
      * @return
      */
     Map<String, List<SysCitysEntity>> getListAll(String key);

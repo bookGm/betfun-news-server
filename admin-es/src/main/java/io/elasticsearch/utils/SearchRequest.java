@@ -12,7 +12,7 @@ public class SearchRequest {
     private String key;
 
     //过滤条件
-    private Map<String,String> filter;
+    private Map<String, String> filter;
 
     //当前页数
     private Integer currPage;
@@ -23,30 +23,37 @@ public class SearchRequest {
 
 
     public Integer getCurrPage() {
-        if(currPage == null){
+        if (currPage == null) {
             return DEFAULT_PAGE;
         }
         // 获取页码时做一些校验，不能小于0
         return Math.max(DEFAULT_PAGE, currPage);
     }
+
     public void setCurrPage(Integer currPage) {
         this.currPage = currPage;
     }
+
     public String getKey() {
         return key;
     }
+
     public void setKey(String key) {
         this.key = key;
     }
+
     public Map<String, String> getParams() {
         return filter;
     }
+
     public void setParams(Map<String, String> params) {
         this.filter = params;
     }
+
     public Integer getPageSize() {
         return pageSize;
     }
+
     public void setPageSize(Integer pageSize) {
         this.pageSize = pageSize;
     }

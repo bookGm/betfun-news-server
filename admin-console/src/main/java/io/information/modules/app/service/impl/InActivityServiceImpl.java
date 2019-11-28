@@ -19,6 +19,7 @@ import io.information.modules.app.service.IInActivityDatasService;
 import io.information.modules.app.service.IInActivityFieldsService;
 import io.information.modules.app.service.IInActivityService;
 import io.information.modules.app.service.IInActivityTicketService;
+import io.information.modules.app.vo.ActivityBannerVo;
 import io.information.modules.sys.service.SysCitysService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
@@ -136,7 +137,7 @@ public class InActivityServiceImpl extends ServiceImpl<InActivityDao, InActivity
                     String name = sysCitysService.getById(id).getName();
                     actAddName.append(name).append("-");
                 }
-                String newAddName = actAddName.substring(0,actAddName.length() - 1);
+                String newAddName = actAddName.substring(0, actAddName.length() - 1);
                 activity.setActAddrName(newAddName);
             }
         }
@@ -166,7 +167,7 @@ public class InActivityServiceImpl extends ServiceImpl<InActivityDao, InActivity
                 String name = sysCitysService.getById(id).getName();
                 actAddName.append(name).append("-");
             }
-            String newAddName = actAddName.substring(0,actAddName.length() - 1);
+            String newAddName = actAddName.substring(0, actAddName.length() - 1);
             activity.setActAddrName(newAddName);
         }
         Long startTime = activity.getActStartTime().getTime();
@@ -282,6 +283,18 @@ public class InActivityServiceImpl extends ServiceImpl<InActivityDao, InActivity
 
 
     @Override
+    public List<ActivityBannerVo> banner() {
+        LambdaQueryWrapper<InActivity> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(InActivity::getActBanner, 1).eq(InActivity::getActStatus, 2);
+        List<InActivity> list = this.list(queryWrapper);
+        List<ActivityBannerVo> vos = BeanHelper.copyWithCollection(list, ActivityBannerVo.class);
+        if (null != vos && !vos.isEmpty()) {
+            return vos;
+        }
+        return null;
+    }
+
+    @Override
     public List<InActivity> interested() {
         List<InActivity> activityList = this.baseMapper.interested();
         String actTimeType = "";
@@ -307,7 +320,7 @@ public class InActivityServiceImpl extends ServiceImpl<InActivityDao, InActivity
                     String name = sysCitysService.getById(id).getName();
                     actAddName.append(name).append("-");
                 }
-                String newAddName = actAddName.substring(0,actAddName.length() - 1);
+                String newAddName = actAddName.substring(0, actAddName.length() - 1);
                 activity.setActAddrName(newAddName);
             }
         }

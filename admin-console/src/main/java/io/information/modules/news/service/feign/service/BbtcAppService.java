@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 public interface BbtcAppService {
     /**
      * 获取行情
+     *
      * @return
      */
     @Headers({
@@ -22,7 +23,7 @@ public interface BbtcAppService {
             "origin:https://www.8btc.com",
             "referer:https://www.8btc.com/"
     })
-    @RequestMapping(value = "/head/ticker", method = RequestMethod.GET,headers = {"from=web","origin=https://www.8btc.com"})
+    @RequestMapping(value = "/head/ticker", method = RequestMethod.GET, headers = {"from=web", "origin=https://www.8btc.com"})
     FeignBbApp getTikerList(
             @RequestParam(value = "symbols") String symbols
     );

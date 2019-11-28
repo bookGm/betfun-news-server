@@ -182,7 +182,7 @@ public class UserSpecialVo implements Serializable {
     }
 
     public void setTotalPage(int totalPage) {
-        this.totalPage = (int)Math.ceil((double)totalCount/pageSize);
+        this.totalPage = (int) Math.ceil((double) totalCount / pageSize);
     }
 
     public int getCurrPage() {

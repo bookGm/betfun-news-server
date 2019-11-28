@@ -2,7 +2,6 @@ package io.information.modules.app.controller;
 
 
 import io.information.common.utils.R;
-import io.information.common.utils.RedisKeys;
 import io.information.modules.app.entity.InDic;
 import io.information.modules.app.service.IInDicService;
 import io.swagger.annotations.Api;
@@ -84,7 +83,6 @@ public class InDicController {
         List<InDic> dics = dicService.queryDicById(dId);
         return R.ok().put("dicList", dics);
     }
-
 
 
 }

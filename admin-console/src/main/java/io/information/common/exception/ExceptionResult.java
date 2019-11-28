@@ -11,7 +11,7 @@ public class ExceptionResult {
     private String messages;
     private String timestamp;
 
-    public ExceptionResult(IMException e){
+    public ExceptionResult(IMException e) {
         this.status = e.getStatus();
         this.messages = e.getMessage();
         this.timestamp = new Date().toString();

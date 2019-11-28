@@ -88,6 +88,7 @@ public final class CookieUtils {
             this.request = request;
             return this;
         }
+
         public CookieBuilder response(HttpServletResponse response) {
             this.response = response;
             return this;
@@ -102,18 +103,22 @@ public final class CookieUtils {
             this.charset = charset;
             return this;
         }
+
         public CookieBuilder domain(String domain) {
             this.domain = domain;
             return this;
         }
+
         public CookieBuilder path(String path) {
             this.path = path;
             return this;
         }
+
         public CookieBuilder value(String value) {
             this.value = value;
             return this;
         }
+
         public CookieBuilder name(String name) {
             this.name = name;
             return this;
@@ -129,7 +134,7 @@ public final class CookieUtils {
                 if (StringUtil.isBlank(charset)) {
                     charset = "utf-8";
                 }
-                if(StringUtil.isBlank(name)||StringUtil.isBlank(value)){
+                if (StringUtil.isBlank(name) || StringUtil.isBlank(value)) {
                     throw new RuntimeException("cookie名称和值不能为空！");
                 }
                 if (StringUtil.isNotBlank(charset)) {
@@ -139,15 +144,15 @@ public final class CookieUtils {
                 if (maxAge != null && maxAge >= 0)
                     cookie.setMaxAge(maxAge);
 
-                if(StringUtil.isNotBlank(domain)){
+                if (StringUtil.isNotBlank(domain)) {
                     cookie.setDomain(domain);
-                }else if (null != request) {
+                } else if (null != request) {
                     // 设置域名的cookie
                     cookie.setDomain(getDomainName(request));
                 }
                 // 设置path
                 cookie.setPath("/");
-                if(StringUtil.isNotBlank(path)){
+                if (StringUtil.isNotBlank(path)) {
                     cookie.setPath(path);
                 }
                 cookie.setHttpOnly(httpOnly);

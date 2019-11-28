@@ -5,7 +5,6 @@ import org.springframework.data.elasticsearch.repository.ElasticsearchRepository
 
 /**
  * 测试Es地址数据支持
- *
  */
-public interface LocationDao extends ElasticsearchRepository<LocationEntity,String> {
+public interface LocationDao extends ElasticsearchRepository<LocationEntity, String> {
 }

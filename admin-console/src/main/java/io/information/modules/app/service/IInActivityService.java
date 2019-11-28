@@ -4,8 +4,8 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import io.information.common.utils.PageUtils;
 import io.information.modules.app.entity.InActivity;
 import io.information.modules.app.entity.InActivityFields;
+import io.information.modules.app.vo.ActivityBannerVo;
 
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -37,4 +37,5 @@ public interface IInActivityService extends IService<InActivity> {
 
     List<InActivity> interested();
 
+    List<ActivityBannerVo> banner();
 }

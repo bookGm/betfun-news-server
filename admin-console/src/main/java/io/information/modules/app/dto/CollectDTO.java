@@ -37,18 +37,23 @@ public class CollectDTO implements Serializable {
     public InArticle getArticle() {
         return article;
     }
+
     public void setArticle(InArticle article) {
         this.article = article;
     }
+
     public InCardBase getCardBase() {
         return cardBase;
     }
+
     public void setCardBase(InCardBase cardBase) {
         this.cardBase = cardBase;
     }
+
     public InActivity getActivity() {
         return activity;
     }
+
     public void setActivity(InActivity activity) {
         this.activity = activity;
     }

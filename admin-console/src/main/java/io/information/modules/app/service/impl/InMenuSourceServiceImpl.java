@@ -36,7 +36,7 @@ public class InMenuSourceServiceImpl extends ServiceImpl<InMenuSourceDao, InMenu
     @Override
     public void updatesUrl(InMenuSource menuSource) {
         LambdaUpdateWrapper<InMenuSource> updateWrapper = new LambdaUpdateWrapper<>();
-        updateWrapper.eq(InMenuSource::getsUrl,menuSource.getsUrl());
+        updateWrapper.eq(InMenuSource::getsUrl, menuSource.getsUrl());
         this.update(updateWrapper);
     }
 }

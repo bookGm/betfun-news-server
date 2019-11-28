@@ -22,7 +22,7 @@ public class EsFlashController {
      * 搜索快讯
      */
     @PostMapping("/search")
-    public PageUtils searchFlash(@RequestBody SearchRequest request){
+    public PageUtils searchFlash(@RequestBody SearchRequest request) {
         return flashService.searchFlash(request);
     }
 }

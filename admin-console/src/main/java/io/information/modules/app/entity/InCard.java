@@ -7,9 +7,7 @@ import io.swagger.annotations.ApiModelProperty;
 import java.io.Serializable;
 
 /**
- *
  * 资讯帖子前台字段
- *
  */
 @ApiModel(value = "帖子", description = "所有帖子字段")
 public class InCard implements Serializable {

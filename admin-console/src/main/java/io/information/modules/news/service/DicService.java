@@ -1,7 +1,6 @@
 package io.information.modules.news.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import io.information.common.utils.PageUtils;
 import io.information.modules.news.entity.DicEntity;
 
 import java.util.List;
@@ -15,13 +14,12 @@ import java.util.Map;
  * @date 2019-09-29 13:13:05
  */
 public interface DicService extends IService<DicEntity> {
-
     List<DicEntity> queryDidAscList();
 
     /**
      * 获取字典列表
      */
-    Map<String,List<DicEntity>> getListAll(String key);
+    Map<String, List<DicEntity>> getListAll(String key);
 
     void deleteDic(Long[] dIds);
 

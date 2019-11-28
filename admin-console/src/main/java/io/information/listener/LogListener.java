@@ -4,7 +4,6 @@ import com.guansuo.common.JsonUtil;
 import com.guansuo.common.StringUtil;
 import io.information.modules.app.entity.InCardBase;
 import io.information.modules.app.entity.InLog;
-import io.information.modules.app.entity.InMessage;
 import io.information.modules.app.entity.InUser;
 import io.information.modules.app.service.IInCardService;
 import io.information.modules.app.service.IInLogService;
@@ -62,7 +61,6 @@ public class LogListener {
 //            key = Constants.system_Save_RouteKey
 //    ))
 //    public void system(String m) {
-//        //TODO
 //        InMessage message = JsonUtil.parseObject(m, InMessage.class);
 //        //接收到新消息&&内容
 //        if(message.gettId() == -1){

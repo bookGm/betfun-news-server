@@ -25,6 +25,7 @@ public class ActivityServiceImpl extends ServiceImpl<ActivityDao, ActivityEntity
             String actTitle = String.valueOf(params.get("actTitle"));
             queryWrapper.like(ActivityEntity::getActTitle, actTitle);
         }
+        queryWrapper.orderByDesc(ActivityEntity::getActBanner);
         IPage<ActivityEntity> page = this.page(
                 new Query<ActivityEntity>().getPage(params),
                 queryWrapper
@@ -40,7 +41,7 @@ public class ActivityServiceImpl extends ServiceImpl<ActivityDao, ActivityEntity
             String actTitle = String.valueOf(params.get("actTitle"));
             queryWrapper.like(ActivityEntity::getActTitle, actTitle);
         }
-        queryWrapper.eq(ActivityEntity::getActStatus,1);
+        queryWrapper.eq(ActivityEntity::getActStatus, 1);
         IPage<ActivityEntity> page = this.page(
                 new Query<ActivityEntity>().getPage(params),
                 queryWrapper

@@ -1,7 +1,7 @@
 package io.information.modules.news.dao;
 
-import io.information.modules.news.entity.CardBaseEntity;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import io.information.modules.news.entity.CardBaseEntity;
 import org.apache.ibatis.annotations.Mapper;
 
 /**

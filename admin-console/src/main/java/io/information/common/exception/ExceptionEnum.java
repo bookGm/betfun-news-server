@@ -5,8 +5,8 @@ import lombok.Getter;
 @Getter
 public enum ExceptionEnum {
 
-    USER_PASSWORD_ERROR(400,"用户名或密码错误!"),
-    NODE_PARENT_PATH(400,"当前节点为父节点"),
+    USER_PASSWORD_ERROR(400, "用户名或密码错误!"),
+    NODE_PARENT_PATH(400, "当前节点为父节点"),
 
     INVALID_FILE_TYPE(400, "无效的文件类型！"),
     INVALID_NOTIFY_PARAM(400, "回调参数有误！"),

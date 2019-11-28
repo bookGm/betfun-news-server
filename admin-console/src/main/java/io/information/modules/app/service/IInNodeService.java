@@ -18,7 +18,6 @@ import java.util.Map;
  * @since 2019-11-04
  */
 public interface IInNodeService extends IService<InNode> {
-
     PageUtils queryPage(Map<String, Object> params);
 
     Map<Long, String> search(Long noType);

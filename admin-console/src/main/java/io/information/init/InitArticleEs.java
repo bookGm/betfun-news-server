@@ -3,21 +3,18 @@ package io.information.init;
 import io.elasticsearch.dao.EsArticleDao;
 import io.elasticsearch.entity.EsArticleEntity;
 import io.information.common.utils.IdGenerator;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-@Component
+//@Component
 public class InitArticleEs {
-    @Autowired
+    //    @Autowired
     EsArticleDao articleDao;
 
-    @PostConstruct
+    //    @PostConstruct
     public void init() {
         //只初始化一次
         Iterable<EsArticleEntity> esArticle = articleDao.findAll();
