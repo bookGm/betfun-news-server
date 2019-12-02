@@ -14,9 +14,9 @@ public class ChannelUtil {
     /**
      * 用于记录c-s连接后建立的通道
      */
-    private static final Set<Channel> CHANNELS = new CopyOnWriteArraySet<>();
+    static final Set<Channel> CHANNELS = new CopyOnWriteArraySet<>();
     //    private static final Set<Channel> CHANNELS = new ConcurrentSkipListSet<>();
-    private static final Map<String,Channel> CLIENT_CHANNELS=new ConcurrentHashMap();
+    static final Map<String,Channel> CLIENT_CHANNELS=new ConcurrentHashMap();
 
     /**
      * ChannelUtil日志输出
@@ -85,5 +85,11 @@ public class ChannelUtil {
     public static int getClientChannelSize()
     {
         return CLIENT_CHANNELS.size();
+    }
+
+    public static void sendAll(String t){
+        for(Map.Entry<String,Channel> m:CLIENT_CHANNELS.entrySet()){
+            m.getValue().writeAndFlush(t);
+        }
     }
 }

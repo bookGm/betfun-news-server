@@ -7,6 +7,7 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.channel.group.ChannelGroup;
 import io.netty.channel.group.DefaultChannelGroup;
+import io.netty.channel.socket.SocketChannel;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 import io.netty.util.concurrent.GlobalEventExecutor;
 
@@ -24,6 +25,9 @@ public class TextWebSocketFrameHandler extends
 	@Override
 	protected void channelRead0(ChannelHandlerContext ctx,
 			TextWebSocketFrame msg) throws Exception { // (1)
+		System.out.println("msg---------------text-----------"+msg.text());
+		ctx.writeAndFlush("cccccccccccccccccccccccccc");
+		channels.writeAndFlush("cccccccccccccccccccccccccc");
 		//将client与通道绑定起来
 //		Channel incoming = ctx.channel();
 //		for (Channel channel : channels) {
@@ -38,11 +42,10 @@ public class TextWebSocketFrameHandler extends
 	@Override
     public void handlerAdded(ChannelHandlerContext ctx) throws Exception {  // (2)
         Channel incoming = ctx.channel();
-//
 //        // Broadcast a message to multiple Channels
-//        channels.writeAndFlush(new TextWebSocketFrame("[SERVER] - " + incoming.remoteAddress() + " 加入"));
-//
-//        channels.add(incoming);
+        channels.writeAndFlush(new TextWebSocketFrame("[SERVER] - " + incoming.remoteAddress() + " 加入"));
+
+        channels.add(incoming);
 //		System.out.println("Client:"+incoming.remoteAddress() +"加入");
     }
 
@@ -61,11 +64,15 @@ public class TextWebSocketFrameHandler extends
 	    
 	@Override
 	public void channelActive(ChannelHandlerContext ctx) throws Exception { // (5)
-		ChannelUtil.registerChannel(ctx.channel());
+		ctx.writeAndFlush("bbbbbbbbbbbbbb");
+		String uuid = ctx.channel().id().asLongText();
+		ChannelUtil.bind(uuid, ctx.channel());
+		System.out.println("a new connect come in: " + uuid);
 	}
 	
 	@Override
 	public void channelInactive(ChannelHandlerContext ctx) throws Exception { // (6)
+		ctx.writeAndFlush("aaaaaaaaaaaa");
 	}
 	
 	@Override

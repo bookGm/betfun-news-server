@@ -12,6 +12,11 @@ public class InArticleUserDetailVo implements Serializable {
      */
     @ApiModelProperty(value = "用户头像", name = "uPhoto", dataType = "String")
     private String uPhoto;
+    /**
+     * 用户id
+     */
+    @ApiModelProperty(hidden = true)
+    private Long uId;
 
     /**
      * 用户昵称
@@ -89,5 +94,13 @@ public class InArticleUserDetailVo implements Serializable {
 
     public void setaCollect(Integer aCollect) {
         this.aCollect = aCollect;
+    }
+
+    public Long getuId() {
+        return uId;
+    }
+
+    public void setuId(Long uId) {
+        this.uId = uId;
     }
 }

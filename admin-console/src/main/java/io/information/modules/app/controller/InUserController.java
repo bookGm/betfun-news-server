@@ -175,7 +175,7 @@ public class InUserController extends AbstractController {
             u.setuNick(redactDataDTO.getuNick());
             u.setuIntro(redactDataDTO.getuIntro());
             if (null != redactDataDTO.getuPhoto() && !redactDataDTO.getuPhoto().isEmpty()) {
-                u.setuPhone(redactDataDTO.getuPhoto());
+                u.setuPhoto(redactDataDTO.getuPhoto());
             }
             userService.updateById(u);
             InUser inUser = userService.getById(u.getuId());
