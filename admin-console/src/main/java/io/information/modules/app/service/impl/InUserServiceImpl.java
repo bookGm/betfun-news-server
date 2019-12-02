@@ -204,7 +204,7 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
                 boolVo.setLike(isLike);
                 //点赞数量
                 List<Map.Entry<Object, Object>> lNumber = redisUtils.hfget(RedisKeys.LIKE, "*-*-" + uId + "-*");
-                boolVo.setLikeNumber(lNumber == null ? 0 : lNumber.size());
+//                boolVo.setLikeNumber(lNumber == null ? 0 : lNumber.size());
                 //评论数量
                 int count = commonReplyService.count(new LambdaQueryWrapper<InCommonReply>().eq(InCommonReply::gettId, uId));
                 boolVo.setReplyNumber(count);

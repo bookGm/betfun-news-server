@@ -13,11 +13,12 @@ import io.information.modules.app.entity.InActivity;
 import io.information.modules.app.entity.InArticle;
 import io.information.modules.app.entity.InCardBase;
 import io.information.modules.app.entity.InUser;
-import io.information.modules.app.service.*;
+import io.information.modules.app.service.IInActivityService;
+import io.information.modules.app.service.IInArticleService;
+import io.information.modules.app.service.IInCardBaseService;
+import io.information.modules.app.service.IInUserService;
 import io.information.modules.app.vo.*;
-import io.information.netty.util.ChannelUtil;
 import io.mq.utils.Constants;
-import io.netty.channel.Channel;
 import io.swagger.annotations.*;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -397,56 +398,6 @@ public class InArticleController {
             tid = activityService.getById(id).getuId();
         }
         return tid;
-    }
-
-    @GetMapping("/articleUserDetail")
-    @ApiOperation(value = "查询文章作者及详情", httpMethod = "GET", notes = "文章id", response = InArticleUserDetailVo.class)
-    @ApiImplicitParams({
-            @ApiImplicitParam(value = "id", name = "aId", required = true),
-            @ApiImplicitParam(value = "所属用户id", name = "uId", required = false),
-            @ApiImplicitParam(value = "类型(0：文章 1：帖子 2：活动)", name = "type", required = true)
-    })
-    public ResultUtil<InArticleUserDetailVo> getArticleUserDetail(@RequestParam("aId") Long aId,@RequestParam("type") Integer type, @RequestParam(value = "uId", required = false) Long uId) {
-        InArticleUserDetailVo av = null;
-        if(NewsEnum.点赞_文章.getCode().equals(String.valueOf(type))){
-            InArticle a= articleService.getById(aId);
-            if(null==a){
-                return ResultUtil.error("不存在此文章");
-            }
-            av = new InArticleUserDetailVo();
-            av.setuId(a.getuId());
-            av.setaLike(a.getaLike());
-            av.setaCollect(a.getaCollect());
-        }
-        if(NewsEnum.点赞_帖子.getCode().equals(String.valueOf(type))){
-            InCardBase c= baseService.getById(aId);
-            if(null==c){
-                return ResultUtil.error("不存在此帖子");
-            }
-            av = new InArticleUserDetailVo();
-            av.setuId(c.getuId());
-            av.setaLike(c.getcLike());
-            av.setaCollect(c.getcCollect());
-        }
-        if(NewsEnum.点赞_活动.getCode().equals(String.valueOf(type))){
-            InActivity a= activityService.getById(aId);
-            if(null==a){
-                return ResultUtil.error("不存在此活动");
-            }
-            av = new InArticleUserDetailVo();
-            av.setuId(a.getuId());
-            av.setaLike(a.getActLike());
-            av.setaCollect(a.getActCollect());
-        }
-
-        if (null!=av&&StringUtil.isNotBlank(uId)) {
-            InUser u = inUserService.getById(uId);
-            av.setuNick(u.getuNick());
-            av.setuPhoto(u.getuPhoto());
-            av.setLiked(redisTemplate.opsForHash().hasKey(RedisKeys.LIKE, aId + "-" + uId + "-" + av.getuId() + "-" + type));
-            av.setCollected(redisTemplate.opsForHash().hasKey(RedisKeys.COLLECT, aId + "-" + uId + "-" + av.getuId() + "-" + type));
-        }
-        return ResultUtil.ok(av);
     }
 
 

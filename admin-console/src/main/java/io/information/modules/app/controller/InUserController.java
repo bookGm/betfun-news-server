@@ -43,6 +43,8 @@ import java.util.stream.Collectors;
 @Api(value = "/app/user", tags = "APP资讯用户接口")
 public class InUserController extends AbstractController {
     @Autowired
+    private IInCommonReplyService replyService;
+    @Autowired
     private IInActivityService activityService;
     @Autowired
     private IInArticleService articleService;
@@ -54,6 +56,8 @@ public class InUserController extends AbstractController {
     private IInUserService userService;
     @Autowired
     private IInCardService cardService;
+    @Autowired
+    private IInCardBaseService baseService;
     @Autowired
     RedisUtils redisUtils;
 
@@ -253,7 +257,6 @@ public class InUserController extends AbstractController {
     /**
      * 用户 -- 相关数量
      */
-    @Login
     @GetMapping("/userNumber")
     @ApiOperation(value = "用户数据信息[点赞，收藏，评论]", httpMethod = "GET", response = UserBoolVo.class)
     @ApiImplicitParams({
@@ -261,10 +264,52 @@ public class InUserController extends AbstractController {
             @ApiImplicitParam(value = "目标[文章，帖子，活动]ID", name = "tId", required = true),
             @ApiImplicitParam(value = "目标类型(0：文章 1：帖子 2：活动)", name = "type", required = true)
     })
-    public ResultUtil<UserBoolVo> userNumber(@RequestParam Long uId, @RequestParam Long tId, @RequestParam Integer
-            type, @ApiIgnore @LoginUser InUser user) {
-        UserBoolVo boolVo = userService.userNumber(uId, tId, type, user);
-        return ResultUtil.ok(boolVo);
+    public ResultUtil<UserBoolVo> userNumber(@RequestParam Long uId, @RequestParam Long tId, @RequestParam Integer type) {
+        UserBoolVo boolVo = null;
+        if (null != tId) {
+            if (NewsEnum.点赞_文章.getCode().equals(String.valueOf(type))) {
+                InArticle a = articleService.getById(tId);
+                if (null == a) {
+                    return ResultUtil.error("不存在此文章");
+                }
+                boolVo = new UserBoolVo();
+                boolVo.setuId(a.getuId());
+                boolVo.setLikeNumber(a.getaLike());
+                boolVo.setCollectNumber(a.getaCollect());
+                boolVo.setReplyNumber(replyService.count(new LambdaQueryWrapper<InCommonReply>().eq(InCommonReply::gettId, tId)));
+            }
+            if (NewsEnum.点赞_帖子.getCode().equals(String.valueOf(type))) {
+                InCardBase c = baseService.getById(tId);
+                if (null == c) {
+                    return ResultUtil.error("不存在此帖子");
+                }
+                boolVo = new UserBoolVo();
+                boolVo.setuId(c.getuId());
+                boolVo.setLikeNumber(c.getcLike());
+                boolVo.setCollectNumber(c.getcCollect());
+                boolVo.setReplyNumber(replyService.count(new LambdaQueryWrapper<InCommonReply>().eq(InCommonReply::gettId, tId)));
+            }
+            if (NewsEnum.点赞_活动.getCode().equals(String.valueOf(type))) {
+                InActivity a = activityService.getById(tId);
+                if (null == a) {
+                    return ResultUtil.error("不存在此活动");
+                }
+                boolVo = new UserBoolVo();
+                boolVo.setuId(a.getuId());
+                boolVo.setLikeNumber(a.getActLike());
+                boolVo.setCollectNumber(a.getActCollect());
+                boolVo.setReplyNumber(replyService.count(new LambdaQueryWrapper<InCommonReply>().eq(InCommonReply::gettId, tId)));
+            }
+            if (null != boolVo && StringUtil.isNotBlank(uId)) {
+                InUser u = userService.getById(uId);
+                boolVo.setuNick(u.getuNick());
+                boolVo.setuPhoto(u.getuPhoto());
+                boolVo.setLike(redisUtils.hashHasKey(RedisKeys.LIKE, tId + "-" + uId + "-" + boolVo.getuId() + "-" + type));
+                boolVo.setCollect(redisUtils.hashHasKey(RedisKeys.COLLECT, tId + "-" + uId + "-" + boolVo.getuId() + "-" + type));
+            }
+            return ResultUtil.ok(boolVo);
+        }
+        return ResultUtil.error("必要参数为空");
     }
 
 
@@ -552,18 +597,5 @@ public class InUserController extends AbstractController {
         } else {
             return ResultUtil.error("收藏删除失败，请重试");
         }
-    }
-
-    @GetMapping("/esSave")
-    public R esSave() {
-        List<InUser> users = userService.all();
-        List<EsUserEntity> uEsList = BeanHelper.copyWithCollection(users, EsUserEntity.class);
-        if (null != uEsList) {
-            for (EsUserEntity esUser : uEsList) {
-                rabbitTemplate.convertAndSend(Constants.userExchange,
-                        Constants.user_Save_RouteKey, esUser);
-            }
-        }
-        return R.ok();
     }
 }

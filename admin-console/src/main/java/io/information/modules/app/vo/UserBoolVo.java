@@ -17,6 +17,12 @@ public class UserBoolVo implements Serializable {
     private String uNick;
 
     /**
+     * 用户id
+     */
+    @ApiModelProperty(hidden = true)
+    private Long uId;
+
+    /**
      * 用户头像
      */
     @ApiModelProperty(value = "用户头像", name = "uPhoto")
@@ -32,7 +38,7 @@ public class UserBoolVo implements Serializable {
      * 点赞数量
      */
     @ApiModelProperty(value = "点赞数量", name = "likeNumber")
-    private Integer likeNumber;
+    private Long likeNumber;
 
     /**
      * 是否收藏
@@ -51,6 +57,15 @@ public class UserBoolVo implements Serializable {
      */
     @ApiModelProperty(value = "评论数量", name = "replyNumber")
     private Integer replyNumber;
+
+
+    public Long getuId() {
+        return uId;
+    }
+
+    public void setuId(Long uId) {
+        this.uId = uId;
+    }
 
     public String getuNick() {
         return uNick;
@@ -92,11 +107,11 @@ public class UserBoolVo implements Serializable {
         this.replyNumber = replyNumber;
     }
 
-    public Integer getLikeNumber() {
+    public Long getLikeNumber() {
         return likeNumber;
     }
 
-    public void setLikeNumber(Integer likeNumber) {
+    public void setLikeNumber(Long likeNumber) {
         this.likeNumber = likeNumber;
     }
 
