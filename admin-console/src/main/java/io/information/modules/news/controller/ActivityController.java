@@ -67,10 +67,10 @@ public class ActivityController extends AbstractController {
     public R auditOk(@RequestBody Map<String, Object> map) {
         if (null != map.get("actId") && StringUtil.isNotBlank(map.get("actId"))) {
             long actId = Long.parseLong(String.valueOf(map.get("actId")));
-            ActivityEntity activity = new ActivityEntity();
-            activity.setActId(actId);
+            ActivityEntity activity = activityService.getById(actId);
             activity.setActStatus(2);
             activityService.updateById(activity);
+            //进行消息保存
             MessageEntity message = new MessageEntity();
             message.setmId(IdGenerator.getId());
             message.setmContent("恭喜，您发布的活动《" + activity.getActTitle() + "》已通过审核");
@@ -93,10 +93,10 @@ public class ActivityController extends AbstractController {
     public R auditNo(@RequestBody Map<String, Object> map) {
         if (null != map.get("actId") && StringUtil.isNotBlank(map.get("actId"))) {
             long actId = Long.parseLong(String.valueOf(map.get("actId")));
-            ActivityEntity activity = new ActivityEntity();
-            activity.setActId(actId);
+            ActivityEntity activity = activityService.getById(actId);
             activity.setActStatus(0);
             activityService.updateById(activity);
+            //进行消息保存
             MessageEntity message = new MessageEntity();
             message.setmId(IdGenerator.getId());
             message.setmContent("很遗憾，您发布的活动《" + activity.getActTitle() + "》未通过审核");

@@ -128,10 +128,10 @@ public class ArticleController extends AbstractController {
     public R auditOk(@RequestBody Map<String, Object> params) {
         if (null != params.get("aId") && StringUtil.isNotBlank(params.get("aId"))) {
             long aId = Long.parseLong(String.valueOf(params.get("aId")));
-            ArticleEntity article = new ArticleEntity();
-            article.setaId(aId);
+            ArticleEntity article = articleService.getById(aId);
             article.setaStatus(2);
             articleService.updateById(article);
+            //进行消息保存
             MessageEntity message = new MessageEntity();
             message.setmId(IdGenerator.getId());
             message.setmContent("恭喜，您发布的文章《" + article.getaTitle() + "》已通过审核");
@@ -154,10 +154,10 @@ public class ArticleController extends AbstractController {
     public R auditNo(@RequestBody Map<String, Object> params) {
         if (null != params.get("aId") && StringUtil.isNotBlank(params.get("aId"))) {
             long aId = Long.parseLong(String.valueOf(params.get("aId")));
-            ArticleEntity article = new ArticleEntity();
-            article.setaId(aId);
+            ArticleEntity article = articleService.getById(aId);
             article.setaStatus(0);
             articleService.updateById(article);
+            //进行消息保存
             MessageEntity message = new MessageEntity();
             message.setmId(IdGenerator.getId());
             message.setmContent("很遗憾，您发布的文章《" + article.getaTitle() + "》未通过审核");

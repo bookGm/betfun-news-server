@@ -110,15 +110,15 @@ public class UserController {
     public R auditOk(@RequestBody Map<String, Object> map) {
         if (null != map.get("uId") && StringUtil.isNotBlank(map.get("uId"))) {
             long uId = Long.parseLong(String.valueOf(map.get("uId")));
-            UserEntity userEntity = new UserEntity();
-            userEntity.setuId(uId);
+            UserEntity userEntity = userService.getById(uId);
             userEntity.setuAuthStatus(2);
             userService.updateById(userEntity);
+            //进行消息保存
             MessageEntity message = new MessageEntity();
             message.setmId(IdGenerator.getId());
             //0：个人 1：媒体 2：企业
             String type = "";
-            switch (userEntity.getuAuthStatus()) {
+            switch (userEntity.getuAuthType()) {
                 case 0:
                     type = "个人";
                     break;
@@ -149,16 +149,13 @@ public class UserController {
     public R auditNo(@RequestBody Map<String, Object> map) {
         if (null != map.get("uId") && StringUtil.isNotBlank(map.get("uId"))) {
             long uId = Long.parseLong(String.valueOf(map.get("uId")));
-            UserEntity userEntity = new UserEntity();
-            userEntity.setuId(uId);
-            userEntity.setuAuthStatus(0);
-            userEntity.setuAuthType(null);
-            userService.updateById(userEntity);
+            UserEntity userEntity = userService.getById(uId);
+            //进行消息保存
             MessageEntity message = new MessageEntity();
             message.setmId(IdGenerator.getId());
             //0：个人 1：媒体 2：企业
             String type = "";
-            switch (userEntity.getuAuthStatus()) {
+            switch (userEntity.getuAuthType()) {
                 case 0:
                     type = "个人";
                     break;
@@ -175,6 +172,10 @@ public class UserController {
             messageService.save(message);
 //            rabbitTemplate.convertAndSend(Constants.systemExchange,
 //                    Constants.system_Save_RouteKey, message);
+            //更新信息
+            userEntity.setuAuthStatus(0);
+            userEntity.setuAuthType(null);
+            userService.updateById(userEntity);
             return R.ok();
         }
         return R.error("缺少必要的参数");
