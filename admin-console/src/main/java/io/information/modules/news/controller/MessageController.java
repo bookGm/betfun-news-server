@@ -1,13 +1,15 @@
 package io.information.modules.news.controller;
 
+import com.guansuo.common.JsonUtil;
 import io.information.common.utils.IdGenerator;
 import io.information.common.utils.PageUtils;
 import io.information.common.utils.R;
 import io.information.modules.news.entity.MessageEntity;
 import io.information.modules.news.service.MessageService;
-import io.mq.utils.Constants;
+import io.information.netty.util.MyChannelHandlerPool;
+import io.netty.channel.Channel;
+import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,8 +28,6 @@ import java.util.Map;
 public class MessageController {
     @Autowired
     private MessageService messageService;
-    @Autowired
-    private RabbitTemplate rabbitTemplate;
 
     /**
      * 列表
@@ -52,7 +52,7 @@ public class MessageController {
 
 
     /**
-     * 保存<个人>
+     * 保存
      */
     @RequestMapping("/save")
     @RequiresPermissions("news:message:save")
@@ -60,24 +60,11 @@ public class MessageController {
         message.setmId(IdGenerator.getId());
         message.setmCreateTime(new Date());
         messageService.save(message);
-        rabbitTemplate.convertAndSend(Constants.systemExchange,
-                Constants.system_Save_RouteKey, message);
-        return R.ok();
-    }
-
-
-    /**
-     * 保存<系统>
-     */
-    @RequestMapping("/saveSystem")
-    @RequiresPermissions("news:message:save")
-    public R saveSystem(@RequestBody MessageEntity message) {
-        message.setmId(IdGenerator.getId());
-        message.setmCreateTime(new Date());
-        message.settId(-1L);
-        messageService.save(message);
-        rabbitTemplate.convertAndSend(Constants.systemExchange,
-                Constants.system_Save_RouteKey, message);
+        if (message.gettId() == -1) {
+            for (Channel c : MyChannelHandlerPool.channelGroup) {
+                c.writeAndFlush(new TextWebSocketFrame(JsonUtil.toJSONString(message)));
+            }
+        }
         return R.ok();
     }
 

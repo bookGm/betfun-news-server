@@ -50,4 +50,18 @@ public interface InCardBaseDao extends BaseMapper<InCardBase> {
      * 增加访问量
      */
     void addReadNumber(@Param("number") long number, @Param("cId") Long cId);
+
+    /**
+     * 减少点赞数
+     *
+     * @param cid 帖子ID
+     */
+    void removeALike(long cid);
+
+    /**
+     * 减少收藏数
+     *
+     * @param cid 帖子ID
+     */
+    void removeACollect(long cid);
 }

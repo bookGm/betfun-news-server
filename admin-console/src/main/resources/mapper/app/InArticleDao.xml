@@ -5,8 +5,14 @@
     <update id="addALike" parameterType="java.lang.Long">
          update in_article set a_like=a_like+1 where a_id=#{aid}
     </update>
+    <update id="removeALike" parameterType="java.lang.Long">
+         update in_article set a_like=a_like-1 where a_id=#{aid}
+    </update>
     <update id="addACollect" parameterType="java.lang.Long">
          update in_article set a_collect=a_collect+1 where a_id=#{aid}
+    </update>
+    <update id="removeACollect" parameterType="java.lang.Long">
+         update in_article set a_collect=a_collect-1 where a_id=#{aid}
     </update>
     <update id="addReadNumber" parameterType="java.lang.Long">
          update in_article set a_read_number=#{aReadNumber} where a_id=#{aId}

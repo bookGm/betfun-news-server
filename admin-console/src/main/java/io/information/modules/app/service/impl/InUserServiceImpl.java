@@ -299,16 +299,22 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
 
     private void getTitle(String id, String type, InLikeVo likeVo) {
         if (NewsEnum.点赞_文章.getCode().equals(type)) {
-            likeVo.setData(articleService.getById(id).getaTitle());
-            likeVo.setType(NewsEnum.点赞_文章.getName());
+            if (null != articleService.getById(id)) {
+                likeVo.setData(articleService.getById(id).getaTitle());
+                likeVo.setType(NewsEnum.点赞_文章.getName());
+            }
         }
         if (NewsEnum.点赞_帖子.getCode().equals(type)) {
-            likeVo.setData(baseService.getById(id).getcTitle());
-            likeVo.setType(NewsEnum.点赞_帖子.getName());
+            if (null != baseService.getById(id)) {
+                likeVo.setData(baseService.getById(id).getcTitle());
+                likeVo.setType(NewsEnum.点赞_帖子.getName());
+            }
         }
         if (NewsEnum.点赞_活动.getCode().equals(type)) {
-            likeVo.setData(activityService.getById(id).getActTitle());
-            likeVo.setType(NewsEnum.点赞_活动.getName());
+            if (null != activityService.getById(id)) {
+                likeVo.setData(activityService.getById(id).getActTitle());
+                likeVo.setType(NewsEnum.点赞_活动.getName());
+            }
         }
     }
 
@@ -517,9 +523,21 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
                         String[] str = String.valueOf(obj.getKey()).split("-");
                         Long id = Long.valueOf(str[0]);
                         InArticle article = articleService.getById(id);//目标信息
-                        article.setaSimpleTime(DateUtils.getSimpleTime(String.valueOf(obj.getValue())));
-                        dto.setArticle(article);
-                        collects.add(dto);
+                        if (null != article) {
+                            if (null == article.getaCreateTime()) {
+                                article.setaSimpleTime(DateUtils.getSimpleTime(new Date()));
+                            } else {
+                                article.setaSimpleTime(DateUtils.getSimpleTime(article.getaCreateTime()));
+                            }
+                            if (null != article.getuId()) {
+                                InUser user = this.getById(article.getuId());
+                                if (null != user) {
+                                    article.setuName(user.getuName() == null ? "" : user.getuName());
+                                }
+                            }
+                            dto.setArticle(article);
+                            collects.add(dto);
+                        }
                     }
                     break;
                 case 1:     //帖子
@@ -528,9 +546,21 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
                         String[] str = String.valueOf(obj.getKey()).split("-");
                         Long id = Long.valueOf(str[0]);
                         InCardBase cardBase = baseService.getById(id);//目标信息
-                        cardBase.setcSimpleTime(DateUtils.getSimpleTime(String.valueOf(obj.getValue())));
-                        dto.setCardBase(cardBase);
-                        collects.add(dto);
+                        if (null != cardBase) {
+                            if (null == cardBase.getcCreateTime()) {
+                                cardBase.setcSimpleTime(DateUtils.getSimpleTime(new Date()));
+                            } else {
+                                cardBase.setcSimpleTime(DateUtils.getSimpleTime(cardBase.getcCreateTime()));
+                            }
+                            if (null != cardBase.getuId()) {
+                                InUser user = this.getById(cardBase.getuId());
+                                if (null != user) {
+                                    cardBase.setuNick(user.getuNick() == null ? "" : user.getuNick());
+                                }
+                            }
+                            dto.setCardBase(cardBase);
+                            collects.add(dto);
+                        }
                     }
                     break;
                 case 2:     //活动
@@ -539,15 +569,22 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
                         String[] str = String.valueOf(obj.getKey()).split("-");
                         Long id = Long.valueOf(str[0]);
                         InActivity activity = activityService.getById(id);//目标信息
-                        activity.setaSimpleTime(DateUtils.getSimpleTime(String.valueOf(obj.getValue())));
-                        if (null != activity.getuId()) {
-                            InUser user = this.getById(activity.getuId());
-                            if (null != user) {
-                                activity.setuName(user.getuName() == null ? "" : user.getuName());
+                        if (null != activity) {
+                            if (null == activity.getActCreateTime()) {
+                                activity.setaSimpleTime(DateUtils.getSimpleTime(new Date()));
+                            } else {
+                                activity.setaSimpleTime(DateUtils.getSimpleTime(activity.getActCreateTime()));
                             }
+                            System.out.println(obj);
+                            if (null != activity.getuId()) {
+                                InUser user = this.getById(activity.getuId());
+                                if (null != user) {
+                                    activity.setuName(user.getuName() == null ? "" : user.getuName());
+                                }
+                            }
+                            dto.setActivity(activity);
+                            collects.add(dto);
                         }
-                        dto.setActivity(activity);
-                        collects.add(dto);
                     }
                     break;
             }

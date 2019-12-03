@@ -262,14 +262,11 @@ public class InArticleController {
                 && (null != map.get("type") && StringUtil.isNotBlank(map.get("type")))) {
             long id = Long.parseLong(String.valueOf(map.get("id")));
             int type = Integer.parseInt(String.valueOf(map.get("type")));
-            //#id-#uid-#tId-#type"
             Long tid = filterId(id, type);
             if (StringUtil.isBlank(tid)) {
                 return ResultUtil.error("取消点赞失败");
             }
-            String key = id + "-" + user.getuId() + "-" + tid + "-" + type;
-            System.out.println(key);
-            Long r = redisUtils.hremove(RedisKeys.LIKE, key);
+            Long r = articleService.removeALike(id, user.getuId(), type, tid);
             if (r > 0) {
                 return ResultUtil.ok();
             } else {
@@ -324,8 +321,7 @@ public class InArticleController {
             if (StringUtil.isBlank(tid)) {
                 return ResultUtil.error("取消收藏失败");
             }
-            String key = id + "-" + user.getuId() + "-" + tid + "-" + type;
-            Long r = redisUtils.hremove(RedisKeys.FOCUS, key);
+            Long r = articleService.removeCollect(id, tid, type, user.getuId());
             if (r > 0) {
                 return ResultUtil.ok();
             } else {

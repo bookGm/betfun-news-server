@@ -2,6 +2,7 @@ package io.information.modules.app.controller;
 
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.guansuo.common.StringUtil;
 import com.guansuo.newsenum.NewsEnum;
 import io.elasticsearch.entity.EsUserEntity;
@@ -260,11 +261,14 @@ public class InUserController extends AbstractController {
     @GetMapping("/userNumber")
     @ApiOperation(value = "用户数据信息[点赞，收藏，评论]", httpMethod = "GET", response = UserBoolVo.class)
     @ApiImplicitParams({
-            @ApiImplicitParam(value = "目标用户ID", name = "uId", required = true),
+            @ApiImplicitParam(value = "用户ID", name = "uId", required = true),
             @ApiImplicitParam(value = "目标[文章，帖子，活动]ID", name = "tId", required = true),
             @ApiImplicitParam(value = "目标类型(0：文章 1：帖子 2：活动)", name = "type", required = true)
     })
     public ResultUtil<UserBoolVo> userNumber(@RequestParam Long uId, @RequestParam Long tId, @RequestParam Integer type) {
+        if (uId == null) {
+            return null;
+        }
         UserBoolVo boolVo = null;
         if (null != tId) {
             if (NewsEnum.点赞_文章.getCode().equals(String.valueOf(type))) {
@@ -273,6 +277,7 @@ public class InUserController extends AbstractController {
                     return ResultUtil.error("不存在此文章");
                 }
                 boolVo = new UserBoolVo();
+                //目标用户ID
                 boolVo.setuId(a.getuId());
                 boolVo.setLikeNumber(a.getaLike());
                 boolVo.setCollectNumber(a.getaCollect());
@@ -300,16 +305,17 @@ public class InUserController extends AbstractController {
                 boolVo.setCollectNumber(a.getActCollect());
                 boolVo.setReplyNumber(replyService.count(new LambdaQueryWrapper<InCommonReply>().eq(InCommonReply::gettId, tId)));
             }
-            if (null != boolVo && StringUtil.isNotBlank(uId)) {
-                InUser u = userService.getById(uId);
+            if (null != boolVo && StringUtil.isNotBlank(boolVo.getuId())) {
+                InUser u = userService.getById(boolVo.getuId());
                 boolVo.setuNick(u.getuNick());
                 boolVo.setuPhoto(u.getuPhoto());
+                //#id-#uid-#tId-#type  ID   用户ID  目标用户ID  类型
                 boolVo.setLike(redisUtils.hashHasKey(RedisKeys.LIKE, tId + "-" + uId + "-" + boolVo.getuId() + "-" + type));
                 boolVo.setCollect(redisUtils.hashHasKey(RedisKeys.COLLECT, tId + "-" + uId + "-" + boolVo.getuId() + "-" + type));
             }
             return ResultUtil.ok(boolVo);
         }
-        return ResultUtil.error("必要参数为空");
+        return ResultUtil.error("缺少必要参数");
     }
 
 
@@ -572,8 +578,8 @@ public class InUserController extends AbstractController {
      * 个人中心 -- 删除收藏
      */
     @Login
-    @GetMapping("/delFavorite")
-    @ApiOperation(value = "个人中心 -- 删除收藏", httpMethod = "GET")
+    @PostMapping("/delFavorite")
+    @ApiOperation(value = "个人中心 -- 删除收藏", httpMethod = "POST")
     @ApiImplicitParams({
             @ApiImplicitParam(value = "文章、帖子、活动id", name = "id", required = true),
             @ApiImplicitParam(value = "id类型 0：文章 1：帖子 2：活动", name = "type", required = true),
@@ -581,13 +587,13 @@ public class InUserController extends AbstractController {
     public ResultUtil delFavorite(@RequestParam String id, @RequestParam String type, @ApiIgnore @LoginUser InUser
             user) {
         Long uId = -1L;
-        if (NewsEnum.收藏_文章.getCode().equals(type)) {
+        if (NewsEnum.收藏_文章.getCode().equals(String.valueOf(type))) {
             uId = articleService.getById(id).getuId();
         }
-        if (NewsEnum.收藏_帖子.getCode().equals(type)) {
+        if (NewsEnum.收藏_帖子.getCode().equals(String.valueOf(type))) {
             uId = cardService.getById(id).getuId();
         }
-        if (NewsEnum.收藏_活动.getCode().equals(type)) {
+        if (NewsEnum.收藏_活动.getCode().equals(String.valueOf(type))) {
             uId = activityService.getById(id).getuId();
         }
         String key = id + "-" + user.getuId() + "-" + uId + "-" + type;
@@ -597,5 +603,26 @@ public class InUserController extends AbstractController {
         } else {
             return ResultUtil.error("收藏删除失败，请重试");
         }
+    }
+
+
+    /**
+     * 公告
+     */
+    @Login
+    @GetMapping("/notice")
+    @ApiOperation(value = "个人中心 -- 公告", httpMethod = "GET")
+    @ApiImplicitParams({
+            @ApiImplicitParam(value = "每页显示条数", name = "pageSize", required = true),
+            @ApiImplicitParam(value = "当前页数", name = "currPage", required = true)
+    })
+    public ResultUtil notice(@RequestBody Map<String, Object> map) {
+        LambdaQueryWrapper<InMessage> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(InMessage::gettId, -1);
+        IPage<InMessage> page = messageService.page(
+                new Query<InMessage>().getPage(map),
+                queryWrapper
+        );
+        return ResultUtil.ok(new PageUtils<InMessage>(page));
     }
 }

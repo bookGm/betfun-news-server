@@ -4,8 +4,14 @@
     <update id="addALike" parameterType="java.lang.Long">
          update in_card_base set c_like=c_like+1 where c_id=#{cid}
     </update>
+    <update id="removeALike" parameterType="java.lang.Long">
+         update in_card_base set c_like=c_like-1 where c_id=#{cid}
+    </update>
     <update id="addACollect" parameterType="java.lang.Long">
          update in_card_base set c_collect=c_collect+1 where c_id=#{cid}
+    </update>
+    <update id="removeACollect" parameterType="java.lang.Long">
+         update in_card_base set c_collect=c_collect-1 where c_id=#{cid}
     </update>
     <select id="searchTitleAndId" resultType="io.information.modules.app.vo.CardBaseVo">
         SELECT c_id,c_title,c_like FROM in_card_base WHERE u_id = #{uId} LIMIT #{currPage},#{pageSize}

@@ -43,6 +43,17 @@ public interface IInArticleService extends IService<InArticle> {
      */
     String collect(Long id, Long tId, int type, Long uid);
 
+    /**
+     * 取消点赞
+     */
+    Long removeALike(long id, Long uId, int type, Long tid);
+
+    /**
+     * q取消收藏
+     * type(0：文章 1：帖子 2：活动)
+     */
+    Long removeCollect(Long id, Long tId, int type, Long uid);
+
     TagArticleVo tagArticle(Map<String, Object> map);
 
     List<InArticle> all();

@@ -4,8 +4,14 @@
     <update id="addALike" parameterType="java.lang.Long">
          update in_activity set act_like=act_like+1 where act_id=#{actid}
     </update>
+    <update id="removeALike" parameterType="java.lang.Long">
+         update in_activity set act_like=act_like-1 where act_id=#{actid}
+    </update>
     <update id="addACollect" parameterType="java.lang.Long">
          update in_activity set act_collect=act_collect+1 where act_id=#{actid}
+    </update>
+    <update id="removeACollect" parameterType="java.lang.Long">
+         update in_activity set act_collect=act_collect-1 where act_id=#{actid}
     </update>
     <update id="addApply" parameterType="java.lang.Long">
          update in_activity set act_in_num=act_in_num+1 where act_id=#{actid}

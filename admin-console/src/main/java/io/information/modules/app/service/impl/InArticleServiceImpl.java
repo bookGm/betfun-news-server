@@ -203,30 +203,69 @@ public class InArticleServiceImpl extends ServiceImpl<InArticleDao, InArticle> i
     @Override
     @HashCacheable(key = RedisKeys.LIKE, keyField = "#id-#uid-#tId-#type")
     public String giveALike(Long id, Long uid, int type, Long tId) {
-        if (NewsEnum.点赞_文章.getCode().equals(type)) {
+        if (NewsEnum.点赞_文章.getCode().equals(String.valueOf(type))) {
             this.baseMapper.addALike(id);
+            System.out.println("添加完成");
         }
-        if (NewsEnum.点赞_帖子.getCode().equals(type)) {
+        if (NewsEnum.点赞_帖子.getCode().equals(String.valueOf(type))) {
             logOperate(uid, id, NewsEnum.操作_点赞);
             this.inCardBaseDao.addALike(id);
+            System.out.println("添加完成");
         }
-        if (NewsEnum.点赞_活动.getCode().equals(type)) {
+        if (NewsEnum.点赞_活动.getCode().equals(String.valueOf(type))) {
             this.inActivityDao.addALike(id);
+            System.out.println("添加完成");
         }
         return DateUtils.format(new Date());
+    }
+
+
+    @Override
+    public Long removeALike(long id, Long uid, int type, Long tid) {
+        if (NewsEnum.点赞_文章.getCode().equals(String.valueOf(type))) {
+            this.baseMapper.removeALike(id);
+            System.out.println("删除完成");
+        }
+        if (NewsEnum.点赞_帖子.getCode().equals(String.valueOf(type))) {
+            logOperate(uid, id, NewsEnum.操作_点赞);
+            this.inCardBaseDao.removeALike(id);
+            System.out.println("删除完成");
+        }
+        if (NewsEnum.点赞_活动.getCode().equals(String.valueOf(type))) {
+            this.inActivityDao.removeALike(id);
+            System.out.println("删除完成");
+        }
+        String key = id + "-" + uid + "-" + tid + "-" + type;
+        return redisUtils.hremove(RedisKeys.LIKE, key);
+    }
+
+    @Override
+    public Long removeCollect(Long id, Long tid, int type, Long uid) {
+        if (NewsEnum.收藏_文章.getCode().equals(String.valueOf(type))) {
+            this.baseMapper.removeACollect(id);
+        }
+        if (NewsEnum.收藏_帖子.getCode().equals(String.valueOf(type))) {
+            logOperate(uid, id, NewsEnum.操作_收藏);
+            this.inCardBaseDao.removeACollect(id);
+        }
+        if (NewsEnum.收藏_活动.getCode().equals(String.valueOf(type))) {
+            this.inActivityDao.removeACollect(id);
+        }
+        String key = id + "-" + uid + "-" + tid + "-" + type;
+        return redisUtils.hremove(RedisKeys.COLLECT, key);
     }
 
     @Override
     @HashCacheable(key = RedisKeys.COLLECT, keyField = "#id-#uid-#tId-#type")
     public String collect(Long id, Long uid, int type, Long tId) {
-        if (NewsEnum.收藏_文章.getCode().equals(type)) {
+        if (NewsEnum.收藏_文章.getCode().equals(String.valueOf(type))) {
             this.baseMapper.addACollect(id);
         }
-        if (NewsEnum.收藏_帖子.getCode().equals(type)) {
+        if (NewsEnum.收藏_帖子.getCode().equals(String.valueOf(type))) {
             logOperate(uid, id, NewsEnum.操作_收藏);
             this.inCardBaseDao.addACollect(id);
         }
-        if (NewsEnum.收藏_活动.getCode().equals(type)) {
+        if (NewsEnum.收藏_活动.getCode().equals(String.valueOf(type))) {
             this.inActivityDao.addACollect(id);
         }
         return DateUtils.format(new Date());

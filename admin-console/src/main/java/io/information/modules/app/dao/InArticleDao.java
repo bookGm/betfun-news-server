@@ -95,4 +95,18 @@ public interface InArticleDao extends BaseMapper<InArticle> {
      * 查询所有文章
      */
     List<InArticle> all();
+
+    /**
+     * 减少点赞数
+     *
+     * @param aid
+     */
+    void removeALike(long aid);
+
+    /**
+     * 减少收藏数
+     *
+     * @param aid
+     */
+    void removeACollect(long aid);
 }

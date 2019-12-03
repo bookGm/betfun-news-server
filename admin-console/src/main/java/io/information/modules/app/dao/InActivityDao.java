@@ -49,4 +49,18 @@ public interface InActivityDao extends BaseMapper<InActivity> {
      * 感兴趣
      */
     List<InActivity> interested();
+
+    /**
+     * 减少点赞数
+     *
+     * @param actid
+     */
+    void removeALike(long actid);
+
+    /**
+     * 减少收藏数
+     *
+     * @param actid
+     */
+    void removeACollect(long actid);
 }
