@@ -10,6 +10,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import java.net.InetSocketAddress;
+
 /**
  * Websocket
  * 
@@ -35,15 +37,13 @@ public class WebsocketServer {
             b.group(bossGroup, workerGroup)
              .channel(NioServerSocketChannel.class) // (3)
              .childHandler(new WebsocketServerInitializer())  //(4)
-             .option(ChannelOption.SO_BACKLOG, 128)          // (5)
+             .option(ChannelOption.SO_BACKLOG, 1024)          // (5)
+             .localAddress(new InetSocketAddress(port))
              .childOption(ChannelOption.SO_KEEPALIVE, true); // (6)
-
-            LOG.info("---------------WebsocketChatServer 启动了---------------" + port);
+              LOG.info("---------------WebsocketChatServer 启动了---------------" + port);
             // 绑定端口，开始接收进来的连接
-            ChannelFuture f = b.bind(port).sync(); // (7)
-            // 等待服务器  socket 关闭 。
-            // 在这个例子中，这不会发生，但你可以优雅地关闭你的服务器。
-            f.channel().closeFuture().sync();
+             ChannelFuture f = b.bind(port).sync(); // (7)
+             f.channel().closeFuture().sync();
         } finally {
             workerGroup.shutdownGracefully();
             bossGroup.shutdownGracefully();

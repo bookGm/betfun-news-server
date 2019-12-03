@@ -17,18 +17,18 @@ import java.net.URL;
  */
 public class HttpRequestHandler extends SimpleChannelInboundHandler<FullHttpRequest> { //1
     private final String wsUri;
-    private static final File INDEX;
+//    private static final File INDEX;
 
-    static {
-        URL location = HttpRequestHandler.class.getProtectionDomain().getCodeSource().getLocation();
-        try {
-            String path = location.toURI() + "WebsocketChatClient.html";
-            path = !path.contains("file:") ? path : path.substring(5);
-            INDEX = new File(path);
-        } catch (URISyntaxException e) {
-            throw new IllegalStateException("Unable to locate WebsocketChatClient.html", e);
-        }
-    }
+//    static {
+//        URL location = HttpRequestHandler.class.getProtectionDomain().getCodeSource().getLocation();
+//        try {
+//            String path = location.toURI() + "WebsocketChatClient.html";
+//            path = !path.contains("file:") ? path : path.substring(5);
+//            INDEX = new File(path);
+//        } catch (URISyntaxException e) {
+//            throw new IllegalStateException("Unable to locate WebsocketChatClient.html", e);
+//        }
+//    }
 
     public HttpRequestHandler(String wsUri) {
         this.wsUri = wsUri;
@@ -43,7 +43,7 @@ public class HttpRequestHandler extends SimpleChannelInboundHandler<FullHttpRequ
                 send100Continue(ctx);                               //3
             }
 
-            RandomAccessFile file = new RandomAccessFile(INDEX, "r");//4
+//            RandomAccessFile file = new RandomAccessFile(INDEX, "r");//4
 
             HttpResponse response = new DefaultHttpResponse(request.getProtocolVersion(), HttpResponseStatus.OK);
             response.headers().set(HttpHeaders.Names.CONTENT_TYPE, "text/html; charset=UTF-8");
@@ -51,22 +51,22 @@ public class HttpRequestHandler extends SimpleChannelInboundHandler<FullHttpRequ
             boolean keepAlive = HttpHeaders.isKeepAlive(request);
 
             if (keepAlive) {                                        //5
-                response.headers().set(HttpHeaders.Names.CONTENT_LENGTH, file.length());
+//                response.headers().set(HttpHeaders.Names.CONTENT_LENGTH, file.length());
                 response.headers().set(HttpHeaders.Names.CONNECTION, HttpHeaders.Values.KEEP_ALIVE);
             }
             ctx.write(response);                    //6
 
-            if (ctx.pipeline().get(SslHandler.class) == null) {     //7
-                ctx.write(new DefaultFileRegion(file.getChannel(), 0, file.length()));
-            } else {
-                ctx.write(new ChunkedNioFile(file.getChannel()));
-            }
+//            if (ctx.pipeline().get(SslHandler.class) == null) {     //7
+//                ctx.write(new DefaultFileRegion(file.getChannel(), 0, file.length()));
+//            } else {
+//                ctx.write(new ChunkedNioFile(file.getChannel()));
+//            }
             ChannelFuture future = ctx.writeAndFlush(LastHttpContent.EMPTY_LAST_CONTENT);           //8
             if (!keepAlive) {
                 future.addListener(ChannelFutureListener.CLOSE);        //9
             }
-            
-            file.close();
+
+//            file.close();
         }
     }
 
@@ -79,7 +79,7 @@ public class HttpRequestHandler extends SimpleChannelInboundHandler<FullHttpRequ
 	public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause)
 			throws Exception {
     	Channel incoming = ctx.channel();
-		System.out.println("Client:"+incoming.remoteAddress()+"异常");
+//		System.out.println("Client:"+incoming.remoteAddress()+"异常");
         // 当出现异常就关闭连接
         cause.printStackTrace();
         ctx.close();
