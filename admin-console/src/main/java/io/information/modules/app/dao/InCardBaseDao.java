@@ -38,7 +38,7 @@ public interface InCardBaseDao extends BaseMapper<InCardBase> {
      * 查询帖子ID和标题
      * 根据用户ID和分页信息
      */
-    List<CardBaseVo> searchTitleAndId(@Param("uId") Long uId, @Param("currPage") Integer currPage, @Param("pageSize") Integer pageSize);
+    List<Object> searchTitleAndId(@Param("uId") Long uId, @Param("currPage") Integer currPage, @Param("pageSize") Integer pageSize);
 
     /**
      * 查询帖子ID和标题

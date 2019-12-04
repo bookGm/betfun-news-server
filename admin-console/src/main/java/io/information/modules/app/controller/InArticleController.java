@@ -14,7 +14,6 @@ import io.information.modules.app.entity.InUser;
 import io.information.modules.app.service.IInActivityService;
 import io.information.modules.app.service.IInArticleService;
 import io.information.modules.app.service.IInCardBaseService;
-import io.information.modules.app.service.IInUserService;
 import io.information.modules.app.vo.ArticleBannerVo;
 import io.information.modules.app.vo.ArticleUserVo;
 import io.information.modules.app.vo.ArticleVo;
@@ -344,7 +343,7 @@ public class InArticleController {
     @ApiResponse(code = 200, message = "aCount：文章数  rCount：阅读量  fCount：粉丝数")
     public R getArticleStatistics(@ApiIgnore @LoginUser InUser user) {
         Map<String, Object> rm = new HashMap<>();
-        List<InArticle> list = articleService.list(new LambdaQueryWrapper<InArticle>().eq(InArticle::getuId, user.getuId()).eq(InArticle::getaStatus,2));
+        List<InArticle> list = articleService.list(new LambdaQueryWrapper<InArticle>().eq(InArticle::getuId, user.getuId()).eq(InArticle::getaStatus, 2));
         //累计文章数
         rm.put("aCount", list.size());
         //累计阅读量
@@ -402,16 +401,16 @@ public class InArticleController {
      * 行业要闻&技术前沿
      */
     @GetMapping("/doubleArticle")
-    @ApiOperation(value = "行业要闻 和 技术前沿", httpMethod = "GET")
+    @ApiOperation(value = "行业要闻 和 技术前沿", httpMethod = "GET", response = InArticle.class)
     @ApiImplicitParams({
             @ApiImplicitParam(value = "每页显示条数", name = "pageSize", required = true),
             @ApiImplicitParam(value = "当前页数", name = "currPage", required = true),
             @ApiImplicitParam(value = "1：行业要闻  2：技术前沿", name = "status", required = true),
             @ApiImplicitParam(value = "排序规则 0：最热  1：推荐", name = "type", required = true),
     })
-    public ResultUtil<List<InArticle>> doubleArticle(@RequestParam Map<String, Object> map) {
-        List<InArticle> articles = articleService.doubleArticle(map);
-        return ResultUtil.ok(articles);
+    public R doubleArticle(@RequestParam Map<String, Object> map) {
+        PageUtils page = articleService.doubleArticle(map);
+        return R.ok().put("page", page);
     }
 
 

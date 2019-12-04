@@ -51,7 +51,7 @@ public interface InArticleDao extends BaseMapper<InArticle> {
      * 查询文章ID和标题
      * 根据用户ID和分页
      */
-    List<ArticleVo> searchTitleAndId(@Param("uId") Long uId, @Param("currPage") Integer currPage, @Param("pageSize") Integer pageSize);
+    List<Object> searchTitleAndId(@Param("uId") Long uId, @Param("currPage") Integer currPage, @Param("pageSize") Integer pageSize);
 
     /**
      * 查询热门文章
@@ -62,24 +62,24 @@ public interface InArticleDao extends BaseMapper<InArticle> {
     /**
      * 1：行业要闻  2：技术前沿
      */
-    List<InArticle> searchArticleInTag(@Param("status") Integer status, @Param("currPage") Integer currPage, @Param("pageSize") Integer pageSize);
+    List<Object> searchArticleInTag(@Param("status") Integer status, @Param("currPage") Integer currPage, @Param("pageSize") Integer pageSize);
 
     /**
      * 1：行业要闻  2：技术前沿
      * 热门
      */
-    List<InArticle> searchArticleInTagByLike(@Param("status") Integer status, @Param("currPage") Integer currPage, @Param("pageSize") Integer pageSize);
+    List<Object> searchArticleInTagByLike(@Param("status") Integer status, @Param("currPage") Integer currPage, @Param("pageSize") Integer pageSize);
 
     /**
      * 1：行业要闻  2：技术前沿
      * 推荐
      */
-    List<InArticle> searchArticleInTagByTime(@Param("status") Integer status, @Param("currPage") Integer currPage, @Param("pageSize") Integer pageSize);
+    List<Object> searchArticleInTagByTime(@Param("status") Integer status, @Param("currPage") Integer currPage, @Param("pageSize") Integer pageSize);
 
     /**
      * 首页标签
      */
-    List<InArticle> searchArticleByTag(@Param("tName") String tName, @Param("currPage") Integer currPage, @Param("pageSize") Integer pageSize);
+    List<Object> searchArticleByTag(@Param("tName") String tName, @Param("currPage") Integer currPage, @Param("pageSize") Integer pageSize);
 
     /**
      * 获取用户所有文章ID

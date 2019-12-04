@@ -218,11 +218,13 @@ public class InNodeServiceImpl extends ServiceImpl<InNodeDao, InNode> implements
                     int cardNumber = baseService.count(queryWrapper);
                     if (cardNumber > 0) {
                         cardUserVo.setCardNumber(cardNumber);
-                        List<CardBaseVo> cardBaseVos = baseDao.searchTitleAndId(uId, currPage, pageSize);
+                        List<Object> list = baseDao.searchTitleAndId(uId, (currPage - 1 < 0 ? 0 : currPage - 1) * pageSize, pageSize);
+                        List<CardBaseVo> cardBaseVos = (List<CardBaseVo>) list.get(0);
+                        int total = ((List<Integer>) list.get(1)).get(0);//总量
                         long sum = cardBaseVos.stream().mapToLong(CardBaseVo::getcLike).sum();
                         cardUserVo.setcLike(sum);
                         cardUserVo.setCardBaseVos(cardBaseVos);
-                        cardUserVo.setTotalCount(cardBaseVos.size());
+                        cardUserVo.setTotalCount((int) Math.ceil((double) total / pageSize));
                         cardUserVo.setCurrPage(currPage);
                         cardUserVo.setPageSize(pageSize);
                     } else {

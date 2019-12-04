@@ -121,15 +121,15 @@ public class InArticle implements Serializable {
     /**
      * 是否主页展示
      */
-    @ApiModelProperty(value = "是否主页展示(0：否 1：是)", name = "aBenner")
-    private InActivity aBanner;
+    @ApiModelProperty(value = "是否主页展示(0：否 1：是)", name = "aBanner")
+    private Integer aBanner;
 
 
-    public InActivity getaBanner() {
+    public Integer getaBanner() {
         return aBanner;
     }
 
-    public void setaBanner(InActivity aBanner) {
+    public void setaBanner(Integer aBanner) {
         this.aBanner = aBanner;
     }
 

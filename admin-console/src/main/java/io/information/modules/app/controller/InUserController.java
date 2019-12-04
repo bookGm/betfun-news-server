@@ -616,7 +616,7 @@ public class InUserController extends AbstractController {
             @ApiImplicitParam(value = "每页显示条数", name = "pageSize", required = true),
             @ApiImplicitParam(value = "当前页数", name = "currPage", required = true)
     })
-    public ResultUtil notice(@RequestBody Map<String, Object> map) {
+    public ResultUtil notice(@RequestParam Map<String, Object> map) {
         LambdaQueryWrapper<InMessage> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(InMessage::gettId, -1);
         IPage<InMessage> page = messageService.page(

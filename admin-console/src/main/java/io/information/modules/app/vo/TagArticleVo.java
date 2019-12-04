@@ -23,6 +23,63 @@ public class TagArticleVo implements Serializable {
     @ApiModelProperty(value = "文章数据集合", name = "articleList")
     private List<InArticle> articleList;
 
+    /**
+     * 总记录数
+     */
+    @ApiModelProperty(value = "总记录数", name = "totalCount", required = true)
+    private int totalCount;
+    /**
+     * 每页记录数
+     */
+    @ApiModelProperty(value = "每页记录数", name = "pageSize", required = true)
+    private int pageSize;
+    /**
+     * 总页数
+     */
+    @ApiModelProperty(value = "总页数", name = "totalPage", required = true)
+    private int totalPage;
+    /**
+     * 当前页数
+     */
+    @ApiModelProperty(value = "当前页数", name = "currPage", required = true)
+    private int currPage;
+
+
+    public TagArticleVo() {
+
+    }
+
+    public int getTotalCount() {
+        return totalCount;
+    }
+
+    public void setTotalCount(int totalCount) {
+        this.totalCount = totalCount;
+    }
+
+    public int getPageSize() {
+        return pageSize;
+    }
+
+    public void setPageSize(int pageSize) {
+        this.pageSize = pageSize;
+    }
+
+    public int getTotalPage() {
+        return totalPage;
+    }
+
+    public void setTotalPage(int totalPage) {
+        this.totalPage = totalPage;
+    }
+
+    public int getCurrPage() {
+        return currPage;
+    }
+
+    public void setCurrPage(int currPage) {
+        this.currPage = currPage;
+    }
 
     public InTag getTag() {
         return tag;

@@ -36,7 +36,7 @@ public class TextWebSocketFrameHandler extends
 //		MyChannelHandlerPool.channelGroup.writeAndFlush(new TextWebSocketFrame("[SERVER] - " + incoming.remoteAddress() + " 加入"));
 
         MyChannelHandlerPool.channelGroup.add(incoming);
-//		System.out.println("Client:" + incoming.remoteAddress() + "加入");
+//        System.out.println("Client:" + incoming.remoteAddress() + "加入");
     }
 
     @Override
@@ -44,9 +44,9 @@ public class TextWebSocketFrameHandler extends
         Channel incoming = ctx.channel();
 
         // Broadcast a message to multiple Channels
-        MyChannelHandlerPool.channelGroup.writeAndFlush(new TextWebSocketFrame("[SERVER] - " + incoming.remoteAddress() + " 离开"));
+//        MyChannelHandlerPool.channelGroup.writeAndFlush(new TextWebSocketFrame("[SERVER] - " + incoming.remoteAddress() + " 离开"));
 
-//		System.out.println("Client:" + incoming.remoteAddress() + "离开");
+//        System.out.println("Client:" + incoming.remoteAddress() + "离开");
     }
 
     @Override

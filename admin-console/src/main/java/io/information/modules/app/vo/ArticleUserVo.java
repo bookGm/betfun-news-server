@@ -9,8 +9,6 @@ import java.io.Serializable;
 import java.util.List;
 
 @ApiModel(value = "社区 -- 用户文章数据", description = "用户信息和文章信息")
-@AllArgsConstructor
-@NoArgsConstructor
 public class ArticleUserVo implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -54,6 +52,61 @@ public class ArticleUserVo implements Serializable {
     @ApiModelProperty(value = "用户文章信息", name = "cardBaseVos")
     private List<ArticleVo> articleVos;
 
+    /**
+     * 总记录数
+     */
+    @ApiModelProperty(value = "总记录数", name = "totalCount", required = true)
+    private int totalCount;
+    /**
+     * 每页记录数
+     */
+    @ApiModelProperty(value = "每页记录数", name = "pageSize", required = true)
+    private int pageSize;
+    /**
+     * 总页数
+     */
+    @ApiModelProperty(value = "总页数", name = "totalPage", required = true)
+    private int totalPage;
+    /**
+     * 当前页数
+     */
+    @ApiModelProperty(value = "当前页数", name = "currPage", required = true)
+    private int currPage;
+
+    public ArticleUserVo() {
+    }
+
+    public int getTotalCount() {
+        return totalCount;
+    }
+
+    public void setTotalCount(int totalCount) {
+        this.totalCount = totalCount;
+    }
+
+    public int getPageSize() {
+        return pageSize;
+    }
+
+    public void setPageSize(int pageSize) {
+        this.pageSize = pageSize;
+    }
+
+    public int getTotalPage() {
+        return totalPage;
+    }
+
+    public void setTotalPage(int totalPage) {
+        this.totalPage = totalPage;
+    }
+
+    public int getCurrPage() {
+        return currPage;
+    }
+
+    public void setCurrPage(int currPage) {
+        this.currPage = currPage;
+    }
 
     public Long getuId() {
         return uId;

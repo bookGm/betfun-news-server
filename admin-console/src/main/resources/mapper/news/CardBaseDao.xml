@@ -13,5 +13,4 @@
         <result property="cHide" column="c_hide"/>
     </resultMap>
 
-
 </mapper>

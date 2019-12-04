@@ -29,7 +29,7 @@ public interface IInArticleService extends IService<InArticle> {
 
     ArticleUserVo articleRecommended(Map<String, Object> map);
 
-    List<InArticle> doubleArticle(Map<String, Object> map);
+    PageUtils doubleArticle(Map<String, Object> map);
 
     /**
      * 点赞

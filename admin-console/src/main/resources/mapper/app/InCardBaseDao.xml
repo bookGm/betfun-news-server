@@ -1,6 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="io.information.modules.app.dao.InCardBaseDao">
+
+    <resultMap type="java.lang.Integer" id="total">
+        <result column="total"/>
+    </resultMap>
+
+    <resultMap type="io.information.modules.app.vo.CardBaseVo" id="cardBaseVoMap">
+        <result property="cId" column="c_id"/>
+        <result property="cTitle" column="c_title"/>
+        <result property="cLike" column="c_like"/>
+    </resultMap>
+
     <update id="addALike" parameterType="java.lang.Long">
          update in_card_base set c_like=c_like+1 where c_id=#{cid}
     </update>
@@ -13,8 +24,10 @@
     <update id="removeACollect" parameterType="java.lang.Long">
          update in_card_base set c_collect=c_collect-1 where c_id=#{cid}
     </update>
-    <select id="searchTitleAndId" resultType="io.information.modules.app.vo.CardBaseVo">
-        SELECT c_id,c_title,c_like FROM in_card_base WHERE u_id = #{uId} LIMIT #{currPage},#{pageSize}
+    <select id="searchTitleAndId" resultMap="cardBaseVoMap,total">
+        SELECT SQL_CALC_FOUND_ROWS c_id,c_title,c_like FROM in_card_base WHERE u_id = #{uId}
+        LIMIT #{currPage},#{pageSize};
+        SELECT FOUND_ROWS() AS total;
     </select>
     <select id="searchBaseByLike" resultType="io.information.modules.app.vo.CardBaseVo">
         SELECT * FROM (SELECT c_id,u_id,c_title FROM in_card_base ORDER BY c_like DESC) AS base LIMIT 5
