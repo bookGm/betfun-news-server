@@ -208,8 +208,8 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
                 //评论数量
                 int count = commonReplyService.count(new LambdaQueryWrapper<InCommonReply>().eq(InCommonReply::gettId, uId));
                 boolVo.setReplyNumber(count);
+                return boolVo;
             }
-            return boolVo;
         }
         return null;
     }
@@ -456,7 +456,9 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
             InUser user = this.getById(id);
             if (null != user) {
                 InUserDTO userDTO = BeanHelper.copyProperties(user, InUserDTO.class);
-                newsFocus.add(userDTO);
+                if (null != userDTO) {
+                    newsFocus.add(userDTO);
+                }
             }
         }
         return new PageUtils(newsFocus, cmap.size(), size, page);
@@ -488,7 +490,9 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
             InUser user = this.getById(id);
             if (null != user) {
                 InUserDTO userDTO = BeanHelper.copyProperties(user, InUserDTO.class);
-                newsFans.add(userDTO);
+                if (null != userDTO) {
+                    newsFans.add(userDTO);
+                }
             }
         }
         return new PageUtils(newsFans, cmap.size(), size, page);

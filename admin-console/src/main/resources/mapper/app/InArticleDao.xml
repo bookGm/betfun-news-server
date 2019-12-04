@@ -18,25 +18,25 @@
          update in_article set a_read_number=#{aReadNumber} where a_id=#{aId}
     </update>
     <select id="searchTitleAndId" resultType="io.information.modules.app.vo.ArticleVo">
-        select a_id,a_title,a_create_time from in_article where u_id = #{uId} limit #{currPage},#{pageSize}
+        SELECT a_id,a_title,a_create_time FROM in_article WHERE u_id = #{uId} AND a_status = 2 LIMIT #{currPage},#{pageSize}
     </select>
     <select id="searchArticleByTime" resultType="io.information.modules.app.vo.ArticleVo">
-        SELECT a_id,a_title,a_cover,a_create_time FROM (SELECT a_id,a_title,a_cover,a_create_time,a_like FROM in_article ORDER BY a_critic DESC) AS article ORDER BY a_like DESC LIMIT 10
+        SELECT a_id,a_title,a_cover,a_create_time FROM (SELECT a_id,a_title,a_cover,a_create_time,a_like FROM in_article WHERE a_status = 2 ORDER BY a_critic DESC) AS article ORDER BY a_like DESC LIMIT 10
     </select>
     <select id="searchArticleInTag" resultType="io.information.modules.app.entity.InArticle">
-        SELECT a.* FROM in_article a,in_tag t WHERE FIND_IN_SET(t.t_name,a.a_keyword) AND t.t_category= #{status} GROUP BY a.a_id ORDER BY a.a_create_time DESC LIMIT #{currPage},#{pageSize}
+        SELECT a.* FROM in_article a,in_tag t WHERE FIND_IN_SET(t.t_name,a.a_keyword) AND t.t_category= 1 AND a_status = 2 GROUP BY a.a_id ORDER BY a.a_create_time DESC LIMIT 1,10
     </select>
     <select id="searchArticleInTagByTime" resultType="io.information.modules.app.entity.InArticle">
-        SELECT a.* FROM in_article a,in_tag t WHERE FIND_IN_SET(t.t_name,a.a_keyword) AND t.t_category= #{status} GROUP BY a.a_id ORDER BY a.a_critic DESC LIMIT #{currPage},#{pageSize}
+        SELECT a.* FROM in_article a,in_tag t WHERE FIND_IN_SET(t.t_name,a.a_keyword) AND t.t_category= #{status} AND a_status = 2 GROUP BY a.a_id ORDER BY a.a_critic DESC LIMIT #{currPage},#{pageSize}
     </select>
     <select id="searchArticleInTagByLike" resultType="io.information.modules.app.entity.InArticle">
-        SELECT a.* FROM in_article a,in_tag t WHERE FIND_IN_SET(t.t_name,a.a_keyword) AND t.t_category= #{status} GROUP BY a.a_id ORDER BY a.a_like DESC LIMIT #{currPage},#{pageSize}
+        SELECT a.* FROM in_article a,in_tag t WHERE FIND_IN_SET(t.t_name,a.a_keyword) AND t.t_category= #{status} AND a_status = 2 GROUP BY a.a_id ORDER BY a.a_like DESC LIMIT #{currPage},#{pageSize}
     </select>
     <select id="searchArticleByTag" resultType="io.information.modules.app.entity.InArticle">
-        SELECT a.* FROM in_article a,in_tag t WHERE FIND_IN_SET(#{tName},a.a_keyword) LIMIT #{currPage},#{pageSize}
+        SELECT a.* FROM in_article a,in_tag t WHERE FIND_IN_SET(#{tName},a.a_keyword) AND a_status = 2 LIMIT #{currPage},#{pageSize}
     </select>
     <select id="allAId" resultType="java.lang.Long" parameterType="java.lang.Long">
-        select a_id from in_article where u_id = #{uId} ORDER BY a_create_time DESC
+        select a_id from in_article where u_id = #{uId} AND a_status = 2 ORDER BY a_create_time DESC
     </select>
     <select id="all" resultType="io.information.modules.app.entity.InArticle">
         select * from in_article

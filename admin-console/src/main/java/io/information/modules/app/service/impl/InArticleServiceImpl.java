@@ -58,9 +58,10 @@ public class InArticleServiceImpl extends ServiceImpl<InArticleDao, InArticle> i
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
-        LambdaQueryWrapper<InArticle> qw = new LambdaQueryWrapper<InArticle>();
-        if (params.containsKey("type") && StringUtil.isNotBlank(params.get("type"))) {
-            switch (Integer.parseInt(String.valueOf(params.get("type")))) {
+        LambdaQueryWrapper<InArticle> qw = new LambdaQueryWrapper<>();
+        if (null != params.get("type") && StringUtil.isNotBlank(params.get("type"))) {
+            int type = Integer.parseInt(String.valueOf(params.get("type")));
+            switch (type) {
                 case 0:
                     qw.orderByDesc(InArticle::getaCreateTime);
                     break;
@@ -68,23 +69,26 @@ public class InArticleServiceImpl extends ServiceImpl<InArticleDao, InArticle> i
                     qw.orderByDesc(InArticle::getaReadNumber);
                     break;
                 case 2:
-                    qw.orderByDesc(InArticle::getaCreateTime, InArticle::getaReadNumber);
+                    qw.orderByDesc(InArticle::getaReadNumber, InArticle::getaCreateTime);
                     break;
             }
         }
-        if (params.containsKey("uId") && StringUtil.isNotBlank(params.get("uId"))) {
-            qw.eq(InArticle::getuId, params.get("uId"));
+        if (null != params.get("uId") && StringUtil.isNotBlank(params.get("uId"))) {
+            long uId = Long.parseLong(String.valueOf(params.get("uId")));
+            qw.eq(InArticle::getuId, uId);
         }
-        if (params.containsKey("aStatus") && StringUtil.isNotBlank(params.get("aStatus"))) {
-            qw.eq(InArticle::getaStatus, params.get("aStatus"));
+        if (null != params.get("aStatus") && StringUtil.isNotBlank(params.get("aStatus"))) {
+            int aStatus = Integer.parseInt(String.valueOf(params.get("aStatus")));
+            qw.eq(InArticle::getaStatus, aStatus);
         }
         IPage<InArticle> page = this.page(
                 new Query<InArticle>().getPage(params), qw
         );
         for (InArticle a : page.getRecords()) {
-            Object obj = redisUtils.hget(RedisKeys.INUSER, String.valueOf(a.getuId()));
-            if (null != obj) {
-                a.setuName(((InUser) obj).getuName());
+//            Object obj = redisUtils.hget(RedisKeys.INUSER, String.valueOf(a.getuId()));
+            InUser user = userService.getById(a.getaId());
+            if (null != user) {
+                a.setuName(user.getuName());
             }
             if (StringUtil.isNotBlank(a.getaCreateTime())) {
                 a.setaSimpleTime(DateUtils.getSimpleTime(a.getaCreateTime()));
@@ -116,7 +120,7 @@ public class InArticleServiceImpl extends ServiceImpl<InArticleDao, InArticle> i
                 ArticleUserVo articleUserVo = DataUtils.copyData(user, ArticleUserVo.class);
                 if (null != articleUserVo) {
                     LambdaQueryWrapper<InArticle> queryWrapper = new LambdaQueryWrapper<>();
-                    queryWrapper.eq(InArticle::getuId, uId);
+                    queryWrapper.eq(InArticle::getuId, uId).eq(InArticle::getaStatus, 2);
                     int articleNumber = this.count(queryWrapper);
                     if (articleNumber > 0) {
                         List<InArticle> list = this.list(queryWrapper);

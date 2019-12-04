@@ -15,7 +15,10 @@ import io.information.modules.app.service.IInActivityService;
 import io.information.modules.app.service.IInArticleService;
 import io.information.modules.app.service.IInCardBaseService;
 import io.information.modules.app.service.IInUserService;
-import io.information.modules.app.vo.*;
+import io.information.modules.app.vo.ArticleBannerVo;
+import io.information.modules.app.vo.ArticleUserVo;
+import io.information.modules.app.vo.ArticleVo;
+import io.information.modules.app.vo.TagArticleVo;
 import io.mq.utils.Constants;
 import io.swagger.annotations.*;
 import org.apache.commons.lang.StringUtils;
@@ -48,8 +51,6 @@ public class InArticleController {
     @Autowired
     private IInCardBaseService baseService;
     @Autowired
-    private IInUserService inUserService;
-    @Autowired
     private RabbitTemplate rabbitTemplate;
     @Autowired
     private StringRedisTemplate redisTemplate;
@@ -68,6 +69,7 @@ public class InArticleController {
                 article.setaId(IdGenerator.getId());
             }
             article.setuId(user.getuId());
+            article.setuName(user.getuName());
             article.setaStatus(1);
             article.setaCreateTime(new Date());
             articleService.save(article);
@@ -86,6 +88,7 @@ public class InArticleController {
     public R saveDraft(@RequestBody InArticle article, @ApiIgnore @LoginUser InUser user) {
         article.setaId(IdGenerator.getId());
         article.setuId(user.getuId());
+        article.setuName(user.getuName());
         article.setaStatus(0);
         article.setaCreateTime(new Date());
         articleService.save(article);
@@ -145,7 +148,7 @@ public class InArticleController {
      * 列表
      */
     @GetMapping("/list")
-    @ApiOperation(value = "获取已发布的文章", httpMethod = "GET", notes = "分页数据，文章状态[aStatus]，状态码[type]")
+    @ApiOperation(value = "获取文章列表", httpMethod = "GET", notes = "分页数据，文章状态[aStatus]，状态码[type]")
     @ApiImplicitParams({
             @ApiImplicitParam(value = "每页显示条数", name = "pageSize", required = true),
             @ApiImplicitParam(value = "当前页数", name = "currPage", required = true),
@@ -341,7 +344,7 @@ public class InArticleController {
     @ApiResponse(code = 200, message = "aCount：文章数  rCount：阅读量  fCount：粉丝数")
     public R getArticleStatistics(@ApiIgnore @LoginUser InUser user) {
         Map<String, Object> rm = new HashMap<>();
-        List<InArticle> list = articleService.list(new LambdaQueryWrapper<InArticle>().eq(InArticle::getuId, user.getuId()));
+        List<InArticle> list = articleService.list(new LambdaQueryWrapper<InArticle>().eq(InArticle::getuId, user.getuId()).eq(InArticle::getaStatus,2));
         //累计文章数
         rm.put("aCount", list.size());
         //累计阅读量

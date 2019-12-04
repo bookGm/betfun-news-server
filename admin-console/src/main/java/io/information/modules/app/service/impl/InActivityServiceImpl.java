@@ -92,7 +92,7 @@ public class InActivityServiceImpl extends ServiceImpl<InActivityDao, InActivity
         LambdaQueryWrapper<InActivity> queryWrapper = new LambdaQueryWrapper<>();
         if (null != params.get("type") && StringUtil.isNotBlank(params.get("type"))) {
             int type = Integer.parseInt(String.valueOf(params.get("type")));
-            switch (Integer.parseInt(String.valueOf(params.get("type")))) {
+            switch (type) {
                 case -1: //最新发布
                     queryWrapper.orderByDesc(InActivity::getActCreateTime);
                     break;
@@ -105,10 +105,12 @@ public class InActivityServiceImpl extends ServiceImpl<InActivityDao, InActivity
             }
         }
         if (params.containsKey("uId") && StringUtil.isNotBlank(params.get("uId"))) {
-            queryWrapper.eq(InActivity::getuId, params.get("uId"));
+            long uId = Long.parseLong(String.valueOf(params.get("uId")));
+            queryWrapper.eq(InActivity::getuId, uId);
         }
         if (params.containsKey("actStatus") && StringUtil.isNotBlank(params.get("actStatus"))) {
-            queryWrapper.eq(InActivity::getActStatus, params.get("actStatus"));
+            int actStatus = Integer.parseInt(String.valueOf(params.get("actStatus")));
+            queryWrapper.eq(InActivity::getActStatus, actStatus);
         }
         IPage<InActivity> page = this.page(
                 new Query<InActivity>().getPage(params),

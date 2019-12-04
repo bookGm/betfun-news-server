@@ -116,8 +116,6 @@ public class InNodeServiceImpl extends ServiceImpl<InNodeDao, InNode> implements
                 vo.setLikeNumber(likeNumber == null ? 0L : likeNumber.getSum());
                 //添加
                 vos.add(vo);
-            } else {
-                vos.add(null);
             }
         }
         int total = (int) page.getTotal();
@@ -171,8 +169,8 @@ public class InNodeServiceImpl extends ServiceImpl<InNodeDao, InNode> implements
                             cardVo.setcId(base.getcId());
                             cardVo.setReadNumber(base.getcReadNumber());
                             cardVo.setReplyNumber(base.getcCritic());
+                            list.add(cardVo);
                         }
-                        list.add(cardVo);
                     }
                 }
             }
@@ -212,26 +210,29 @@ public class InNodeServiceImpl extends ServiceImpl<InNodeDao, InNode> implements
         if (null != map.get("uId") && StringUtil.isNotBlank(map.get("uId"))) {
             long uId = Long.parseLong(String.valueOf(map.get("uId")));
             InUser user = userService.getById(uId);
-            CardUserVo cardUserVo = BeanHelper.copyProperties(user, CardUserVo.class);
-            if (null != cardUserVo) {
-                LambdaQueryWrapper<InCardBase> queryWrapper = new LambdaQueryWrapper<>();
-                queryWrapper.eq(InCardBase::getuId, uId);
-                int cardNumber = baseService.count(queryWrapper);
-                if (cardNumber > 0) {
-                    cardUserVo.setCardNumber(cardNumber);
-                    List<CardBaseVo> cardBaseVos = baseDao.searchTitleAndId(uId, currPage, pageSize);
-                    long sum = cardBaseVos.stream().mapToLong(CardBaseVo::getcLike).sum();
-                    cardUserVo.setcLike(sum);
-                    cardUserVo.setCardBaseVos(cardBaseVos);
-                    cardUserVo.setTotalCount(cardBaseVos.size());
-                    cardUserVo.setCurrPage(currPage);
-                    cardUserVo.setPageSize(pageSize);
-                } else {
-                    cardUserVo.setCardNumber(0);
-                    cardUserVo.setcLike(0L);
-                    cardUserVo.setCardBaseVos(null);
+            if (null != user) {
+                CardUserVo cardUserVo = BeanHelper.copyProperties(user, CardUserVo.class);
+                if (null != cardUserVo) {
+                    LambdaQueryWrapper<InCardBase> queryWrapper = new LambdaQueryWrapper<>();
+                    queryWrapper.eq(InCardBase::getuId, uId);
+                    int cardNumber = baseService.count(queryWrapper);
+                    if (cardNumber > 0) {
+                        cardUserVo.setCardNumber(cardNumber);
+                        List<CardBaseVo> cardBaseVos = baseDao.searchTitleAndId(uId, currPage, pageSize);
+                        long sum = cardBaseVos.stream().mapToLong(CardBaseVo::getcLike).sum();
+                        cardUserVo.setcLike(sum);
+                        cardUserVo.setCardBaseVos(cardBaseVos);
+                        cardUserVo.setTotalCount(cardBaseVos.size());
+                        cardUserVo.setCurrPage(currPage);
+                        cardUserVo.setPageSize(pageSize);
+                    } else {
+                        cardUserVo.setCardNumber(0);
+                        cardUserVo.setcLike(0L);
+                        cardUserVo.setCardBaseVos(null);
+                    }
+                    return cardUserVo;
                 }
-                return cardUserVo;
+                return null;
             }
             return null;
         }

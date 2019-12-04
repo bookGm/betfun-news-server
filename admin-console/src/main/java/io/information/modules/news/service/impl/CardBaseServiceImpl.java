@@ -56,12 +56,20 @@ public class CardBaseServiceImpl extends ServiceImpl<CardBaseDao, CardBaseEntity
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void addCard(CardVo cardVo) {
-        CardBaseEntity baseEntity = BeanHelper.copyProperties(cardVo, CardBaseEntity.class);
-        CardArgueEntity argueEntity = BeanHelper.copyProperties(cardVo, CardArgueEntity.class);
-        CardVoteEntity voteEntity = BeanHelper.copyProperties(cardVo, CardVoteEntity.class);
-        this.save(baseEntity);
-        argueService.save(argueEntity);
-        voteService.save(voteEntity);
+        if (cardVo != null) {
+            CardBaseEntity baseEntity = BeanHelper.copyProperties(cardVo, CardBaseEntity.class);
+            CardArgueEntity argueEntity = BeanHelper.copyProperties(cardVo, CardArgueEntity.class);
+            CardVoteEntity voteEntity = BeanHelper.copyProperties(cardVo, CardVoteEntity.class);
+            if (null != baseEntity) {
+                this.save(baseEntity);
+            }
+            if (null != argueEntity) {
+                argueService.save(argueEntity);
+            }
+            if (null != voteEntity) {
+                voteService.save(voteEntity);
+            }
+        }
     }
 
     @Override
