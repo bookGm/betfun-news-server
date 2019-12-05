@@ -406,7 +406,7 @@ public class InArticleController {
             @ApiImplicitParam(value = "每页显示条数", name = "pageSize", required = true),
             @ApiImplicitParam(value = "当前页数", name = "currPage", required = true),
             @ApiImplicitParam(value = "1：行业要闻  2：技术前沿", name = "status", required = true),
-            @ApiImplicitParam(value = "排序规则 0：最热  1：推荐", name = "type", required = true),
+            @ApiImplicitParam(value = "排序规则 默认最新 0：最热  1：推荐", name = "type", required = true),
     })
     public R doubleArticle(@RequestParam Map<String, Object> map) {
         PageUtils page = articleService.doubleArticle(map);

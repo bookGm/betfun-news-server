@@ -191,7 +191,7 @@ public class InArticleServiceImpl extends ServiceImpl<InArticleDao, InArticle> i
                         }
                         break;
                 }
-                return new PageUtils(arrayList, total, currPage, pageSize);
+                return new PageUtils(arrayList, total, pageSize, currPage);
             } else {
                 List<Object> list = this.baseMapper.searchArticleInTag(status, (currPage - 1 < 0 ? 0 : currPage - 1) * pageSize, pageSize);
                 List<InArticle> inArticleList = (List<InArticle>) list.get(0);
@@ -201,7 +201,7 @@ public class InArticleServiceImpl extends ServiceImpl<InArticleDao, InArticle> i
                         inArticle.setaSimpleTime(DateUtils.getSimpleTime(inArticle.getaCreateTime()));
                     }
                 }
-                return new PageUtils(inArticleList, total, currPage, pageSize);
+                return new PageUtils(inArticleList, total, pageSize, currPage);
             }
         }
         return null;
