@@ -125,20 +125,20 @@ public class ArticleEsServiceImpl implements ArticleEsService {
      */
     private void withHighlight(NativeSearchQueryBuilder searchQuery) {
         HighlightBuilder.Field hfield = new HighlightBuilder.Field("aKeyword")
-                .preTags("<em style='color:#349dff'>")
-                .postTags("</em>")
+                .preTags("<b style='color:#349dff'>")
+                .postTags("</b>")
                 .fragmentSize(100);
         HighlightBuilder.Field hfield2 = new HighlightBuilder.Field("aTitle")
-                .preTags("<em style='color:#349dff'>")
-                .postTags("</em>")
+                .preTags("<b style='color:#349dff'>")
+                .postTags("</b>")
                 .fragmentSize(100);
         HighlightBuilder.Field hfield3 = new HighlightBuilder.Field("aContent")
-                .preTags("<em style='color:#349dff'>")
-                .postTags("</em>")
+                .preTags("<b style='color:#349dff'>")
+                .postTags("</b>")
                 .fragmentSize(100);
         HighlightBuilder.Field hfield4 = new HighlightBuilder.Field("aBrief")
-                .preTags("<em style='color:#349dff'>")
-                .postTags("</em>")
+                .preTags("<b style='color:#349dff'>")
+                .postTags("</b>")
                 .fragmentSize(100);
         searchQuery.withHighlightFields(hfield, hfield2, hfield3, hfield4);
     }

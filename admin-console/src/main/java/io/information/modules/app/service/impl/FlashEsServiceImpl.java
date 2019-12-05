@@ -96,16 +96,16 @@ public class FlashEsServiceImpl implements FlashEsService {
      */
     private void withHighlight(NativeSearchQueryBuilder searchQuery) {
         HighlightBuilder.Field hfield = new HighlightBuilder.Field("nTitle")
-                .preTags("<em style='color:#349dff'>")
-                .postTags("</em>")
+                .preTags("<b style='color:#349dff'>")
+                .postTags("</b>")
                 .fragmentSize(100);
         HighlightBuilder.Field hfield2 = new HighlightBuilder.Field("nBrief")
-                .preTags("<em style='color:#349dff'>")
-                .postTags("</em>")
+                .preTags("<b style='color:#349dff'>")
+                .postTags("</b>")
                 .fragmentSize(100);
         HighlightBuilder.Field hfield3 = new HighlightBuilder.Field("nContent")
-                .preTags("<em style='color:#349dff'>")
-                .postTags("</em>")
+                .preTags("<b style='color:#349dff'>")
+                .postTags("</b>")
                 .fragmentSize(100);
         searchQuery.withHighlightFields(hfield, hfield2, hfield3);
     }

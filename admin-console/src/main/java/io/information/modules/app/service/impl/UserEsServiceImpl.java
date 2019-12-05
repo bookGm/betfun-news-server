@@ -117,20 +117,20 @@ public class UserEsServiceImpl implements UserEsService {
      */
     private void withHighlight(NativeSearchQueryBuilder searchQuery) {
         HighlightBuilder.Field hfield = new HighlightBuilder.Field("uName")
-                .preTags("<em style='color:#349dff'>")
-                .postTags("</em>")
+                .preTags("<b style='color:#349dff'>")
+                .postTags("</b>")
                 .fragmentSize(100);
         HighlightBuilder.Field hfield2 = new HighlightBuilder.Field("uIntro")
-                .preTags("<em style='color:#349dff'>")
-                .postTags("</em>")
+                .preTags("<b style='color:#349dff'>")
+                .postTags("</b>")
                 .fragmentSize(100);
         HighlightBuilder.Field hfield3 = new HighlightBuilder.Field("uNick")
-                .preTags("<em style='color:#349dff'>")
-                .postTags("</em>")
+                .preTags("<b style='color:#349dff'>")
+                .postTags("</b>")
                 .fragmentSize(100);
         HighlightBuilder.Field hfield4 = new HighlightBuilder.Field("uCompanyName")
-                .preTags("<em style='color:#349dff'>")
-                .postTags("</em>")
+                .preTags("<b style='color:#349dff'>")
+                .postTags("</b>")
                 .fragmentSize(100);
         searchQuery.withHighlightFields(hfield, hfield2, hfield3, hfield4);
     }
@@ -143,7 +143,7 @@ public class UserEsServiceImpl implements UserEsService {
         if (smap.get("uId") != null)
             ed.setUId(Long.parseLong(String.valueOf(smap.get("uId").toString())));
         if (smap.get("uPhoto") != null)
-            ed.setUPhone(String.valueOf(smap.get("uPhoto").toString()));
+            ed.setUPhoto(String.valueOf(smap.get("uPhoto").toString()));
         if (smap.get("uFocus") != null)
             ed.setUFocus(Integer.parseInt(String.valueOf(smap.get("uFocus").toString())));
         if (smap.get("uFans") != null)
