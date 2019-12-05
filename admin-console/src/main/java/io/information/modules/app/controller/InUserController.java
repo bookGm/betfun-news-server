@@ -265,12 +265,11 @@ public class InUserController extends AbstractController {
             @ApiImplicitParam(value = "目标[文章，帖子，活动]ID", name = "tId", required = true),
             @ApiImplicitParam(value = "目标类型(0：文章 1：帖子 2：活动)", name = "type", required = true)
     })
-    public ResultUtil<UserBoolVo> userNumber(@RequestParam Long uId, @RequestParam Long tId, @RequestParam Integer type) {
-        if (uId == null) {
-            return null;
-        }
+    public ResultUtil<UserBoolVo> userNumber(@RequestParam Map<String, Object> map) {
         UserBoolVo boolVo = null;
-        if (null != tId) {
+        if (null != map.get("tId") && StringUtil.isNotBlank(map.get("tId"))) {
+            long tId = Long.parseLong(String.valueOf(map.get("tId")));
+            Integer type = StringUtil.isBlank(map.get("type")) ? 0 : Integer.parseInt(String.valueOf(map.get("type")));
             if (NewsEnum.点赞_文章.getCode().equals(String.valueOf(type))) {
                 InArticle a = articleService.getById(tId);
                 if (null == a) {
@@ -309,9 +308,15 @@ public class InUserController extends AbstractController {
                 InUser u = userService.getById(boolVo.getuId());
                 boolVo.setuNick(u.getuNick());
                 boolVo.setuPhoto(u.getuPhoto());
-                //#id-#uid-#tId-#type  ID   用户ID  目标用户ID  类型
-                boolVo.setLike(redisUtils.hashHasKey(RedisKeys.LIKE, tId + "-" + uId + "-" + boolVo.getuId() + "-" + type));
-                boolVo.setCollect(redisUtils.hashHasKey(RedisKeys.COLLECT, tId + "-" + uId + "-" + boolVo.getuId() + "-" + type));
+                if (null != map.get("uId") && StringUtil.isNotBlank(map.get("uId"))) {
+                    long uId = Long.parseLong(String.valueOf(map.get("uId")));
+                    //#id-#uid-#tId-#type  ID   用户ID  目标用户ID  类型
+                    boolVo.setLike(redisUtils.hashHasKey(RedisKeys.LIKE, tId + "-" + uId + "-" + boolVo.getuId() + "-" + type));
+                    boolVo.setCollect(redisUtils.hashHasKey(RedisKeys.COLLECT, tId + "-" + uId + "-" + boolVo.getuId() + "-" + type));
+                } else {
+                    boolVo.setLike(false);
+                    boolVo.setCollect(false);
+                }
             }
             return ResultUtil.ok(boolVo);
         }

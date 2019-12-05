@@ -90,7 +90,9 @@ public class InCardServiceImpl extends ServiceImpl<InCardBaseDao, InCardBase> im
                 }
                 if (null != map.get("uId") && StringUtil.isNotBlank(map.get("uId"))) {
                     long uId = Long.parseLong(String.valueOf(map.get("uId")));
-                    base.setuNick(iInUserService.getById(uId).getuNick());
+                    if (null != iInUserService.getById(uId)) {
+                        base.setuNick(iInUserService.getById(uId).getuNick());
+                    }
                 }
                 card.setBase(base);
                 if (null != base.getcCategory()) {
@@ -108,10 +110,14 @@ public class InCardServiceImpl extends ServiceImpl<InCardBaseDao, InCardBase> im
                             if (null != vote) {
                                 if (null != map.get("uId") && StringUtil.isNotBlank(map.get("uId"))) {
                                     long uId = Long.parseLong(String.valueOf(map.get("uId")));
-                                    String optIndexs = iInCardVoteService.vote(cId, uId, null);
-                                    if (StringUtil.isBlank(optIndexs)) {
+                                    String optIndexs = "";
+                                    List<Map.Entry<Object, Object>> list = redisUtils.hfget(RedisKeys.VOTE, cId + "-" + uId);
+                                    if (null == list) {
                                         vote.setVote(false);
                                     } else {
+                                        for (Map.Entry<Object, Object> entry : list) {
+                                            optIndexs = (String) entry.getValue();
+                                        }
                                         vote.setOptIndexs(optIndexs);
                                         vote.setVote(true);
                                     }

@@ -26,7 +26,7 @@ public class EsFlashServiceImpl implements EsFlashService {
 
     @Override
     public void updatedFlash(EsFlashEntity flash) {
-        flashDao.deleteById(flash.getnId());
+        flashDao.deleteById(flash.getNId());
         flashDao.save(flash);
     }
 

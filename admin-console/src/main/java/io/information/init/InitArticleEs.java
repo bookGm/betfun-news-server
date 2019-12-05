@@ -25,25 +25,25 @@ public class InitArticleEs {
         String simple = format.format(new Date());
         for (int i = 0; i < 40; i++) {
             EsArticleEntity post = new EsArticleEntity();
-            post.setaId(IdGenerator.getId());
+            post.setAId(IdGenerator.getId());
             Long uId = 1187210015197888514L;
-            post.setuId(uId);
-            post.setuName("456");
-            post.setaTitle(getTitle().get(i));
-            post.setaContent(getContent().get(i));
-            post.setaBrief(getBrief().get(i));
-            post.setaKeyword(getKeyword().get(i));
-            post.setaCover(null);
-            post.setaType(3);
-            post.setaSource(null);
-            post.setaLink(null);
-            post.setaLink(null);
-            post.setaCreateTime(new Date());
-            post.setaLike(0L);
-            post.setaCollect(i);
-            post.setaCritic(0L);
-            post.setaReadNumber((long) (i * 10));
-            post.setaSimpleTime(simple);
+            post.setUId(uId);
+            post.setUName("456");
+            post.setATitle(getTitle().get(i));
+            post.setAContent(getContent().get(i));
+            post.setABrief(getBrief().get(i));
+            post.setAKeyword(getKeyword().get(i));
+            post.setACover(null);
+            post.setAType(3);
+            post.setASource(null);
+            post.setALink(null);
+            post.setALink(null);
+            post.setACreateTime(new Date());
+            post.setALike(0L);
+            post.setACollect(i);
+            post.setACritic(0L);
+            post.setAReadNumber((long) (i * 10));
+            post.setASimpleTime(simple);
             articleDao.save(post);
         }
     }

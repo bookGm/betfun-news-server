@@ -53,7 +53,7 @@ public class InCardController {
     @ApiOperation(value = "帖子详情", httpMethod = "GET")
     @ApiImplicitParams({
             @ApiImplicitParam(value = "帖子id", name = "cId", required = true),
-            @ApiImplicitParam(value = "用户id", name = "uId", required = false)
+            @ApiImplicitParam(value = "登录用户id", name = "uId", required = false)
     })
     public R details(@RequestParam Map<String, Object> map, @ApiIgnore HttpServletRequest request) {
         if (null != map.get("cId") && StringUtil.isNotBlank(map.get("cId"))) {

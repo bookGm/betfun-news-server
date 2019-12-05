@@ -8,16 +8,30 @@ import io.elasticsearch.utils.SearchRequest;
 import io.information.modules.app.entity.InArticle;
 import io.information.modules.app.service.IInArticleService;
 import io.information.modules.app.service.UserEsService;
+import org.apache.commons.lang.StringUtils;
+import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.index.query.Operator;
+import org.elasticsearch.search.SearchHit;
+import org.elasticsearch.search.SearchHits;
+import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
+import org.elasticsearch.search.fetch.subphase.highlight.HighlightField;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
+import org.springframework.data.elasticsearch.core.SearchResultMapper;
 import org.springframework.data.elasticsearch.core.aggregation.AggregatedPage;
+import org.springframework.data.elasticsearch.core.aggregation.impl.AggregatedPageImpl;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
-import org.springframework.data.elasticsearch.core.query.SearchQuery;
 import org.springframework.stereotype.Service;
 
+import java.lang.reflect.Method;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import static org.elasticsearch.index.query.QueryBuilders.multiMatchQuery;
 
@@ -29,106 +43,189 @@ public class UserEsServiceImpl implements UserEsService {
     private IInArticleService articleService;
 
 
+    //高亮显示ex
     @Override
     public PageUtils search(SearchRequest request) {
         if (null != request.getKey() && StringUtil.isNotBlank(request.getKey())) {
             String key = request.getKey();
-            Integer size = request.getPageSize();
-            Integer page = request.getCurrPage();
-            //多字段匹配[昵称，简介，企业名称，姓名？]
-            SearchQuery searchQuery = new NativeSearchQueryBuilder()
-                    .withQuery(multiMatchQuery(key, "uName", "uIntro", "uNick", "uCompanyName")
-                            .operator(Operator.OR) /*.minimumShouldMatch("30%")*/)
-                    .withPageable(PageRequest.of(page, size))
-                    .build();
-            AggregatedPage<EsUserEntity> esUserEntities =
-                    elasticsearchTemplate.queryForPage(searchQuery, EsUserEntity.class);
-            if (null != esUserEntities && !esUserEntities.getContent().isEmpty()) {
-                List<EsUserEntity> list = esUserEntities.getContent();
-                long totalCount = esUserEntities.getTotalElements();
-                //文章数 浏览数 获赞数
-                for (EsUserEntity entity : list) {
-                    LambdaQueryWrapper<InArticle> queryWrapper = new LambdaQueryWrapper<>();
-                    if (null != entity && null != entity.getuId()) {
-                        queryWrapper.eq(InArticle::getuId, entity.getuId());
-                        int articleNumber = articleService.count(queryWrapper);
-                        entity.setArticleNumber(articleNumber);
-                        List<InArticle> articles = articleService.list(queryWrapper);
-                        long readNumber = articles.stream().mapToLong(InArticle::getaReadNumber).sum();
-                        long likeNumber = articles.stream().mapToLong(InArticle::getaLike).sum();
-                        entity.setReadNumber(readNumber);
-                        entity.setLikeNUmber(likeNumber);
-                    }
+            Integer pageSize = request.getPageSize();
+            Integer currPage = request.getCurrPage();
+
+            NativeSearchQueryBuilder searchQuery = new NativeSearchQueryBuilder();
+            //设置索引...
+            withHighlight(searchQuery);
+            //设置查询条件
+            searchQuery.withQuery(multiMatchQuery(key, "uName", "uIntro", "uNick", "uCompanyName")
+                    .operator(Operator.OR) /*.minimumShouldMatch("30%")*/)
+                    .withPageable(PageRequest.of(currPage, pageSize));
+
+            //自定义查询结果封装
+            AggregatedPage<EsUserEntity> esUserEntities = elasticsearchTemplate.queryForPage(searchQuery.build(), EsUserEntity.class,
+                    new SearchResultMapper() {
+
+                        @Override
+                        public <T> AggregatedPage<T> mapResults(SearchResponse response, Class<T> clazz,
+                                                                Pageable pageable) {
+                            // TODO Auto-generated method stub
+                            List<EsUserEntity> chunk = new ArrayList<>();
+                            SearchHits hits = response.getHits();
+
+                            for (SearchHit hit : hits) {
+                                if (hits.getHits().length <= 0) {
+                                    return null;
+                                }
+                                Map<String, Object> smap = hit.getSourceAsMap();
+                                Map<String, HighlightField> hmap = hit.getHighlightFields();
+                                EsUserEntity esEntity = createEsEntity(smap, hmap);
+
+                                //高亮内容
+                                setHighLight(hit, "uName", esEntity);
+                                setHighLight(hit, "uNick", esEntity);
+                                setHighLight(hit, "uIntro", esEntity);
+                                setHighLight(hit, "uCompanyName", esEntity);
+
+                                chunk.add(esEntity);
+                            }
+                            return new AggregatedPageImpl<>((List<T>) chunk);
+                        }
+                    });
+
+            List<EsUserEntity> entityList = esUserEntities.getContent();
+//            文章数 浏览数 获赞数
+            for (EsUserEntity entity : entityList) {
+                LambdaQueryWrapper<InArticle> queryWrapper = new LambdaQueryWrapper<>();
+                if (null != entity && null != entity.getUId()) {
+                    queryWrapper.eq(InArticle::getuId, entity.getUId());
+                    int articleNumber = articleService.count(queryWrapper);
+                    entity.setArticleNumber(articleNumber);
+                    List<InArticle> articles = articleService.list(queryWrapper);
+                    long readNumber = articles.stream().mapToLong(InArticle::getaReadNumber).sum();
+                    long likeNumber = articles.stream().mapToLong(InArticle::getaLike).sum();
+                    entity.setReadNumber(readNumber);
+                    entity.setLikeNUmber(likeNumber);
                 }
-                //列表数据 总记录数 每页记录数 当前页数
-                return new PageUtils(list, totalCount, size, page);
             }
-            return null;
+            long total = esUserEntities.getTotalElements();
+            return new PageUtils(entityList, total, pageSize, currPage);
         }
         return null;
     }
 
+
     /**
-     * 拼接在某属性的 set方法
+     * 添加高亮条件
      */
-    private static String parSetName(String fieldName) {
-        if (null == fieldName || "".equals(fieldName)) {
-            return null;
+    private void withHighlight(NativeSearchQueryBuilder searchQuery) {
+        HighlightBuilder.Field hfield = new HighlightBuilder.Field("uName")
+                .preTags("<em style='color:#349dff'>")
+                .postTags("</em>")
+                .fragmentSize(100);
+        HighlightBuilder.Field hfield2 = new HighlightBuilder.Field("uIntro")
+                .preTags("<em style='color:#349dff'>")
+                .postTags("</em>")
+                .fragmentSize(100);
+        HighlightBuilder.Field hfield3 = new HighlightBuilder.Field("uNick")
+                .preTags("<em style='color:#349dff'>")
+                .postTags("</em>")
+                .fragmentSize(100);
+        HighlightBuilder.Field hfield4 = new HighlightBuilder.Field("uCompanyName")
+                .preTags("<em style='color:#349dff'>")
+                .postTags("</em>")
+                .fragmentSize(100);
+        searchQuery.withHighlightFields(hfield, hfield2, hfield3, hfield4);
+    }
+
+    /**
+     * 根据搜索结果创建ES对象
+     */
+    private EsUserEntity createEsEntity(Map<String, Object> smap, Map<String, HighlightField> hmap) {
+        EsUserEntity ed = new EsUserEntity();
+        if (smap.get("uId") != null)
+            ed.setUId(Long.parseLong(String.valueOf(smap.get("uId").toString())));
+        if (smap.get("uPhoto") != null)
+            ed.setUPhone(String.valueOf(smap.get("uPhoto").toString()));
+        if (smap.get("uFocus") != null)
+            ed.setUFocus(Integer.parseInt(String.valueOf(smap.get("uFocus").toString())));
+        if (smap.get("uFans") != null)
+            ed.setUFans(Long.parseLong(String.valueOf(smap.get("uFans").toString())));
+        if (smap.get("uPhone") != null)
+            ed.setUPhone(String.valueOf(smap.get("uPhone").toString()));
+        if (smap.get("uAuthStatus") != null)
+            ed.setUAuthStatus(Integer.parseInt(String.valueOf(smap.get("uAuthStatus").toString())));
+        if (smap.get("uAuthType") != null)
+            ed.setUAuthType(Integer.parseInt(String.valueOf(smap.get("uAuthType").toString())));
+        if (smap.get("uCreateTime") != null) {
+            String timeString = String.valueOf(smap.get("uCreateTime").toString());
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            try {
+                Date date = sdf.parse(timeString);
+                ed.setUCreateTime(date);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
         }
-        int startIndex = 0;
-        if (fieldName.charAt(0) == '_')
-            startIndex = 1;
-        return "set" + fieldName.substring(startIndex, startIndex + 1).toUpperCase()
-                + fieldName.substring(startIndex + 1);
+        if (smap.get("uPotential") != null)
+            ed.setUPotential(Integer.parseInt(String.valueOf(smap.get("uPotential").toString())));
+        return ed;
     }
 
 
-    //高亮显示ex
+    /**
+     * 反射调用属性的set方法设置高亮的内容   注意BUG
+     */
+    public void setHighLight(SearchHit searchHit, String field, Object object) {
+        Map<String, HighlightField> highlightFieldMap = searchHit.getHighlightFields();
+        HighlightField highlightField = highlightFieldMap.get(field);
+        if (highlightField != null) {
+            String highLightMessage = highlightField.fragments()[0].toString();
+            String capitalize = StringUtils.capitalize(field);
+            String methodName = "set" + capitalize;//setUName
+            Class<?> clazz = object.getClass();
+            try {
+                Method setMethod = clazz.getMethod(methodName, String.class);
+                setMethod.invoke(object, highLightMessage);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
 
-//    @Override
-//    public PageUtils search(Map<String, Object> map) {
-//        Integer size = StringUtil.isBlank(map.get("pageSize")) ? 10 : Integer.parseInt(String.valueOf(map.get("pageSize")));
-//        Integer page = StringUtil.isBlank(map.get("currPage")) ? 1 : Integer.parseInt(String.valueOf(map.get("currPage")));
-//        if (null != map.get("key") && StringUtil.isNotBlank(map.get("key"))) {
-//            String key = String.valueOf(map.get("key"));
-//            //根据昵称匹配用户
-//            NativeSearchQueryBuilder queryBuilder = new NativeSearchQueryBuilder();
-//            queryBuilder.withQuery(QueryBuilders
-//                    .fuzzyQuery("uNick", key).fuzziness(Fuzziness.AUTO))
-//                    .withHighlightFields(new HighlightBuilder.Field(key)).build();
-//            Page<EsUserEntity> search = esTemplate.queryForPage(queryBuilder.build(), EsUserEntity.class, new SearchResultMapper() {
-//                @Override
-//                public <T> AggregatedPage<T> mapResults(SearchResponse response, Class<T> aClass, Pageable pageable) {
-//                    List<EsUserEntity> users = new ArrayList<>();
-//                    SearchHits hits = response.getHits();
-//                    for (SearchHit searchHit : hits) {
-//                        if (hits.getHits().length <= 0) {
-//                            return null;
-//                        }
-//                        EsUserEntity user = new EsUserEntity();
-//                        String highLightMessage = searchHit.getHighlightFields().get(key).fragments()[0].toString();
-//                        user.setuNick(String.valueOf(searchHit.getFields().get("content")));
-//                        // 反射调用set方法将高亮内容设置进去
-//                        try {
-//                            String setMethodName = parSetName(key);
-//                            Class<? extends EsUserEntity> userClass = user.getClass();
-//                            Method setMethod = userClass.getMethod(setMethodName, String.class);
-//                            setMethod.invoke(user, highLightMessage);
-//                        } catch (Exception e) {
-//                            e.printStackTrace();
-//                        }
-//                        users.add(user);
+        }
+    }
+
+    //    @Override
+//    public PageUtils search(SearchRequest request) {
+//        if (null != request.getKey() && StringUtil.isNotBlank(request.getKey())) {
+//            String key = request.getKey();
+//            Integer size = request.getPageSize();
+//            Integer page = request.getCurrPage();
+//            //多字段匹配[昵称，简介，企业名称，姓名？]
+//            SearchQuery searchQuery = new NativeSearchQueryBuilder()
+//                    .withQuery(multiMatchQuery(key, "uName", "uIntro", "uNick", "uCompanyName")
+//                            .operator(Operator.OR) /*.minimumShouldMatch("30%")*/)
+//                    .withPageable(PageRequest.of(page, size))
+//                    .build();
+//            AggregatedPage<EsUserEntity> esUserEntities =
+//                    elasticsearchTemplate.queryForPage(searchQuery, EsUserEntity.class);
+//            if (null != esUserEntities && !esUserEntities.getContent().isEmpty()) {
+//                List<EsUserEntity> list = esUserEntities.getContent();
+//                long totalCount = esUserEntities.getTotalElements();
+//                //文章数 浏览数 获赞数
+//                for (EsUserEntity entity : list) {
+//                    LambdaQueryWrapper<InArticle> queryWrapper = new LambdaQueryWrapper<>();
+//                    if (null != entity && null != entity.getuId()) {
+//                        queryWrapper.eq(InArticle::getuId, entity.getuId());
+//                        int articleNumber = articleService.count(queryWrapper);
+//                        entity.setArticleNumber(articleNumber);
+//                        List<InArticle> articles = articleService.list(queryWrapper);
+//                        long readNumber = articles.stream().mapToLong(InArticle::getaReadNumber).sum();
+//                        long likeNumber = articles.stream().mapToLong(InArticle::getaLike).sum();
+//                        entity.setReadNumber(readNumber);
+//                        entity.setLikeNUmber(likeNumber);
 //                    }
-//                    if (users.size() > 0) {
-//                        return (AggregatedPage<T>) new PageImpl<T>((List<T>) users);
-//                    }
-//                    return null;
 //                }
-//            });
-//            List<EsUserEntity> list = search.getContent();
-//            long totalCount = search.getTotalElements();
-//            //列表数据 总记录数 每页记录数 当前页数
-//            return new PageUtils(list, totalCount, size, page);
+//                //列表数据 总记录数 每页记录数 当前页数
+//                return new PageUtils(list, totalCount, size, page);
+//            }
+//            return null;
 //        }
 //        return null;
 //    }

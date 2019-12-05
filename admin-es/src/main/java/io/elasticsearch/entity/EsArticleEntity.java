@@ -2,6 +2,7 @@ package io.elasticsearch.entity;
 
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.elasticsearch.annotations.DateFormat;
 import org.springframework.data.elasticsearch.annotations.Document;
@@ -12,6 +13,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 @Document(indexName = "articles", type = "article", shards = 5, replicas = 1, refreshInterval = "-1")
+@Data
 public class EsArticleEntity implements Serializable {
     private static final Long serialVersionUID = 1L;
     @Id
@@ -70,147 +72,4 @@ public class EsArticleEntity implements Serializable {
     @TableField(exist = false)
     private String aSimpleTime; //简单时间
 
-    public Long getaId() {
-        return aId;
-    }
-
-    public void setaId(Long aId) {
-        this.aId = aId;
-    }
-
-    public Long getuId() {
-        return uId;
-    }
-
-    public void setuId(Long uId) {
-        this.uId = uId;
-    }
-
-    public String getaTitle() {
-        return aTitle;
-    }
-
-    public void setaTitle(String aTitle) {
-        this.aTitle = aTitle;
-    }
-
-    public String getaContent() {
-        return aContent;
-    }
-
-    public void setaContent(String aContent) {
-        this.aContent = aContent;
-    }
-
-    public String getaBrief() {
-        return aBrief;
-    }
-
-    public void setaBrief(String aBrief) {
-        this.aBrief = aBrief;
-    }
-
-    public Integer getaType() {
-        return aType;
-    }
-
-    public void setaType(Integer aType) {
-        this.aType = aType;
-    }
-
-    public String getaSource() {
-        return aSource;
-    }
-
-    public void setaSource(String aSource) {
-        this.aSource = aSource;
-    }
-
-    public String getaLink() {
-        return aLink;
-    }
-
-    public void setaLink(String aLink) {
-        this.aLink = aLink;
-    }
-
-    public Date getaCreateTime() {
-        return aCreateTime;
-    }
-
-    public void setaCreateTime(Date aCreateTime) {
-        this.aCreateTime = aCreateTime;
-    }
-
-    public String getaKeyword() {
-        return aKeyword;
-    }
-
-    public void setaKeyword(String aKeyword) {
-        this.aKeyword = aKeyword;
-    }
-
-    public String getaCover() {
-        return aCover;
-    }
-
-    public void setaCover(String aCover) {
-        this.aCover = aCover;
-    }
-
-    public Integer getaStatus() {
-        return aStatus;
-    }
-
-    public void setaStatus(Integer aStatus) {
-        this.aStatus = aStatus;
-    }
-
-    public String getuName() {
-        return uName;
-    }
-
-    public void setuName(String uName) {
-        this.uName = uName;
-    }
-
-    public Long getaLike() {
-        return aLike;
-    }
-
-    public void setaLike(Long aLike) {
-        this.aLike = aLike;
-    }
-
-    public Integer getaCollect() {
-        return aCollect;
-    }
-
-    public void setaCollect(Integer aCollect) {
-        this.aCollect = aCollect;
-    }
-
-    public Long getaCritic() {
-        return aCritic;
-    }
-
-    public void setaCritic(Long aCritic) {
-        this.aCritic = aCritic;
-    }
-
-    public Long getaReadNumber() {
-        return aReadNumber;
-    }
-
-    public void setaReadNumber(Long aReadNumber) {
-        this.aReadNumber = aReadNumber;
-    }
-
-    public String getaSimpleTime() {
-        return aSimpleTime;
-    }
-
-    public void setaSimpleTime(String aSimpleTime) {
-        this.aSimpleTime = aSimpleTime;
-    }
 }

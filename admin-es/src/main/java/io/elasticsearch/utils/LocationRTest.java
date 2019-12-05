@@ -38,12 +38,12 @@ public class LocationRTest {
         List<EsArticleEntity> employees = new ArrayList<>();
         for (int i = 0; i < 10; i++) {
             EsArticleEntity location = new EsArticleEntity();
-            location.setuId(0L);
-            location.setaBrief("摘要" + i);
-            location.setaId((long) i);
-            location.setaContent("内容" + i);
-            location.setaCreateTime(new Date());
-            location.setaTitle("标题" + i);
+            location.setUId(0L);
+            location.setABrief("摘要" + i);
+            location.setAId((long) i);
+            location.setAContent("内容" + i);
+            location.setACreateTime(new Date());
+            location.setATitle("标题" + i);
             employees.add(location);
         }
         articleDao.saveAll(employees);
