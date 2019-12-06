@@ -166,6 +166,7 @@ public class AppLoginController {
             user.setuNick(phone);
             user.setuSalt(salt);
             user.setuPhone(phone);
+            user.setuPwd(new Sha256Hash(form.getPwd(), user.getuSalt()).toHex());
             user.setuCreateTime(new Date());
             user.setuSalt(new Sha256Hash(phone.substring(phone.length() - 6), salt).toHex());
             user.setuToken(r.get("token").toString());

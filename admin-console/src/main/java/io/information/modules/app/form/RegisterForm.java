@@ -24,4 +24,8 @@ public class RegisterForm {
     @NotBlank(message = "验证码不能为空")
     private String code;
 
+    @ApiModelProperty(value = "密码")
+    @NotBlank(message = "密码不能为空")
+    private String pwd;
+
 }
