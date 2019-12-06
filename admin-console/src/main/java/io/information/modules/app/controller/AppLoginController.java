@@ -12,7 +12,6 @@ import io.information.common.utils.*;
 import io.information.modules.app.entity.InUser;
 import io.information.modules.app.form.AppLoginForm;
 import io.information.modules.app.form.RegisterForm;
-import io.information.modules.app.service.IInNewsFlashService;
 import io.information.modules.app.service.IInUserService;
 import io.information.modules.app.utils.JwtUtils;
 import io.mq.utils.Constants;
@@ -45,8 +44,6 @@ import java.util.Map;
 public class AppLoginController {
     @Autowired
     private IInUserService iInUserService;
-    @Autowired
-    private IInNewsFlashService iInNewsFlashService;
     @Autowired
     private RabbitTemplate rabbitTemplate;
     @Autowired
@@ -118,6 +115,59 @@ public class AppLoginController {
                     "手机号或密码不正确");
         }
         return resultToken(user.getuId(), user.getuAuthStatus(), user.getuNick());
+    }
+
+
+    @ApiOperation(value = "忘记密码获取手机验证码")
+    @PostMapping("getForgetVerificationCode")
+    public R getForgetVerificationCode(String phone) {
+        String rkey = RedisKeys.LOGIN_PHONECODE + phone;
+        if (redis.hasKey(rkey)) return R.error("请稍后发送");
+        if (StringUtil.isBlank(phone)) return R.error(HttpStatus.SC_UNAUTHORIZED, "请输入手机号码！");
+        LambdaQueryWrapper<InUser> qw = new LambdaQueryWrapper<InUser>();
+        qw.eq(InUser::getuPhone, phone);
+        InUser user = iInUserService.getOne(qw);
+        if (null == user) {
+            return R.error("不存在该用户，请先注册!");
+        }
+        int rand = 100000 + (int) (Math.random() * 899999);
+        if (rand > 0) {
+            Boolean status = SmsUtil.sendSMS(user.getuPhone(), MessageFormat.format(SmsTemplate.forgetCodeTemplate, rand + ""));
+            if (status) {
+                redis.set(rkey, String.valueOf(rand), 60);
+                return R.ok();
+            } else {
+                return R.error("短信发送失败，请重试");
+            }
+        }
+        return R.error("短信发送失败，请重试");
+    }
+
+
+    @PostMapping("pwdForget")
+    @ApiOperation("忘记密码")
+    public R pwdForget(@RequestBody @Validated(PwdLogin.class) AppLoginForm form) {
+        String rkey = RedisKeys.LOGIN_PHONECODE + form.getUPhone();
+        if (!redis.hasKey(rkey)) {
+            return R.error("验证码已超时");
+        }
+
+        LambdaQueryWrapper<InUser> qw = new LambdaQueryWrapper<InUser>();
+        qw.eq(InUser::getuPhone, form.getUPhone());
+        InUser user = iInUserService.getOne(qw);
+        if (null == user) {
+            return R.error("用户不存在，请先注册");
+        } else {
+            String hashPwd = new Sha256Hash(form.getUPwd(), user.getuSalt()).toString();
+            user.setuPwd(hashPwd);
+            iInUserService.updateById(user);
+            if (redis.get(rkey).equals(form.getCode())) {
+                redis.remove(rkey);
+                return resultToken(user.getuId(), user.getuAuthStatus(), user.getuNick());
+            } else {
+                return R.error("验证码输入错误");
+            }
+        }
     }
 
     @PostMapping("codeLogin")

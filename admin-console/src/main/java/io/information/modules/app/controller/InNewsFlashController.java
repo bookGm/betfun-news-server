@@ -54,7 +54,7 @@ public class InNewsFlashController {
     }
 
     /**
-     * 查询
+     * 查询 gId 上一条 tId 下一条
      */
     @GetMapping("/info/{nId}")
     @ApiOperation(value = "查询单个快讯", httpMethod = "GET", notes = "快讯ID")
@@ -113,7 +113,7 @@ public class InNewsFlashController {
         return R.error("缺少必要的参数");
     }
 
-    @GetMapping("/esSave")
+//    @GetMapping("/esSave")
     public R esSave() {
         List<InNewsFlash> users = newsFlashService.all();
         List<EsFlashEntity> fEsList = BeanHelper.copyWithCollection(users, EsFlashEntity.class);
