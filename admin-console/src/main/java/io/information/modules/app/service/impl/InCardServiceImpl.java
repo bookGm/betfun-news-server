@@ -3,6 +3,7 @@ package io.information.modules.app.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.guansuo.common.DateUtils;
 import com.guansuo.common.JsonUtil;
 import com.guansuo.common.StringUtil;
 import com.guansuo.newsenum.NewsEnum;
@@ -88,12 +89,10 @@ public class InCardServiceImpl extends ServiceImpl<InCardBaseDao, InCardBase> im
                 if (null != base.getcNodeCategory()) {
                     base.setcNodeCategoryValue(dicHelper.getDicName(base.getcNodeCategory().longValue()));
                 }
-                if (null != map.get("uId") && StringUtil.isNotBlank(map.get("uId"))) {
-                    long uId = Long.parseLong(String.valueOf(map.get("uId")));
-                    if (null != iInUserService.getById(uId)) {
-                        base.setuNick(iInUserService.getById(uId).getuNick());
-                    }
+                if (null != iInUserService.getById(base.getuId())) {
+                    base.setuNick(iInUserService.getById(base.getuId()).getuNick());
                 }
+                base.setcSimpleTime(DateUtils.getSimpleTime(base.getcCreateTime()));
                 card.setBase(base);
                 if (null != base.getcCategory()) {
                     switch (base.getcCategory()) {
@@ -108,6 +107,8 @@ public class InCardServiceImpl extends ServiceImpl<InCardBaseDao, InCardBase> im
                             //投票帖子
                             InCardVote vote = voteService.getById(base.getcId());
                             if (null != vote) {
+                                List<Map.Entry<Object, Object>> votes = redisUtils.hfget(RedisKeys.VOTE, cId + "-*");
+                                vote.setVoteNumber(votes == null ? 0 : votes.size());
                                 if (null != map.get("uId") && StringUtil.isNotBlank(map.get("uId"))) {
                                     long uId = Long.parseLong(String.valueOf(map.get("uId")));
                                     String optIndexs = "";

@@ -62,6 +62,13 @@ public class InCardVote implements Serializable {
     private Boolean isVote;
 
     /**
+     * 多少人投票
+     */
+    @ApiModelProperty(value = "投票总人数", name = "votes", required = false)
+    @TableField(exist = false)
+    private Integer voteNumber;
+
+    /**
      * 投票选项
      */
     @ApiModelProperty(value = "投票选项", name = "optIndexs", required = false)
@@ -128,6 +135,14 @@ public class InCardVote implements Serializable {
     private Integer cv28;
     @TableField("cv_29")
     private Integer cv29;
+
+    public Integer getVoteNumber() {
+        return voteNumber;
+    }
+
+    public void setVoteNumber(Integer voteNumber) {
+        this.voteNumber = voteNumber;
+    }
 
     public Long getcId() {
         return cId;
