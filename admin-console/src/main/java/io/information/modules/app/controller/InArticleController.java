@@ -433,7 +433,6 @@ public class InArticleController {
     /**
      * 添加ES -- 文章 使用一次
      */
-//    @GetMapping("/esSave")
     public R esSave() {
         List<InArticle> articles = articleService.all();
         List<EsArticleEntity> aEsList = BeanHelper.copyWithCollection(articles, EsArticleEntity.class);

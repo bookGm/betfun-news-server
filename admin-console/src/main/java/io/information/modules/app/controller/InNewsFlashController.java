@@ -3,15 +3,13 @@ package io.information.modules.app.controller;
 
 import com.guansuo.common.StringUtil;
 import io.elasticsearch.entity.EsFlashEntity;
-import io.information.common.utils.BeanHelper;
-import io.information.common.utils.IdGenerator;
-import io.information.common.utils.PageUtils;
-import io.information.common.utils.R;
+import io.information.common.utils.*;
 import io.information.modules.app.annotation.Login;
 import io.information.modules.app.annotation.LoginUser;
 import io.information.modules.app.entity.InNewsFlash;
 import io.information.modules.app.entity.InUser;
 import io.information.modules.app.service.IInNewsFlashService;
+import io.information.modules.app.vo.FlashVo;
 import io.mq.utils.Constants;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -54,13 +52,13 @@ public class InNewsFlashController {
     }
 
     /**
-     * 查询 gId 上一条 tId 下一条
+     * 查询
      */
     @GetMapping("/info/{nId}")
-    @ApiOperation(value = "查询单个快讯", httpMethod = "GET", notes = "快讯ID")
-    public R info(@PathVariable("nId") Long nId) {
-        InNewsFlash newsFlash = newsFlashService.getById(nId);
-        return R.ok().put("newsFlash", newsFlash);
+    @ApiOperation(value = "查询单个快讯", httpMethod = "GET", notes = "快讯ID", response = FlashVo.class)
+    public ResultUtil info(@PathVariable("nId") Long nId) {
+        FlashVo details = newsFlashService.details(nId);
+        return ResultUtil.ok(details);
     }
 
     /**
@@ -113,7 +111,7 @@ public class InNewsFlashController {
         return R.error("缺少必要的参数");
     }
 
-//    @GetMapping("/esSave")
+    //    @GetMapping("/esSave")
     public R esSave() {
         List<InNewsFlash> users = newsFlashService.all();
         List<EsFlashEntity> fEsList = BeanHelper.copyWithCollection(users, EsFlashEntity.class);

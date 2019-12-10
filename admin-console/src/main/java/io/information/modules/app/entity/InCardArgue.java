@@ -78,10 +78,25 @@ public class InCardArgue implements Serializable {
     private Date caCloseTime;
 
     /**
+     * 辩论是否结束
+     */
+    @ApiModelProperty(value = "辩论是否结束(true：已结束 false：进行中)", name = "timeType")
+    @TableField(exist = false)
+    private Boolean timeType;
+
+    /**
      * 裁判
      */
     @ApiModelProperty(value = "裁判", name = "caReferee", required = false)
     private String caReferee;
+
+    public Boolean getTimeType() {
+        return timeType;
+    }
+
+    public void setTimeType(Boolean timeType) {
+        this.timeType = timeType;
+    }
 
     public Long getcId() {
         return cId;

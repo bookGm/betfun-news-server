@@ -44,16 +44,17 @@ public class FlashEsServiceImpl implements FlashEsService {
             String key = request.getKey();
             Integer pageSize = request.getPageSize();
             Integer currPage = request.getCurrPage();
-
+            //多字段匹配[标题，摘要，内容]
             NativeSearchQueryBuilder searchQuery = new NativeSearchQueryBuilder();
-            //设置索引...
-            //设置高亮
-            withHighlight(searchQuery);
             //设置查询条件
             searchQuery.withQuery(multiMatchQuery(key, "nTitle", "nBrief", "nContent")
                     .operator(Operator.OR) /*.minimumShouldMatch("30%")*/)
+                    //设置索引...
+                    .withIndices("flashs")
                     .withPageable(PageRequest.of(currPage, pageSize));
 
+            //设置高亮
+            withHighlight(searchQuery);
             //自定义查询结果封装
             AggregatedPage<EsFlashEntity> esFlashEntities = elasticsearchTemplate.queryForPage(searchQuery.build(), EsFlashEntity.class,
                     new SearchResultMapper() {
@@ -62,7 +63,7 @@ public class FlashEsServiceImpl implements FlashEsService {
                         public <T> AggregatedPage<T> mapResults(SearchResponse response, Class<T> clazz,
                                                                 Pageable pageable) {
                             // TODO Auto-generated method stub
-                            List<EsFlashEntity> chunk = new ArrayList<>();
+                            List<T> chunk = new ArrayList<>();
                             SearchHits hits = response.getHits();
 
                             for (SearchHit hit : hits) {
@@ -78,9 +79,9 @@ public class FlashEsServiceImpl implements FlashEsService {
                                 setHighLight(hit, "nBrief", esEntity);
                                 setHighLight(hit, "nContent", esEntity);
 
-                                chunk.add(esEntity);
+                                chunk.add((T) (esEntity));
                             }
-                            return new AggregatedPageImpl<>((List<T>) chunk);
+                            return new AggregatedPageImpl<T>(chunk, pageable, response.getHits().getTotalHits());
                         }
                     });
 
@@ -159,21 +160,20 @@ public class FlashEsServiceImpl implements FlashEsService {
 
 
 //    @Override
-//    public PageUtils searchFlash(SearchRequest request) {
+//    public PageUtils searchTest(SearchRequest request) {
 //        if (null != request.getKey() && StringUtil.isNotBlank(request.getKey())) {
 //            String key = request.getKey();
 //            Integer size = request.getPageSize();
 //            Integer page = request.getCurrPage();
 //            //多字段匹配[标题，摘要，内容]
-//            SearchQuery searchQuery = new NativeSearchQueryBuilder()
-//                    .withQuery(multiMatchQuery(key, "nTitle", "nBrief", "nContent")
-//                                    .operator(Operator.OR)
-//                            /*.minimumShouldMatch("30%")*/)
+//            NativeSearchQueryBuilder searchQuery = new NativeSearchQueryBuilder();
+//            searchQuery.withQuery(multiMatchQuery(key, "nTitle", "nBrief", "nContent")
+//                            .operator(Operator.OR)
+//                    /*.minimumShouldMatch("30%")*/)
 //                    .withIndices("flashs")
-//                    .withPageable(PageRequest.of(page, size))
-//                    .build();
+//                    .withPageable(PageRequest.of(page, size));
 //            AggregatedPage<EsFlashEntity> esFlashEntities =
-//                    elasticsearchTemplate.queryForPage(searchQuery, EsFlashEntity.class);
+//                    elasticsearchTemplate.queryForPage(searchQuery.build(), EsFlashEntity.class);
 //            if (null != esFlashEntities && !esFlashEntities.getContent().isEmpty()) {
 //                List<EsFlashEntity> list = esFlashEntities.getContent();
 //                long totalCount = esFlashEntities.getTotalElements();

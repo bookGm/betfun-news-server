@@ -31,5 +31,15 @@ public interface InNewsFlashDao extends BaseMapper<InNewsFlash> {
      */
     void addNBad(@Param("nId") Long nId);
 
+    /**
+     * 上一条
+     */
+    InNewsFlash upDetails(@Param("nId") Long nId);
+
+    /**
+     * 下一条
+     */
+    InNewsFlash beDetails(@Param("nId") Long nId);
+
     List<InNewsFlash> all();
 }

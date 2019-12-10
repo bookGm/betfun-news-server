@@ -579,7 +579,6 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
                             } else {
                                 activity.setaSimpleTime(DateUtils.getSimpleTime(activity.getActCreateTime()));
                             }
-                            System.out.println(obj);
                             if (null != activity.getuId()) {
                                 InUser user = this.getById(activity.getuId());
                                 if (null != user) {

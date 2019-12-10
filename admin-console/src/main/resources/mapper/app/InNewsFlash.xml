@@ -10,4 +10,10 @@
     <select id="all" resultType="io.information.modules.app.entity.InNewsFlash">
         select * from in_news_flash
     </select>
+    <select id="upDetails" resultType="io.information.modules.app.entity.InNewsFlash" parameterType="java.lang.Long">
+        SELECT * FROM in_news_flash WHERE n_create_time > (SELECT n_create_time FROM in_news_flash WHERE n_id = #{nId}) ORDER BY n_create_time ASC LIMIT 1;
+    </select>
+    <select id="beDetails" resultType="io.information.modules.app.entity.InNewsFlash" parameterType="java.lang.Long">
+        SELECT * FROM in_news_flash WHERE (SELECT n_create_time FROM in_news_flash WHERE n_id = #{nId}) > n_create_time ORDER BY n_create_time DESC LIMIT 1;
+    </select>
 </mapper>

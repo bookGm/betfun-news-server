@@ -13,6 +13,7 @@ import io.information.common.utils.RedisKeys;
 import io.information.modules.app.dao.InNewsFlashDao;
 import io.information.modules.app.entity.InNewsFlash;
 import io.information.modules.app.service.IInNewsFlashService;
+import io.information.modules.app.vo.FlashVo;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -43,6 +44,31 @@ public class InNewsFlashServiceImpl extends ServiceImpl<InNewsFlashDao, InNewsFl
             }
         }
         return new PageUtils(page);
+    }
+
+    @Override
+    public FlashVo details(Long nId) {
+        InNewsFlash flash = this.getById(nId);
+        if (null != flash) {
+            FlashVo vo = new FlashVo();
+            InNewsFlash upDetails = this.baseMapper.upDetails(nId);
+            if (null != upDetails) {
+                vo.setUpFlash(upDetails);
+                vo.setGFlash(true);
+            } else {
+                vo.setGFlash(false);
+            }
+            InNewsFlash beDetails = this.baseMapper.beDetails(nId);
+            if (null != beDetails) {
+                vo.setDeFlash(beDetails);
+                vo.setTFlash(true);
+            } else {
+                vo.setTFlash(false);
+            }
+            vo.setFlash(flash);
+            return vo;
+        }
+        return null;
     }
 
     @Override

@@ -3,6 +3,7 @@ package io.information.modules.app.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import io.information.common.utils.PageUtils;
 import io.information.modules.app.entity.InNewsFlash;
+import io.information.modules.app.vo.FlashVo;
 
 import java.util.List;
 import java.util.Map;
@@ -30,4 +31,5 @@ public interface IInNewsFlashService extends IService<InNewsFlash> {
 
     List<InNewsFlash> all();
 
+    FlashVo details(Long nId);
 }

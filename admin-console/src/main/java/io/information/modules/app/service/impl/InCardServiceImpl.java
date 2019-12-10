@@ -100,6 +100,17 @@ public class InCardServiceImpl extends ServiceImpl<InCardBaseDao, InCardBase> im
                             //辩论帖子
                             InCardArgue argue = argueService.getById(base.getcId());
                             if (null != argue) {
+                                long currTime = new Date().getTime();   //当前时间
+                                long closeTime = argue.getCaCloseTime().getTime();  //结束时间
+                                if (currTime > closeTime) {
+                                    //已结束
+                                    argue.setTimeType(true);
+                                } else if (currTime < closeTime) {
+                                    //进行中
+                                    argue.setTimeType(false);
+                                } else {
+                                    argue.setTimeType(true);
+                                }
                                 card.setArgue(argue);
                             }
                             break;
@@ -107,8 +118,21 @@ public class InCardServiceImpl extends ServiceImpl<InCardBaseDao, InCardBase> im
                             //投票帖子
                             InCardVote vote = voteService.getById(base.getcId());
                             if (null != vote) {
+                                long currTime = new Date().getTime();   //当前时间
+                                long closeTime = vote.getCvCloseTime().getTime();   //结束时间
+                                if (currTime > closeTime) {
+                                    //已结束
+                                    vote.setTimeType(true);
+                                } else if (currTime < closeTime) {
+                                    //进行中
+                                    vote.setTimeType(false);
+                                } else {
+                                    vote.setTimeType(true);
+                                }
+                                //投票数量
                                 List<Map.Entry<Object, Object>> votes = redisUtils.hfget(RedisKeys.VOTE, cId + "-*");
                                 vote.setVoteNumber(votes == null ? 0 : votes.size());
+                                //用户是否投票
                                 if (null != map.get("uId") && StringUtil.isNotBlank(map.get("uId"))) {
                                     long uId = Long.parseLong(String.valueOf(map.get("uId")));
                                     String optIndexs = "";

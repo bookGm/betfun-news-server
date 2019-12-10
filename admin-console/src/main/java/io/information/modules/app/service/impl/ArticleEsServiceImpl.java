@@ -30,6 +30,7 @@ import org.springframework.data.elasticsearch.core.SearchResultMapper;
 import org.springframework.data.elasticsearch.core.aggregation.AggregatedPage;
 import org.springframework.data.elasticsearch.core.aggregation.impl.AggregatedPageImpl;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
+import org.springframework.data.elasticsearch.core.query.SearchQuery;
 import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.stereotype.Service;
 
@@ -70,14 +71,15 @@ public class ArticleEsServiceImpl implements ArticleEsService {
 
             NativeSearchQueryBuilder searchQuery = new NativeSearchQueryBuilder();
             //设置索引...
-            //设置高亮
-            withHighlight(searchQuery);
             //设置查询条件
             searchQuery.withQuery(multiMatchQuery(key, "aKeyword", "aTitle", "aContent", "aBrief")
                     .operator(Operator.OR) /*.minimumShouldMatch("30%")*/)
                     .withPageable(PageRequest.of(currPage, pageSize));
 
+            //设置高亮
+            withHighlight(searchQuery);
             //自定义查询结果封装
+
             AggregatedPage<EsArticleEntity> esArticleEntities = elasticsearchTemplate.queryForPage(searchQuery.build(), EsArticleEntity.class,
                     new SearchResultMapper() {
 
@@ -104,7 +106,7 @@ public class ArticleEsServiceImpl implements ArticleEsService {
 
                                 chunk.add(esEntity);
                             }
-                            return new AggregatedPageImpl<>((List<T>) chunk);
+                            return new AggregatedPageImpl<>((List<T>) chunk, pageable, response.getHits().getTotalHits());
                         }
                     });
 
@@ -205,5 +207,32 @@ public class ArticleEsServiceImpl implements ArticleEsService {
         }
     }
 
+
+
+//    @Override
+//    public PageUtils searchTest(SearchRequest request) {
+//        if (null != request.getKey() && StringUtil.isNotBlank(request.getKey())) {
+//            String key = request.getKey();
+//            Integer size = request.getPageSize();
+//            Integer page = request.getCurrPage();
+//            //多字段匹配[标题，摘要，内容]
+//            SearchQuery searchQuery = new NativeSearchQueryBuilder()
+//                    .withQuery(multiMatchQuery(key, "aKeyword", "aTitle", "aContent", "aBrief")
+//                                    .operator(Operator.OR)
+//                            /*.minimumShouldMatch("30%")*/)
+//                    .withPageable(PageRequest.of(page, size))
+//                    .build();
+//            AggregatedPage<EsArticleEntity> esFlashEntities =
+//                    elasticsearchTemplate.queryForPage(searchQuery, EsArticleEntity.class);
+//            if (null != esFlashEntities && !esFlashEntities.getContent().isEmpty()) {
+//                List<EsArticleEntity> list = esFlashEntities.getContent();
+//                long totalCount = esFlashEntities.getTotalElements();
+//                //列表数据 总记录数 每页记录数 当前页数
+//                return new PageUtils(list, totalCount, size, page);
+//            }
+//            return null;
+//        }
+//        return null;
+//    }
 
 }

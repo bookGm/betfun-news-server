@@ -225,16 +225,13 @@ public class InArticleServiceImpl extends ServiceImpl<InArticleDao, InArticle> i
     public String giveALike(Long id, Long uid, int type, Long tId) {
         if (NewsEnum.点赞_文章.getCode().equals(String.valueOf(type))) {
             this.baseMapper.addALike(id);
-            System.out.println("添加完成");
         }
         if (NewsEnum.点赞_帖子.getCode().equals(String.valueOf(type))) {
             logOperate(uid, id, NewsEnum.操作_点赞);
             this.inCardBaseDao.addALike(id);
-            System.out.println("添加完成");
         }
         if (NewsEnum.点赞_活动.getCode().equals(String.valueOf(type))) {
             this.inActivityDao.addALike(id);
-            System.out.println("添加完成");
         }
         return DateUtils.format(new Date());
     }
@@ -244,16 +241,13 @@ public class InArticleServiceImpl extends ServiceImpl<InArticleDao, InArticle> i
     public Long removeALike(long id, Long uid, int type, Long tid) {
         if (NewsEnum.点赞_文章.getCode().equals(String.valueOf(type))) {
             this.baseMapper.removeALike(id);
-            System.out.println("删除完成");
         }
         if (NewsEnum.点赞_帖子.getCode().equals(String.valueOf(type))) {
             logOperate(uid, id, NewsEnum.操作_点赞);
             this.inCardBaseDao.removeALike(id);
-            System.out.println("删除完成");
         }
         if (NewsEnum.点赞_活动.getCode().equals(String.valueOf(type))) {
             this.inActivityDao.removeALike(id);
-            System.out.println("删除完成");
         }
         String key = id + "-" + uid + "-" + tid + "-" + type;
         return redisUtils.hremove(RedisKeys.LIKE, key);

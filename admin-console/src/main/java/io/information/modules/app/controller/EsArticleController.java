@@ -29,4 +29,10 @@ public class EsArticleController {
     public PageUtils searchInfo(@RequestBody SearchRequest request) {
         return articleService.searchInfo(request);
     }
+
+
+//    @PostMapping("/test")
+//    public PageUtils searchTest(@RequestBody SearchRequest request) {
+//        return articleService.searchTest(request);
+//    }
 }

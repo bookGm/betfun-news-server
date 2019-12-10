@@ -23,6 +23,7 @@ import org.springframework.data.elasticsearch.core.SearchResultMapper;
 import org.springframework.data.elasticsearch.core.aggregation.AggregatedPage;
 import org.springframework.data.elasticsearch.core.aggregation.impl.AggregatedPageImpl;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
+import org.springframework.data.elasticsearch.core.query.SearchQuery;
 import org.springframework.stereotype.Service;
 
 import java.lang.reflect.Method;
@@ -45,7 +46,7 @@ public class UserEsServiceImpl implements UserEsService {
 
     //高亮显示ex
     @Override
-    public PageUtils search(SearchRequest request) {
+    public PageUtils searchUsers(SearchRequest request) {
         if (null != request.getKey() && StringUtil.isNotBlank(request.getKey())) {
             String key = request.getKey();
             Integer pageSize = request.getPageSize();
@@ -86,7 +87,7 @@ public class UserEsServiceImpl implements UserEsService {
 
                                 chunk.add(esEntity);
                             }
-                            return new AggregatedPageImpl<>((List<T>) chunk);
+                            return new AggregatedPageImpl<>((List<T>) chunk, pageable, response.getHits().getTotalHits());
                         }
                     });
 
@@ -191,8 +192,8 @@ public class UserEsServiceImpl implements UserEsService {
         }
     }
 
-    //    @Override
-//    public PageUtils search(SearchRequest request) {
+//        @Override
+//    public PageUtils searchTest(SearchRequest request) {
 //        if (null != request.getKey() && StringUtil.isNotBlank(request.getKey())) {
 //            String key = request.getKey();
 //            Integer size = request.getPageSize();
@@ -211,8 +212,8 @@ public class UserEsServiceImpl implements UserEsService {
 //                //文章数 浏览数 获赞数
 //                for (EsUserEntity entity : list) {
 //                    LambdaQueryWrapper<InArticle> queryWrapper = new LambdaQueryWrapper<>();
-//                    if (null != entity && null != entity.getuId()) {
-//                        queryWrapper.eq(InArticle::getuId, entity.getuId());
+//                    if (null != entity && null != entity.getUId()) {
+//                        queryWrapper.eq(InArticle::getuId, entity.getUId());
 //                        int articleNumber = articleService.count(queryWrapper);
 //                        entity.setArticleNumber(articleNumber);
 //                        List<InArticle> articles = articleService.list(queryWrapper);
