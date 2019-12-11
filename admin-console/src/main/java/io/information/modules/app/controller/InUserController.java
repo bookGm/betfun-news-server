@@ -77,7 +77,9 @@ public class InUserController extends AbstractController {
     public R change(@RequestParam String uPwd, @RequestParam String newPwd, @ApiIgnore @LoginUser InUser user) {
         if (!user.getuPwd().equals(new Sha256Hash(uPwd, user.getuSalt()).toHex())) {
             return R.error("旧密码不匹配");
-        } else {
+        } else if(user.getuPwd().equals(new Sha256Hash(newPwd, user.getuSalt()).toHex())){
+            return R.error("新密码与旧密码不能相同");
+        }else {
             user.setuPwd(new Sha256Hash(newPwd, user.getuSalt()).toHex());
             userService.updateById(user);
             return R.ok();
