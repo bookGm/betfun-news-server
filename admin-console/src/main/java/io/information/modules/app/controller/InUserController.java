@@ -20,6 +20,7 @@ import io.information.modules.app.vo.UserCardVo;
 import io.information.modules.sys.controller.AbstractController;
 import io.mq.utils.Constants;
 import io.swagger.annotations.*;
+import org.apache.shiro.crypto.hash.Sha256Hash;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -74,11 +75,12 @@ public class InUserController extends AbstractController {
             @ApiImplicitParam(value = "新密码", name = "newPwd", required = true)
     })
     public R change(@RequestParam String uPwd, @RequestParam String newPwd, @ApiIgnore @LoginUser InUser user) {
-        boolean flag = userService.change(uPwd, newPwd, user);
-        if (flag) {
-            return R.ok();
+        if (!user.getuPwd().equals(new Sha256Hash(uPwd, user.getuSalt()).toHex())) {
+            return R.error("旧密码不匹配");
         } else {
-            return R.error("输入的旧密码有误");
+            user.setuPwd(new Sha256Hash(newPwd, user.getuSalt()).toHex());
+            userService.updateById(user);
+            return R.ok();
         }
     }
 

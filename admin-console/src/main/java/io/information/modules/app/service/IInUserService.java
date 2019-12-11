@@ -50,8 +50,6 @@ public interface IInUserService extends IService<InUser> {
 
     PageUtils favorite(Map<String, Object> map);
 
-    boolean change(String uPwd, String newPwd, InUser user);
-
     PageUtils fansNode(Map<String, Object> map);
 
     UserBoolVo userNumber(Long uId, Long tId, Integer type, InUser user);

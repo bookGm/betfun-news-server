@@ -62,18 +62,6 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
     @Autowired
     RedisUtils redisUtils;
 
-
-    @Override
-    public boolean change(String uPwd, String newPwd, InUser user) {
-        if (!user.getuPwd().equals(new Sha256Hash(uPwd, user.getuSalt()).toHex())) {
-            return false;
-        } else {
-            user.setuPwd(new Sha256Hash(newPwd, user.getuSalt()).toHex());
-            this.updateById(user);
-            return true;
-        }
-    }
-
     @Override
     public Boolean saveWithCache(InUser inUser) {
         if (this.save(inUser)) {
