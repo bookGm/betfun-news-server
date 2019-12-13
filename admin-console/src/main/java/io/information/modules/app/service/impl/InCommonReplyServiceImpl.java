@@ -42,8 +42,12 @@ public class InCommonReplyServiceImpl extends ServiceImpl<InCommonReplyDao, InCo
             for (InCommonReply r : page.getRecords()) {
                 r.setCrCount(this.count(new LambdaQueryWrapper<InCommonReply>().eq(InCommonReply::getToCrId, r.getCrId())));
                 InUser u = iInUserService.getById(r.getcId());
-                r.setcName(u.getuNick());
-                r.setcPhoto(u.getuPhoto());
+                if (null != u) {
+                    r.setcName(u.getuName());
+                    r.setcPhoto(u.getuPhoto());
+                } else {
+                    r.setcName("关注的用户已不存在");
+                }
             }
             return new PageUtils(page);
         }

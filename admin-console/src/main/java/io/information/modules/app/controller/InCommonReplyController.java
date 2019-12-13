@@ -75,7 +75,7 @@ public class InCommonReplyController {
         commonReply.setcName(user.getuNick());
         commonReply.setcPhoto(user.getuPhoto());
         commonReply.setCrSimpleTime("刚刚");
-        if (commonReply.gettType().equals(NewsEnum.评论_帖子)) {
+        if ((null != commonReply.gettType()) && NewsEnum.评论_帖子.equals(commonReply.gettType())) {
             logOperate(user.getuId(), commonReply.gettId(), commonReply.gettName(), NewsEnum.操作_评论);
         }
         return R.ok().put("crObj", commonReply);

@@ -64,17 +64,25 @@ public class InArticleController {
     @ApiOperation(value = "专栏 -- 发布文章", httpMethod = "POST")
     public R save(@RequestBody InArticle article, @ApiIgnore @LoginUser InUser user) {
         if (user.getuAuthStatus() == 2) {
-            if (null == article.getaId() || ("").equals(article.getaId())) {
+            if (null != article.getaId()) {
+                articleService.updateById(article);
+                if (article.getaStatus() == 2) {
+                    rabbitTemplate.convertAndSend(Constants.articleExchange,
+                            Constants.article_Update_RouteKey, JSON.toJSON(article));
+                }
+            } else {
                 article.setaId(IdGenerator.getId());
+                article.setuId(user.getuId());
+                article.setuName(user.getuName());
+                article.setaStatus(1);
+                if (null == article.getaCreateTime()) {
+                    article.setaCreateTime(new Date());
+                }
+                articleService.save(article);
+                EsArticleEntity esArticle = BeanHelper.copyProperties(article, EsArticleEntity.class);
+                rabbitTemplate.convertAndSend(Constants.articleExchange,
+                        Constants.article_Save_RouteKey, esArticle);
             }
-            article.setuId(user.getuId());
-            article.setuName(user.getuName());
-            article.setaStatus(1);
-            article.setaCreateTime(new Date());
-            articleService.save(article);
-            EsArticleEntity esArticle = BeanHelper.copyProperties(article, EsArticleEntity.class);
-            rabbitTemplate.convertAndSend(Constants.articleExchange,
-                    Constants.article_Save_RouteKey, esArticle);
             return R.ok();
         }
         return R.error("此操作需要认证通过");
@@ -85,12 +93,17 @@ public class InArticleController {
     @PostMapping("/saveDraft")
     @ApiOperation(value = "专栏 -- 保存草稿", httpMethod = "POST")
     public R saveDraft(@RequestBody InArticle article, @ApiIgnore @LoginUser InUser user) {
-        article.setaId(IdGenerator.getId());
-        article.setuId(user.getuId());
-        article.setuName(user.getuName());
-        article.setaStatus(0);
-        article.setaCreateTime(new Date());
-        articleService.save(article);
+        if (null != article.getaId()) {
+            article.setaStatus(0);
+            articleService.updateById(article);
+        } else {
+            article.setaId(IdGenerator.getId());
+            article.setuId(user.getuId());
+            article.setuName(user.getuName());
+            article.setaStatus(0);
+            article.setaCreateTime(new Date());
+            articleService.save(article);
+        }
         return R.ok();
     }
 
@@ -186,18 +199,23 @@ public class InArticleController {
     public R queryArticle(@PathVariable("aId") String aId, @ApiIgnore HttpServletRequest request) {
         String ip = IPUtils.getIpAddr(request);
         InArticle article = articleService.getById(aId);
-        Boolean aBoolean = redisTemplate.hasKey(RedisKeys.ABROWSEIP + ip + aId);
-        if (!aBoolean) {
-            redisTemplate.opsForValue().set(RedisKeys.ABROWSEIP + ip + aId, aId, 60 * 60 * 2);
+        if(null != article){
+            Boolean aBoolean = redisTemplate.hasKey(RedisKeys.ABROWSEIP + ip + aId);
+            if (!aBoolean) {
+                redisTemplate.opsForValue().set(RedisKeys.ABROWSEIP + ip + aId, aId, 60 * 60 * 2);
 //            redisTemplate.setValueSerializer(new GenericToStringSerializer<Long>(Long.class));
-            Long aLong = redisTemplate.opsForValue().increment(RedisKeys.ABROWSE + aId, 1);//如果通过自增1
-            if (aLong % 100 == 0) {
-                redisTemplate.delete(ip + aId);
-                long readNumber = aLong + article.getaReadNumber();
-                articleService.updateReadNumber(readNumber, article.getaId());
+                Long aLong = redisTemplate.opsForValue().increment(RedisKeys.ABROWSE + aId, 1);//如果通过自增1
+                if (aLong % 100 == 0) {
+                    redisTemplate.delete(ip + aId);
+                    long readNumber = aLong + article.getaReadNumber();
+                    articleService.updateReadNumber(readNumber, article.getaId());
+                }
             }
+            return R.ok().put("article", article);
+        }else {
+            return R.error("文章不存在");
         }
-        return R.ok().put("article", article);
+
     }
 
 

@@ -137,7 +137,11 @@ public class InActivityController {
     @ApiOperation(value = "查询单个活动信息", httpMethod = "GET", notes = "活动ID[actId]")
     public R info(@PathVariable("actId") Long actId) {
         InActivity activity = activityService.details(actId);
-        return R.ok().put("activity", activity);
+        if (null != activity) {
+            return R.ok().put("activity", activity);
+        } else {
+            return R.error("活动不存在");
+        }
     }
 
 

@@ -77,9 +77,9 @@ public class InUserController extends AbstractController {
     public R change(@RequestParam String uPwd, @RequestParam String newPwd, @ApiIgnore @LoginUser InUser user) {
         if (!user.getuPwd().equals(new Sha256Hash(uPwd, user.getuSalt()).toHex())) {
             return R.error("旧密码不匹配");
-        } else if(user.getuPwd().equals(new Sha256Hash(newPwd, user.getuSalt()).toHex())){
+        } else if (user.getuPwd().equals(new Sha256Hash(newPwd, user.getuSalt()).toHex())) {
             return R.error("新密码与旧密码不能相同");
-        }else {
+        } else {
             user.setuPwd(new Sha256Hash(newPwd, user.getuSalt()).toHex());
             userService.updateById(user);
             return R.ok();
@@ -215,7 +215,7 @@ public class InUserController extends AbstractController {
                     return R.ok();
                 }
             }
-            return R.error("关注的用户不存在");
+            return R.error("关注的用户已不存在");
         }
         return R.error("必要参数不能为空");
     }
@@ -310,8 +310,12 @@ public class InUserController extends AbstractController {
             }
             if (null != boolVo && StringUtil.isNotBlank(boolVo.getuId())) {
                 InUser u = userService.getById(boolVo.getuId());
-                boolVo.setuNick(u.getuNick());
-                boolVo.setuPhoto(u.getuPhoto());
+                if (null != u) {
+                    boolVo.setuNick(u.getuNick() == null ? "" : u.getuNick());
+                    boolVo.setuPhoto(u.getuPhoto());
+                }else {
+                    boolVo.setuNick("关注的用户已不存在");
+                }
                 if (null != map.get("uId") && StringUtil.isNotBlank(map.get("uId"))) {
                     long uId = Long.parseLong(String.valueOf(map.get("uId")));
                     //#id-#uid-#tId-#type  ID   用户ID  目标用户ID  类型

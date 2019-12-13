@@ -20,7 +20,6 @@ import io.information.modules.app.service.*;
 import io.information.modules.app.vo.InLikeVo;
 import io.information.modules.app.vo.UserBoolVo;
 import io.information.modules.app.vo.UserCardVo;
-import org.apache.shiro.crypto.hash.Sha256Hash;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,6 +60,8 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
     InArticleDao articleDao;
     @Autowired
     RedisUtils redisUtils;
+    @Autowired
+    DicHelper dicHelper;
 
     @Override
     public Boolean saveWithCache(InUser inUser) {
@@ -143,16 +144,22 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
     public PageUtils fansNode(Map<String, Object> map) {
         Integer size = StringUtil.isBlank(map.get("pageSize")) ? 10 : Integer.parseInt(String.valueOf(map.get("pageSize")));
         Integer page = StringUtil.isBlank(map.get("currPage")) ? 1 : Integer.parseInt(String.valueOf(map.get("currPage")));
-        Integer bindex = page * size;
+        if (page == 0) {
+            page = 1;
+        }
+        Integer bindex = (page - 1) * size;
         //模糊查询出某类的key  #uId-#type-#noId
         Long uId = Long.parseLong(String.valueOf(map.get("uId")));
         List<Map.Entry<Object, Object>> nmap = redisUtils.hfget(RedisKeys.NODES, uId + "-*-*");
+        int nSize = nmap.size();
         ArrayList<InNodeDTO> nodeFocus = null;
         //关注目标信息
         if (null != nmap && nmap.size() > 0) {
             nodeFocus = new ArrayList<>();
             if (bindex + size < nmap.size()) {
                 nmap = nmap.subList(bindex, bindex + size);
+            } else if (bindex < nmap.size()) {
+                nmap = nmap.subList(bindex, nmap.size());
             }
         } else {
             return new PageUtils(nodeFocus, 0, size, page);
@@ -164,9 +171,14 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
             if (null != node) {
                 InNodeDTO dto = BeanHelper.copyProperties(node, InNodeDTO.class);
                 nodeFocus.add(dto);
+            } else {
+                InNodeDTO nodeDTO = new InNodeDTO();
+                nodeDTO.setNoName("节点不存在");
+                nodeDTO.setNoBrief("节点已经不能使用了");
+                nodeFocus.add(nodeDTO);
             }
         }
-        return new PageUtils(nodeFocus, nmap.size(), size, page);
+        return new PageUtils(nodeFocus, nSize, size, page);
 
     }
 
@@ -310,14 +322,20 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
     public PageUtils<InLikeVo> like(Map<String, Object> map, Long uId) {
         Integer size = StringUtil.isBlank(map.get("pageSize")) ? 10 : Integer.parseInt(String.valueOf(map.get("pageSize")));
         Integer page = StringUtil.isBlank(map.get("currPage")) ? 1 : Integer.parseInt(String.valueOf(map.get("currPage")));
-        Integer bindex = page * size;
+        if (page == 0) {
+            page = 1;
+        }
+        Integer bindex = (page - 1) * size;
         //模糊查询出某类的key  #id-#uid-#tId-#type
         List<Map.Entry<Object, Object>> cmap = redisUtils.hfget(RedisKeys.LIKE, "*-*-" + uId + "-*");
+        int cSize = cmap == null ? 0 : cmap.size();
         ArrayList<InLikeVo> newsLike = null;
         if (null != cmap && cmap.size() > 0) {
             newsLike = new ArrayList<>();
             if (bindex + size < cmap.size()) {
                 cmap = cmap.subList(bindex, bindex + size);
+            } else if (bindex < cmap.size()) {
+                cmap = cmap.subList(bindex, cmap.size());
             }
         } else {
             return new PageUtils(newsLike, 0, size, page);
@@ -334,11 +352,13 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
             if (null != user) {
                 likeVo.setNick(user.getuNick());
                 likeVo.setPhoto(user.getuPhoto());
-                getTitle(str[0], str[3], likeVo);
-                newsLike.add(likeVo);
+            } else {
+                likeVo.setNick("关注的用户已不存在");
             }
+            getTitle(str[0], str[3], likeVo);
+            newsLike.add(likeVo);
         }
-        return new PageUtils(newsLike, cmap.size(), size, page);
+        return new PageUtils(newsLike, cSize, size, page);
     }
 
 
@@ -381,15 +401,21 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
         Long uId = Long.parseLong(String.valueOf(map.get("uId")));
         Integer size = StringUtil.isBlank(map.get("pageSize")) ? 10 : Integer.parseInt(String.valueOf(map.get("pageSize")));
         Integer page = StringUtil.isBlank(map.get("currPage")) ? 1 : Integer.parseInt(String.valueOf(map.get("currPage")));
-        Integer bindex = page * size;
+        if (page == 0) {
+            page = 1;
+        }
+        Integer bindex = (page - 1) * size;
         //根据uId查询用户关注的目标
         List<Map.Entry<Object, Object>> cmap = redisUtils.hfget(RedisKeys.FOCUS, uId + "-*-*");
+        int cSize = cmap == null ? 0 : cmap.size();
         ArrayList<InUserDTO> newsFocus = null;
         //关注目标信息
         if (null != cmap && cmap.size() > 0) {
             newsFocus = new ArrayList<>();
             if (bindex + size < cmap.size()) {
                 cmap = cmap.subList(bindex, bindex + size);
+            } else if (bindex < cmap.size()) {
+                cmap = cmap.subList(bindex, cmap.size());
             }
         } else {
             return new PageUtils(newsFocus, 0, size, page);
@@ -406,20 +432,31 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
                 userDTO.setuPhoto(user.getuPhoto());
                 userDTO.setuIntro(user.getuIntro());
                 newsFocus.add(userDTO);
+            } else {
+                InUserDTO dto = new InUserDTO();
+                dto.setuId(null);
+                dto.setuNick("关注的用户已不存在");
+                newsFocus.add(dto);
             }
         }
-        return new PageUtils(newsFocus, cmap.size(), size, page);
+        return new PageUtils(newsFocus, cSize, size, page);
     }
 
     @Override
     public PageUtils fansPerson(Map<String, Object> map) {
         Integer page = StringUtil.isBlank(map.get("currPage")) ? 1 : Integer.parseInt(String.valueOf(map.get("currPage")));
         Integer size = StringUtil.isBlank(map.get("pageSize")) ? 10 : Integer.parseInt(String.valueOf(map.get("pageSize")));
-        Integer bindex = page * size;
+        if (page == 0) {
+            page = 1;
+        }
+        Integer bindex = (page - 1) * size;
         Long uId = Long.parseLong(String.valueOf(map.get("uId")));
         //根据uId查询用户关注的目标  #uId-#type-#fId
         List<Map.Entry<Object, Object>> cmap = redisUtils.hfget(RedisKeys.FOCUS, uId + "-1-*");
         List<Map.Entry<Object, Object>> cmap2 = redisUtils.hfget(RedisKeys.FOCUS, uId + "-2-*");
+        int cSize = cmap == null ? 0 : cmap.size();
+        int c2Size = cmap2 == null ? 0 : cmap2.size();
+        int sSize = cSize + c2Size;
         ArrayList<InUserDTO> newsFocus = null;
         if (null != cmap && cmap2 != null) {
             cmap.addAll(cmap2);
@@ -434,6 +471,8 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
             newsFocus = new ArrayList<>();
             if (bindex + size < cmap.size()) {
                 cmap = cmap.subList(bindex, bindex + size);
+            } else if (bindex < cmap.size()) {
+                cmap = cmap.subList(bindex, cmap.size());
             }
         } else {
             return new PageUtils(newsFocus, 0, size, page);
@@ -447,9 +486,14 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
                 if (null != userDTO) {
                     newsFocus.add(userDTO);
                 }
+            } else {
+                InUserDTO dto = new InUserDTO();
+                dto.setuId(null);
+                dto.setuNick("关注的用户已不存在");
+                newsFocus.add(dto);
             }
         }
-        return new PageUtils(newsFocus, cmap.size(), size, page);
+        return new PageUtils(newsFocus, sSize, size, page);
     }
 
 
@@ -458,9 +502,13 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
         Long uId = Long.parseLong(String.valueOf(map.get("uId")));
         Integer page = StringUtil.isBlank(map.get("currPage")) ? 1 : Integer.parseInt(String.valueOf(map.get("currPage")));
         Integer size = StringUtil.isBlank(map.get("pageSize")) ? 10 : Integer.parseInt(String.valueOf(map.get("pageSize")));
-        Integer bindex = page * size;
+        if (page == 0) {
+            page = 1;
+        }
+        Integer bindex = (page - 1) * size;
         //以uId为目标查询粉丝  #uId-#status-#fId
         List<Map.Entry<Object, Object>> cmap = redisUtils.hfget(RedisKeys.FOCUS, "*-*-" + uId);
+        int cSize = cmap == null ? 0 : cmap.size();
         ArrayList<InUserDTO> newsFans = null;
 
         //关注目标信息
@@ -468,6 +516,8 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
             newsFans = new ArrayList<>();
             if (bindex + size < cmap.size()) {
                 cmap = cmap.subList(bindex, bindex + size);
+            } else if (bindex < cmap.size()) {
+                cmap = cmap.subList(bindex, cmap.size());
             }
         } else {
             return new PageUtils(newsFans, 0, size, page);
@@ -481,9 +531,14 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
                 if (null != userDTO) {
                     newsFans.add(userDTO);
                 }
+            } else {
+                InUserDTO dto = new InUserDTO();
+                dto.setuId(null);
+                dto.setuNick("关注的用户已不存在");
+                newsFans.add(dto);
             }
         }
-        return new PageUtils(newsFans, cmap.size(), size, page);
+        return new PageUtils(newsFans, cSize, size, page);
     }
 
 
@@ -494,16 +549,23 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
             Long uId = Long.parseLong(String.valueOf(map.get("uId")));
             Integer page = StringUtil.isBlank(map.get("currPage")) ? 1 : Integer.parseInt(String.valueOf(map.get("currPage")));
             Integer size = StringUtil.isBlank(map.get("pageSize")) ? 10 : Integer.parseInt(String.valueOf(map.get("pageSize")));
-            Integer bindex = page * size;
+            if (page == 0) {
+                page = 1;
+            }
+            Integer bindex = (page - 1) * size;
+//            Integer bindex = page * size;
             //查询用户的收藏   #id-#uid-#tId-#type
             ArrayList<CollectDTO> collects = null;
             List<Map.Entry<Object, Object>> cmap = redisUtils.hfget(RedisKeys.COLLECT, "*-" + uId + "-*-" + type);
+            int cSize = cmap == null ? 0 : cmap.size();
 //            List<Map.Entry<Object, Object>> slist = null;
             //关注目标信息
             if (null != cmap && cmap.size() > 0) {
                 collects = new ArrayList<>();
                 if (bindex + size < cmap.size()) {
                     cmap = cmap.subList(bindex, bindex + size);
+                } else if (bindex < cmap.size()) {
+                    cmap = cmap.subList(bindex, cmap.size());
                 }
             } else {
                 return new PageUtils(collects, 0, size, page);
@@ -529,6 +591,12 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
                             }
                             dto.setArticle(article);
                             collects.add(dto);
+                        } else {
+                            InArticle inArticle = new InArticle();
+                            inArticle.setaId(null);
+                            inArticle.setaTitle("该文章已被作者删除");
+                            dto.setArticle(inArticle);
+                            collects.add(dto);
                         }
                     }
                     break;
@@ -539,6 +607,9 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
                         Long id = Long.valueOf(str[0]);
                         InCardBase cardBase = baseService.getById(id);//目标信息
                         if (null != cardBase) {
+                            if (null != cardBase.getcNodeCategory()) {
+                                cardBase.setcNodeCategoryValue(dicHelper.getDicName(cardBase.getcNodeCategory().longValue()));
+                            }
                             if (null == cardBase.getcCreateTime()) {
                                 cardBase.setcSimpleTime(DateUtils.getSimpleTime(new Date()));
                             } else {
@@ -551,6 +622,12 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
                                 }
                             }
                             dto.setCardBase(cardBase);
+                            collects.add(dto);
+                        } else {
+                            InCardBase inCardBase = new InCardBase();
+                            inCardBase.setcId(null);
+                            inCardBase.setcTitle("该帖子已被作者删除");
+                            dto.setCardBase(inCardBase);
                             collects.add(dto);
                         }
                     }
@@ -575,11 +652,17 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
                             }
                             dto.setActivity(activity);
                             collects.add(dto);
+                        } else {
+                            InActivity inActivity = new InActivity();
+                            inActivity.setActId(null);
+                            inActivity.setActTitle("该活动已被作者删除");
+                            dto.setActivity(inActivity);
+                            collects.add(dto);
                         }
                     }
                     break;
             }
-            return new PageUtils(collects, cmap.size(), size, page);
+            return new PageUtils(collects, cSize, size, page);
         }
         return null;
     }

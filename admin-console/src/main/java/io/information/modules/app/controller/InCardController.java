@@ -60,18 +60,22 @@ public class InCardController {
             Long cId = Long.parseLong(String.valueOf(map.get("cId")));
             String ip = IPUtils.getIpAddr(request);
             InCard card = cardService.details(map);
-            Boolean aBoolean = redisTemplate.hasKey(RedisKeys.CARDBROWSEIP + ip + cId);
-            if (!aBoolean) {
-                redisTemplate.opsForValue().set(RedisKeys.CARDBROWSEIP + ip + cId, String.valueOf(cId), 60 * 60 * 2);
-                Long aLong = redisTemplate.opsForValue().increment(RedisKeys.CARDBROWSE + cId, 1);//如果通过自增1
-                if (aLong % 100 == 0) {
-                    redisTemplate.delete(ip + cId);
-                    InCardBase base = cardBaseService.getById(cId);
-                    long readNumber = aLong + base.getcReadNumber();
-                    cardBaseService.updateReadNumber(readNumber, cId);
+            if (null != card) {
+                Boolean aBoolean = redisTemplate.hasKey(RedisKeys.CARDBROWSEIP + ip + cId);
+                if (!aBoolean) {
+                    redisTemplate.opsForValue().set(RedisKeys.CARDBROWSEIP + ip + cId, String.valueOf(cId), 60 * 60 * 2);
+                    Long aLong = redisTemplate.opsForValue().increment(RedisKeys.CARDBROWSE + cId, 1);//如果通过自增1
+                    if (aLong % 100 == 0) {
+                        redisTemplate.delete(ip + cId);
+                        InCardBase base = cardBaseService.getById(cId);
+                        long readNumber = aLong + base.getcReadNumber();
+                        cardBaseService.updateReadNumber(readNumber, cId);
+                    }
                 }
+                return R.ok().put("card", card);
+            } else {
+                return R.error("帖子不存在");
             }
-            return R.ok().put("card", card);
         }
         return R.error("必要参数为空");
     }

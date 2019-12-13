@@ -149,44 +149,48 @@ public class InActivityServiceImpl extends ServiceImpl<InActivityDao, InActivity
     @Override
     public InActivity details(Long actId) {
         InActivity activity = this.getById(actId);
-        List<InActivityFields> fields = fieldsDao.searchByActId(actId);
-        List<InActivityTicket> tickets = ticketDao.searchByActId(actId);
-        List<InActivityDatas> datas = datasDao.searchByActId(actId);
-        if (null != fields && !fields.isEmpty()) {
-            activity.setFieldsList(fields);
-        }
-        if (null != tickets && !tickets.isEmpty()) {
-            activity.setTicketList(tickets);
-        }
-        if (null != datas && !datas.isEmpty()) {
-            activity.setDatasList(datas);
-        }
-        if (null != activity.getActAddr()) {
-            String[] split = activity.getActAddr().split("-");
-            StringBuilder actAddName = new StringBuilder();
-            for (String s : split) {
-                long id = Long.parseLong(s);
-                String name = sysCitysService.getById(id).getName();
-                actAddName.append(name).append("-");
+        if (null != activity) {
+            List<InActivityFields> fields = fieldsDao.searchByActId(actId);
+            List<InActivityTicket> tickets = ticketDao.searchByActId(actId);
+            List<InActivityDatas> datas = datasDao.searchByActId(actId);
+            if (null != fields && !fields.isEmpty()) {
+                activity.setFieldsList(fields);
             }
-            String newAddName = actAddName.substring(0, actAddName.length() - 1);
-            activity.setActAddrName(newAddName);
-        }
-        Long startTime = activity.getActStartTime().getTime();
-        Long closeTime = activity.getActCloseTime().getTime();
-        String actTimeType = "";
-        Long currDate = new Date().getTime();
-        if (startTime > currDate) {
-            actTimeType = "未开始";
+            if (null != tickets && !tickets.isEmpty()) {
+                activity.setTicketList(tickets);
+            }
+            if (null != datas && !datas.isEmpty()) {
+                activity.setDatasList(datas);
+            }
+            if (null != activity.getActAddr()) {
+                String[] split = activity.getActAddr().split("-");
+                StringBuilder actAddName = new StringBuilder();
+                for (String s : split) {
+                    long id = Long.parseLong(s);
+                    String name = sysCitysService.getById(id).getName();
+                    actAddName.append(name).append("-");
+                }
+                String newAddName = actAddName.substring(0, actAddName.length() - 1);
+                activity.setActAddrName(newAddName);
+            }
+            Long startTime = activity.getActStartTime().getTime();
+            Long closeTime = activity.getActCloseTime().getTime();
+            String actTimeType = "";
+            Long currDate = new Date().getTime();
+            if (startTime > currDate) {
+                actTimeType = "未开始";
+            } else {
+                if (closeTime < currDate) {
+                    actTimeType = "已结束";
+                } else if ((closeTime > currDate)) {
+                    actTimeType = "进行中";
+                }
+            }
+            activity.setActTimeType(actTimeType);
+            return activity;
         } else {
-            if (closeTime < currDate) {
-                actTimeType = "已结束";
-            } else if ((closeTime > currDate)) {
-                actTimeType = "进行中";
-            }
+            return null;
         }
-        activity.setActTimeType(actTimeType);
-        return activity;
     }
 
     @Override
