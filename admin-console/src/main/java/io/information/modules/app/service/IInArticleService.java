@@ -62,5 +62,5 @@ public interface IInArticleService extends IService<InArticle> {
 
     List<InArticle> interested();
 
-    InArticle next(Long uId);
+    InArticle next(Long aId);
 }

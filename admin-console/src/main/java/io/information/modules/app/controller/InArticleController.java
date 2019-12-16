@@ -224,9 +224,9 @@ public class InArticleController {
      */
     @GetMapping("/next")
     @ApiOperation(value = "文章内容 -- 下一篇", httpMethod = "GET", response = InArticle.class)
-    @ApiImplicitParam(value = "当前文章的作者ID", name = "uId", required = true)
-    public ResultUtil next(@RequestParam Long uId) {
-        InArticle article = articleService.next(uId);
+    @ApiImplicitParam(value = "当前文章ID", name = "aId", required = true)
+    public ResultUtil next(@RequestParam Long aId) {
+        InArticle article = articleService.next(aId);
         return ResultUtil.ok(article);
     }
 

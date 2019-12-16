@@ -336,7 +336,7 @@ public class InArticleServiceImpl extends ServiceImpl<InArticleDao, InArticle> i
     }
 
     @Override
-    public InArticle next(Long uId) {
-        return this.baseMapper.next(uId);
+    public InArticle next(Long aId) {
+        return this.baseMapper.next(aId);
     }
 }

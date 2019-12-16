@@ -45,7 +45,7 @@ public interface InArticleDao extends BaseMapper<InArticle> {
     /**
      * 下一篇
      */
-    InArticle next(@Param("uId") Long uId);
+    InArticle next(@Param("aId") Long aId);
 
     /**
      * 查询文章ID和标题
