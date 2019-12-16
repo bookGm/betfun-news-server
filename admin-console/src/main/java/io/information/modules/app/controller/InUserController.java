@@ -215,7 +215,7 @@ public class InUserController extends AbstractController {
                     return R.ok();
                 }
             }
-            return R.error("关注的用户已不存在");
+            return R.error("用户已不存在");
         }
         return R.error("必要参数不能为空");
     }
@@ -314,7 +314,7 @@ public class InUserController extends AbstractController {
                     boolVo.setuNick(u.getuNick() == null ? "" : u.getuNick());
                     boolVo.setuPhoto(u.getuPhoto());
                 }else {
-                    boolVo.setuNick("关注的用户已不存在");
+                    boolVo.setuNick("用户已不存在");
                 }
                 if (null != map.get("uId") && StringUtil.isNotBlank(map.get("uId"))) {
                     long uId = Long.parseLong(String.valueOf(map.get("uId")));

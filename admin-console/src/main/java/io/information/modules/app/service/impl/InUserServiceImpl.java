@@ -353,7 +353,7 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
                 likeVo.setNick(user.getuNick());
                 likeVo.setPhoto(user.getuPhoto());
             } else {
-                likeVo.setNick("关注的用户已不存在");
+                likeVo.setNick("用户已不存在");
             }
             getTitle(str[0], str[3], likeVo);
             newsLike.add(likeVo);
@@ -435,7 +435,7 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
             } else {
                 InUserDTO dto = new InUserDTO();
                 dto.setuId(null);
-                dto.setuNick("关注的用户已不存在");
+                dto.setuNick("用户已不存在");
                 newsFocus.add(dto);
             }
         }
@@ -489,7 +489,7 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
             } else {
                 InUserDTO dto = new InUserDTO();
                 dto.setuId(null);
-                dto.setuNick("关注的用户已不存在");
+                dto.setuNick("用户已不存在");
                 newsFocus.add(dto);
             }
         }
@@ -534,7 +534,7 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
             } else {
                 InUserDTO dto = new InUserDTO();
                 dto.setuId(null);
-                dto.setuNick("关注的用户已不存在");
+                dto.setuNick("用户已不存在");
                 newsFans.add(dto);
             }
         }

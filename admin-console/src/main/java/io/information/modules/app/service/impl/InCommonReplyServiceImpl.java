@@ -46,7 +46,7 @@ public class InCommonReplyServiceImpl extends ServiceImpl<InCommonReplyDao, InCo
                     r.setcName(u.getuName());
                     r.setcPhoto(u.getuPhoto());
                 } else {
-                    r.setcName("关注的用户已不存在");
+                    r.setcName("用户已不存在");
                 }
             }
             return new PageUtils(page);
