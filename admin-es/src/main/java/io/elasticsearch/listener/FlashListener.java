@@ -22,7 +22,7 @@ public class FlashListener {
     @Autowired
     private EsFlashService flashService;
 
-    private static final Logger LOG = LoggerFactory.getLogger(EsArticleServiceImpl.class);
+    private static final Logger LOG = LoggerFactory.getLogger(EsFlashService.class);
 
     /**
      * 快讯发布

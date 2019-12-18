@@ -32,7 +32,7 @@ public class LogListener {
     @Autowired
     private IInCardService iInCardService;
 
-    private static final Logger LOG = LoggerFactory.getLogger(EsArticleServiceImpl.class);
+    private static final Logger LOG = LoggerFactory.getLogger(IInLogService.class);
 
 
     /**

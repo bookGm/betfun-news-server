@@ -23,7 +23,7 @@ public class UserListener {
     @Autowired
     private EsUserService userService;
 
-    private static final Logger LOG = LoggerFactory.getLogger(EsArticleServiceImpl.class);
+    private static final Logger LOG = LoggerFactory.getLogger(EsUserService.class);
 
     /**
      * 用户注册
