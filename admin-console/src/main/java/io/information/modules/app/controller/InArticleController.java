@@ -199,7 +199,7 @@ public class InArticleController {
     public R queryArticle(@PathVariable("aId") String aId, @ApiIgnore HttpServletRequest request) {
         String ip = IPUtils.getIpAddr(request);
         InArticle article = articleService.getById(aId);
-        if(null != article){
+        if (null != article) {
             Boolean aBoolean = redisTemplate.hasKey(RedisKeys.ABROWSEIP + ip + aId);
             if (!aBoolean) {
                 redisTemplate.opsForValue().set(RedisKeys.ABROWSEIP + ip + aId, aId, 60 * 60 * 2);
@@ -212,7 +212,7 @@ public class InArticleController {
                 }
             }
             return R.ok().put("article", article);
-        }else {
+        } else {
             return R.error("文章不存在");
         }
 
@@ -224,9 +224,13 @@ public class InArticleController {
      */
     @GetMapping("/next")
     @ApiOperation(value = "文章内容 -- 下一篇", httpMethod = "GET", response = InArticle.class)
-    @ApiImplicitParam(value = "当前文章ID", name = "aId", required = true)
-    public ResultUtil next(@RequestParam Long aId) {
-        InArticle article = articleService.next(aId);
+    @ApiImplicitParams({
+            @ApiImplicitParam(value = "文章ID", name = "aId", required = true),
+            @ApiImplicitParam(value = "0：时间排序 1：浏览量排序 2：综合排序", name = "type", required = true),
+            @ApiImplicitParam(value = "0：草稿箱 1：审核中 2：已发布", name = "aStatus", required = true)
+    })
+    public ResultUtil next(@RequestParam Long aId, @RequestParam(defaultValue = "0") Integer type, @RequestParam Integer aStatus) {
+        InArticle article = articleService.next(aId, type, aStatus);
         return ResultUtil.ok(article);
     }
 

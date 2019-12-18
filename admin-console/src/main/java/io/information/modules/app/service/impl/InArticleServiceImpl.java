@@ -69,7 +69,7 @@ public class InArticleServiceImpl extends ServiceImpl<InArticleDao, InArticle> i
                     qw.orderByDesc(InArticle::getaReadNumber);
                     break;
                 case 2:
-                    qw.orderByDesc(InArticle::getaReadNumber, InArticle::getaCreateTime);
+                    qw.orderByDesc(InArticle::getaLike);
                     break;
             }
         }
@@ -336,7 +336,22 @@ public class InArticleServiceImpl extends ServiceImpl<InArticleDao, InArticle> i
     }
 
     @Override
-    public InArticle next(Long aId) {
-        return this.baseMapper.next(aId);
+    public InArticle next(Long aId, Integer type, Integer aStatus) {
+        InArticle article = null;
+        switch (type) {
+            case 0:
+                //时间排序
+                article = this.baseMapper.timeNext(aId, aStatus);
+                break;
+            case 1:
+                //浏览量排序
+                article = this.baseMapper.readNext(aId, aStatus);
+                break;
+            case 2:
+                //综合排序
+                article = this.baseMapper.synNext(aId, aStatus);
+                break;
+        }
+        return article;
     }
 }
