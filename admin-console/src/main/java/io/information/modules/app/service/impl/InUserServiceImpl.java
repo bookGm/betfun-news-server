@@ -434,7 +434,7 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
                 newsFocus.add(userDTO);
             } else {
                 InUserDTO dto = new InUserDTO();
-                dto.setuId(null);
+                dto.setuId(id);
                 dto.setuNick("用户已不存在");
                 newsFocus.add(dto);
             }
@@ -488,7 +488,7 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
                 }
             } else {
                 InUserDTO dto = new InUserDTO();
-                dto.setuId(null);
+                dto.setuId(id);
                 dto.setuNick("用户已不存在");
                 newsFocus.add(dto);
             }
@@ -533,7 +533,7 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
                 }
             } else {
                 InUserDTO dto = new InUserDTO();
-                dto.setuId(null);
+                dto.setuId(id);
                 dto.setuNick("用户已不存在");
                 newsFans.add(dto);
             }
@@ -593,7 +593,8 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
                             collects.add(dto);
                         } else {
                             InArticle inArticle = new InArticle();
-                            inArticle.setaId(null);
+                            inArticle.setaId(id);
+                            inArticle.setuId(null);
                             inArticle.setaTitle("该文章已被作者删除");
                             dto.setArticle(inArticle);
                             collects.add(dto);
@@ -625,7 +626,8 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
                             collects.add(dto);
                         } else {
                             InCardBase inCardBase = new InCardBase();
-                            inCardBase.setcId(null);
+                            inCardBase.setcId(id);
+                            inCardBase.setuId(null);
                             inCardBase.setcTitle("该帖子已被作者删除");
                             dto.setCardBase(inCardBase);
                             collects.add(dto);
@@ -654,7 +656,8 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
                             collects.add(dto);
                         } else {
                             InActivity inActivity = new InActivity();
-                            inActivity.setActId(null);
+                            inActivity.setActId(id);
+                            inActivity.setuId(null);
                             inActivity.setActTitle("该活动已被作者删除");
                             dto.setActivity(inActivity);
                             collects.add(dto);

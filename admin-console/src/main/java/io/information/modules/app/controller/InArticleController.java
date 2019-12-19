@@ -288,7 +288,7 @@ public class InArticleController {
             int type = Integer.parseInt(String.valueOf(map.get("type")));
             Long tid = filterId(id, type);
             if (StringUtil.isBlank(tid)) {
-                return ResultUtil.error("取消点赞失败");
+                return ResultUtil.error("取消点赞失败，目标可能已经不存在");
             }
             Long r = articleService.removeALike(id, user.getuId(), type, tid);
             if (r > 0) {
