@@ -91,9 +91,9 @@ public class InUploadDownController {
 
 
     @PostMapping("/uploadDle")
-    public R delete(String img) throws FileNotFoundException {
+    public R delete(@RequestParam("image") String image) throws FileNotFoundException {
         String path = ResourceUtils.getURL("classpath:").getPath() + "static/upload/";
-        boolean flag = FileUtils.deleteQuietly(new File(path + img));
+        boolean flag = FileUtils.deleteQuietly(new File(path + image));
         if (flag) {
             return R.ok();
         } else {
