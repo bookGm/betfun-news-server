@@ -217,8 +217,9 @@ public class AppLoginController {
             user.setuSalt(salt);
             user.setuPhone(phone);
             user.setuPwd(new Sha256Hash(form.getPwd(), salt).toHex());
+            user.setuPhoto("http://guansuo.info/news/upload/20191231115456head.png");
             user.setuCreateTime(new Date());
-//            user.setuPwd(new Sha256Hash(phone.substring(phone.length() - 6), salt).toHex());
+//            user.setuSalt(new Sha256Hash(phone.substring(phone.length() - 6), salt).toHex());
             user.setuToken(r.get("token").toString());
             if (iInUserService.saveWithCache(user)) {
                 EsUserEntity esUser = BeanHelper.copyProperties(user, EsUserEntity.class);

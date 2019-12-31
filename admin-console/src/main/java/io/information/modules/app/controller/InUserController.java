@@ -94,6 +94,9 @@ public class InUserController extends AbstractController {
     @GetMapping("/info")
     @ApiOperation(value = "查询用户信息", httpMethod = "GET")
     public ResultUtil<InUser> info(@ApiIgnore @LoginUser InUser user) {
+        if (null == user.getuPhoto()) {
+            user.setuPhoto("http://guansuo.info/news/upload/20191231115456head.png");
+        }
         return ResultUtil.ok(userService.getById(user.getuId()));
     }
 
@@ -241,6 +244,17 @@ public class InUserController extends AbstractController {
                 } else {
                     return ResultUtil.error("取消关注失败，请重试");
                 }
+            } else {
+                String key = user.getuId() + "-*-" + uId;
+                List<Map.Entry<Object, Object>> list = redisUtils.hfget(RedisKeys.FOCUS, key);
+                Map.Entry<Object, Object> entry = list.get(0);
+                Object entryKey = entry.getKey();
+                Long r = redisUtils.hremove(RedisKeys.FOCUS, entryKey);
+                if (r > 0) {
+                    return ResultUtil.ok();
+                } else {
+                    return ResultUtil.error("取消关注失败，请重试");
+                }
             }
         }
         return ResultUtil.error("必要参数不能为空");
@@ -313,7 +327,7 @@ public class InUserController extends AbstractController {
                 if (null != u) {
                     boolVo.setuNick(u.getuNick() == null ? "" : u.getuNick());
                     boolVo.setuPhoto(u.getuPhoto());
-                }else {
+                } else {
                     boolVo.setuNick("用户已不存在");
                 }
                 if (null != map.get("uId") && StringUtil.isNotBlank(map.get("uId"))) {
@@ -601,20 +615,33 @@ public class InUserController extends AbstractController {
             user) {
         Long uId = -1L;
         if (NewsEnum.收藏_文章.getCode().equals(String.valueOf(type))) {
-            uId = articleService.getById(id).getuId();
+            uId = articleService.getById(id) == null ? 0 : articleService.getById(id).getuId();
         }
         if (NewsEnum.收藏_帖子.getCode().equals(String.valueOf(type))) {
-            uId = cardService.getById(id).getuId();
+            uId = cardService.getById(id) == null ? 0 : cardService.getById(id).getuId();
         }
         if (NewsEnum.收藏_活动.getCode().equals(String.valueOf(type))) {
-            uId = activityService.getById(id).getuId();
+            uId = activityService.getById(id) == null ? 0 : activityService.getById(id).getuId();
         }
-        String key = id + "-" + user.getuId() + "-" + uId + "-" + type;
-        Long r = redisUtils.hremove(RedisKeys.COLLECT, key);
-        if (r > 0) {
-            return ResultUtil.ok();
+        if (uId == 0) {
+            String key = id + "-" + user.getuId() + "-*-" + type;
+            List<Map.Entry<Object, Object>> list = redisUtils.hfget(RedisKeys.COLLECT, key);
+            Map.Entry<Object, Object> entry = list.get(0);
+            Object entryKey = entry.getKey();
+            Long r = redisUtils.hremove(RedisKeys.COLLECT, entryKey);
+            if (r > 0) {
+                return ResultUtil.ok();
+            } else {
+                return ResultUtil.error("收藏删除失败，请重试");
+            }
         } else {
-            return ResultUtil.error("收藏删除失败，请重试");
+            String key = id + "-" + user.getuId() + "-" + uId + "-" + type;
+            Long r = redisUtils.hremove(RedisKeys.COLLECT, key);
+            if (r > 0) {
+                return ResultUtil.ok();
+            } else {
+                return ResultUtil.error("收藏删除失败，请重试");
+            }
         }
     }
 

@@ -66,6 +66,7 @@ public class UserController {
         user.setuId(IdGenerator.getId());
         user.setuCreateTime(new Date());
         user.setuPotential(-1);
+        user.setuPhoto("http://guansuo.info/news/upload/20191231115456head.png");
         userService.save(user);
         return R.ok();
     }
