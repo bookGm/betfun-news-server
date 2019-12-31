@@ -25,7 +25,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 @RestController
-@RequestMapping("app/uploadDown")
+@RequestMapping("/app/uploadDown")
 public class InUploadDownController {
     @Autowired
     ServerConfig serverConfig;
@@ -91,9 +91,9 @@ public class InUploadDownController {
 
 
     @PostMapping("/uploadDle")
-    public R delete(@RequestParam("image") String image) throws FileNotFoundException {
+    public R delete(String img) throws FileNotFoundException {
         String path = ResourceUtils.getURL("classpath:").getPath() + "static/upload/";
-        boolean flag = FileUtils.deleteQuietly(new File(path + image));
+        boolean flag = FileUtils.deleteQuietly(new File(path + img));
         if (flag) {
             return R.ok();
         } else {

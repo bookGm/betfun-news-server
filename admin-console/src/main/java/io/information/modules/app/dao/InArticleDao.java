@@ -43,19 +43,9 @@ public interface InArticleDao extends BaseMapper<InArticle> {
     void addReadNumber(@Param("aReadNumber") Long aReadNumber, @Param("aId") Long aId);
 
     /**
-     * 下一篇(时间排序)
+     * 下一篇
      */
-    InArticle timeNext(@Param("aId") Long aId, @Param("aStatus") Integer aStatus);
-
-    /**
-     * 下一篇(浏览量排序)
-     */
-    InArticle readNext(@Param("aId") Long aId, @Param("aStatus") Integer aStatus);
-
-    /**
-     * 下一篇(综合排序)
-     */
-    InArticle synNext(@Param("aId") Long aId, @Param("aStatus") Integer aStatus);
+    InArticle next(@Param("aId") Long aId);
 
     /**
      * 查询文章ID和标题

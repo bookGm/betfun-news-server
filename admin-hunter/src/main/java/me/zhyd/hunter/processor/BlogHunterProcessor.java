@@ -107,7 +107,7 @@ public class BlogHunterProcessor extends HunterProcessor {
                     //逐出扫描的时间间隔(毫秒) 如果为负数,则不运行逐出线程, 默认-1
                     config.setTimeBetweenEvictionRunsMillis(-1);
 
-                    jedisPool = new JedisPool(config, "192.168.1.6", 6379, 10000);
+                    jedisPool = new JedisPool(config, "127.0.0.1", 6379, 10000);
                 }
             }
         }

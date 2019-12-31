@@ -45,6 +45,12 @@ public class InCardBase implements Serializable {
     @TableField(exist = false)
     @ApiModelProperty(value = "用户昵称", name = "uNick", required = false)
     private String uNick;
+    /**
+     * 用户昵称
+     */
+    @TableField(exist = false)
+    @ApiModelProperty(value = "用户头像", name = "uPhoto", required = false)
+    private String uPhoto;
 
 
     /**
@@ -253,5 +259,13 @@ public class InCardBase implements Serializable {
 
     public void setcNodeCategoryValue(String cNodeCategoryValue) {
         this.cNodeCategoryValue = cNodeCategoryValue;
+    }
+
+    public String getuPhoto() {
+        return uPhoto;
+    }
+
+    public void setuPhoto(String uPhoto) {
+        this.uPhoto = uPhoto;
     }
 }

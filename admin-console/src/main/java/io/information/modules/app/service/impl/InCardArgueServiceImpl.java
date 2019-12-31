@@ -48,7 +48,7 @@ public class InCardArgueServiceImpl extends ServiceImpl<InCardArgueDao, InCardAr
                 break;
             case 1:
                 //反方
-                int rNumber = argue.getCaRsideNumber() == null ? 0 : argue.getCaRsideNumber();
+                int rNumber = argue.getCaRsideNumber() == null ? 0 : argue.getCaFsideNumber();
                 argue.setCaRsideNumber(rNumber + 1);
                 break;
         }

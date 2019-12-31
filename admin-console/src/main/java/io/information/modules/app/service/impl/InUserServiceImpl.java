@@ -151,10 +151,11 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
         //模糊查询出某类的key  #uId-#type-#noId
         Long uId = Long.parseLong(String.valueOf(map.get("uId")));
         List<Map.Entry<Object, Object>> nmap = redisUtils.hfget(RedisKeys.NODES, uId + "-*-*");
-        int nSize = nmap.size();
+        int nSize = 0;
         ArrayList<InNodeDTO> nodeFocus = null;
         //关注目标信息
         if (null != nmap && nmap.size() > 0) {
+            nSize = nmap.size();
             nodeFocus = new ArrayList<>();
             if (bindex + size < nmap.size()) {
                 nmap = nmap.subList(bindex, bindex + size);
@@ -434,7 +435,7 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
                 newsFocus.add(userDTO);
             } else {
                 InUserDTO dto = new InUserDTO();
-                dto.setuId(id);
+                dto.setuId(null);
                 dto.setuNick("用户已不存在");
                 newsFocus.add(dto);
             }
@@ -488,7 +489,7 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
                 }
             } else {
                 InUserDTO dto = new InUserDTO();
-                dto.setuId(id);
+                dto.setuId(null);
                 dto.setuNick("用户已不存在");
                 newsFocus.add(dto);
             }
@@ -533,7 +534,7 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
                 }
             } else {
                 InUserDTO dto = new InUserDTO();
-                dto.setuId(id);
+                dto.setuId(null);
                 dto.setuNick("用户已不存在");
                 newsFans.add(dto);
             }
@@ -593,8 +594,7 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
                             collects.add(dto);
                         } else {
                             InArticle inArticle = new InArticle();
-                            inArticle.setaId(id);
-                            inArticle.setuId(null);
+                            inArticle.setaId(null);
                             inArticle.setaTitle("该文章已被作者删除");
                             dto.setArticle(inArticle);
                             collects.add(dto);
@@ -620,14 +620,14 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
                                 InUser user = this.getById(cardBase.getuId());
                                 if (null != user) {
                                     cardBase.setuNick(user.getuNick() == null ? "" : user.getuNick());
+                                    cardBase.setuPhoto(user.getuPhoto());
                                 }
                             }
                             dto.setCardBase(cardBase);
                             collects.add(dto);
                         } else {
                             InCardBase inCardBase = new InCardBase();
-                            inCardBase.setcId(id);
-                            inCardBase.setuId(null);
+                            inCardBase.setcId(null);
                             inCardBase.setcTitle("该帖子已被作者删除");
                             dto.setCardBase(inCardBase);
                             collects.add(dto);
@@ -656,8 +656,7 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
                             collects.add(dto);
                         } else {
                             InActivity inActivity = new InActivity();
-                            inActivity.setActId(id);
-                            inActivity.setuId(null);
+                            inActivity.setActId(null);
                             inActivity.setActTitle("该活动已被作者删除");
                             dto.setActivity(inActivity);
                             collects.add(dto);

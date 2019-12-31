@@ -22,7 +22,8 @@ public class ServerConfig implements ApplicationListener<WebServerInitializedEve
             e.printStackTrace();
         }
 //        return "http://"+address.getHostAddress() +":"+this.serverPort+contextPath;
-        return "http://192.168.1.6:" + this.serverPort + contextPath;
+//        return "http://192.168.1.6:" + this.serverPort + contextPath;
+        return "http://guansuo.info" + contextPath;
     }
 
     @Override
