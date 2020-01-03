@@ -95,8 +95,8 @@ public class UserEsServiceImpl implements UserEsService {
 //            文章数 浏览数 获赞数
             for (EsUserEntity entity : entityList) {
                 LambdaQueryWrapper<InArticle> queryWrapper = new LambdaQueryWrapper<>();
-                if (null != entity && null != entity.getUId()) {
-                    queryWrapper.eq(InArticle::getuId, entity.getUId());
+                if (null != entity && null != entity.getuId()) {
+                    queryWrapper.eq(InArticle::getuId, entity.getuId());
                     int articleNumber = articleService.count(queryWrapper);
                     entity.setArticleNumber(articleNumber);
                     List<InArticle> articles = articleService.list(queryWrapper);
@@ -142,31 +142,31 @@ public class UserEsServiceImpl implements UserEsService {
     private EsUserEntity createEsEntity(Map<String, Object> smap, Map<String, HighlightField> hmap) {
         EsUserEntity ed = new EsUserEntity();
         if (smap.get("uId") != null)
-            ed.setUId(Long.parseLong(String.valueOf(smap.get("uId").toString())));
+            ed.setuId(Long.parseLong(String.valueOf(smap.get("uId").toString())));
         if (smap.get("uPhoto") != null)
-            ed.setUPhoto(String.valueOf(smap.get("uPhoto").toString()));
+            ed.setuPhoto(String.valueOf(smap.get("uPhoto").toString()));
         if (smap.get("uFocus") != null)
-            ed.setUFocus(Integer.parseInt(String.valueOf(smap.get("uFocus").toString())));
+            ed.setuFocus(Integer.parseInt(String.valueOf(smap.get("uFocus").toString())));
         if (smap.get("uFans") != null)
-            ed.setUFans(Long.parseLong(String.valueOf(smap.get("uFans").toString())));
+            ed.setuFans(Long.parseLong(String.valueOf(smap.get("uFans").toString())));
         if (smap.get("uPhone") != null)
-            ed.setUPhone(String.valueOf(smap.get("uPhone").toString()));
+            ed.setuPhone(String.valueOf(smap.get("uPhone").toString()));
         if (smap.get("uAuthStatus") != null)
-            ed.setUAuthStatus(Integer.parseInt(String.valueOf(smap.get("uAuthStatus").toString())));
+            ed.setuAuthStatus(Integer.parseInt(String.valueOf(smap.get("uAuthStatus").toString())));
         if (smap.get("uAuthType") != null)
-            ed.setUAuthType(Integer.parseInt(String.valueOf(smap.get("uAuthType").toString())));
+            ed.setuAuthType(Integer.parseInt(String.valueOf(smap.get("uAuthType").toString())));
         if (smap.get("uCreateTime") != null) {
             String timeString = String.valueOf(smap.get("uCreateTime").toString());
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             try {
                 Date date = sdf.parse(timeString);
-                ed.setUCreateTime(date);
+                ed.setuCreateTime(date);
             } catch (ParseException e) {
                 e.printStackTrace();
             }
         }
         if (smap.get("uPotential") != null)
-            ed.setUPotential(Integer.parseInt(String.valueOf(smap.get("uPotential").toString())));
+            ed.setuPotential(Integer.parseInt(String.valueOf(smap.get("uPotential").toString())));
         return ed;
     }
 

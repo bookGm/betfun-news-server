@@ -113,7 +113,7 @@ public class ArticleEsServiceImpl implements ArticleEsService {
             List<EsArticleEntity> entityList = esArticleEntities.getContent();
             // 简单时间
             for (EsArticleEntity entity : entityList) {
-                entity.setASimpleTime(DateUtils.getSimpleTime(entity.getACreateTime()));
+                entity.setaSimpleTime(DateUtils.getSimpleTime(entity.getaCreateTime()));
             }
             long total = esArticleEntities.getTotalElements();
             return new PageUtils(entityList, total, pageSize, currPage);
@@ -151,33 +151,33 @@ public class ArticleEsServiceImpl implements ArticleEsService {
     private EsArticleEntity createEsEntity(Map<String, Object> smap, Map<String, HighlightField> hmap) {
         EsArticleEntity ed = new EsArticleEntity();
         if (smap.get("aId") != null)
-            ed.setAId(Long.parseLong(String.valueOf(smap.get("aId").toString())));
+            ed.setaId(Long.parseLong(String.valueOf(smap.get("aId").toString())));
         if (smap.get("uId") != null)
-            ed.setUId(Long.parseLong(String.valueOf(smap.get("uId").toString())));
+            ed.setuId(Long.parseLong(String.valueOf(smap.get("uId").toString())));
         if (smap.get("uName") != null)
-            ed.setUName(String.valueOf(smap.get("uName").toString()));
+            ed.setuName(String.valueOf(smap.get("uName").toString()));
         if (smap.get("aCover") != null)
-            ed.setACover(String.valueOf(smap.get("aCover").toString()));
+            ed.setaCover(String.valueOf(smap.get("aCover").toString()));
         if (smap.get("aType") != null)
-            ed.setAType(Integer.parseInt(String.valueOf(smap.get("aType").toString())));
+            ed.setaType(Integer.parseInt(String.valueOf(smap.get("aType").toString())));
         if (smap.get("aSource") != null)
-            ed.setASource(String.valueOf(smap.get("aSource").toString()));
+            ed.setaSource(String.valueOf(smap.get("aSource").toString()));
         if (smap.get("aLink") != null)
-            ed.setALink(String.valueOf(smap.get("aLink").toString()));
+            ed.setaLink(String.valueOf(smap.get("aLink").toString()));
         if (smap.get("aLike") != null)
-            ed.setALike(Long.parseLong(String.valueOf(smap.get("aLike").toString())));
+            ed.setaLike(Long.parseLong(String.valueOf(smap.get("aLike").toString())));
         if (smap.get("aCollect") != null)
-            ed.setACollect(Integer.parseInt(String.valueOf(smap.get("aCollect").toString())));
+            ed.setaCollect(Integer.parseInt(String.valueOf(smap.get("aCollect").toString())));
         if (smap.get("aCritic") != null)
-            ed.setACritic(Long.parseLong(String.valueOf(smap.get("aCritic").toString())));
+            ed.setaCritic(Long.parseLong(String.valueOf(smap.get("aCritic").toString())));
         if (smap.get("aReadNumber") != null)
-            ed.setAReadNumber(Long.parseLong(String.valueOf(smap.get("aReadNumber").toString())));
+            ed.setaReadNumber(Long.parseLong(String.valueOf(smap.get("aReadNumber").toString())));
         if (smap.get("aCreateTime") != null) {
             String timeString = String.valueOf(smap.get("aCreateTime").toString());
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             try {
                 Date date = sdf.parse(timeString);
-                ed.setACreateTime(date);
+                ed.setaCreateTime(date);
             } catch (ParseException e) {
                 e.printStackTrace();
             }

@@ -26,7 +26,7 @@ public class EsUserServiceImpl implements EsUserService {
 
     @Override
     public void updatedUser(EsUserEntity userEntity) {
-        userDao.deleteById(userEntity.getUId());
+        userDao.deleteById(userEntity.getuId());
         userDao.save(userEntity);
     }
 

@@ -8,13 +8,12 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
 
 import java.net.InetSocketAddress;
 
 /**
  * Websocket
- * 
+ *
  * @author LX
  * @date 2019-11-25
  */
@@ -29,25 +28,25 @@ public class WebsocketServer {
 
 
     public void run() throws Exception {
-        
+
         EventLoopGroup bossGroup = new NioEventLoopGroup(); // (1)
         EventLoopGroup workerGroup = new NioEventLoopGroup();
         try {
             ServerBootstrap b = new ServerBootstrap(); // (2)
             b.group(bossGroup, workerGroup)
-             .channel(NioServerSocketChannel.class) // (3)
-             .childHandler(new WebsocketServerInitializer())  //(4)
-             .option(ChannelOption.SO_BACKLOG, 1024)          // (5)
-             .localAddress(new InetSocketAddress(port))
-             .childOption(ChannelOption.SO_KEEPALIVE, true); // (6)
-              LOG.info("---------------WebsocketChatServer 启动了---------------" + port);
+                    .channel(NioServerSocketChannel.class) // (3)
+                    .childHandler(new WebsocketServerInitializer())  //(4)
+                    .option(ChannelOption.SO_BACKLOG, 1024)          // (5)
+                    .localAddress(new InetSocketAddress(port))
+                    .childOption(ChannelOption.SO_KEEPALIVE, true); // (6)
+            LOG.info("---------------WebsocketChatServer 启动了---------------" + port);
             // 绑定端口，开始接收进来的连接
-             ChannelFuture f = b.bind(port).sync(); // (7)
-             f.channel().closeFuture().sync();
-        } finally {
+            ChannelFuture f = b.bind(port)/*.sync()*/; // (7)
+//             f.channel().closeFuture().sync();
+        } catch (Exception e) {
             workerGroup.shutdownGracefully();
             bossGroup.shutdownGracefully();
-            LOG.info("---------------WebsocketChatServer--------------- 关闭了");
+            LOG.info("---------------WebsocketChatServer--------------- 关闭了" + e.getMessage());
         }
     }
 

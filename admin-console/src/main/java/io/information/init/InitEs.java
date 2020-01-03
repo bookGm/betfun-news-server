@@ -1,50 +1,144 @@
 package io.information.init;
 
 import io.elasticsearch.dao.EsArticleDao;
+import io.elasticsearch.dao.EsFlashDao;
+import io.elasticsearch.dao.EsUserDao;
 import io.elasticsearch.entity.EsArticleEntity;
+import io.elasticsearch.entity.EsFlashEntity;
+import io.elasticsearch.entity.EsUserEntity;
+import io.elasticsearch.entity.LocationEntity;
+import io.information.common.utils.BeanHelper;
 import io.information.common.utils.IdGenerator;
+import io.information.modules.app.entity.InArticle;
+import io.information.modules.app.entity.InNewsFlash;
+import io.information.modules.app.entity.InUser;
+import io.information.modules.app.service.IInArticleService;
+import io.information.modules.app.service.IInNewsFlashService;
+import io.information.modules.app.service.IInUserService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-//@Component
-public class InitArticleEs {
-    //    @Autowired
-    EsArticleDao articleDao;
+@Component
+public class InitEs {
+    @Autowired
+    EsArticleDao esArticleDao;
+    @Autowired
+    EsFlashDao esFlashDao;
+    @Autowired
+    EsUserDao esUserDao;
+    @Autowired
+    IInArticleService articleService;
+    @Autowired
+    IInNewsFlashService flashService;
+    @Autowired
+    IInUserService userService;
 
-    //    @PostConstruct
+    @PostConstruct
     public void init() {
         //只初始化一次
-        Iterable<EsArticleEntity> esArticle = articleDao.findAll();
-        if (esArticle.iterator().hasNext()) {
+        Iterable<EsArticleEntity> esArticles = esArticleDao.findAll();
+        if (esArticles.iterator().hasNext()) {
+            return;
+        }
+        Iterable<EsFlashEntity> esFlashs = esFlashDao.findAll();
+        if (esFlashs.iterator().hasNext()) {
+            return;
+        }
+        Iterable<EsUserEntity> esUsers = esUserDao.findAll();
+        if (esUsers.iterator().hasNext()) {
             return;
         }
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String simple = format.format(new Date());
-        for (int i = 0; i < 40; i++) {
+        Long uId = 5L;
+        for (int i = 0; i < 2; i++) {
+            //用户
+            EsUserEntity esUser = new EsUserEntity();
+            esUser.setuId(uId);
+            esUser.setuAccount("15231848846");
+            esUser.setuName("云迹");
+            esUser.setuPwd("b8a9ab9eb88aedc956a4791cb1be212615c177226eb25a5b3a1496fc17eb869f");
+            esUser.setuSalt("8fd413b44ceabf99480cde819336d8d8cbbeea08f62a311db029ffd1da96ed18");
+            esUser.setuNick("云迹");
+            esUser.setuPhoto("http://guansuo.info/news/upload/20191231115456head.png");
+            esUser.setuPhone("15231848846");
+            esUser.setuIntro("best day");
+            esUser.setuFans(41L);
+            esUser.setLikeNUmber(0L);
+            esUser.setuAuthStatus(2);
+            esUser.setuFocus(33);
+            esUser.setuAuthType(0);
+            esUser.setuCreateTime(new Date());
+            esUser.setuPotential(0);
+            esUser.setReadNumber(10L * i);
+            esUser.setArticleNumber(1);
+            esUserDao.save(esUser);
+//            InUser user = BeanHelper.copyProperties(esUser, InUser.class);
+//            userService.save(user);
+            //文章
             EsArticleEntity post = new EsArticleEntity();
-            post.setAId(IdGenerator.getId());
-            Long uId = 1187210015197888514L;
-            post.setUId(uId);
-            post.setUName("456");
-            post.setATitle(getTitle().get(i));
-            post.setAContent(getContent().get(i));
-            post.setABrief(getBrief().get(i));
-            post.setAKeyword(getKeyword().get(i));
-            post.setACover(null);
-            post.setAType(3);
-            post.setASource(null);
-            post.setALink(null);
-            post.setALink(null);
-            post.setACreateTime(new Date());
-            post.setALike(0L);
-            post.setACollect(i);
-            post.setACritic(0L);
-            post.setAReadNumber((long) (i * 10));
-            post.setASimpleTime(simple);
-            articleDao.save(post);
+            post.setaId(IdGenerator.getId());
+            post.setuId(uId);
+            post.setuName("云迹");
+            post.setaTitle("BTC多次下探关键支撑区域，短线多头反抗力量较弱");
+            post.setaContent("<p><strong>作者 | 哈希派分析团队</strong></p>\n" +
+                    "<p><img src=\"https://appserversrc.8btc.com/images/20191115115703REec.jpeg\" title=\"\" alt=\"\"></p>\n" +
+                    "<p><img src=\"https://appserversrc.8btc.com/images/20191115115704LbS7.jpeg\" title=\"\" alt=\"\"></p>\n" +
+                    "<p><img src=\"https://appserversrc.8btc.com/images/20191115115705QcoK.jpeg\" title=\"\" alt=\"\"></p>\n" +
+                    "<p><img src=\"https://appserversrc.8btc.com/images/20191115115709nIqd.jpeg\" title=\"\" alt=\"\"></p>\n" +
+                    "<p><img src=\"https://appserversrc.8btc.com/images/20191115115706fL8b.jpeg\" title=\"\" alt=\"\"></p>\n" +
+                    "<p><img src=\"https://appserversrc.8btc.com/images/20191115115706Zplf.jpeg\" title=\"\" alt=\"\"></p>\n" +
+                    "<p><img src=\"https://appserversrc.8btc.com/images/20191115115707rUBf.jpeg\" title=\"\" alt=\"\"></p>\n" +
+                    "<p><img src=\"https://appserversrc.8btc.com/images/20191115115711ljn0.jpeg\" title=\"\" alt=\"\"></p>\n" +
+                    "<p><img src=\"https://appserversrc.8btc.com/images/2019111511570823Cj.jpeg\" title=\"\" alt=\"\"></p>\n" +
+                    "<p><img src=\"https://appserversrc.8btc.com/images/20191115115709RtJg.jpeg\" title=\"\" alt=\"\"></p>\n" +
+                    "<p><img src=\"https://appserversrc.8btc.com/images/20191115115713FkW7.jpeg\" title=\"\" alt=\"\"></p>\n" +
+                    "<p><img src=\"https://appserversrc.8btc.com/images/20191115115709H9ca.jpeg\" title=\"\" alt=\"\"></p>\n" +
+                    "<p><img src=\"https://appserversrc.8btc.com/images/20191115115710RqBo.jpeg\" title=\"\" alt=\"\"></p>\n" +
+                    "<p><img src=\"https://appserversrc.8btc.com/images/20191115115710xuu6.jpeg\" title=\"\" alt=\"\"></p>\n" +
+                    "<p><img src=\"https://appserversrc.8btc.com/images/2019111511571433tK.jpeg\" title=\"\" alt=\"\"></p>\n" +
+                    "<p><img src=\"https://appserversrc.8btc.com/images/20191115115715eK0h.jpeg\" title=\"\" alt=\"\"></p>");
+            post.setaBrief("作者 | 哈希派分析团队");
+            post.setaKeyword("比特币,以太坊,行情分析");
+            post.setaCover("https://appserversrc.8btc.com/viking/20191115115657_sNby.jpeg");
+            post.setaType(1);
+            post.setaStatus(2);
+            post.setaSource("巴比特");
+            post.setaLink("https://www.8btc.com/article/514617");
+            post.setaCreateTime(new Date());
+            post.setaLike(0L);
+            post.setaCollect(i);
+            post.setaCritic(0L);
+            post.setaReadNumber((long) (i * 10));
+            post.setaSimpleTime(simple);
+            InArticle inArticle = BeanHelper.copyProperties(post, InArticle.class);
+            esArticleDao.save(post);
+            articleService.save(inArticle);
+            //快讯
+            EsFlashEntity esFlash = new EsFlashEntity();
+            esFlash.setnCreateTime(new Date());
+            esFlash.setnBad(5);
+            esFlash.setnBull(6);
+            esFlash.setnId(IdGenerator.getId());
+            esFlash.setnTitle("动态 | 金山云一次性通过2019可信区块链测试 排名第一");
+            esFlash.setnBrief("今天，中国排名第一 (金融界）");
+            esFlash.setnContent("今天，在中国信息通信研究院、中国通信标准化协会联合主办的 2019 可信区块链峰会上，金山云一次性通过2019年可信区块链标准评测，排名第一，KBaaS和KLedger作为金山云区块链的两大核心产品，一次性通过全部评测。本次峰会主要分享区块链的最新动态，展示应用热点及标杆案例，探讨区块链应用面临的挑战何以及赋能实体经济的最佳路径等议题。（金融界）");
+            InNewsFlash flash = BeanHelper.copyProperties(esFlash, InNewsFlash.class);
+            esFlashDao.save(esFlash);
+            flashService.save(flash);
+            //其他
+            LocationEntity entity = new LocationEntity();
+            entity.setId(IdGenerator.getUUID());
+            entity.setFirstName(i+"其他");
+            entity.setLastName("其他"+i);
+            entity.setAge(0);
+            entity.setAbout("其他");
         }
     }
 

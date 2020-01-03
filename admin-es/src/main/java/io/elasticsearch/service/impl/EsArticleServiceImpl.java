@@ -41,7 +41,7 @@ public class EsArticleServiceImpl implements EsArticleService {
 
     @Override
     public void updatedArticle(EsArticleEntity articleEntity) {
-        articleDao.deleteById(articleEntity.getAId());
+        articleDao.deleteById(articleEntity.getaId());
         articleDao.save(articleEntity);
     }
 

@@ -118,17 +118,17 @@ public class FlashEsServiceImpl implements FlashEsService {
     private EsFlashEntity createEsEntity(Map<String, Object> smap, Map<String, HighlightField> hmap) {
         EsFlashEntity ed = new EsFlashEntity();
         if (smap.get("nId") != null)
-            ed.setNId(Long.parseLong(String.valueOf(smap.get("nId").toString())));
+            ed.setnId(Long.parseLong(String.valueOf(smap.get("nId").toString())));
         if (smap.get("nBull") != null)
-            ed.setNBull(Integer.parseInt(String.valueOf(smap.get("nBull").toString())));
+            ed.setnBull(Integer.parseInt(String.valueOf(smap.get("nBull").toString())));
         if (smap.get("nBad") != null)
-            ed.setNBad(Integer.getInteger(String.valueOf(smap.get("nBad").toString())));
+            ed.setnBad(Integer.getInteger(String.valueOf(smap.get("nBad").toString())));
         if (smap.get("nCreateTime") != null) {
             String timeString = String.valueOf(smap.get("nCreateTime").toString());
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             try {
                 Date date = sdf.parse(timeString);
-                ed.setNCreateTime(date);
+                ed.setnCreateTime(date);
             } catch (ParseException e) {
                 e.printStackTrace();
             }
