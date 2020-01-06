@@ -93,7 +93,7 @@ public class InUser implements Serializable {
     /**
      * 认证状态（0：未通过  1：通过 ）
      */
-    @ApiModelProperty(value = "认证状态（0：未通过  1：通过 ）", name = "uAuthStatus", required = false)
+    @ApiModelProperty(value = "认证状态（0：未通过  1：审核中 2：已通过）", name = "uAuthStatus", required = false)
     private Integer uAuthStatus;
     /**
      * 认证类型（0：个人 1：媒体 2：企业）

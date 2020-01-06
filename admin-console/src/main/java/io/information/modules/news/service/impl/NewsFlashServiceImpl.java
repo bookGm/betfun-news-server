@@ -102,9 +102,15 @@ public class NewsFlashServiceImpl extends ServiceImpl<NewsFlashDao, NewsFlash> i
     public PageUtils queryPage(Map<String, Object> params) {
         LambdaQueryWrapper<NewsFlash> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.orderByDesc(NewsFlash::getnCreateTime);
-        if (null != params.get("aTitle") && StringUtil.isNotBlank(params.get("aTitle"))) {
-            queryWrapper.like(NewsFlash::getnTitle, (String) params.get("aTitle"));
+        if (null != params.get("key") && StringUtil.isNotBlank(params.get("key"))) {
+            String key = (String) params.get("key");
+            queryWrapper.like(NewsFlash::getnTitle, key)
+                    .or()
+                    .eq(NewsFlash::getnId, key)
+                    .or()
+                    .like(NewsFlash::getnBrief, key);
         }
+        queryWrapper.orderByDesc(NewsFlash::getnCreateTime);
         IPage<NewsFlash> page = this.page(
                 new Query<NewsFlash>().getPage(params),
                 queryWrapper

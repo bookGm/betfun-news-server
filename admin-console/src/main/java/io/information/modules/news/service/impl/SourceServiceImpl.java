@@ -1,10 +1,10 @@
 package io.information.modules.news.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.guansuo.common.StringUtil;
 import io.information.common.utils.PageUtils;
 import io.information.common.utils.Query;
 import io.information.modules.news.dao.SourceDao;
@@ -22,9 +22,19 @@ public class SourceServiceImpl extends ServiceImpl<SourceDao, SourceEntity> impl
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
+        LambdaQueryWrapper<SourceEntity> queryWrapper = new LambdaQueryWrapper<>();
+        if (null != params.get("key") && StringUtil.isNotBlank(params.get("key"))) {
+            String key = String.valueOf(params.get("key"));
+            queryWrapper.eq(SourceEntity::getsOperationUserid, key)
+                    .or()
+                    .like(SourceEntity::getsComponent, key)
+                    .or()
+                    .like(SourceEntity::getsName, key);
+        }
+        queryWrapper.orderByDesc(SourceEntity::getsCreateTime);
         IPage<SourceEntity> page = this.page(
                 new Query<SourceEntity>().getPage(params),
-                new QueryWrapper<SourceEntity>()
+                queryWrapper
         );
 
         return new PageUtils(page);

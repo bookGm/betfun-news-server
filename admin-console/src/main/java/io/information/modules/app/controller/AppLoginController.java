@@ -111,8 +111,7 @@ public class AppLoginController {
         qw.eq(InUser::getuPhone, form.getUPhone());
         InUser user = iInUserService.getOne(qw);
         if (null == user || !user.getuPwd().equals(new Sha256Hash(form.getUPwd(), user.getuSalt()).toHex())) {
-            return R.error("" +
-                    "手机号或密码不正确");
+            return R.error("手机号或密码不正确");
         }
         return resultToken(user.getuId(), user.getuAuthStatus(), user.getuNick());
     }
@@ -216,6 +215,7 @@ public class AppLoginController {
             user.setuNick(phone);
             user.setuSalt(salt);
             user.setuPhone(phone);
+            user.setuAuthType(null);
             user.setuPwd(new Sha256Hash(form.getPwd(), salt).toHex());
             user.setuPhoto("http://guansuo.info/news/upload/20191231115456head.png");
             user.setuCreateTime(new Date());

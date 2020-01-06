@@ -15,7 +15,11 @@ import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.amqp.support.AmqpHeaders;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.Header;
+import org.springframework.messaging.handler.annotation.Headers;
 import org.springframework.stereotype.Component;
+
+import java.io.IOException;
+import java.util.Map;
 
 @Component
 public class UserListener {
@@ -32,9 +36,16 @@ public class UserListener {
             exchange = @Exchange(name = Constants.userExchange),
             key = Constants.user_Save_RouteKey
     ))
-    public void created(EsUserEntity esUser, Channel channel, @Header(AmqpHeaders.DELIVERY_TAG) long tag) {
+    public void created(EsUserEntity esUser, Channel channel, @Headers Map<String, Object> headers) {
         userService.saveUser(esUser);
-        RabbitMQUtils.askMessage(channel, tag, LOG);
+        // 手动ack
+        Long deliveryTag = (Long) headers.get(AmqpHeaders.DELIVERY_TAG);
+        // 手动签收
+        try {
+            channel.basicAck(deliveryTag, false);
+        } catch (IOException e) {
+            System.err.println("rabbitMQ手动应答失败" + e.getMessage());
+        }
     }
 
 
@@ -46,10 +57,17 @@ public class UserListener {
             exchange = @Exchange(name = Constants.userExchange),
             key = Constants.user_Delete_RouteKey
     ))
-    public void remove(String uIds, Channel channel, @Header(AmqpHeaders.DELIVERY_TAG) long tag) {
+    public void remove(String uIds, Channel channel, @Headers Map<String, Object> headers) {
         if (null != uIds) {
             userService.removeUser(uIds.split(","));
-            RabbitMQUtils.askMessage(channel, tag, LOG);
+            // 手动ack
+            Long deliveryTag = (Long) headers.get(AmqpHeaders.DELIVERY_TAG);
+            // 手动签收
+            try {
+                channel.basicAck(deliveryTag, false);
+            } catch (IOException e) {
+                System.err.println("rabbitMQ手动应答失败" + e.getMessage());
+            }
         }
     }
 
@@ -62,8 +80,15 @@ public class UserListener {
             exchange = @Exchange(name = Constants.userExchange),
             key = Constants.user_Update_RouteKey
     ))
-    public void update(EsUserEntity esUser, Channel channel, @Header(AmqpHeaders.DELIVERY_TAG) long tag) {
+    public void update(EsUserEntity esUser, Channel channel, @Headers Map<String, Object> headers) {
         userService.updatedUser(esUser);
-        RabbitMQUtils.askMessage(channel, tag, LOG);
+        // 手动ack
+        Long deliveryTag = (Long) headers.get(AmqpHeaders.DELIVERY_TAG);
+        // 手动签收
+        try {
+            channel.basicAck(deliveryTag, false);
+        } catch (IOException e) {
+            System.err.println("rabbitMQ手动应答失败" + e.getMessage());
+        }
     }
 }

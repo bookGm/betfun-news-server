@@ -1,6 +1,7 @@
 package io.information.modules.news.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -25,9 +26,14 @@ public class CardVoteServiceImpl extends ServiceImpl<CardVoteDao, CardVoteEntity
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
+        LambdaQueryWrapper<CardVoteEntity> queryWrapper = new LambdaQueryWrapper<>();
+        if (null != params.get("key") && StringUtil.isNotBlank(params.get("key"))) {
+            String key = String.valueOf(params.get("key"));
+            queryWrapper.eq(CardVoteEntity::getcId, key);
+        }
         IPage<CardVoteEntity> page = this.page(
                 new Query<CardVoteEntity>().getPage(params),
-                new QueryWrapper<CardVoteEntity>()
+                queryWrapper
         );
         for (CardVoteEntity v : page.getRecords()) {
             if (StringUtil.isNotBlank(v.getCvInfo())) {

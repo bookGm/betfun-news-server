@@ -21,11 +21,15 @@ public class ActivityServiceImpl extends ServiceImpl<ActivityDao, ActivityEntity
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
         LambdaQueryWrapper<ActivityEntity> queryWrapper = new LambdaQueryWrapper<>();
-        if (null != params.get("actTitle") && StringUtil.isNotBlank(params.get("actTitle"))) {
-            String actTitle = String.valueOf(params.get("actTitle"));
-            queryWrapper.like(ActivityEntity::getActTitle, actTitle);
+        if (null != params.get("key") && StringUtil.isNotBlank(params.get("key"))) {
+            String key = String.valueOf(params.get("key"));
+            queryWrapper.like(ActivityEntity::getActTitle, key)
+                    .or()
+                    .eq(ActivityEntity::getActId, key)
+                    .or()
+                    .eq(ActivityEntity::getActContact, key);
         }
-        queryWrapper.orderByDesc(ActivityEntity::getActBanner);
+        queryWrapper.orderByDesc(ActivityEntity::getActBanner, ActivityEntity::getActCreateTime);
         IPage<ActivityEntity> page = this.page(
                 new Query<ActivityEntity>().getPage(params),
                 queryWrapper
@@ -37,11 +41,16 @@ public class ActivityServiceImpl extends ServiceImpl<ActivityDao, ActivityEntity
     @Override
     public PageUtils audit(Map<String, Object> params) {
         LambdaQueryWrapper<ActivityEntity> queryWrapper = new LambdaQueryWrapper<>();
-        if (null != params.get("actTitle") && StringUtil.isNotBlank(params.get("actTitle"))) {
-            String actTitle = String.valueOf(params.get("actTitle"));
-            queryWrapper.like(ActivityEntity::getActTitle, actTitle);
+        if (null != params.get("key") && StringUtil.isNotBlank(params.get("key"))) {
+            String key = String.valueOf(params.get("key"));
+            queryWrapper.like(ActivityEntity::getActTitle, key)
+                    .or()
+                    .eq(ActivityEntity::getActId, key)
+                    .or()
+                    .eq(ActivityEntity::getActContact, key);
         }
         queryWrapper.eq(ActivityEntity::getActStatus, 1);
+        queryWrapper.orderByDesc(ActivityEntity::getActBanner, ActivityEntity::getActCategory);
         IPage<ActivityEntity> page = this.page(
                 new Query<ActivityEntity>().getPage(params),
                 queryWrapper

@@ -53,11 +53,17 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleDao, ArticleEntity> i
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
         LambdaQueryWrapper<ArticleEntity> queryWrapper = new LambdaQueryWrapper<>();
-        if (null != params.get("aTitle") && StringUtil.isNotBlank(params.get("aTitle"))) {
-            String aTitle = String.valueOf(params.get("aTitle"));
-            queryWrapper.like(ArticleEntity::getaTitle, aTitle);
+        if (null != params.get("key") && StringUtil.isNotBlank(params.get("key"))) {
+            String key = String.valueOf(params.get("key"));
+            queryWrapper.like(ArticleEntity::getaTitle, key)
+                    .or()
+                    .like(ArticleEntity::getaBrief, key)
+                    .or()
+                    .like(ArticleEntity::getaKeyword, key)
+                    .or()
+                    .eq(ArticleEntity::getaId, key);
         }
-        queryWrapper.orderByDesc(ArticleEntity::getaBanner);
+        queryWrapper.orderByDesc(ArticleEntity::getaBanner,ArticleEntity::getaCreateTime);
         IPage<ArticleEntity> page = this.page(
                 new Query<ArticleEntity>().getPage(params),
                 queryWrapper
@@ -68,11 +74,18 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleDao, ArticleEntity> i
     @Override
     public PageUtils audit(Map<String, Object> params) {
         LambdaQueryWrapper<ArticleEntity> queryWrapper = new LambdaQueryWrapper<>();
-        if (null != params.get("aTitle") && StringUtil.isNotBlank(params.get("aTitle"))) {
-            String aTitle = String.valueOf(params.get("aTitle"));
-            queryWrapper.like(ArticleEntity::getaTitle, aTitle);
+        if (null != params.get("key") && StringUtil.isNotBlank(params.get("key"))) {
+            String key = String.valueOf(params.get("key"));
+            queryWrapper.like(ArticleEntity::getaTitle, key)
+                    .or()
+                    .like(ArticleEntity::getaBrief, key)
+                    .or()
+                    .like(ArticleEntity::getaKeyword, key)
+                    .or()
+                    .eq(ArticleEntity::getaId, key);
         }
         queryWrapper.eq(ArticleEntity::getaStatus, 1);
+        queryWrapper.orderByDesc(ArticleEntity::getaBanner,ArticleEntity::getaCreateTime);
         IPage<ArticleEntity> page = this.page(
                 new Query<ArticleEntity>().getPage(params),
                 queryWrapper

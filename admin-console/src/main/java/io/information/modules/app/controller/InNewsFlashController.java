@@ -40,6 +40,8 @@ public class InNewsFlashController {
     private IInNewsFlashService newsFlashService;
     @Autowired
     private RabbitTemplate rabbitTemplate;
+    @Autowired
+    private RedisUtils redisUtils;
 
     /**
      * 列表 esOK
@@ -59,6 +61,18 @@ public class InNewsFlashController {
     public ResultUtil info(@PathVariable("nId") Long nId) {
         FlashVo details = newsFlashService.details(nId);
         return ResultUtil.ok(details);
+    }
+
+    /**
+     * 是否已经点击
+     */
+    @Login
+    @GetMapping("/isPoint/{nId}")
+    @ApiOperation(value = "快讯是否已经点击", httpMethod = "GET", notes = "快讯ID", response = FlashVo.class)
+    public ResultUtil isPoint(@PathVariable("nId") Long nId, @ApiIgnore @LoginUser InUser user) {
+        //是否点击
+        Boolean isPoint = redisUtils.hashHasKey(RedisKeys.LIKE, nId + "-" + user.getuId());
+        return ResultUtil.ok(isPoint);
     }
 
     /**
@@ -103,7 +117,12 @@ public class InNewsFlashController {
     public R attitude(@RequestBody Map<String, Object> map, @ApiIgnore @LoginUser InUser user) {
         if ((null != map.get("nId") && StringUtil.isNotBlank(map.get("nId")))
                 && (null != map.get("bId") && StringUtil.isNotBlank(map.get("bId")))) {
+            //是否点击
             long nId = Long.parseLong(String.valueOf(map.get("nId")));
+            Boolean isPoint = redisUtils.hashHasKey(RedisKeys.LIKE, nId + "-" + user.getuId());
+            if(isPoint){
+                return R.error("请不要重复点击！");
+            }
             int bId = Integer.parseInt(String.valueOf(map.get("bId")));
             newsFlashService.attitude(nId, user.getuId(), bId);
             return R.ok();

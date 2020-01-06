@@ -20,9 +20,13 @@ public class MessageServiceImpl extends ServiceImpl<MessageDao, MessageEntity> i
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
         LambdaQueryWrapper<MessageEntity> queryWrapper = new LambdaQueryWrapper<>();
-        if (null != params.get("mContent") && StringUtil.isNotBlank(params.get("mContent"))) {
-            String mContent = String.valueOf(params.get("mContent"));
-            queryWrapper.like(MessageEntity::getmContent, mContent);
+        if (null != params.get("key") && StringUtil.isNotBlank(params.get("key"))) {
+            String key = String.valueOf(params.get("key"));
+            queryWrapper.like(MessageEntity::getmContent, key)
+                    .or()
+                    .eq(MessageEntity::getmId, key)
+                    .or()
+                    .eq(MessageEntity::gettId, key);
         }
         queryWrapper.orderByDesc(MessageEntity::getmCreateTime);
         IPage<MessageEntity> page = this.page(

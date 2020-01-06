@@ -10,17 +10,17 @@ import io.information.modules.app.service.IInCardService;
 import io.information.modules.app.service.IInLogService;
 import io.information.modules.app.service.IInUserService;
 import io.mq.utils.Constants;
-import io.mq.utils.RabbitMQUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.amqp.rabbit.annotation.Exchange;
 import org.springframework.amqp.rabbit.annotation.Queue;
 import org.springframework.amqp.rabbit.annotation.QueueBinding;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.amqp.support.AmqpHeaders;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.messaging.handler.annotation.Header;
+import org.springframework.messaging.handler.annotation.Headers;
 import org.springframework.stereotype.Component;
+
+import java.io.IOException;
+import java.util.Map;
 
 @Component
 public class LogListener {
@@ -31,8 +31,6 @@ public class LogListener {
     @Autowired
     private IInCardService iInCardService;
 
-    private static final Logger LOG = LoggerFactory.getLogger(IInLogService.class);
-
     /**
      * 文章发布
      */
@@ -41,7 +39,7 @@ public class LogListener {
             exchange = @Exchange(name = Constants.logExchange),
             key = Constants.log_Save_RouteKey
     ))
-    public void created(String l, Channel channel, @Header(AmqpHeaders.DELIVERY_TAG) long tag) {
+    public void created(String l, Channel channel, @Headers Map<String, Object> headers) {
         InLog log = JsonUtil.parseObject(l, InLog.class);
         InUser u = iInUserService.getById(log.getlOperateId());
         if (StringUtil.isBlank(log.getlTargetName())) {
@@ -56,7 +54,14 @@ public class LogListener {
         }
         log.setlOperateName(u.getuNick());
         iInLogService.save(log);
-        RabbitMQUtils.askMessage(channel, tag, LOG);
+        // 手动ack
+        Long deliveryTag = (Long) headers.get(AmqpHeaders.DELIVERY_TAG);
+        // 手动签收
+        try {
+            channel.basicAck(deliveryTag, false);
+        } catch (IOException e) {
+            System.err.println("rabbitMQ手动应答失败" + e.getMessage());
+        }
     }
 
 

@@ -92,12 +92,27 @@ public class InUserController extends AbstractController {
      */
     @Login
     @GetMapping("/info")
-    @ApiOperation(value = "查询用户信息", httpMethod = "GET")
-    public ResultUtil<InUser> info(@ApiIgnore @LoginUser InUser user) {
+    @ApiOperation(value = "查询登录用户信息", httpMethod = "GET")
+    public ResultUtil<InUser> loginInfo(@ApiIgnore @LoginUser InUser user) {
         if (null == user.getuPhoto()) {
             user.setuPhoto("http://guansuo.info/news/upload/20191231115456head.png");
         }
         return ResultUtil.ok(userService.getById(user.getuId()));
+    }
+
+
+    /**
+     * 查询用户信息
+     */
+    @GetMapping("/info/{uId}")
+    @ApiOperation(value = "查询用户信息", httpMethod = "GET")
+    @ApiImplicitParam(value = "用户ID", name = "uId", required = true)
+    public ResultUtil<InUser> info(@PathVariable("uId") Long uId) {
+        InUser user = userService.getById(uId);
+        if (null == user.getuPhoto()) {
+            user.setuPhoto("http://guansuo.info/news/upload/20191231115456head.png");
+        }
+        return ResultUtil.ok(user);
     }
 
 
@@ -126,6 +141,7 @@ public class InUserController extends AbstractController {
     public R identifyPersonal(@RequestBody IdentifyPersonalDTO identifyPersonalDTO, @ApiIgnore @LoginUser InUser user) {
         InUser u = DataUtils.copyData(identifyPersonalDTO, InUser.class);
         u.setuId(user.getuId());
+        u.setuAuthType(0);
         u.setuAuthStatus(1);
         userService.updateById(u);
         InUser inUser = userService.getById(u.getuId());
@@ -145,6 +161,7 @@ public class InUserController extends AbstractController {
     public R identifyCompany(@RequestBody IdentifyCompanyDTO identifyCompanyDTO, @ApiIgnore @LoginUser InUser user) {
         InUser u = DataUtils.copyData(identifyCompanyDTO, InUser.class);
         u.setuId(user.getuId());
+        u.setuAuthType(2);
         u.setuAuthStatus(1);
         userService.updateById(u);
         InUser inUser = userService.getById(u.getuId());
@@ -164,6 +181,7 @@ public class InUserController extends AbstractController {
     public R identifyMedia(@RequestBody IdentifyCompanyDTO identifyCompanyDTO, @ApiIgnore @LoginUser InUser user) {
         InUser u = DataUtils.copyData(identifyCompanyDTO, InUser.class);
         u.setuId(user.getuId());
+        u.setuAuthType(1);
         u.setuAuthStatus(1);
         userService.updateById(u);
         InUser inUser = userService.getById(u.getuId());

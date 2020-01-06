@@ -194,8 +194,9 @@ public class ArticleEsServiceImpl implements ArticleEsService {
         HighlightField highlightField = highlightFieldMap.get(field);
         if (highlightField != null) {
             String highLightMessage = highlightField.fragments()[0].toString();
-            String capitalize = StringUtils.capitalize(field);
-            String methodName = "set" + capitalize;//setUName
+//            String capitalize = StringUtils.capitalize(field);
+//            String methodName = "set" + capitalize;//setUName
+            String methodName = "set" + field;//setuName
             Class<?> clazz = object.getClass();
             try {
                 Method setMethod = clazz.getMethod(methodName, String.class);

@@ -1,6 +1,6 @@
 package io.information.modules.news.service.impl;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import io.information.common.utils.PageUtils;
@@ -19,11 +19,12 @@ public class CommonReplyServiceImpl extends ServiceImpl<CommonReplyDao, CommonRe
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
+        LambdaQueryWrapper<CommonReplyEntity> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.orderByDesc(CommonReplyEntity::getCrTime);
         IPage<CommonReplyEntity> page = this.page(
                 new Query<CommonReplyEntity>().getPage(params),
-                new QueryWrapper<CommonReplyEntity>()
+                queryWrapper
         );
-
         return new PageUtils(page);
     }
 

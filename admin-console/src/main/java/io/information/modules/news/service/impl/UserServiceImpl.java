@@ -20,10 +20,17 @@ public class UserServiceImpl extends ServiceImpl<UserDao, UserEntity> implements
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
         LambdaQueryWrapper<UserEntity> queryWrapper = new LambdaQueryWrapper<>();
-        if (null != params.get("uNick") && StringUtil.isNotBlank(params.get("uNick"))) {
-            String uNick = String.valueOf(params.get("uNick"));
-            queryWrapper.like(UserEntity::getuNick, uNick);
+        if (null != params.get("key") && StringUtil.isNotBlank(params.get("key"))) {
+            String key = String.valueOf(params.get("key"));
+            queryWrapper.like(UserEntity::getuNick, key)
+                    .or()
+                    .eq(UserEntity::getuId, key)
+                    .or()
+                    .like(UserEntity::getuName, key)
+                    .or()
+                    .eq(UserEntity::getuPhone, key);
         }
+        queryWrapper.orderByDesc(UserEntity::getuCreateTime);
         IPage<UserEntity> page = this.page(
                 new Query<UserEntity>().getPage(params),
                 queryWrapper
@@ -34,11 +41,18 @@ public class UserServiceImpl extends ServiceImpl<UserDao, UserEntity> implements
     @Override
     public PageUtils audit(Map<String, Object> params) {
         LambdaQueryWrapper<UserEntity> queryWrapper = new LambdaQueryWrapper<>();
-        if (null != params.get("uNick") && StringUtil.isNotBlank(params.get("uNick"))) {
-            String uNick = String.valueOf(params.get("uNick"));
-            queryWrapper.like(UserEntity::getuNick, uNick).or().like(UserEntity::getuName, uNick);
+        if (null != params.get("key") && StringUtil.isNotBlank(params.get("key"))) {
+            String key = String.valueOf(params.get("key"));
+            queryWrapper.like(UserEntity::getuNick, key)
+                    .or()
+                    .eq(UserEntity::getuId, key)
+                    .or()
+                    .like(UserEntity::getuName, key)
+                    .or()
+                    .eq(UserEntity::getuPhone, key);
         }
         queryWrapper.eq(UserEntity::getuAuthStatus, 1);
+        queryWrapper.orderByDesc(UserEntity::getuCreateTime);
         IPage<UserEntity> page = this.page(
                 new Query<UserEntity>().getPage(params),
                 queryWrapper
