@@ -7,9 +7,11 @@ import io.information.common.annotation.HashCacheable;
 import io.information.common.utils.PageUtils;
 import io.information.common.utils.Query;
 import io.information.common.utils.RedisKeys;
+import io.information.common.utils.RedisUtils;
 import io.information.modules.app.dao.InCardArgueDao;
 import io.information.modules.app.entity.InCardArgue;
 import io.information.modules.app.service.IInCardArgueService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
@@ -24,7 +26,8 @@ import java.util.Map;
  */
 @Service
 public class InCardArgueServiceImpl extends ServiceImpl<InCardArgueDao, InCardArgue> implements IInCardArgueService {
-
+    @Autowired
+    RedisUtils redisUtils;
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
@@ -58,6 +61,27 @@ public class InCardArgueServiceImpl extends ServiceImpl<InCardArgueDao, InCardAr
 
 
     @Override
+    public Long delSupport(Long cid, Long uid, Integer sIndex) {
+        InCardArgue argue = this.getById(cid);
+        switch (sIndex) {
+            case 0:
+                //正方
+                int fNumber = argue.getCaFsideNumber() == null ? 1 : argue.getCaFsideNumber();
+                argue.setCaFsideNumber(fNumber - 1);
+                break;
+            case 1:
+                //反方
+                int rNumber = argue.getCaRsideNumber() == null ? 1 : argue.getCaRsideNumber();
+                argue.setCaRsideNumber(rNumber - 1);
+                break;
+        }
+        this.updateById(argue);
+        String key = cid + "-" + uid;
+        return redisUtils.hremove(RedisKeys.SUPPORT, key);
+    }
+
+
+    @Override
     @HashCacheable(key = RedisKeys.JOIN, keyField = "#cid-#uid")
     public String join(Long cid, Long uid, Integer jIndex) {
         InCardArgue argue = this.getById(cid);
@@ -73,5 +97,24 @@ public class InCardArgueServiceImpl extends ServiceImpl<InCardArgueDao, InCardAr
         }
         this.updateById(argue);
         return String.valueOf(jIndex);
+    }
+
+
+    @Override
+    public Long delJoin(Long cid, Long uid, Integer jIndex) {
+        InCardArgue argue = this.getById(cid);
+        switch (jIndex) {
+            case 0:
+                //正方
+                argue.setCaFsideDebater(argue.getCaFsideDebater() - 1);
+                break;
+            case 1:
+                //反方
+                argue.setCaRsideDebater(argue.getCaRsideDebater() - 1);
+                break;
+        }
+        this.updateById(argue);
+        String key = cid + "-" + uid;
+        return redisUtils.hremove(RedisKeys.JOIN, key);
     }
 }

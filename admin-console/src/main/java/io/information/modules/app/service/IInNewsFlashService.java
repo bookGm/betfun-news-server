@@ -29,6 +29,16 @@ public interface IInNewsFlashService extends IService<InNewsFlash> {
      */
     String attitude(Long nId, Long uId, Integer bId);
 
+    /**
+     * 取消利好利空
+     *
+     * @param nId 快讯id
+     * @param uId 用户id
+     * @param bId 0：利空 1：利好
+     * @return
+     */
+    Long delAttitude(Long nId, Long uId, Integer bId);
+
     List<InNewsFlash> all();
 
     FlashVo details(Long nId);

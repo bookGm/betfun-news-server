@@ -19,5 +19,9 @@ public interface IInCardArgueService extends IService<InCardArgue> {
 
     String support(Long cid, Long uid, Integer sIndex);
 
+    Long delSupport(Long cid, Long uid, Integer sIndex);
+
     String join(Long cid, Long uid, Integer jIndex);
+
+    Long delJoin(Long cid, Long uid, Integer jIndex);
 }

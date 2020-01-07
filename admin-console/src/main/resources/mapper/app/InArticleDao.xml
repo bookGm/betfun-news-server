@@ -81,7 +81,7 @@
     </select>
     <select id="searchArticleByTag" resultMap="articleMap,count">
         SELECT SQL_CALC_FOUND_ROWS a.* FROM in_article a,in_tag t WHERE
-        FIND_IN_SET(#{tName},a.a_keyword) AND a_status = 2
+        FIND_IN_SET(#{tName},a.a_keyword) AND a_status = 2 GROUP BY a.a_id
         LIMIT #{currPage},#{pageSize};
         SELECT FOUND_ROWS() AS total;
     </select>

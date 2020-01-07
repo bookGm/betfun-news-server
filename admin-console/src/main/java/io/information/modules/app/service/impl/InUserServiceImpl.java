@@ -79,8 +79,8 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
     @Override
     @HashCacheable(key = RedisKeys.FOCUS, keyField = "#uId-#status-#fId")
     public String focus(Long uId, Integer status, Long fId) {
-        this.baseMapper.addFans(uId);
-        this.baseMapper.addFocus(fId);
+        this.baseMapper.addFans(fId);
+        this.baseMapper.addFocus(uId);
         return String.valueOf(status);
     }
 

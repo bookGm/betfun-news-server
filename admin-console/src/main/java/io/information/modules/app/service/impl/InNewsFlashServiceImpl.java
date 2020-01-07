@@ -10,10 +10,12 @@ import io.information.common.annotation.HashCacheable;
 import io.information.common.utils.PageUtils;
 import io.information.common.utils.Query;
 import io.information.common.utils.RedisKeys;
+import io.information.common.utils.RedisUtils;
 import io.information.modules.app.dao.InNewsFlashDao;
 import io.information.modules.app.entity.InNewsFlash;
 import io.information.modules.app.service.IInNewsFlashService;
 import io.information.modules.app.vo.FlashVo;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -30,6 +32,8 @@ import java.util.Map;
  */
 @Service
 public class InNewsFlashServiceImpl extends ServiceImpl<InNewsFlashDao, InNewsFlash> implements IInNewsFlashService {
+    @Autowired
+    RedisUtils redisUtils;
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
@@ -81,6 +85,18 @@ public class InNewsFlashServiceImpl extends ServiceImpl<InNewsFlashDao, InNewsFl
             this.baseMapper.addNBull(nId);
         }
         return String.valueOf(bId);
+    }
+
+    @Override
+    public Long delAttitude(Long nId, Long uId, Integer bId) {
+        if (NewsEnum.快讯_利空.getCode().equals(bId + "")) {
+            this.baseMapper.delNBad(nId);
+        }
+        if (NewsEnum.快讯_利好.getCode().equals(bId + "")) {
+            this.baseMapper.delNBull(nId);
+        }
+        String key = nId + "-" + uId;
+        return redisUtils.hremove(RedisKeys.NATTITUDE, key);
     }
 
     @Override

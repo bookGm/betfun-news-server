@@ -49,6 +49,21 @@ public class InCardArgueController {
 
 
     /**
+     * 取消辩论支持
+     */
+    @Login
+    @GetMapping("/delSupport")
+    @ApiOperation(value = "支持辩论方", httpMethod = "GET")
+    @ApiImplicitParams({
+            @ApiImplicitParam(value = "帖子id", name = "cId", required = true),
+            @ApiImplicitParam(value = "支持方（0：正方  1：反方）", name = "supportSide", required = false),
+    })
+    public R delSupport(@RequestParam("cId") Long cId, @RequestParam("supportSide") Integer supportSide, @ApiIgnore @LoginUser InUser user) {
+        return R.ok().put("supportSide", argueService.delSupport(cId, user.getuId(), supportSide));
+    }
+
+
+    /**
      * 加入辩论
      */
     @Login
@@ -60,6 +75,20 @@ public class InCardArgueController {
     })
     public R join(@RequestParam("cId") Long cId, @RequestParam("joinSide") Integer joinSide, @ApiIgnore @LoginUser InUser user) {
         return R.ok().put("joinSide", argueService.join(cId, user.getuId(), joinSide));
+    }
+
+    /**
+     * 取消加入辩论
+     */
+    @Login
+    @GetMapping("/delJoin")
+    @ApiOperation(value = "取消加入辩论方", httpMethod = "GET")
+    @ApiImplicitParams({
+            @ApiImplicitParam(value = "帖子id", name = "cId", required = true),
+            @ApiImplicitParam(value = "加入方（0：正方  1：反方）", name = "joinSide", required = false),
+    })
+    public R delJoin(@RequestParam("cId") Long cId, @RequestParam("joinSide") Integer joinSide, @ApiIgnore @LoginUser InUser user) {
+        return R.ok().put("joinSide", argueService.delJoin(cId, user.getuId(), joinSide));
     }
 
 }

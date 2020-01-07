@@ -13,13 +13,13 @@ public class FlashVo implements Serializable {
     /**
      * 是否有上一条
      */
-    @ApiModelProperty(value = "是否有上一条(true：有  false：没有)", name = "isGFlash")
+    @ApiModelProperty(value = "是否有上一条(true：有  false：没有)", name = "gFlash")
     private Boolean isGFlash;
 
     /**
      * 上一条
      */
-    @ApiModelProperty(value = "上一条", name = "gFlash")
+    @ApiModelProperty(value = "上一条", name = "upFlash")
     private InNewsFlash upFlash;
 
 
@@ -32,13 +32,13 @@ public class FlashVo implements Serializable {
     /**
      * 是否有下一条
      */
-    @ApiModelProperty(value = "是否有下一条(true：有  false：没有)", name = "isTFlash")
+    @ApiModelProperty(value = "是否有下一条(true：有  false：没有)", name = "tFlash")
     private Boolean isTFlash;
 
     /**
      * 下一条
      */
-    @ApiModelProperty(value = "下一条", name = "tFlash")
+    @ApiModelProperty(value = "下一条", name = "deFlash")
     private InNewsFlash deFlash;
 
 

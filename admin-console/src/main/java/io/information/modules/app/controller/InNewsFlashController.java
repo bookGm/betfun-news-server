@@ -71,7 +71,7 @@ public class InNewsFlashController {
     @ApiOperation(value = "快讯是否已经点击", httpMethod = "GET", notes = "快讯ID", response = FlashVo.class)
     public ResultUtil isPoint(@PathVariable("nId") Long nId, @ApiIgnore @LoginUser InUser user) {
         //是否点击
-        Boolean isPoint = redisUtils.hashHasKey(RedisKeys.LIKE, nId + "-" + user.getuId());
+        Boolean isPoint = redisUtils.hashHasKey(RedisKeys.NATTITUDE, nId + "-" + user.getuId());
         return ResultUtil.ok(isPoint);
     }
 
@@ -117,11 +117,10 @@ public class InNewsFlashController {
     public R attitude(@RequestBody Map<String, Object> map, @ApiIgnore @LoginUser InUser user) {
         if ((null != map.get("nId") && StringUtil.isNotBlank(map.get("nId")))
                 && (null != map.get("bId") && StringUtil.isNotBlank(map.get("bId")))) {
-            //是否点击
             long nId = Long.parseLong(String.valueOf(map.get("nId")));
-            Boolean isPoint = redisUtils.hashHasKey(RedisKeys.LIKE, nId + "-" + user.getuId());
-            if(isPoint){
-                return R.error("请不要重复点击！");
+            Boolean isPoint = redisUtils.hashHasKey(RedisKeys.NATTITUDE, nId + "-" + user.getuId());
+            if (isPoint) {
+                return R.error("以支持，请不要重复点击！");
             }
             int bId = Integer.parseInt(String.valueOf(map.get("bId")));
             newsFlashService.attitude(nId, user.getuId(), bId);
@@ -129,6 +128,33 @@ public class InNewsFlashController {
         }
         return R.error("缺少必要的参数");
     }
+
+
+    /**
+     * 取消利好利空
+     */
+    @Login
+    @PostMapping("/delAttitude")
+    @ApiOperation(value = "取消利好利空", httpMethod = "POST")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "nId", value = "资讯id", required = true),
+            @ApiImplicitParam(name = "bId", value = "0：利空 1：利好", required = true)
+    })
+    public R delAttitude(@RequestBody Map<String, Object> map, @ApiIgnore @LoginUser InUser user) {
+        if ((null != map.get("nId") && StringUtil.isNotBlank(map.get("nId")))
+                && (null != map.get("bId") && StringUtil.isNotBlank(map.get("bId")))) {
+            long nId = Long.parseLong(String.valueOf(map.get("nId")));
+            Boolean isPoint = redisUtils.hashHasKey(RedisKeys.NATTITUDE, nId + "-" + user.getuId());
+            if (isPoint) {
+                return R.error("已取消，请不要重复点击！");
+            }
+            int bId = Integer.parseInt(String.valueOf(map.get("bId")));
+            newsFlashService.delAttitude(nId, user.getuId(), bId);
+            return R.ok();
+        }
+        return R.error("缺少必要的参数");
+    }
+
 
     //    @GetMapping("/esSave")
     public R esSave() {
