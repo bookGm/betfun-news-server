@@ -8,7 +8,6 @@ import io.elasticsearch.utils.SearchRequest;
 import io.information.modules.app.entity.InArticle;
 import io.information.modules.app.service.IInArticleService;
 import io.information.modules.app.service.UserEsService;
-import org.apache.commons.lang.StringUtils;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.index.query.Operator;
 import org.elasticsearch.search.SearchHit;
@@ -23,7 +22,6 @@ import org.springframework.data.elasticsearch.core.SearchResultMapper;
 import org.springframework.data.elasticsearch.core.aggregation.AggregatedPage;
 import org.springframework.data.elasticsearch.core.aggregation.impl.AggregatedPageImpl;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
-import org.springframework.data.elasticsearch.core.query.SearchQuery;
 import org.springframework.stereotype.Service;
 
 import java.lang.reflect.Method;
@@ -151,6 +149,14 @@ public class UserEsServiceImpl implements UserEsService {
             ed.setuFans(Long.parseLong(String.valueOf(smap.get("uFans").toString())));
         if (smap.get("uPhone") != null)
             ed.setuPhone(String.valueOf(smap.get("uPhone").toString()));
+        if (smap.get("uName") != null)
+            ed.setuName(String.valueOf(smap.get("uName").toString()));
+        if (smap.get("uNick") != null)
+            ed.setuNick(String.valueOf(smap.get("uNick").toString()));
+        if (smap.get("uIntro") != null)
+            ed.setuIntro(String.valueOf(smap.get("uIntro").toString()));
+        if (smap.get("uCompanyName") != null)
+            ed.setuCompanyName(String.valueOf(smap.get("uCompanyName").toString()));
         if (smap.get("uAuthStatus") != null)
             ed.setuAuthStatus(Integer.parseInt(String.valueOf(smap.get("uAuthStatus").toString())));
         if (smap.get("uAuthType") != null)

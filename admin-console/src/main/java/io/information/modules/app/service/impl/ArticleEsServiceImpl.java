@@ -11,7 +11,6 @@ import io.information.modules.app.service.ArticleEsService;
 import io.information.modules.app.service.IInArticleService;
 import io.mq.utils.Constants;
 import io.mq.utils.RabbitMQUtils;
-import org.apache.commons.lang.StringUtils;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.index.query.Operator;
 import org.elasticsearch.search.SearchHit;
@@ -30,7 +29,6 @@ import org.springframework.data.elasticsearch.core.SearchResultMapper;
 import org.springframework.data.elasticsearch.core.aggregation.AggregatedPage;
 import org.springframework.data.elasticsearch.core.aggregation.impl.AggregatedPageImpl;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
-import org.springframework.data.elasticsearch.core.query.SearchQuery;
 import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.stereotype.Service;
 
@@ -87,7 +85,7 @@ public class ArticleEsServiceImpl implements ArticleEsService {
                         public <T> AggregatedPage<T> mapResults(SearchResponse response, Class<T> clazz,
                                                                 Pageable pageable) {
                             // TODO Auto-generated method stub
-                            List<EsArticleEntity> chunk = new ArrayList<>();
+                            List<T> chunk = new ArrayList<>();
                             SearchHits hits = response.getHits();
 
                             for (SearchHit hit : hits) {
@@ -104,9 +102,9 @@ public class ArticleEsServiceImpl implements ArticleEsService {
                                 setHighLight(hit, "aContent", esEntity);
                                 setHighLight(hit, "aBrief", esEntity);
 
-                                chunk.add(esEntity);
+                                chunk.add((T) (esEntity));
                             }
-                            return new AggregatedPageImpl<>((List<T>) chunk, pageable, response.getHits().getTotalHits());
+                            return new AggregatedPageImpl<T>((List<T>) chunk, pageable, response.getHits().getTotalHits());
                         }
                     });
 
@@ -170,6 +168,14 @@ public class ArticleEsServiceImpl implements ArticleEsService {
             ed.setaCollect(Integer.parseInt(String.valueOf(smap.get("aCollect").toString())));
         if (smap.get("aCritic") != null)
             ed.setaCritic(Long.parseLong(String.valueOf(smap.get("aCritic").toString())));
+        if (smap.get("aKeyword") != null)
+            ed.setaKeyword(String.valueOf(smap.get("aKeyword").toString()));
+        if (smap.get("aTitle") != null)
+            ed.setaTitle(String.valueOf(smap.get("aTitle").toString()));
+        if (smap.get("aContent") != null)
+            ed.setaContent(String.valueOf(smap.get("aContent").toString()));
+        if (smap.get("aBrief") != null)
+            ed.setaBrief(String.valueOf(smap.get("aBrief").toString()));
         if (smap.get("aReadNumber") != null)
             ed.setaReadNumber(Long.parseLong(String.valueOf(smap.get("aReadNumber").toString())));
         if (smap.get("aCreateTime") != null) {
@@ -207,7 +213,6 @@ public class ArticleEsServiceImpl implements ArticleEsService {
 
         }
     }
-
 
 
 //    @Override

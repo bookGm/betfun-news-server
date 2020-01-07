@@ -5,7 +5,6 @@ import io.elasticsearch.entity.EsFlashEntity;
 import io.elasticsearch.utils.PageUtils;
 import io.elasticsearch.utils.SearchRequest;
 import io.information.modules.app.service.FlashEsService;
-import org.apache.commons.lang.StringUtils;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.index.query.Operator;
 import org.elasticsearch.search.SearchHit;
@@ -123,6 +122,12 @@ public class FlashEsServiceImpl implements FlashEsService {
             ed.setnBull(Integer.parseInt(String.valueOf(smap.get("nBull").toString())));
         if (smap.get("nBad") != null)
             ed.setnBad(Integer.getInteger(String.valueOf(smap.get("nBad").toString())));
+        if (smap.get("nTitle") != null)
+            ed.setnTitle(String.valueOf(smap.get("nTitle").toString()));
+        if (smap.get("nBrief") != null)
+            ed.setnBrief(String.valueOf(smap.get("nBrief").toString()));
+        if (smap.get("nContent") != null)
+            ed.setnContent(String.valueOf(smap.get("nContent").toString()));
         if (smap.get("nCreateTime") != null) {
             String timeString = String.valueOf(smap.get("nCreateTime").toString());
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
