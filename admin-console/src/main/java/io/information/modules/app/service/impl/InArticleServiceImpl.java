@@ -360,7 +360,16 @@ public class InArticleServiceImpl extends ServiceImpl<InArticleDao, InArticle> i
 
     @Override
     public List<InArticle> interested() {
-        return this.baseMapper.interested();
+        List<InArticle> articles = this.baseMapper.interested();
+        for (InArticle article : articles) {
+            Object number = redisTemplate.opsForValue().get(RedisKeys.ABROWSE + article.getaId());
+            if (null != number) {
+                long readNumber = Long.parseLong(String.valueOf(number));
+                article.setaReadNumber(readNumber);
+            }
+            article.setaSimpleTime(DateUtils.getSimpleTime(article.getaCreateTime()));
+        }
+        return articles;
     }
 
     @Override
@@ -379,6 +388,14 @@ public class InArticleServiceImpl extends ServiceImpl<InArticleDao, InArticle> i
                 //综合排序
                 article = this.baseMapper.synNext(aId, aStatus);
                 break;
+        }
+        if (null != article) {
+            Object number = redisTemplate.opsForValue().get(RedisKeys.ABROWSE + article.getaId());
+            if (null != number) {
+                long readNumber = Long.parseLong(String.valueOf(number));
+                article.setaReadNumber(readNumber);
+            }
+            article.setaSimpleTime(DateUtils.getSimpleTime(article.getaCreateTime()));
         }
         return article;
     }

@@ -29,6 +29,7 @@ import springfox.documentation.annotations.ApiIgnore;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**
@@ -198,22 +199,24 @@ public class InArticleController {
     @ApiOperation(value = "查询单个资讯文章", httpMethod = "GET", notes = "文章ID[aId]")
     public R queryArticle(@PathVariable("aId") String aId, @ApiIgnore HttpServletRequest request) {
         String ip = IPUtils.getIpAddr(request);
-        Long number = 0L;
         InArticle article = articleService.getById(aId);
         if (null != article) {
             Boolean aBoolean = redisTemplate.hasKey(RedisKeys.ABROWSEIP + ip + aId);
             if (!aBoolean) {
-                redisTemplate.opsForValue().set(RedisKeys.ABROWSEIP + ip + aId, aId, 60 * 60 * 2);
+                redisTemplate.opsForValue().set(RedisKeys.ABROWSEIP + ip + aId, aId, 60 * 60 * 2, TimeUnit.SECONDS);
 //            redisTemplate.setValueSerializer(new GenericToStringSerializer<Long>(Long.class));
                 Long aLong = redisTemplate.opsForValue().increment(RedisKeys.ABROWSE + aId, 1);//如果通过自增1
-                number = aLong;
                 if (aLong % 100 == 0) {
                     redisTemplate.delete(ip + aId);
                     long readNumber = aLong + article.getaReadNumber();
                     articleService.updateReadNumber(readNumber, article.getaId());
                 }
             }
-            article.setaReadNumber(number);
+            Object number = redisTemplate.opsForValue().get(RedisKeys.ABROWSE + article.getaId());
+            if (null != number) {
+                long readNumber = Long.parseLong(String.valueOf(number));
+                article.setaReadNumber(readNumber);
+            }
             return R.ok().put("article", article);
         } else {
             return R.error("文章不存在");

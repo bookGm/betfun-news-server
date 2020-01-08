@@ -35,19 +35,19 @@ public class UserArticleVo implements Serializable {
     /**
      * 用户粉丝数量
      */
-    @ApiModelProperty(value = "粉丝数量", name = "uFans")
+    @ApiModelProperty(value = "用户粉丝数量", name = "uFans")
     private Long uFans;
 
     /**
      * 用户文章浏览量
      */
-    @ApiModelProperty(value = "浏览量", name = "readNumber")
+    @ApiModelProperty(value = "用户文章浏览量", name = "readNumber")
     private Long readNumber;
 
     /**
      * 用户获赞数量
      */
-    @ApiModelProperty(value = "获赞数量", name = "likeNumber")
+    @ApiModelProperty(value = "用户获赞数量", name = "likeNumber")
     private Long likeNumber;
 
     /**

@@ -9,14 +9,18 @@ import io.information.common.utils.Query;
 import io.information.modules.news.dao.ActivityDao;
 import io.information.modules.news.entity.ActivityEntity;
 import io.information.modules.news.service.ActivityService;
+import io.information.modules.sys.service.SysCitysService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.Map;
 
 
 @Service
 public class ActivityServiceImpl extends ServiceImpl<ActivityDao, ActivityEntity> implements ActivityService {
-
+    @Autowired
+    SysCitysService sysCitysService;
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
@@ -55,6 +59,19 @@ public class ActivityServiceImpl extends ServiceImpl<ActivityDao, ActivityEntity
                 new Query<ActivityEntity>().getPage(params),
                 queryWrapper
         );
+        for (ActivityEntity activity : page.getRecords()) {
+            if (null != activity.getActAddr()) {
+                String[] split = activity.getActAddr().split("-");
+                StringBuilder actAddName = new StringBuilder();
+                for (String s : split) {
+                    long id = Long.parseLong(s);
+                    String name = sysCitysService.getById(id).getName();
+                    actAddName.append(name).append("-");
+                }
+                String newAddName = actAddName.substring(0, actAddName.length() - 1);
+                activity.setActAddrName(newAddName);
+            }
+        }
         return new PageUtils(page);
     }
 

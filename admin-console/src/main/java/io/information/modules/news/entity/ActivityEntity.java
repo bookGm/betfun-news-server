@@ -1,6 +1,7 @@
 package io.information.modules.news.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -40,6 +41,9 @@ public class ActivityEntity implements Serializable {
      * 活动地址（省市县编码横线分隔）
      */
     private String actAddr;
+
+    @TableField(exist = false)
+    private String actAddrName;
     /**
      * 活动地址详情
      */
@@ -101,6 +105,14 @@ public class ActivityEntity implements Serializable {
      */
     private Integer actBanner;
 
+
+    public String getActAddrName() {
+        return actAddrName;
+    }
+
+    public void setActAddrName(String actAddrName) {
+        this.actAddrName = actAddrName;
+    }
 
     public Integer getActBanner() {
         return actBanner;

@@ -21,6 +21,7 @@ import springfox.documentation.annotations.ApiIgnore;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 
 @RestController
@@ -63,7 +64,7 @@ public class InCardController {
             if (null != card) {
                 Boolean aBoolean = redisTemplate.hasKey(RedisKeys.CARDBROWSEIP + ip + cId);
                 if (!aBoolean) {
-                    redisTemplate.opsForValue().set(RedisKeys.CARDBROWSEIP + ip + cId, String.valueOf(cId), 60 * 60 * 2);
+                    redisTemplate.opsForValue().set(RedisKeys.CARDBROWSEIP + ip + cId, String.valueOf(cId), 60 * 60 * 2, TimeUnit.SECONDS);
                     Long aLong = redisTemplate.opsForValue().increment(RedisKeys.CARDBROWSE + cId, 1);//如果通过自增1
                     if (aLong % 100 == 0) {
                         redisTemplate.delete(ip + cId);

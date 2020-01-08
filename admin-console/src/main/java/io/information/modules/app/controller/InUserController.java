@@ -693,6 +693,6 @@ public class InUserController extends AbstractController {
                 new Query<InMessage>().getPage(map),
                 queryWrapper
         );
-        return ResultUtil.ok(new PageUtils<InMessage>(page));
+        return ResultUtil.ok(new PageUtils<>(page));
     }
 }

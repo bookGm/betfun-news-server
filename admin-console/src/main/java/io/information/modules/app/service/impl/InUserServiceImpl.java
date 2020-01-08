@@ -23,6 +23,7 @@ import io.information.modules.app.vo.UserCardVo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
@@ -45,7 +46,7 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
     @Autowired
     IInActivityService activityService;
     @Autowired
-    StringRedisTemplate redisTemplate;
+    RedisTemplate redisTemplate;
     @Autowired
     IInArticleService articleService;
     @Autowired
@@ -264,7 +265,11 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
                             cardVo.setcId(base.getcId());
                             cardVo.setcTitle(base.getcTitle());
                             cardVo.setcId(base.getcId());
-                            cardVo.setReadNumber(base.getcReadNumber());
+                            Object number = redisTemplate.opsForValue().get(RedisKeys.CARDBROWSE + cardVo.getcId());
+                            if (null != number) {
+                                long readNumber = Long.parseLong(String.valueOf(number));
+                                cardVo.setReadNumber(readNumber);
+                            }
                             cardVo.setReplyNumber(base.getcCritic());
                         }
                         list.add(cardVo);
@@ -581,6 +586,11 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
                         InArticle article = articleService.getById(id);//目标信息
                         if (null != article) {
 //                            article.setExist(0);
+                            Object number = redisTemplate.opsForValue().get(RedisKeys.ABROWSE + article.getaId());
+                            if (null != number) {
+                                long readNumber = Long.parseLong(String.valueOf(number));
+                                article.setaReadNumber(readNumber);
+                            }
                             if (null == article.getaCreateTime()) {
                                 article.setaSimpleTime(DateUtils.getSimpleTime(new Date()));
                             } else {
@@ -612,6 +622,11 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
                         Long id = Long.valueOf(str[0]);
                         InCardBase cardBase = baseService.getById(id);//目标信息
                         if (null != cardBase) {
+                            Object number = redisTemplate.opsForValue().get(RedisKeys.CARDBROWSE + cardBase.getcId());
+                            if (null != number) {
+                                long readNumber = Long.parseLong(String.valueOf(number));
+                                cardBase.setcReadNumber(readNumber);
+                            }
                             if (null != cardBase.getcNodeCategory()) {
                                 cardBase.setcNodeCategoryValue(dicHelper.getDicName(cardBase.getcNodeCategory().longValue()));
                             }

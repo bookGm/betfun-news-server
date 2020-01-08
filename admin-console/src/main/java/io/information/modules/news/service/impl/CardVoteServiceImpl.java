@@ -37,6 +37,7 @@ public class CardVoteServiceImpl extends ServiceImpl<CardVoteDao, CardVoteEntity
         );
         for (CardVoteEntity v : page.getRecords()) {
             if (StringUtil.isNotBlank(v.getCvInfo())) {
+//                String[] split = v.getCvInfo().split(",");
                 List<String> list = JSONObject.parseArray(v.getCvInfo(), String.class);
                 for (int i = 0; i < list.size(); i++) {
                     v.setInfo(i, list.get(i));

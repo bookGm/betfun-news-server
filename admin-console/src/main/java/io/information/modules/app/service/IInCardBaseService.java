@@ -18,6 +18,4 @@ public interface IInCardBaseService extends IService<InCardBase> {
     PageUtils queryPage(Map<String, Object> map);
 
     void updateReadNumber(long number, Long cId);
-
-    PageUtils text(Map<String, Object> map);
 }

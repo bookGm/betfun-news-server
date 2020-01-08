@@ -47,14 +47,4 @@ public class InCardBaseController {
         return R.ok().put("page", page);
     }
 
-
-    /**
-     * 最新动态
-     */
-    @GetMapping("/text")
-    public ResultUtil text(@RequestParam Map<String, Object> map) {
-        PageUtils page = cardBaseService.text(map);
-        return ResultUtil.ok(page);
-    }
-
 }

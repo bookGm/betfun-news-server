@@ -16,6 +16,7 @@ import io.information.modules.app.entity.*;
 import io.information.modules.app.service.*;
 import io.information.modules.app.vo.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -48,6 +49,8 @@ public class InNodeServiceImpl extends ServiceImpl<InNodeDao, InNode> implements
     RedisUtils redisUtils;
     @Autowired
     InLogDao logDao;
+    @Autowired
+    RedisTemplate redisTemplate;
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
@@ -109,8 +112,14 @@ public class InNodeServiceImpl extends ServiceImpl<InNodeDao, InNode> implements
                 //累计文章数
                 vo.setArticleNumber(list.size());
                 //累计浏览量
-                LongSummaryStatistics readNumber = list.stream().collect(Collectors.summarizingLong((n) -> n.getaReadNumber() == null ? 0L : n.getaReadNumber()));
-                vo.setReadNumber(readNumber == null ? 0L : readNumber.getSum());
+                Long readNumber = 0L;
+                for (InArticle article : list) {
+                    Object number = redisTemplate.opsForValue().get(RedisKeys.ABROWSE + article.getaId());
+                    if (null != number) {
+                        readNumber += Long.parseLong(String.valueOf(number));
+                    }
+                }
+                vo.setReadNumber(readNumber);
                 //累计点赞数
                 LongSummaryStatistics likeNumber = list.stream().collect(Collectors.summarizingLong((n) -> n.getaLike() == null ? 0L : n.getaLike()));
                 vo.setLikeNumber(likeNumber == null ? 0L : likeNumber.getSum());
@@ -170,7 +179,11 @@ public class InNodeServiceImpl extends ServiceImpl<InNodeDao, InNode> implements
                             cardVo.setcId(base.getcId());
                             cardVo.setcTitle(base.getcTitle());
                             cardVo.setcId(base.getcId());
-                            cardVo.setReadNumber(base.getcReadNumber());
+                            Object number = redisTemplate.opsForValue().get(RedisKeys.CARDBROWSE + cardVo.getcId());
+                            if (null != number) {
+                                long readNumber = Long.parseLong(String.valueOf(number));
+                                cardVo.setReadNumber(readNumber);
+                            }
                             cardVo.setReplyNumber(base.getcCritic());
                             list.add(cardVo);
                         }
@@ -299,16 +312,31 @@ public class InNodeServiceImpl extends ServiceImpl<InNodeDao, InNode> implements
                 //获赞数
                 long likeNumber = articles.stream().mapToLong(InArticle::getaLike).sum();
                 //浏览量
-                long readNumber = articles.stream().mapToLong(InArticle::getaReadNumber).sum();
-                vo.setLikeNumber(likeNumber);
+                long readNumber = 0L;
+                for (InArticle article : articles) {
+                    Object number = redisTemplate.opsForValue().get(RedisKeys.ABROWSE + article.getaId());
+                    if (null != number) {
+                        readNumber += Long.parseLong(String.valueOf(number));
+                    }
+                }
                 vo.setReadNumber(readNumber);
+                vo.setLikeNumber(likeNumber);
                 IPage<InArticle> page = articleService.page(
                         new Query<InArticle>().getPage(map),
                         queryWrapper
                 );
+
                 //文章信息
                 List<InArticle> articleList = page.getRecords();
-                vo.setArticles(articleList);
+                if (null != articleList) {
+                    for (InArticle article : articleList) {
+                        Object number = redisTemplate.opsForValue().get(RedisKeys.ABROWSE + article.getaId());
+                        if (null != number) {
+                            article.setaReadNumber(Long.parseLong(String.valueOf(number)));
+                        }
+                    }
+                    vo.setArticles(articleList);
+                }
                 //分页数据
                 vo.setTotalPage(articles.size());
                 vo.setCurrPage(currPage);
@@ -345,7 +373,15 @@ public class InNodeServiceImpl extends ServiceImpl<InNodeDao, InNode> implements
                 );
                 //文章信息
                 List<InArticle> articleList = page.getRecords();
-                vo.setArticles(articleList);
+                if (null != articleList) {
+                    for (InArticle article : articleList) {
+                        Object number = redisTemplate.opsForValue().get(RedisKeys.ABROWSE + article.getaId());
+                        if (null != number) {
+                            article.setaReadNumber(Long.parseLong(String.valueOf(number)));
+                        }
+                    }
+                    vo.setArticles(articleList);
+                }
                 //分页数据
                 vo.setTotalPage(articles.size());
                 vo.setCurrPage(currPage);
