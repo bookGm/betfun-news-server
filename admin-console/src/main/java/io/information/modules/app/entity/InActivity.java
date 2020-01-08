@@ -50,6 +50,13 @@ public class InActivity implements Serializable {
     private Long uId;
 
     /**
+     * 是否存在
+     */
+    @ApiModelProperty(value = "活动是否存在（0：存在 1：不存在）", name = "isExist")
+    @TableField(exist = false)
+    private Integer isExist;
+
+    /**
      * 发布者名称
      */
     @TableField(exist = false)
@@ -173,6 +180,13 @@ public class InActivity implements Serializable {
     @TableField(exist = false)
     private String aSimpleTime;
 
+    public Integer getExist() {
+        return isExist;
+    }
+
+    public void setExist(Integer exist) {
+        isExist = exist;
+    }
 
     public String getuName() {
         return uName;

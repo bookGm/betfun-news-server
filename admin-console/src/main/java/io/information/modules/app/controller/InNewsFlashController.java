@@ -2,6 +2,7 @@ package io.information.modules.app.controller;
 
 
 import com.guansuo.common.StringUtil;
+import com.guansuo.newsenum.NewsEnum;
 import io.elasticsearch.entity.EsFlashEntity;
 import io.information.common.utils.*;
 import io.information.modules.app.annotation.Login;
@@ -124,7 +125,16 @@ public class InNewsFlashController {
             }
             int bId = Integer.parseInt(String.valueOf(map.get("bId")));
             newsFlashService.attitude(nId, user.getuId(), bId);
-            return R.ok();
+            InNewsFlash flash = newsFlashService.getById(nId);
+            EsFlashEntity esFlash = BeanHelper.copyProperties(flash, EsFlashEntity.class);
+            rabbitTemplate.convertAndSend(Constants.flashExchange,
+                    Constants.flash_Update_RouteKey, esFlash);
+            if (NewsEnum.快讯_利空.getCode().equals(bId + "")) {
+                return R.ok().put("number", flash.getnBad());
+            }
+            if (NewsEnum.快讯_利好.getCode().equals(bId + "")) {
+                return R.ok().put("number", flash.getnBull());
+            }
         }
         return R.error("缺少必要的参数");
     }
@@ -145,12 +155,21 @@ public class InNewsFlashController {
                 && (null != map.get("bId") && StringUtil.isNotBlank(map.get("bId")))) {
             long nId = Long.parseLong(String.valueOf(map.get("nId")));
             Boolean isPoint = redisUtils.hashHasKey(RedisKeys.NATTITUDE, nId + "-" + user.getuId());
-            if (isPoint) {
+            if (!isPoint) {
                 return R.error("已取消，请不要重复点击！");
             }
             int bId = Integer.parseInt(String.valueOf(map.get("bId")));
             newsFlashService.delAttitude(nId, user.getuId(), bId);
-            return R.ok();
+            InNewsFlash flash = newsFlashService.getById(nId);
+            EsFlashEntity esFlash = BeanHelper.copyProperties(flash, EsFlashEntity.class);
+            rabbitTemplate.convertAndSend(Constants.flashExchange,
+                    Constants.flash_Update_RouteKey, esFlash);
+            if (NewsEnum.快讯_利空.getCode().equals(bId + "")) {
+                return R.ok().put("number", flash.getnBad());
+            }
+            if (NewsEnum.快讯_利好.getCode().equals(bId + "")) {
+                return R.ok().put("number", flash.getnBull());
+            }
         }
         return R.error("缺少必要的参数");
     }

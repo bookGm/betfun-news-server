@@ -15,6 +15,7 @@ import io.information.modules.app.vo.CardArgueVo;
 import io.mq.utils.Constants;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -35,6 +36,8 @@ public class InCardServiceImpl extends ServiceImpl<InCardBaseDao, InCardBase> im
     RabbitTemplate rabbitTemplate;
     @Autowired
     IInUserService iInUserService;
+    @Autowired
+    RedisTemplate redisTemplate;
     @Autowired
     RedisUtils redisUtils;
     @Autowired
@@ -86,6 +89,11 @@ public class InCardServiceImpl extends ServiceImpl<InCardBaseDao, InCardBase> im
             InCard card = new InCard();
             InCardBase base = baseService.getById(cId);
             if (null != base) {
+                Object number = redisTemplate.opsForValue().get(RedisKeys.CARDBROWSE + cId);
+                if (null != number) {
+                    long readNumber = Long.parseLong(String.valueOf(number));
+                    base.setcReadNumber(readNumber);
+                }
                 if (null != base.getcNodeCategory()) {
                     base.setcNodeCategoryValue(dicHelper.getDicName(base.getcNodeCategory().longValue()));
                 }
@@ -195,6 +203,13 @@ public class InCardServiceImpl extends ServiceImpl<InCardBaseDao, InCardBase> im
                 new Query<InCardBase>().getPage(map),
                 queryWrapper
         );
+        for (InCardBase base : page.getRecords()) {
+            Object number = redisTemplate.opsForValue().get(RedisKeys.CARDBROWSE + base.getcId());
+            if (null != number) {
+                long readNumber = Long.parseLong(String.valueOf(number));
+                base.setcReadNumber(readNumber);
+            }
+        }
         return new PageUtils(page);
     }
 

@@ -16,6 +16,9 @@ public class ArticleBannerVo implements Serializable {
     @ApiModelProperty(value = "文章封面URL", name = "aCover")
     private String aCover;
 
+    @ApiModelProperty(value = "文章标题", name = "aTitle")
+    private String aTitle;
+
 
     public Long getaId() {
         return aId;
@@ -31,5 +34,13 @@ public class ArticleBannerVo implements Serializable {
 
     public void setaCover(String aCover) {
         this.aCover = aCover;
+    }
+
+    public String getaTitle() {
+        return aTitle;
+    }
+
+    public void setaTitle(String aTitle) {
+        this.aTitle = aTitle;
     }
 }

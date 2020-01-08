@@ -157,6 +157,9 @@ public class InNodeServiceImpl extends ServiceImpl<InNodeDao, InNode> implements
             if (null != base.getuId() && StringUtil.isNotBlank(base.getuId())) {
                 InUser user = userService.getById(base.getuId());
                 if (null != user) {
+                    if (user.getuPhoto() == null || "".equals(user.getuPhone())) {
+                        user.setuPhoto("http://guansuo.info/news/upload/20191231115456head.png");
+                    }
                     UserCardVo cardVo = BeanHelper.copyProperties(user, UserCardVo.class);
                     if (null != cardVo) {
                         String simpleTime = DateUtils.getSimpleTime(base.getcCreateTime() == null ? new Date() : base.getcCreateTime());

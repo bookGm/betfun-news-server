@@ -115,7 +115,8 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleDao, ArticleEntity> i
         a.setaCreateTime(date);
         a.setaSimpleTime(DateUtils.getSimpleTime(date));
         a.setaStatus(Integer.parseInt(NewsEnum.文章状态_已发布.getCode()));
-        a.setaReadNumber(Long.parseLong(b.getViews()));
+//        a.setaReadNumber(Long.parseLong(b.getViews()));
+        a.setaReadNumber(0L);
         a.setaType(Integer.parseInt(NewsEnum.文章类型_转载.getCode()));
         StringBuffer ts = new StringBuffer();
         for (Object t : b.getTags()) {

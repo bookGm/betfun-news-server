@@ -113,8 +113,13 @@ public class InCommonReplyServiceImpl extends ServiceImpl<InCommonReplyDao, InCo
         );
         for (InCommonReply record : page.getRecords()) {
             InUser user = iInUserService.getById(record.getcId());
-            record.setcName(user.getuName());
-            record.setcPhoto(user.getuPhoto());
+            if (user != null) {
+                record.setcName(user.getuName() == null ? "" : user.getuNick());
+                record.setcPhoto(user.getuPhoto());
+            } else {
+                record.setcName("用户已不存在");
+                record.setcPhoto("http://guansuo.info/news/upload/20191231115456head.png");
+            }
             record.setCrSimpleTime(DateUtils.getSimpleTime(record.getCrTime()));
         }
         return new PageUtils<>(page);

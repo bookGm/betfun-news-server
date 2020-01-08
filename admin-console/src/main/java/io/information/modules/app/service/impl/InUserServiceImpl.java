@@ -390,6 +390,7 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
                 queryWrapper
         );
         for (InActivity act : page.getRecords()) {
+//            act.setExist(0);
             act.setuName(String.valueOf(map.get("uName") == null ? "" : map.get("uName")));
             act.setaSimpleTime(DateUtils.getSimpleTime(act.getActCreateTime()));
         }
@@ -579,6 +580,7 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
                         Long id = Long.valueOf(str[0]);
                         InArticle article = articleService.getById(id);//目标信息
                         if (null != article) {
+//                            article.setExist(0);
                             if (null == article.getaCreateTime()) {
                                 article.setaSimpleTime(DateUtils.getSimpleTime(new Date()));
                             } else {
@@ -594,6 +596,7 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
                             collects.add(dto);
                         } else {
                             InArticle inArticle = new InArticle();
+                            inArticle.setExist(1);
                             inArticle.setaId(id);
                             inArticle.setuId(null);
                             inArticle.setaTitle("该文章已被作者删除");
@@ -643,6 +646,7 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
                         Long id = Long.valueOf(str[0]);
                         InActivity activity = activityService.getById(id);//目标信息
                         if (null != activity) {
+//                            activity.setExist(0);
                             if (null == activity.getActCreateTime()) {
                                 activity.setaSimpleTime(DateUtils.getSimpleTime(new Date()));
                             } else {
@@ -658,6 +662,7 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
                             collects.add(dto);
                         } else {
                             InActivity inActivity = new InActivity();
+                            inActivity.setExist(1);
                             inActivity.setActId(id);
                             inActivity.setuId(null);
                             inActivity.setActTitle("该活动已被作者删除");

@@ -9,6 +9,9 @@ import io.elasticsearch.entity.EsUserEntity;
 import io.information.common.utils.*;
 import io.information.modules.app.annotation.Login;
 import io.information.modules.app.annotation.LoginUser;
+import io.information.modules.app.dao.InActivityDao;
+import io.information.modules.app.dao.InArticleDao;
+import io.information.modules.app.dao.InCardBaseDao;
 import io.information.modules.app.dto.IdentifyCompanyDTO;
 import io.information.modules.app.dto.IdentifyPersonalDTO;
 import io.information.modules.app.dto.RedactDataDTO;
@@ -49,7 +52,11 @@ public class InUserController extends AbstractController {
     @Autowired
     private IInActivityService activityService;
     @Autowired
+    private InArticleDao articleDao;
+    @Autowired
     private IInArticleService articleService;
+    @Autowired
+    private InActivityDao activityDao;
     @Autowired
     private IInMessageService messageService;
     @Autowired
@@ -58,6 +65,8 @@ public class InUserController extends AbstractController {
     private IInUserService userService;
     @Autowired
     private IInCardService cardService;
+    @Autowired
+    private InCardBaseDao cardBaseDao;
     @Autowired
     private IInCardBaseService baseService;
     @Autowired
@@ -634,12 +643,15 @@ public class InUserController extends AbstractController {
         Long uId = -1L;
         if (NewsEnum.收藏_文章.getCode().equals(String.valueOf(type))) {
             uId = articleService.getById(id) == null ? 0 : articleService.getById(id).getuId();
+            articleDao.removeACollect(Long.parseLong(id));
         }
         if (NewsEnum.收藏_帖子.getCode().equals(String.valueOf(type))) {
             uId = cardService.getById(id) == null ? 0 : cardService.getById(id).getuId();
+            cardBaseDao.removeACollect(Long.parseLong(id));
         }
         if (NewsEnum.收藏_活动.getCode().equals(String.valueOf(type))) {
             uId = activityService.getById(id) == null ? 0 : activityService.getById(id).getuId();
+            activityDao.removeACollect(Long.parseLong(id));
         }
         if (uId == 0) {
             String key = id + "-" + user.getuId() + "-*-" + type;

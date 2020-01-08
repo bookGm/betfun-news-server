@@ -56,12 +56,12 @@ public interface InCardBaseDao extends BaseMapper<InCardBase> {
      *
      * @param cid 帖子ID
      */
-    void removeALike(long cid);
+    void removeALike(Long cid);
 
     /**
      * 减少收藏数
      *
      * @param cid 帖子ID
      */
-    void removeACollect(long cid);
+    void removeACollect(Long cid);
 }

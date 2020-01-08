@@ -121,7 +121,7 @@ public class FlashEsServiceImpl implements FlashEsService {
         if (smap.get("nBull") != null)
             ed.setnBull(Integer.parseInt(String.valueOf(smap.get("nBull").toString())));
         if (smap.get("nBad") != null)
-            ed.setnBad(Integer.getInteger(String.valueOf(smap.get("nBad").toString())));
+            ed.setnBad(Integer.parseInt(String.valueOf(smap.get("nBad").toString())));
         if (smap.get("nTitle") != null)
             ed.setnTitle(String.valueOf(smap.get("nTitle").toString()));
         if (smap.get("nBrief") != null)

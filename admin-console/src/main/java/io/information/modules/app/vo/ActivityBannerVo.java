@@ -21,6 +21,9 @@ public class ActivityBannerVo implements Serializable {
     @ApiModelProperty(value = "活动封面URL", name = "actCover", required = false)
     private String actCover;
 
+    @ApiModelProperty(value = "活动标题", name = "actTitle", required = false)
+    private String actTitle;
+
     public Long getActId() {
         return actId;
     }
@@ -35,5 +38,13 @@ public class ActivityBannerVo implements Serializable {
 
     public void setActCover(String actCover) {
         this.actCover = actCover;
+    }
+
+    public String getActTitle() {
+        return actTitle;
+    }
+
+    public void setActTitle(String actTitle) {
+        this.actTitle = actTitle;
     }
 }

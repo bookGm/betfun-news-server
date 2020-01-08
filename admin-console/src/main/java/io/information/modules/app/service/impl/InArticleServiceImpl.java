@@ -26,6 +26,7 @@ import io.information.modules.app.vo.TagArticleVo;
 import io.mq.utils.Constants;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -53,6 +54,8 @@ public class InArticleServiceImpl extends ServiceImpl<InArticleDao, InArticle> i
     InCardBaseDao inCardBaseDao;
     @Autowired
     RabbitTemplate rabbitTemplate;
+    @Autowired
+    RedisTemplate redisTemplate;
     @Autowired
     IInTagService tagService;
 
@@ -85,7 +88,12 @@ public class InArticleServiceImpl extends ServiceImpl<InArticleDao, InArticle> i
                 new Query<InArticle>().getPage(params), qw
         );
         for (InArticle a : page.getRecords()) {
-//            Object obj = redisUtils.hget(RedisKeys.INUSER, String.valueOf(a.getuId()));
+            //获取缓存中的浏览量
+            Object number = redisTemplate.opsForValue().get(RedisKeys.ABROWSE + a.getaId());
+            if (null != number) {
+                long readNumber = Long.parseLong(String.valueOf(number));
+                a.setaReadNumber(readNumber);
+            }
             InUser user = userService.getById(a.getaId());
             if (null != user) {
                 a.setuName(user.getuName());
@@ -174,6 +182,11 @@ public class InArticleServiceImpl extends ServiceImpl<InArticleDao, InArticle> i
                         total = ((List<Integer>) list.get(1)).get(0);//总量
                         if (null != inArticles && !inArticles.isEmpty()) {
                             for (InArticle inArticle : inArticles) {
+                                Object number = redisTemplate.opsForValue().get(RedisKeys.ABROWSE + inArticle.getaId());
+                                if (null != number) {
+                                    long readNumber = Long.parseLong(String.valueOf(number));
+                                    inArticle.setaReadNumber(readNumber);
+                                }
                                 inArticle.setaSimpleTime(DateUtils.getSimpleTime(inArticle.getaCreateTime()));
                             }
                             arrayList.addAll(inArticles);
@@ -185,6 +198,11 @@ public class InArticleServiceImpl extends ServiceImpl<InArticleDao, InArticle> i
                         total = ((List<Integer>) list1.get(1)).get(0);//总量
                         if (null != inArticleList && !inArticleList.isEmpty()) {
                             for (InArticle inArticle : inArticleList) {
+                                Object number = redisTemplate.opsForValue().get(RedisKeys.ABROWSE + inArticle.getaId());
+                                if (null != number) {
+                                    long readNumber = Long.parseLong(String.valueOf(number));
+                                    inArticle.setaReadNumber(readNumber);
+                                }
                                 inArticle.setaSimpleTime(DateUtils.getSimpleTime(inArticle.getaCreateTime()));
                             }
                             arrayList.addAll(inArticleList);
@@ -198,6 +216,11 @@ public class InArticleServiceImpl extends ServiceImpl<InArticleDao, InArticle> i
                 int total = ((List<Integer>) list.get(1)).get(0);//总量
                 if (null != inArticleList && !inArticleList.isEmpty()) {
                     for (InArticle inArticle : inArticleList) {
+                        Object number = redisTemplate.opsForValue().get(RedisKeys.ABROWSE + inArticle.getaId());
+                        if (null != number) {
+                            long readNumber = Long.parseLong(String.valueOf(number));
+                            inArticle.setaReadNumber(readNumber);
+                        }
                         inArticle.setaSimpleTime(DateUtils.getSimpleTime(inArticle.getaCreateTime()));
                     }
                 }
@@ -297,6 +320,11 @@ public class InArticleServiceImpl extends ServiceImpl<InArticleDao, InArticle> i
             int total = ((List<Integer>) list.get(1)).get(0);//总量
             if (null != articles) {
                 for (InArticle article : articles) {
+                    Object number = redisTemplate.opsForValue().get(RedisKeys.ABROWSE + article.getaId());
+                    if (null != number) {
+                        long readNumber = Long.parseLong(String.valueOf(number));
+                        article.setaReadNumber(readNumber);
+                    }
                     article.setaSimpleTime(DateUtils.getSimpleTime(article.getaCreateTime()));
                 }
                 TagArticleVo vo = new TagArticleVo();

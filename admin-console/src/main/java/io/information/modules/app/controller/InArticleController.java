@@ -73,7 +73,7 @@ public class InArticleController {
             } else {
                 article.setaId(IdGenerator.getId());
                 article.setuId(user.getuId());
-                article.setuName(user.getuName());
+                article.setuName(user.getuName() == null ? user.getuNick() : user.getuName());
                 article.setaStatus(1);
                 if (null == article.getaCreateTime()) {
                     article.setaCreateTime(new Date());
@@ -198,6 +198,7 @@ public class InArticleController {
     @ApiOperation(value = "查询单个资讯文章", httpMethod = "GET", notes = "文章ID[aId]")
     public R queryArticle(@PathVariable("aId") String aId, @ApiIgnore HttpServletRequest request) {
         String ip = IPUtils.getIpAddr(request);
+        Long number = 0L;
         InArticle article = articleService.getById(aId);
         if (null != article) {
             Boolean aBoolean = redisTemplate.hasKey(RedisKeys.ABROWSEIP + ip + aId);
@@ -205,12 +206,14 @@ public class InArticleController {
                 redisTemplate.opsForValue().set(RedisKeys.ABROWSEIP + ip + aId, aId, 60 * 60 * 2);
 //            redisTemplate.setValueSerializer(new GenericToStringSerializer<Long>(Long.class));
                 Long aLong = redisTemplate.opsForValue().increment(RedisKeys.ABROWSE + aId, 1);//如果通过自增1
+                number = aLong;
                 if (aLong % 100 == 0) {
                     redisTemplate.delete(ip + aId);
                     long readNumber = aLong + article.getaReadNumber();
                     articleService.updateReadNumber(readNumber, article.getaId());
                 }
             }
+            article.setaReadNumber(number);
             return R.ok().put("article", article);
         } else {
             return R.error("文章不存在");

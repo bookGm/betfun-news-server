@@ -70,7 +70,7 @@ public class ArticleEsServiceImpl implements ArticleEsService {
             NativeSearchQueryBuilder searchQuery = new NativeSearchQueryBuilder();
             //设置索引...
             //设置查询条件
-            searchQuery.withQuery(multiMatchQuery(key, "aKeyword", "aTitle", "aContent", "aBrief")
+            searchQuery.withQuery(multiMatchQuery(key, "uName", "aKeyword", "aTitle", "aContent", "aBrief")
                     .operator(Operator.OR) /*.minimumShouldMatch("30%")*/)
                     .withPageable(PageRequest.of(currPage, pageSize));
 
@@ -97,6 +97,7 @@ public class ArticleEsServiceImpl implements ArticleEsService {
                                 EsArticleEntity esEntity = createEsEntity(smap, hmap);
 
                                 //高亮内容
+                                setHighLight(hit, "uName", esEntity);
                                 setHighLight(hit, "aKeyword", esEntity);
                                 setHighLight(hit, "aTitle", esEntity);
                                 setHighLight(hit, "aContent", esEntity);

@@ -124,6 +124,21 @@ public class InArticle implements Serializable {
     @ApiModelProperty(value = "是否主页展示(0：否 1：是)", name = "aBanner")
     private Integer aBanner;
 
+    /**
+     * 是否存在
+     */
+    @ApiModelProperty(value = "活动是否存在（0：存在 1：不存在）", name = "isExist")
+    @TableField(exist = false)
+    private Integer isExist;
+
+
+    public Integer getExist() {
+        return isExist;
+    }
+
+    public void setExist(Integer exist) {
+        isExist = exist;
+    }
 
     public Integer getaBanner() {
         return aBanner;
