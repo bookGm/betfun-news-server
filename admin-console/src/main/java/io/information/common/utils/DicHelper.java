@@ -2,6 +2,9 @@ package io.information.common.utils;
 
 import com.guansuo.common.StringUtil;
 import io.information.modules.news.entity.DicEntity;
+import io.information.modules.news.service.DicService;
+import io.information.modules.news.service.NodeService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -20,6 +23,10 @@ import java.util.stream.Collectors;
  */
 @Component
 public class DicHelper {
+    @Autowired
+    private DicService dicService;
+    @Autowired
+    private NodeService nodeService;
     private Map<Long, DicEntity> dicsContainer = new HashMap<Long, DicEntity>();
     private Map<String, DicEntity> dicsVContainer = new HashMap<String, DicEntity>();
     private List<DicEntity> dicsList = new ArrayList<DicEntity>();
@@ -92,9 +99,30 @@ public class DicHelper {
      * @author: LX
      */
     public void init(List<DicEntity> dicsDb) {
+        List<DicEntity> dicList = dicService.list();
+        ArrayList<DicEntity> sumList = new ArrayList<>(dicList);
+        for (DicEntity dic : dicList) {
+            Long noType = dic.getdId();
+            //noId,noName  根据字典ID找到节点下一级
+            Map<Long, String> map = nodeService.search(noType);
+            if (null != map) {
+                for (Long noId : map.keySet()) {
+                    //创建新的字典对象
+                    DicEntity nodeDic = new DicEntity();
+                    nodeDic.setdId(noId);
+                    nodeDic.setdName(map.get(noId));
+                    nodeDic.setpId(noType);
+                    sumList.add(nodeDic);
+                }
+            }
+        }
         for (DicEntity dic : dicsDb) {
             dicsContainer.put(dic.getdId(), dic);
             dicsVContainer.put(dic.getdValue(), dic);
+        }
+        for (DicEntity dicEntity : sumList) {
+            dicsContainer.put(dicEntity.getdId(), dicEntity);
+            dicsVContainer.put(dicEntity.getdValue(), dicEntity);
         }
         dicsList = dicsDb;
     }

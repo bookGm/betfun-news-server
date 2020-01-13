@@ -32,6 +32,8 @@ public interface IInNodeService extends IService<InNode> {
 
     String focus(Long uId, Long noId, Long type);
 
+    void delFocus(Long uId, Long noId);
+
     CardUserVo cardRecommended(Map<String, Object> map);
 
     List<CardBaseVo> heatCard();

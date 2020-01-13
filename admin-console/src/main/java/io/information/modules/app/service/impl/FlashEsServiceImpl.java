@@ -1,16 +1,22 @@
 package io.information.modules.app.service.impl;
 
 import com.guansuo.common.StringUtil;
+import io.elasticsearch.dao.EsFlashDao;
 import io.elasticsearch.entity.EsFlashEntity;
 import io.elasticsearch.utils.PageUtils;
 import io.elasticsearch.utils.SearchRequest;
+import io.information.common.utils.BeanHelper;
+import io.information.modules.app.dao.InNewsFlashDao;
+import io.information.modules.app.entity.InNewsFlash;
 import io.information.modules.app.service.FlashEsService;
+import io.mq.utils.Constants;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.index.query.Operator;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHits;
 import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
 import org.elasticsearch.search.fetch.subphase.highlight.HighlightField;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -28,6 +34,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import static org.elasticsearch.index.query.QueryBuilders.multiMatchQuery;
 
@@ -35,6 +42,12 @@ import static org.elasticsearch.index.query.QueryBuilders.multiMatchQuery;
 public class FlashEsServiceImpl implements FlashEsService {
     @Autowired
     private ElasticsearchTemplate elasticsearchTemplate;
+    @Autowired
+    private EsFlashDao esFlashDao;
+    @Autowired
+    private InNewsFlashDao flashDao;
+    @Autowired
+    private RabbitTemplate rabbitTemplate;
 
 
     @Override
@@ -164,8 +177,29 @@ public class FlashEsServiceImpl implements FlashEsService {
         }
     }
 
+    @Override
+    public void updateAll() {
+        Iterable<EsFlashEntity> esUsers = esFlashDao.findAll();
+        List<InNewsFlash> userList = flashDao.all();
+        ArrayList<EsFlashEntity> list = new ArrayList<>();
+        if (esUsers.iterator().hasNext()) {
+            EsFlashEntity next = esUsers.iterator().next();
+            list.add(next);
+        }
+        List<Long> collect = list.stream().map(EsFlashEntity::getnId).collect(Collectors.toList());
+        for (InNewsFlash user : userList) {
+            Long id = user.getnId();
+            boolean b = collect.contains(id);
+            if (!b) {
+                EsFlashEntity esUser = BeanHelper.copyProperties(user, EsFlashEntity.class);
+                rabbitTemplate.convertAndSend(Constants.flashExchange,
+                        Constants.flash_Save_RouteKey, esUser);
+            }
+        }
+    }
 
-//    @Override
+
+    //    @Override
 //    public PageUtils searchTest(SearchRequest request) {
 //        if (null != request.getKey() && StringUtil.isNotBlank(request.getKey())) {
 //            String key = request.getKey();

@@ -2,18 +2,24 @@ package io.information.modules.app.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.guansuo.common.StringUtil;
+import io.elasticsearch.dao.EsUserDao;
 import io.elasticsearch.entity.EsUserEntity;
 import io.elasticsearch.utils.PageUtils;
 import io.elasticsearch.utils.SearchRequest;
+import io.information.common.utils.BeanHelper;
+import io.information.modules.app.dao.InUserDao;
 import io.information.modules.app.entity.InArticle;
+import io.information.modules.app.entity.InUser;
 import io.information.modules.app.service.IInArticleService;
 import io.information.modules.app.service.UserEsService;
+import io.mq.utils.Constants;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.index.query.Operator;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHits;
 import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
 import org.elasticsearch.search.fetch.subphase.highlight.HighlightField;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -31,6 +37,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import static org.elasticsearch.index.query.QueryBuilders.multiMatchQuery;
 
@@ -40,6 +47,12 @@ public class UserEsServiceImpl implements UserEsService {
     private ElasticsearchTemplate elasticsearchTemplate;
     @Autowired
     private IInArticleService articleService;
+    @Autowired
+    private EsUserDao esUserDao;
+    @Autowired
+    private InUserDao userDao;
+    @Autowired
+    RabbitTemplate rabbitTemplate;
 
 
     //高亮显示ex
@@ -176,6 +189,28 @@ public class UserEsServiceImpl implements UserEsService {
         return ed;
     }
 
+
+    @Override
+    public void updateAll() {
+        Iterable<EsUserEntity> esUsers = esUserDao.findAll();
+        List<InUser> userList = userDao.all();
+        ArrayList<EsUserEntity> list = new ArrayList<>();
+        if (esUsers.iterator().hasNext()) {
+            EsUserEntity next = esUsers.iterator().next();
+            list.add(next);
+        }
+        List<Long> collect = list.stream().map(EsUserEntity::getuId).collect(Collectors.toList());
+        for (InUser user : userList) {
+            Long id = user.getuId();
+            boolean b = collect.contains(id);
+            if (!b) {
+                EsUserEntity esUser = BeanHelper.copyProperties(user, EsUserEntity.class);
+                rabbitTemplate.convertAndSend(Constants.userExchange,
+                        Constants.user_Save_RouteKey, esUser);
+            }
+        }
+
+    }
 
     /**
      * 反射调用属性的set方法设置高亮的内容   注意BUG

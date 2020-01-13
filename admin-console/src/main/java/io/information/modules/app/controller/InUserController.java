@@ -26,13 +26,11 @@ import io.swagger.annotations.*;
 import org.apache.shiro.crypto.hash.Sha256Hash;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.LongSummaryStatistics;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -71,6 +69,8 @@ public class InUserController extends AbstractController {
     private IInCardBaseService baseService;
     @Autowired
     RedisUtils redisUtils;
+    @Autowired
+    RedisTemplate redisTemplate;
 
 
     /**
@@ -103,7 +103,7 @@ public class InUserController extends AbstractController {
     @GetMapping("/info")
     @ApiOperation(value = "查询登录用户信息", httpMethod = "GET")
     public ResultUtil<InUser> loginInfo(@ApiIgnore @LoginUser InUser user) {
-        if (null == user.getuPhoto()) {
+        if (null == user.getuPhoto() || user.getuPhoto().equals("")) {
             user.setuPhoto("http://guansuo.info/news/upload/20191231115456head.png");
         }
         return ResultUtil.ok(userService.getById(user.getuId()));
@@ -118,7 +118,7 @@ public class InUserController extends AbstractController {
     @ApiImplicitParam(value = "用户ID", name = "uId", required = true)
     public ResultUtil<InUser> info(@PathVariable("uId") Long uId) {
         InUser user = userService.getById(uId);
-        if (null == user.getuPhoto()) {
+        if (null == user.getuPhoto() || user.getuPhoto().equals("")) {
             user.setuPhoto("http://guansuo.info/news/upload/20191231115456head.png");
         }
         return ResultUtil.ok(user);
@@ -241,6 +241,12 @@ public class InUserController extends AbstractController {
                 if (uId == user.getuId()) {
                     return R.error("您不能关注自己");
                 } else {
+                    String key = user.getuId() + "-" + inUser.getuPotential() + "-" + uId;
+                    Object o = redisUtils.hget(RedisKeys.FOCUS, key);
+                    if (null != o) {
+                        return R.error("已关注，请不要重复关注");
+                    }
+                    //用户ID，被关注用户身份，被关注用户ID
                     userService.focus(user.getuId(), inUser.getuPotential(), uId);
                     return R.ok();
                 }
@@ -260,6 +266,7 @@ public class InUserController extends AbstractController {
     @ApiImplicitParam(value = "用户id", name = "uId", required = true)
     public ResultUtil delFocus(@RequestBody Map<String, Object> map, @ApiIgnore @LoginUser InUser user) {
         //#uId-#status-#fId
+        //用户ID，被关注用户身份，被关注用户ID
         if (null != map.get("uId") && StringUtil.isNotBlank(map.get("uId"))) {
             long uId = Long.parseLong(String.valueOf(map.get("uId")));
             InUser inUser = userService.getById(uId);
@@ -267,6 +274,7 @@ public class InUserController extends AbstractController {
                 String key = user.getuId() + "-" + inUser.getuPotential() + "-" + uId;
                 Long r = redisUtils.hremove(RedisKeys.FOCUS, key);
                 if (r > 0) {
+                    userService.removeFocus(user.getuId(), inUser.getuPotential(), uId);
                     return ResultUtil.ok();
                 } else {
                     return ResultUtil.error("取消关注失败，请重试");
@@ -278,6 +286,7 @@ public class InUserController extends AbstractController {
                 Object entryKey = entry.getKey();
                 Long r = redisUtils.hremove(RedisKeys.FOCUS, entryKey);
                 if (r > 0) {
+                    userService.delFocus(user.getuId());
                     return ResultUtil.ok();
                 } else {
                     return ResultUtil.error("取消关注失败，请重试");
@@ -352,10 +361,12 @@ public class InUserController extends AbstractController {
             if (null != boolVo && StringUtil.isNotBlank(boolVo.getuId())) {
                 InUser u = userService.getById(boolVo.getuId());
                 if (null != u) {
-                    boolVo.setuNick(u.getuNick() == null ? "" : u.getuNick());
-                    boolVo.setuPhoto(u.getuPhoto());
+                    boolVo.setuNick(u.getuNick() == null ? u.getuNick() : u.getuPhone());
+                    boolVo.setuPhoto(u.getuPhoto() == null || u.getuPhoto().equals("")
+                            ? "http://guansuo.info/news/upload/20191231115456head.png" : u.getuPhoto());
                 } else {
                     boolVo.setuNick("用户已不存在");
+                    boolVo.setuPhoto("http://guansuo.info/news/upload/20191231115456head.png");
                 }
                 if (null != map.get("uId") && StringUtil.isNotBlank(map.get("uId"))) {
                     long uId = Long.parseLong(String.valueOf(map.get("uId")));
@@ -425,8 +436,9 @@ public class InUserController extends AbstractController {
     })
     public ResultUtil<PageUtils<InCommonReply>> comment
     (@RequestParam Map<String, Object> map, @ApiIgnore @LoginUser InUser user) {
+        //显示用户本人的评论
         map.put("uId", user.getuId());
-        PageUtils<InCommonReply> page = userService.comment(map);
+        PageUtils<InCommonReply> page = userService.commentUser(map);
         return ResultUtil.ok(page);
     }
 
@@ -443,8 +455,9 @@ public class InUserController extends AbstractController {
     })
     public ResultUtil<PageUtils<InCommonReply>> commentUser
     (@RequestParam Map<String, Object> map, @ApiIgnore @LoginUser InUser user) {
+        //显示其他用户向用户本人发布的评论
         map.put("uId", user.getuId());
-        PageUtils<InCommonReply> page = userService.commentUser(map);
+        PageUtils<InCommonReply> page = userService.comment(map);
         return ResultUtil.ok(page);
     }
 
@@ -533,7 +546,8 @@ public class InUserController extends AbstractController {
     public ResultUtil<PageUtils<InActivity>> active
     (@RequestParam Map<String, Object> map, @ApiIgnore @LoginUser InUser user) {
         map.put("uId", user.getuId());
-        map.put("uName", user.getuName());
+        map.put("uName", user.getuName() == null || user.getuName().equals("")
+                ? user.getuNick() : user.getuName());
         PageUtils<InActivity> page = userService.active(map);
         return ResultUtil.ok(page);
     }
@@ -627,6 +641,7 @@ public class InUserController extends AbstractController {
         PageUtils page = userService.favorite(map);
         return ResultUtil.ok(page);
     }
+
 
     /**
      * 个人中心 -- 删除收藏

@@ -1,7 +1,6 @@
 package io.information.modules.news.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.guansuo.common.StringUtil;
@@ -12,6 +11,8 @@ import io.information.modules.news.entity.NodeEntity;
 import io.information.modules.news.service.NodeService;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 
@@ -36,4 +37,18 @@ public class NodeServiceImpl extends ServiceImpl<NodeDao, NodeEntity> implements
         return new PageUtils(page);
     }
 
+    @Override
+    public Map<Long, String> search(Long noType) {
+        LambdaQueryWrapper<NodeEntity> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(NodeEntity::getNoType, noType);
+        List<NodeEntity> nodeList = this.list(queryWrapper);
+        if (null != nodeList && !nodeList.isEmpty()) {
+            HashMap<Long, String> map = new HashMap<>();
+            for (NodeEntity node : nodeList) {
+                map.put(node.getNoId(), node.getNoName());
+            }
+            return map;
+        }
+        return null;
+    }
 }

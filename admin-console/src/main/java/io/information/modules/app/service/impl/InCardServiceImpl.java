@@ -172,20 +172,22 @@ public class InCardServiceImpl extends ServiceImpl<InCardBaseDao, InCardBase> im
         if (null != cIds && cIds.length > 0) {
             for (Long cId : cIds) {
                 InCardBase base = baseService.getById(cId);
-                if (null != base.getcCategory()) {
-                    switch (base.getcCategory()) {
-                        case 1:
-                            //辩论帖子
-                            argueService.removeById(cId);
-                            break;
-                        case 2:
-                            //投票帖子
-                            voteService.removeById(cId);
-                            break;
+                if (null != base) {
+                    if (null != base.getcCategory()) {
+                        switch (base.getcCategory()) {
+                            case 1:
+                                //辩论帖子
+                                argueService.removeById(cId);
+                                break;
+                            case 2:
+                                //投票帖子
+                                voteService.removeById(cId);
+                                break;
+                        }
                     }
+                    //基础帖子
+                    baseService.removeById(cId);
                 }
-                //基础帖子
-                baseService.removeById(cId);
             }
         }
     }

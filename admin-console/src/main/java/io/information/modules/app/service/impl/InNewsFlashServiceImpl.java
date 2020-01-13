@@ -78,25 +78,27 @@ public class InNewsFlashServiceImpl extends ServiceImpl<InNewsFlashDao, InNewsFl
     @Override
     @HashCacheable(key = RedisKeys.NATTITUDE, keyField = "#nId-#uId")
     public String attitude(Long nId, Long uId, Integer bId) {
-        if (NewsEnum.快讯_利空.getCode().equals(bId + "")) {
-            this.baseMapper.addNBad(nId);
-        }
-        if (NewsEnum.快讯_利好.getCode().equals(bId + "")) {
-            this.baseMapper.addNBull(nId);
-        }
         return String.valueOf(bId);
     }
 
     @Override
-    public Long delAttitude(Long nId, Long uId, Integer bId) {
-        if (NewsEnum.快讯_利空.getCode().equals(bId + "")) {
-            this.baseMapper.delNBad(nId);
-        }
-        if (NewsEnum.快讯_利好.getCode().equals(bId + "")) {
-            this.baseMapper.delNBull(nId);
-        }
-        String key = nId + "-" + uId;
-        return redisUtils.hremove(RedisKeys.NATTITUDE, key);
+    public void addNBad(long nId) {
+        this.baseMapper.addNBad(nId);
+    }
+
+    @Override
+    public void addNBull(long nId) {
+        this.baseMapper.addNBull(nId);
+    }
+
+    @Override
+    public void delNBad(long nId) {
+        this.baseMapper.delNBad(nId);
+    }
+
+    @Override
+    public void delNBull(long nId) {
+        this.baseMapper.delNBull(nId);
     }
 
     @Override

@@ -13,5 +13,7 @@ import java.util.Map;
  */
 public interface NodeService extends IService<NodeEntity> {
     PageUtils queryPage(Map<String, Object> params);
+
+    Map<Long, String> search(Long noType);
 }
 

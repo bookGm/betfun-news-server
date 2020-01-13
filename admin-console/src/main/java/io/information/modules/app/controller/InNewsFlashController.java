@@ -119,57 +119,56 @@ public class InNewsFlashController {
         if ((null != map.get("nId") && StringUtil.isNotBlank(map.get("nId")))
                 && (null != map.get("bId") && StringUtil.isNotBlank(map.get("bId")))) {
             long nId = Long.parseLong(String.valueOf(map.get("nId")));
+            int bId = Integer.parseInt(String.valueOf(map.get("bId")));
             Boolean isPoint = redisUtils.hashHasKey(RedisKeys.NATTITUDE, nId + "-" + user.getuId());
             if (isPoint) {
-                return R.error("以支持，请不要重复点击！");
+                //如果已经点击，则判断点击目标是否一致
+                Object o = redisUtils.hget(RedisKeys.NATTITUDE, nId + "-" + user.getuId());
+                int rBid = Integer.parseInt(String.valueOf(o));
+                if (NewsEnum.快讯_利空.getCode().equals(bId + "")) {
+                    //判断是否为利空
+                    if (rBid == bId && NewsEnum.快讯_利空.getCode().equals(rBid + "")) {
+                        //两次点击一致，利空减一
+                        newsFlashService.delNBad(nId);
+                        redisUtils.hremove(RedisKeys.NATTITUDE, nId + "-" + user.getuId());
+                    } else {
+                        //两次点击不一致，利空+1，利好-1
+                        newsFlashService.delNBull(nId);
+                        newsFlashService.addNBad(nId);
+                        //更新缓存
+                        redisUtils.hset(RedisKeys.NATTITUDE, nId + "-" + user.getuId(), NewsEnum.快讯_利空.getCode());
+                    }
+                } else if (NewsEnum.快讯_利好.getCode().equals(bId + "")) {
+                    //判断是否为利好
+                    if (rBid == bId && NewsEnum.快讯_利好.getCode().equals(rBid + "")) {
+                        //两次点击一致，利好减一
+                        newsFlashService.delNBull(nId);
+                        redisUtils.hremove(RedisKeys.NATTITUDE, nId + "-" + user.getuId());
+                    } else {
+                        //两次点击不一致，利好+1，利空-1
+                        newsFlashService.addNBull(nId);
+                        newsFlashService.delNBad(nId);
+                        //更新缓存
+                        redisUtils.hset(RedisKeys.NATTITUDE, nId + "-" + user.getuId(), NewsEnum.快讯_利好.getCode());
+                    }
+                }
+            } else {
+                //未点击，加一
+                if (NewsEnum.快讯_利空.getCode().equals(bId + "")) {
+                    newsFlashService.addNBad(nId);
+                }
+                if (NewsEnum.快讯_利好.getCode().equals(bId + "")) {
+                    newsFlashService.addNBull(nId);
+                }
+                newsFlashService.attitude(nId, user.getuId(), bId);
             }
-            int bId = Integer.parseInt(String.valueOf(map.get("bId")));
-            newsFlashService.attitude(nId, user.getuId(), bId);
             InNewsFlash flash = newsFlashService.getById(nId);
             EsFlashEntity esFlash = BeanHelper.copyProperties(flash, EsFlashEntity.class);
             rabbitTemplate.convertAndSend(Constants.flashExchange,
                     Constants.flash_Update_RouteKey, esFlash);
-            if (NewsEnum.快讯_利空.getCode().equals(bId + "")) {
-                return R.ok().put("number", flash.getnBad());
-            }
-            if (NewsEnum.快讯_利好.getCode().equals(bId + "")) {
-                return R.ok().put("number", flash.getnBull());
-            }
-        }
-        return R.error("缺少必要的参数");
-    }
 
-
-    /**
-     * 取消利好利空
-     */
-    @Login
-    @PostMapping("/delAttitude")
-    @ApiOperation(value = "取消利好利空", httpMethod = "POST")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "nId", value = "资讯id", required = true),
-            @ApiImplicitParam(name = "bId", value = "0：利空 1：利好", required = true)
-    })
-    public R delAttitude(@RequestBody Map<String, Object> map, @ApiIgnore @LoginUser InUser user) {
-        if ((null != map.get("nId") && StringUtil.isNotBlank(map.get("nId")))
-                && (null != map.get("bId") && StringUtil.isNotBlank(map.get("bId")))) {
-            long nId = Long.parseLong(String.valueOf(map.get("nId")));
-            Boolean isPoint = redisUtils.hashHasKey(RedisKeys.NATTITUDE, nId + "-" + user.getuId());
-            if (!isPoint) {
-                return R.error("已取消，请不要重复点击！");
-            }
-            int bId = Integer.parseInt(String.valueOf(map.get("bId")));
-            newsFlashService.delAttitude(nId, user.getuId(), bId);
-            InNewsFlash flash = newsFlashService.getById(nId);
-            EsFlashEntity esFlash = BeanHelper.copyProperties(flash, EsFlashEntity.class);
-            rabbitTemplate.convertAndSend(Constants.flashExchange,
-                    Constants.flash_Update_RouteKey, esFlash);
-            if (NewsEnum.快讯_利空.getCode().equals(bId + "")) {
-                return R.ok().put("number", flash.getnBad());
-            }
-            if (NewsEnum.快讯_利好.getCode().equals(bId + "")) {
-                return R.ok().put("number", flash.getnBull());
-            }
+            return R.ok().put("nBad", flash.getnBad() == null ? 0 : flash.getnBad())
+                    .put("nBull", flash.getnBull() == null ? 0 : flash.getnBull());
         }
         return R.error("缺少必要的参数");
     }

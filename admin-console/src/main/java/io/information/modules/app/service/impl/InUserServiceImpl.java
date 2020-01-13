@@ -9,8 +9,10 @@ import com.guansuo.common.StringUtil;
 import com.guansuo.newsenum.NewsEnum;
 import io.information.common.annotation.HashCacheable;
 import io.information.common.utils.*;
+import io.information.modules.app.config.MyComparator;
 import io.information.modules.app.dao.InActivityDao;
 import io.information.modules.app.dao.InArticleDao;
+import io.information.modules.app.dao.InCardBaseDao;
 import io.information.modules.app.dao.InUserDao;
 import io.information.modules.app.dto.CollectDTO;
 import io.information.modules.app.dto.InNodeDTO;
@@ -18,13 +20,11 @@ import io.information.modules.app.dto.InUserDTO;
 import io.information.modules.app.entity.*;
 import io.information.modules.app.service.*;
 import io.information.modules.app.vo.InLikeVo;
-import io.information.modules.app.vo.UserBoolVo;
 import io.information.modules.app.vo.UserCardVo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -56,6 +56,8 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
     @Autowired
     InActivityDao activityDao;
     @Autowired
+    InCardBaseDao cardBaseDao;
+    @Autowired
     IInDicService dicService;
     @Autowired
     InArticleDao articleDao;
@@ -80,10 +82,26 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
     @Override
     @HashCacheable(key = RedisKeys.FOCUS, keyField = "#uId-#status-#fId")
     public String focus(Long uId, Integer status, Long fId) {
-        this.baseMapper.addFans(fId);
+        //用户ID，被关注用户身份，被关注用户ID
         this.baseMapper.addFocus(uId);
+        this.baseMapper.addFans(fId);
         return String.valueOf(status);
     }
+
+    @Override
+    public void removeFocus(Long uId, Integer status, Long fId) {
+        //用户ID，被关注用户身份，被关注用户ID
+        this.baseMapper.delFocus(uId);
+        this.baseMapper.delFans(fId);
+    }
+
+
+    @Override
+    public void delFocus(Long uId) {
+        //用户ID
+        this.baseMapper.delFocus(uId);
+    }
+
 
     @Override
     public Boolean isFocus(Long tId, Long uId) {
@@ -99,44 +117,49 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
         LambdaQueryWrapper<InCommonReply> queryWrapper = new LambdaQueryWrapper<>();
         if (null != map.get("uId") && StringUtil.isNotBlank(map.get("uId"))) {
             long uId = Long.parseLong(String.valueOf(map.get("uId")));
-            //查询用户发布的所有文章和活动ID
-            ArrayList<Long> list = new ArrayList<>();
-            List<Long> actIds = activityDao.allActId(uId);
-            List<Long> aIds = articleDao.allAId(uId);
-            list.addAll(actIds);
-            list.addAll(aIds);
-            if (null != list && !list.isEmpty()) {
-                queryWrapper.ne(InCommonReply::gettType, 3).in(InCommonReply::gettId, list);
-                IPage<InCommonReply> page = commonReplyService.page(
-                        new Query<InCommonReply>().getPage(map),
-                        queryWrapper
-                );
-                for (InCommonReply record : page.getRecords()) {
-                    InUser user = this.getById(record.getcId());
-                    record.setcName(user.getuName());
-                    record.setcPhoto(user.getuPhoto());
-                    record.setCrSimpleTime(DateUtils.getSimpleTime(record.getCrTime()));
-                    String typeNmae = "";
-                    switch (record.gettType()) {
-                        //0文章，1帖子，2活动，3用户
-                        case 0:
-                            typeNmae = "文章";
-                            break;
-                        case 1:
-                            typeNmae = "帖子";
-                            break;
-                        case 2:
-                            typeNmae = "活动";
-                            break;
-                        case 3:
-                            typeNmae = "用户";
-                            break;
-                    }
-                    record.settTypeName(typeNmae);
+            //查询用户评论的数据
+            queryWrapper.eq(InCommonReply::getcId, uId);
+            queryWrapper.orderByDesc(InCommonReply::getCrTime);
+            IPage<InCommonReply> page = commonReplyService.page(
+                    new Query<InCommonReply>().getPage(map),
+                    queryWrapper
+            );
+            for (InCommonReply record : page.getRecords()) {
+                InUser user = this.getById(record.getcId());
+                if (null != user) {
+                    record.setcName(user.getuName() == null || user.getuName().equals("")
+                            ? user.getuNick() : user.getuName());
+                    record.setcPhoto(user.getuPhoto() == null || user.getuPhoto().equals("")
+                            ? "http://guansuo.info/news/upload/20191231115456head.png" : user.getuPhoto());
+                } else {
+                    record.setcName("用户已不存在");
+                    record.setcPhoto("http://guansuo.info/news/upload/20191231115456head.png");
                 }
-                return new PageUtils<>(page);
+                record.setCrSimpleTime(DateUtils.getSimpleTime(record.getCrTime()));
+                LambdaQueryWrapper<InCommonReply> query = new LambdaQueryWrapper<>();
+                //根据根ID查询回复数量
+                query.eq(InCommonReply::getCrTId, record.getCrId());
+                int count = commonReplyService.count(query);
+                record.setCrCount(count);
+                String typeNmae = "";
+                switch (record.gettType()) {
+                    //0文章，1帖子，2活动，3用户
+                    case 0:
+                        typeNmae = "文章";
+                        break;
+                    case 1:
+                        typeNmae = "帖子";
+                        break;
+                    case 2:
+                        typeNmae = "活动";
+                        break;
+                    case 3:
+                        typeNmae = "用户";
+                        break;
+                }
+                record.settTypeName(typeNmae);
             }
-            return null;
+            return new PageUtils<>(page);
         }
         return null;
     }
@@ -184,38 +207,6 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
 
     }
 
-    @Override
-    //目标用户ID   目标ID   目标类型   用户ID
-    public UserBoolVo userNumber(Long uId, Long tId, Integer type, InUser user) {
-        if (null != uId) {
-            //用户信息
-            InUser inUser = this.getById(uId);
-            if (inUser == null) {
-                return null;
-            }
-            UserBoolVo boolVo = BeanHelper.copyProperties(inUser, UserBoolVo.class);
-            if (null != boolVo) {
-                //是否收藏
-                Boolean isCollect = redisUtils.hashHasKey(RedisKeys.COLLECT, tId + "-" + user.getuId() + "-" + uId + "-*");
-                boolVo.setCollect(isCollect);
-                //收藏数量
-                List<Map.Entry<Object, Object>> cNumber = redisUtils.hfget(RedisKeys.COLLECT, "*-*-" + uId + "-*");
-                boolVo.setCollectNumber(cNumber == null ? 0 : cNumber.size());
-                //是否点赞
-                Boolean isLike = redisUtils.hashHasKey(RedisKeys.LIKE, tId + "-" + user.getuId() + "-" + uId + "-*");
-                boolVo.setLike(isLike);
-                //点赞数量
-                List<Map.Entry<Object, Object>> lNumber = redisUtils.hfget(RedisKeys.LIKE, "*-*-" + uId + "-*");
-//                boolVo.setLikeNumber(lNumber == null ? 0 : lNumber.size());
-                //评论数量
-                int count = commonReplyService.count(new LambdaQueryWrapper<InCommonReply>().eq(InCommonReply::gettId, uId));
-                boolVo.setReplyNumber(count);
-                return boolVo;
-            }
-        }
-        return null;
-    }
-
 
     @Override
     public PageUtils<InCommonReply> comment(Map<String, Object> params) {
@@ -223,10 +214,11 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
         return commonReplyService.userMsg(params);
     }
 
+
     @Override
     public Map<String, Object> honor(Long uId) {
         LambdaQueryWrapper<InArticle> articleQuery = new LambdaQueryWrapper<>();
-        articleQuery.eq(InArticle::getuId, uId);
+        articleQuery.eq(InArticle::getuId, uId).eq(InArticle::getaStatus, 2);
         List<InArticle> articleList = articleService.list(articleQuery);
         long likeSum = articleList.stream().mapToLong(InArticle::getaLike).sum();
         LambdaQueryWrapper<InCommonReply> replyQuery = new LambdaQueryWrapper<>();
@@ -239,6 +231,7 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
         return map;
     }
 
+
     @Override
     public PageUtils card(Map<String, Object> map) {
         Integer pageSize = StringUtil.isBlank(map.get("pageSize")) ? 10 : Integer.parseInt(String.valueOf(map.get("pageSize")));
@@ -247,6 +240,7 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
         if (null != map.get("uId") && StringUtil.isNotBlank(map.get("uId"))) {
             long uId = Long.parseLong(String.valueOf(map.get("uId")));
             queryWrapper.eq(InCardBase::getuId, uId);
+            queryWrapper.orderByDesc(InCardBase::getcCreateTime);
             IPage<InCardBase> page = baseService.page(
                     new Query<InCardBase>().getPage(map),
                     queryWrapper
@@ -259,19 +253,19 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
                     if (null != cardVo) {
                         String simpleTime = DateUtils.getSimpleTime(base.getcCreateTime() == null ? new Date() : base.getcCreateTime());
                         cardVo.setTime(simpleTime);
-                        InDic dic = dicService.getById(base.getcNodeCategory() == null ? 0 : base.getcNodeCategory());
-                        if (null != dic) {
-                            cardVo.setType(dic.getdName());
-                            cardVo.setcId(base.getcId());
-                            cardVo.setcTitle(base.getcTitle());
-                            cardVo.setcId(base.getcId());
-                            Object number = redisTemplate.opsForValue().get(RedisKeys.CARDBROWSE + cardVo.getcId());
-                            if (null != number) {
-                                long readNumber = Long.parseLong(String.valueOf(number));
-                                cardVo.setReadNumber(readNumber);
-                            }
-                            cardVo.setReplyNumber(base.getcCritic());
+                        String dicName = dicHelper.getDicName(base.getcNodeCategory().longValue()) == null
+                                ? "" : dicHelper.getDicName(base.getcNodeCategory().longValue());
+//                        InDic dic = dicService.getById(base.getcNodeCategory() == null ? 0 : base.getcNodeCategory());
+                        cardVo.setType(dicName);
+                        cardVo.setcId(base.getcId());
+                        cardVo.setcTitle(base.getcTitle());
+                        cardVo.setcId(base.getcId());
+                        Object number = redisTemplate.opsForValue().get(RedisKeys.CARDBROWSE + cardVo.getcId());
+                        if (null != number) {
+                            long readNumber = Long.parseLong(String.valueOf(number));
+                            cardVo.setReadNumber(readNumber);
                         }
+                        cardVo.setReplyNumber(base.getcCritic());
                         list.add(cardVo);
                     }
                 }
@@ -282,6 +276,7 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
         return null;
     }
 
+
     @Override
     public PageUtils<InCommonReply> reply(Map<String, Object> map) {
         if (null != map.get("uId") && StringUtil.isNotBlank(map.get("uId"))) {
@@ -289,6 +284,7 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
             //根据用户ID查询所有目标ID<根>或被评论ID找到回复用户的评论
             LambdaQueryWrapper<InCardBase> cardQuery = new LambdaQueryWrapper<>();
             cardQuery.eq(InCardBase::getuId, uId);
+            cardQuery.orderByDesc(InCardBase::getcCreateTime);
             List<InCardBase> baseList = baseService.list(cardQuery);
             if (null != baseList && !baseList.isEmpty()) {
                 //获取用户帖子ID
@@ -302,6 +298,7 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
         }
         return null;
     }
+
 
     private void getTitle(String id, String type, InLikeVo likeVo) {
         if (NewsEnum.点赞_文章.getCode().equals(type)) {
@@ -323,6 +320,7 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
             }
         }
     }
+
 
     @Override
     public PageUtils<InLikeVo> like(Map<String, Object> map, Long uId) {
@@ -357,9 +355,11 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
 //            InUser user = (InUser) oUser;
             if (null != user) {
                 likeVo.setNick(user.getuNick());
-                likeVo.setPhoto(user.getuPhoto());
+                likeVo.setPhoto(user.getuPhoto() == null || user.getuPhoto().equals("")
+                        ? "http://guansuo.info/news/upload/20191231115456head.png" : user.getuPhoto());
             } else {
                 likeVo.setNick("用户已不存在");
+                likeVo.setPhoto("http://guansuo.info/news/upload/20191231115456head.png");
             }
             getTitle(str[0], str[3], likeVo);
             newsLike.add(likeVo);
@@ -390,6 +390,7 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
         if (null != map.get("uId") && StringUtil.isNotBlank(map.get("uId"))) {
             queryWrapper.eq(InActivity::getuId, Long.parseLong(String.valueOf(map.get("uId"))));
         }
+        queryWrapper.orderByDesc(InActivity::getActCreateTime);
         IPage<InActivity> page = activityService.page(
                 new Query<InActivity>().getPage(map),
                 queryWrapper
@@ -401,6 +402,7 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
         }
         return new PageUtils(page);
     }
+
 
     @Override
     public PageUtils fansWriter(Map<String, Object> map) {
@@ -435,19 +437,23 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
 //            InUser user = (InUser) oUser;
             InUser user = this.getById(id);
             if (null != user) {
-                userDTO.setuNick(user.getuNick());
-                userDTO.setuPhoto(user.getuPhoto());
+                userDTO.setuNick(user.getuName() == null || user.getuName().equals("")
+                        ? user.getuNick() : user.getuName());
+                userDTO.setuPhoto(user.getuPhoto() == null || user.getuPhoto().equals("")
+                        ? "http://guansuo.info/news/upload/20191231115456head.png" : user.getuPhoto());
                 userDTO.setuIntro(user.getuIntro());
                 newsFocus.add(userDTO);
             } else {
                 InUserDTO dto = new InUserDTO();
                 dto.setuId(id);
                 dto.setuNick("用户已不存在");
+                dto.setuPhoto("http://guansuo.info/news/upload/20191231115456head.png");
                 newsFocus.add(dto);
             }
         }
         return new PageUtils(newsFocus, cSize, size, page);
     }
+
 
     @Override
     public PageUtils fansPerson(Map<String, Object> map) {
@@ -497,6 +503,7 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
                 InUserDTO dto = new InUserDTO();
                 dto.setuId(id);
                 dto.setuNick("用户已不存在");
+                dto.setuPhoto("http://guansuo.info/news/upload/20191231115456head.png");
                 newsFocus.add(dto);
             }
         }
@@ -542,6 +549,7 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
                 InUserDTO dto = new InUserDTO();
                 dto.setuId(id);
                 dto.setuNick("用户已不存在");
+                dto.setuPhoto("http://guansuo.info/news/upload/20191231115456head.png");
                 newsFans.add(dto);
             }
         }
@@ -565,10 +573,14 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
             ArrayList<CollectDTO> collects = null;
             List<Map.Entry<Object, Object>> cmap = redisUtils.hfget(RedisKeys.COLLECT, "*-" + uId + "-*-" + type);
             int cSize = cmap == null ? 0 : cmap.size();
+
+//
 //            List<Map.Entry<Object, Object>> slist = null;
             //关注目标信息
             if (null != cmap && cmap.size() > 0) {
                 collects = new ArrayList<>();
+                Collections.sort(cmap, new MyComparator());
+//                Collections.reverse(cmap);
                 if (bindex + size < cmap.size()) {
                     cmap = cmap.subList(bindex, bindex + size);
                 } else if (bindex < cmap.size()) {
@@ -577,6 +589,7 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
             } else {
                 return new PageUtils(collects, 0, size, page);
             }
+
             switch (type) {
                 case 0:     //文章
                     for (Map.Entry<Object, Object> obj : cmap) {
@@ -599,7 +612,8 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
                             if (null != article.getuId()) {
                                 InUser user = this.getById(article.getuId());
                                 if (null != user) {
-                                    article.setuName(user.getuName() == null ? "" : user.getuName());
+                                    article.setuName(user.getuName() == null || user.getuName().equals("")
+                                            ? user.getuNick() : user.getuName());
                                 }
                             }
                             dto.setArticle(article);
@@ -638,8 +652,10 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
                             if (null != cardBase.getuId()) {
                                 InUser user = this.getById(cardBase.getuId());
                                 if (null != user) {
-                                    cardBase.setuNick(user.getuNick() == null ? "" : user.getuNick());
-                                    cardBase.setuPhoto(user.getuPhoto());
+                                    cardBase.setuNick(user.getuName() == null || user.getuName().equals("")
+                                            ? user.getuNick() : user.getuName());
+                                    cardBase.setuPhoto(user.getuPhoto() == null || user.getuPhoto().equals("")
+                                            ? "http://guansuo.info/news/upload/20191231115456head.png" : user.getuPhoto());
                                 }
                             }
                             dto.setCardBase(cardBase);
@@ -670,7 +686,8 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
                             if (null != activity.getuId()) {
                                 InUser user = this.getById(activity.getuId());
                                 if (null != user) {
-                                    activity.setuName(user.getuName() == null ? "" : user.getuName());
+                                    activity.setuName(user.getuName() == null || user.getuName().equals("")
+                                            ? user.getuNick() : user.getuName());
                                 }
                             }
                             dto.setActivity(activity);

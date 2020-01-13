@@ -2,7 +2,6 @@ package io.elasticsearch.entity;
 
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.fasterxml.jackson.annotation.JsonFormat;
-import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.elasticsearch.annotations.DateFormat;
 import org.springframework.data.elasticsearch.annotations.Document;
@@ -21,38 +20,38 @@ public class EsArticleEntity implements Serializable {
 
     @Field(type = FieldType.Keyword)
     private Long uId;   //用户Id
-
-    @Field(type = FieldType.Keyword, analyzer = "ik_max_word", searchAnalyzer = "ik_max_word")
+    //ik_max_word  细粒度搜索
+    @Field(type = FieldType.Keyword, analyzer = "ik_max_word", searchAnalyzer = "ik_smart")
     private String uName;   //用户名称
 
-    @Field(type = FieldType.Keyword, analyzer = "ik_max_word", searchAnalyzer = "ik_max_word")
+    @Field(type = FieldType.Keyword, analyzer = "ik_max_word", searchAnalyzer = "ik_smart")
     private String aTitle;  //文章标题
 
-    @Field(type = FieldType.Keyword, analyzer = "ik_max_word", searchAnalyzer = "ik_max_word")
+    @Field(type = FieldType.Keyword, analyzer = "ik_max_word", searchAnalyzer = "ik_smart")
     private String aContent; //文章内容
 
-    @Field(type = FieldType.Keyword, analyzer = "ik_max_word", searchAnalyzer = "ik_max_word")
+    @Field(type = FieldType.Keyword, analyzer = "ik_max_word", searchAnalyzer = "ik_smart")
     private String aBrief;  //文章摘要
 
-    @Field(type = FieldType.Keyword, analyzer = "ik_max_word", searchAnalyzer = "ik_max_word")
+    @Field(type = FieldType.Keyword, analyzer = "ik_max_word", searchAnalyzer = "ik_smart")
     private String aKeyword;  //文章关键字
 
-    @Field(type = FieldType.Keyword)
+    @Field(index = false, type = FieldType.Keyword)
     private String aCover;  //文章封面URL
 
-    @Field(type = FieldType.Integer)
+    @Field(index = false, type = FieldType.Integer)
     private Integer aType;  //文章类型
 
-    @Field(type = FieldType.Keyword, analyzer = "ik_max_word")
+    @Field(type = FieldType.Keyword, analyzer = "ik_max_word", searchAnalyzer = "ik_smart")
     private String aSource; //文章来源
 
-    @Field(type = FieldType.Integer)
+    @Field(index = false, type = FieldType.Integer)
     private Integer aStatus;    //文章状态
 
-    @Field(type = FieldType.Keyword)
+    @Field(index = false, type = FieldType.Keyword)
     private String aLink;   //文章链接
 
-    @Field(type = FieldType.Date, format = DateFormat.custom, pattern = "yyyy-MM-dd HH:mm:ss")
+    @Field(index = false, type = FieldType.Date, format = DateFormat.custom, pattern = "yyyy-MM-dd HH:mm:ss")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date aCreateTime;// 创建时间
 

@@ -53,13 +53,12 @@ public class InActivityDatasServiceImpl extends ServiceImpl<InActivityDatasDao, 
                     new Query<InActivityDatas>().getPage(map),
                     queryWrapper
             );
-
             List<InActivityDatas> list = page.getRecords();
             Map<Long, List<InActivityDatas>> m = list.stream().collect(Collectors.groupingBy(InActivityDatas::getuId));
             List list1 = new ArrayList();
             for (Map.Entry<Long, List<InActivityDatas>> longListEntry : m.entrySet()) {
                 JSONObject obj = new JSONObject();
-                obj.put("id", longListEntry.getKey());
+//                obj.put("id", longListEntry.getKey());
                 for (InActivityDatas k : longListEntry.getValue()) {
                     obj.put(k.getfName(),
                             k.getdValue() == null ? "" : k.getdValue());

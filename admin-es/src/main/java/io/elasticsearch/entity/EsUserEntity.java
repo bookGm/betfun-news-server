@@ -49,7 +49,7 @@ public class EsUserEntity implements Serializable {
     /**
      * 用户昵称
      */
-    @Field(type = FieldType.Keyword, analyzer = "ik_max_word", searchAnalyzer = "ik_max_word")
+    @Field(type = FieldType.Keyword, analyzer = "ik_max_word", searchAnalyzer = "ik_smart")
     private String uNick;
     /**
      * 用户头像
@@ -59,7 +59,7 @@ public class EsUserEntity implements Serializable {
     /**
      * 用户简介
      */
-    @Field(type = FieldType.Keyword, analyzer = "ik_max_word", searchAnalyzer = "ik_max_word")
+    @Field(type = FieldType.Keyword, analyzer = "ik_max_word", searchAnalyzer = "ik_smart")
     private String uIntro;
     /**
      * 用户关注
@@ -89,7 +89,7 @@ public class EsUserEntity implements Serializable {
     /**
      * 企业名称
      */
-    @Field(type = FieldType.Keyword, analyzer = "ik_max_word", searchAnalyzer = "ik_max_word")
+    @Field(type = FieldType.Keyword, analyzer = "ik_max_word", searchAnalyzer = "ik_smart")
     private String uCompanyName;
     /**
      * 身份证号

@@ -8,10 +8,7 @@ import com.guansuo.common.DateUtils;
 import com.guansuo.common.StringUtil;
 import io.information.common.annotation.HashCacheable;
 import io.information.common.utils.*;
-import io.information.modules.app.dao.InCardBaseDao;
-import io.information.modules.app.dao.InCommonReplyDao;
-import io.information.modules.app.dao.InLogDao;
-import io.information.modules.app.dao.InNodeDao;
+import io.information.modules.app.dao.*;
 import io.information.modules.app.entity.*;
 import io.information.modules.app.service.*;
 import io.information.modules.app.vo.*;
@@ -36,6 +33,8 @@ public class InNodeServiceImpl extends ServiceImpl<InNodeDao, InNode> implements
     @Autowired
     IInUserService userService;
     @Autowired
+    InUserDao userDao;
+    @Autowired
     IInArticleService articleService;
     @Autowired
     IInCardBaseService baseService;
@@ -51,6 +50,8 @@ public class InNodeServiceImpl extends ServiceImpl<InNodeDao, InNode> implements
     InLogDao logDao;
     @Autowired
     RedisTemplate redisTemplate;
+    @Autowired
+    DicHelper dicHelper;
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
@@ -83,7 +84,7 @@ public class InNodeServiceImpl extends ServiceImpl<InNodeDao, InNode> implements
         if (!nodes.isEmpty()) {
             for (InNode node : nodes) {
                 //获取节点对应的帖子集合求出总数(size)
-                int cardNumber = baseService.count(new LambdaQueryWrapper<InCardBase>().eq(InCardBase::getNoId, node.getNoType()));
+                int cardNumber = baseService.count(new LambdaQueryWrapper<InCardBase>().eq(InCardBase::getNoId, node.getNoId()));
                 //将节点和对应帖子的总数放入集合
                 node.setCardNumber(cardNumber);
             }
@@ -173,21 +174,27 @@ public class InNodeServiceImpl extends ServiceImpl<InNodeDao, InNode> implements
                     if (null != cardVo) {
                         String simpleTime = DateUtils.getSimpleTime(base.getcCreateTime() == null ? new Date() : base.getcCreateTime());
                         cardVo.setTime(simpleTime);
-                        InDic dic = dicService.getById(base.getcNodeCategory() == null ? 0 : base.getcNodeCategory());
-                        if (null != dic) {
-                            cardVo.setType(dic.getdName());
-                            cardVo.setcId(base.getcId());
-                            cardVo.setcTitle(base.getcTitle());
-                            cardVo.setcId(base.getcId());
-                            Object number = redisTemplate.opsForValue().get(RedisKeys.CARDBROWSE + cardVo.getcId());
-                            if (null != number) {
-                                long readNumber = Long.parseLong(String.valueOf(number));
-                                cardVo.setReadNumber(readNumber);
-                            }
-                            cardVo.setReplyNumber(base.getcCritic());
-                            list.add(cardVo);
+//                        InDic dic = dicService.getById(base.getcNodeCategory() == null ? 0 : base.getcNodeCategory());
+                        String dicName = dicHelper.getDicName(base.getcNodeCategory().longValue()) == null
+                                ? "" : dicHelper.getDicName(base.getcNodeCategory().longValue());
+                        cardVo.setType(dicName);
+                        cardVo.setcId(base.getcId());
+                        cardVo.setcTitle(base.getcTitle());
+                        cardVo.setcId(base.getcId());
+                        Object number = redisTemplate.opsForValue().get(RedisKeys.CARDBROWSE + cardVo.getcId());
+                        if (null != number) {
+                            long readNumber = Long.parseLong(String.valueOf(number));
+                            cardVo.setReadNumber(readNumber);
                         }
+                        cardVo.setReplyNumber(base.getcCritic());
+                        list.add(cardVo);
                     }
+                } else {
+                    InUser user1 = new InUser();
+                    user1.setuNick("用户已不存在");
+                    user1.setuPhoto("http://guansuo.info/news/upload/20191231115456head.png");
+                    UserCardVo cardVo = BeanHelper.copyProperties(user1, UserCardVo.class);
+                    list.add(cardVo);
                 }
             }
         }
@@ -209,8 +216,15 @@ public class InNodeServiceImpl extends ServiceImpl<InNodeDao, InNode> implements
     @Override
     @HashCacheable(key = RedisKeys.NODES, keyField = "#uId-#type-#noId")
     public String focus(Long uId, Long noId, Long type) {
+        userDao.addFocus(uId);
         this.baseMapper.increaseFocus(noId);
         return String.valueOf(type);
+    }
+
+    @Override
+    public void delFocus(Long uId, Long noId) {
+        userDao.delFocus(uId);
+        this.baseMapper.removeFocus(noId);
     }
 
     @Override
@@ -364,7 +378,13 @@ public class InNodeServiceImpl extends ServiceImpl<InNodeDao, InNode> implements
                 //获赞数
                 long likeNumber = articles.stream().mapToLong(InArticle::getaLike).sum();
                 //浏览量
-                long readNumber = articles.stream().mapToLong(InArticle::getaReadNumber).sum();
+                long readNumber = 0L;
+                for (InArticle article : articles) {
+                    Object number = redisTemplate.opsForValue().get(RedisKeys.ABROWSE + article.getaId());
+                    if (null != number) {
+                        readNumber += Long.parseLong(String.valueOf(number));
+                    }
+                }
                 vo.setLikeNumber(likeNumber);
                 vo.setReadNumber(readNumber);
                 IPage<InArticle> page = articleService.page(

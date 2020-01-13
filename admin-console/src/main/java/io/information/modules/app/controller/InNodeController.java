@@ -71,6 +71,11 @@ public class InNodeController {
             long noId = Long.parseLong(String.valueOf(map.get("noId")));
             InNode node = nodeService.getById(noId);
             if (null != node) {
+                String key = user.getuId() + "-" + node.getNoType() + "-" + noId;
+                Object o = redisUtils.hget(RedisKeys.NODES, key);
+                if (null != o) {
+                    return R.error("已关注，请不要重复关注");
+                }
                 nodeService.focus(user.getuId(), noId, node.getNoType());
                 return R.ok();
             }
@@ -92,10 +97,10 @@ public class InNodeController {
             long noId = Long.parseLong(String.valueOf(map.get("noId")));
             InNode node = nodeService.getById(noId);
             if (null != node) {
-                nodeService.focus(user.getuId(), noId, node.getNoType());
                 String key = user.getuId() + "-" + node.getNoType() + "-" + noId;
                 Long r = redisUtils.hremove(RedisKeys.NODES, key);
                 if (r > 0) {
+                    nodeService.delFocus(user.getuId(), noId);
                     return ResultUtil.ok();
                 } else {
                     return ResultUtil.error("取消关注失败，请重试");

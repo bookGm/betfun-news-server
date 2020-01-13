@@ -17,7 +17,7 @@
          update in_activity set act_in_num=act_in_num+1 where act_id=#{actid}
     </update>
     <select id="allActId" resultType="java.lang.Long" parameterType="java.lang.Long">
-        SELECT act_id FROM in_activity WHERE u_id = #{uId} ORDER BY act_create_time DESC
+        SELECT act_id FROM in_activity WHERE u_id = #{uId} AND act_status = 2 ORDER BY act_create_time DESC
     </select>
     <select id="interested" resultType="io.information.modules.app.entity.InActivity">
         SELECT * FROM in_activity WHERE act_status = 2 ORDER BY act_like DESC,act_create_time DESC LIMIT 3

@@ -19,7 +19,7 @@ import java.lang.reflect.Method;
 
 
 /**
- * redis ZSet缓存，切面处理类
+ * redis Hash缓存，切面处理类
  *
  * @author LX
  */

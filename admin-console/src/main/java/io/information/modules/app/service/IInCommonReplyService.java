@@ -24,5 +24,7 @@ public interface IInCommonReplyService extends IService<InCommonReply> {
     PageUtils discuss(Map<String, Object> map);
 
     PageUtils revert(Map<String, Object> map);
+
+    PageUtils discussUser(Map<String, Object> map);
 }
 

@@ -50,7 +50,8 @@ public class CardBaseServiceImpl extends ServiceImpl<CardBaseDao, CardBaseEntity
         for (CardBaseEntity c : page.getRecords()) {
             UserEntity u = userService.getById(c.getuId());
             if (null != u) {
-                c.setuName(u.getuName());
+                c.setuName(u.getuName() == null || u.getuName().equals("")
+                        ? u.getuNick() : u.getuName());
             }
         }
         return new PageUtils(page);

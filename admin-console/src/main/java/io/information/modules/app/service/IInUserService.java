@@ -26,6 +26,7 @@ public interface IInUserService extends IService<InUser> {
      * @param uId 用户id
      * @param fId 被关注的用户id
      */
+    //用户ID，被关注用户身份，被关注用户ID
     String focus(Long uId, Integer status, Long fId);
 
     Boolean saveWithCache(InUser inUser);
@@ -52,12 +53,13 @@ public interface IInUserService extends IService<InUser> {
 
     PageUtils fansNode(Map<String, Object> map);
 
-    UserBoolVo userNumber(Long uId, Long tId, Integer type, InUser user);
-
     Boolean isFocus(Long tId, Long uId);
 
     PageUtils<InCommonReply> commentUser(Map<String, Object> map);
 
     List<InUser> all();
 
+    void removeFocus(Long uId, Integer status, Long fId);
+
+    void delFocus(Long uId);
 }

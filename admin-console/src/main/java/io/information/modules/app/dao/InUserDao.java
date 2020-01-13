@@ -31,7 +31,21 @@ public interface InUserDao extends BaseMapper<InUser> {
     void addFocus(Long uId);
 
     /**
-     * 查詢所有用戶
+     * 查询所有用戶
      */
     List<InUser> all();
+
+    /**
+     * 关注-1
+     *
+     * @param uId
+     */
+    void delFocus(Long uId);
+
+    /**
+     * 粉丝-1
+     *
+     * @param uId
+     */
+    void delFans(Long uId);
 }

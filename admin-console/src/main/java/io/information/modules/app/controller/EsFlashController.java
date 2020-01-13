@@ -2,6 +2,7 @@ package io.information.modules.app.controller;
 
 import io.elasticsearch.utils.PageUtils;
 import io.elasticsearch.utils.SearchRequest;
+import io.information.common.utils.R;
 import io.information.modules.app.service.FlashEsService;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,8 +30,12 @@ public class EsFlashController {
     }
 
 
-//    @PostMapping("/test")
-//    public PageUtils searchText(@RequestBody SearchRequest request) {
-//        return flashService.searchTest(request);
-//    }
+    /**
+     * 同步
+     */
+    @PostMapping("/KSIQUXOPELK77")
+    public R update() {
+        flashService.updateAll();
+        return R.ok();
+    }
 }

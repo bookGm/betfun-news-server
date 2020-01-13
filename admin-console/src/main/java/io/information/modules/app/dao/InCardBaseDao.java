@@ -35,6 +35,11 @@ public interface InCardBaseDao extends BaseMapper<InCardBase> {
     void addACollect(Long cid);
 
     /**
+     * 获取用户所有帖子ID
+     */
+    List<Long> allCId(@Param("uId") Long uId);
+
+    /**
      * 查询帖子ID和标题
      * 根据用户ID和分页信息
      */

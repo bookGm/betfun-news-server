@@ -7,4 +7,6 @@ public interface ArticleEsService {
 //    PageUtils searchTest(SearchRequest request);
 
     PageUtils searchInfo(SearchRequest request);
+
+    void updateAll();
 }

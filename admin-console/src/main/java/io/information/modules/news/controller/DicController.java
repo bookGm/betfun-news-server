@@ -4,10 +4,12 @@ import io.information.common.utils.R;
 import io.information.modules.app.config.IdWorker;
 import io.information.modules.news.entity.DicEntity;
 import io.information.modules.news.service.DicService;
+import io.information.modules.news.service.NodeService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -24,6 +26,8 @@ import java.util.Map;
 public class DicController {
     @Autowired
     private DicService dicService;
+    @Autowired
+    private NodeService nodeService;
 
 
     /**
@@ -42,7 +46,23 @@ public class DicController {
     @RequiresPermissions("news:dic:list")
     public List<DicEntity> list() {
         List<DicEntity> dicList = dicService.list();
-        return dicList;
+        ArrayList<DicEntity> sumList = new ArrayList<>(dicList);
+        for (DicEntity dic : dicList) {
+            Long noType = dic.getdId();
+            //noId,noName  根据字典ID找到节点下一级
+            Map<Long, String> map = nodeService.search(noType);
+            if(null != map){
+                for (Long noId : map.keySet()) {
+                    //创建新的字典对象
+                    DicEntity nodeDic = new DicEntity();
+                    nodeDic.setdId(noId);
+                    nodeDic.setdName(map.get(noId));
+                    nodeDic.setpId(noType);
+                    sumList.add(nodeDic);
+                }
+            }
+        }
+        return sumList;
     }
 
 

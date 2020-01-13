@@ -7,8 +7,10 @@ import io.elasticsearch.dao.EsArticleDao;
 import io.elasticsearch.entity.EsArticleEntity;
 import io.elasticsearch.utils.PageUtils;
 import io.elasticsearch.utils.SearchRequest;
+import io.information.common.utils.BeanHelper;
+import io.information.modules.app.dao.InArticleDao;
+import io.information.modules.app.entity.InArticle;
 import io.information.modules.app.service.ArticleEsService;
-import io.information.modules.app.service.IInArticleService;
 import io.mq.utils.Constants;
 import io.mq.utils.RabbitMQUtils;
 import org.elasticsearch.action.search.SearchResponse;
@@ -20,6 +22,7 @@ import org.elasticsearch.search.fetch.subphase.highlight.HighlightField;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.support.AmqpHeaders;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -39,17 +42,20 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import static org.elasticsearch.index.query.QueryBuilders.multiMatchQuery;
 
 @Service
 public class ArticleEsServiceImpl implements ArticleEsService {
     @Autowired
-    private EsArticleDao articleDao;
+    private EsArticleDao esArticleDao;
     @Autowired
     private ElasticsearchTemplate elasticsearchTemplate;
     @Autowired
-    IInArticleService articleService;
+    RabbitTemplate rabbitTemplate;
+    @Autowired
+    private InArticleDao articleDao;
 
 
     private static final Logger LOG = LoggerFactory.getLogger(ArticleEsServiceImpl.class);
@@ -215,8 +221,28 @@ public class ArticleEsServiceImpl implements ArticleEsService {
         }
     }
 
+    @Override
+    public void updateAll() {
+        Iterable<EsArticleEntity> esUsers = esArticleDao.findAll();
+        List<InArticle> userList = articleDao.all();
+        ArrayList<EsArticleEntity> list = new ArrayList<>();
+        if (esUsers.iterator().hasNext()) {
+            EsArticleEntity next = esUsers.iterator().next();
+            list.add(next);
+        }
+        List<Long> collect = list.stream().map(EsArticleEntity::getaId).collect(Collectors.toList());
+        for (InArticle user : userList) {
+            Long id = user.getaId();
+            boolean b = collect.contains(id);
+            if (!b) {
+                EsArticleEntity esUser = BeanHelper.copyProperties(user, EsArticleEntity.class);
+                rabbitTemplate.convertAndSend(Constants.articleExchange,
+                        Constants.article_Update_RouteKey, esUser);
+            }
+        }
+    }
 
-//    @Override
+    //    @Override
 //    public PageUtils searchTest(SearchRequest request) {
 //        if (null != request.getKey() && StringUtil.isNotBlank(request.getKey())) {
 //            String key = request.getKey();

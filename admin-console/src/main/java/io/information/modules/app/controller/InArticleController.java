@@ -74,7 +74,8 @@ public class InArticleController {
             } else {
                 article.setaId(IdGenerator.getId());
                 article.setuId(user.getuId());
-                article.setuName(user.getuName() == null ? user.getuNick() : user.getuName());
+                article.setuName(user.getuName() == null || user.getuName().equals("")
+                        ? user.getuNick() : user.getuName());
                 article.setaStatus(1);
                 if (null == article.getaCreateTime()) {
                     article.setaCreateTime(new Date());
@@ -100,7 +101,8 @@ public class InArticleController {
         } else {
             article.setaId(IdGenerator.getId());
             article.setuId(user.getuId());
-            article.setuName(user.getuName());
+            article.setuName(user.getuName() == null || user.getuName().equals("")
+                    ? user.getuNick() : user.getuName());
             article.setaStatus(0);
             article.setaCreateTime(new Date());
             articleService.save(article);
@@ -326,6 +328,11 @@ public class InArticleController {
             if (StringUtil.isBlank(tid)) {
                 return R.error("收藏失败");
             }
+            String key = id + "-" + user.getuId() + "-" + tid + "-" + type;
+            Object o = redisUtils.hget(RedisKeys.COLLECT, key);
+            if (null != o) {
+                return R.error("已收藏，请不要重复收藏");
+            }
             return R.ok().put("time", articleService.collect(id, user.getuId(), type, tid));
         }
         return R.error("必要参数为空");
@@ -456,21 +463,4 @@ public class InArticleController {
         TagArticleVo tagArticleVo = articleService.tagArticle(map);
         return ResultUtil.ok(tagArticleVo);
     }
-
-
-    /**
-     * 添加ES -- 文章 使用一次
-     */
-    public R esSave() {
-        List<InArticle> articles = articleService.all();
-        List<EsArticleEntity> aEsList = BeanHelper.copyWithCollection(articles, EsArticleEntity.class);
-        if (null != aEsList) {
-            for (EsArticleEntity esArticle : aEsList) {
-                rabbitTemplate.convertAndSend(Constants.articleExchange,
-                        Constants.article_Save_RouteKey, esArticle);
-            }
-        }
-        return R.ok();
-    }
-
 }

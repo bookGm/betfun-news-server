@@ -2,6 +2,7 @@ package io.information.modules.app.controller;
 
 import io.elasticsearch.utils.PageUtils;
 import io.elasticsearch.utils.SearchRequest;
+import io.information.common.utils.R;
 import io.information.modules.app.service.ArticleEsService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -31,8 +32,12 @@ public class EsArticleController {
     }
 
 
-//    @PostMapping("/test")
-//    public PageUtils searchTest(@RequestBody SearchRequest request) {
-//        return articleService.searchTest(request);
-//    }
+    /**
+     * 同步
+     */
+    @PostMapping("/KSIQUXOPELK77")
+    public R update() {
+        articleService.updateAll();
+        return R.ok();
+    }
 }

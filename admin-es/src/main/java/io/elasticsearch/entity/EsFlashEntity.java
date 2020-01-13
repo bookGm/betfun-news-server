@@ -1,7 +1,6 @@
 package io.elasticsearch.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.elasticsearch.annotations.DateFormat;
 import org.springframework.data.elasticsearch.annotations.Document;
@@ -24,28 +23,28 @@ public class EsFlashEntity implements Serializable {
     /**
      * 快讯标题
      */
-    @Field(type = FieldType.Keyword, analyzer = "ik_max_word", searchAnalyzer = "ik_max_word")
+    @Field(type = FieldType.Keyword, analyzer = "ik_max_word", searchAnalyzer = "ik_smart")
     private String nTitle;
     /**
      * 快讯摘要
      */
-    @Field(type = FieldType.Keyword, analyzer = "ik_max_word", searchAnalyzer = "ik_max_word")
+    @Field(type = FieldType.Keyword, analyzer = "ik_max_word", searchAnalyzer = "ik_smart")
     private String nBrief;
 
     /**
      * 快讯内容
      */
-    @Field(type = FieldType.Keyword, analyzer = "ik_max_word", searchAnalyzer = "ik_max_word")
+    @Field(type = FieldType.Keyword, analyzer = "ik_max_word", searchAnalyzer = "ik_smart")
     private String nContent;
     /**
      * 利好
      */
-    @Field(type = FieldType.Integer)
+    @Field(index = false, type = FieldType.Integer)
     private Integer nBull;
     /**
      * 利空
      */
-    @Field(type = FieldType.Integer)
+    @Field(index = false, type = FieldType.Integer)
     private Integer nBad;
     /**
      * 创建时间

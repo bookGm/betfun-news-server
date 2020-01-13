@@ -65,4 +65,10 @@ public class InDicServiceImpl extends ServiceImpl<InDicDao, InDic> implements II
         return this.list(queryWrapper);
     }
 
+    @Override
+    public List<InDic> usList() {
+        LambdaQueryWrapper<InDic> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(InDic::getdDisable,0);
+        return this.list(queryWrapper);
+    }
 }

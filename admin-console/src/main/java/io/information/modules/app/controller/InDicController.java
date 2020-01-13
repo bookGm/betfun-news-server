@@ -4,6 +4,7 @@ package io.information.modules.app.controller;
 import io.information.common.utils.R;
 import io.information.modules.app.entity.InDic;
 import io.information.modules.app.service.IInDicService;
+import io.information.modules.app.service.IInNodeService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -30,6 +32,8 @@ import java.util.Map;
 public class InDicController {
     @Autowired
     private IInDicService dicService;
+    @Autowired
+    private IInNodeService nodeService;
 
 
     /**
@@ -43,13 +47,29 @@ public class InDicController {
 
 
     /**
-     * 所有字典节点
+     * 所有可用字典节点
      */
     @GetMapping("/list")
     @ApiOperation(value = "获取所有字典节点信息", httpMethod = "GET", notes = "不需要任何参数")
     public R list() {
-        List<InDic> dicList = dicService.list();
-        return R.ok().put("dicList", dicList);
+        List<InDic> dicList = dicService.usList();
+        ArrayList<InDic> sumList = new ArrayList<>(dicList);
+        for (InDic dic : dicList) {
+            Long noType = dic.getdId();
+            //noId,noName  根据字典ID找到节点下一级
+            Map<Long, String> map = nodeService.search(noType);
+            if(null != map){
+                for (Long noId : map.keySet()) {
+                    //创建新的字典对象
+                    InDic nodeDic = new InDic();
+                    nodeDic.setdId(noId);
+                    nodeDic.setdName(map.get(noId));
+                    nodeDic.setpId(noType);
+                    sumList.add(nodeDic);
+                }
+            }
+        }
+        return R.ok().put("dicList", sumList);
     }
 
 

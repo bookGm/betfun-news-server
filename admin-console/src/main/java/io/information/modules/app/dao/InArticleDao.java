@@ -92,7 +92,7 @@ public interface InArticleDao extends BaseMapper<InArticle> {
     List<Object> searchArticleByTag(@Param("tName") String tName, @Param("currPage") Integer currPage, @Param("pageSize") Integer pageSize);
 
     /**
-     * 获取用户所有文章ID
+     * 获取用户所有已发布文章ID
      */
     List<Long> allAId(@Param("uId") Long uId);
 

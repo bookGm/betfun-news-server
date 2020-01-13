@@ -25,6 +25,13 @@ public interface InNodeDao extends BaseMapper<InNode> {
     void increaseFocus(Long noId);
 
     /**
+     * 关注-1
+     *
+     * @param noId 节点ID
+     */
+    void removeFocus(Long noId);
+
+    /**
      * 查询节点ID、节点名称和节点图标
      * 根据关注排序
      */

@@ -17,6 +17,9 @@
     <update id="increaseFocus" parameterType="java.lang.Long">
          update in_node set no_focus=no_focus+1 where no_id=#{noId}
     </update>
+    <update id="removeFocus" parameterType="java.lang.Long">
+         update in_node set no_focus=no_focus-1 where no_id=#{noId}
+    </update>
     <select id="searchNodeByFocus" resultType="io.information.modules.app.vo.NodeVo">
         SELECT * FROM (SELECT no_id,no_name,no_photo FROM in_node ORDER BY no_focus DESC) AS node LIMIT 6
     </select>

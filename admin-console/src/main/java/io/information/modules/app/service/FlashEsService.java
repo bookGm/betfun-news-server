@@ -7,4 +7,6 @@ public interface FlashEsService {
 //    PageUtils searchTest(SearchRequest request);
 
     PageUtils searchFlash(SearchRequest request);
+
+    void updateAll();
 }

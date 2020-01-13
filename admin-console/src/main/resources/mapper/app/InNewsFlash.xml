@@ -8,10 +8,10 @@
          update in_news_flash set n_bad=n_bad+1 where n_id=#{nId}
     </update>
     <update id="delNBull" parameterType="java.lang.Long">
-         update in_news_flash set n_bull=n_bull-1 where n_id=#{nId}
+         update in_news_flash set n_bull=n_bull-1 where n_id=#{nId} AND n_bull > 0
     </update>
     <update id="delNBad" parameterType="java.lang.Long">
-         update in_news_flash set n_bad=n_bad-1 where n_id=#{nId}
+         update in_news_flash set n_bad=n_bad-1 where n_id=#{nId} AND n_bad > 0
     </update>
     <select id="all" resultType="io.information.modules.app.entity.InNewsFlash">
         select * from in_news_flash

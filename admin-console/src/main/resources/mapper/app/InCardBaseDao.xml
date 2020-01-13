@@ -35,4 +35,7 @@
     <update id="addReadNumber" parameterType="java.lang.Long">
          update in_card_base set c_read_number=#{number} where c_id=#{cId}
     </update>
+    <select id="allCId" resultType="java.lang.Long" parameterType="java.lang.Long">
+        select c_id from in_card_base where u_id = #{uId} ORDER BY c_create_time DESC
+    </select>
 </mapper>

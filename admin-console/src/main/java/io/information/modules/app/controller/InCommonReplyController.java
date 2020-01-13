@@ -1,6 +1,7 @@
 package io.information.modules.app.controller;
 
 import com.guansuo.common.JsonUtil;
+import com.guansuo.common.StringUtil;
 import com.guansuo.newsenum.NewsEnum;
 import io.information.common.utils.IdGenerator;
 import io.information.common.utils.PageUtils;
@@ -73,7 +74,8 @@ public class InCommonReplyController {
         commonReplyService.save(commonReply);
         addCritic(commonReply);
         commonReply.setcName(user.getuNick());
-        commonReply.setcPhoto(user.getuPhoto());
+        commonReply.setcPhoto(user.getuPhoto() == null || user.getuPhoto().equals("")
+                ? "http://guansuo.info/news/upload/20191231115456head.png" : user.getuPhoto());
         commonReply.setCrSimpleTime("刚刚");
         if ((null != commonReply.gettType()) && NewsEnum.评论_帖子.equals(commonReply.gettType())) {
             logOperate(user.getuId(), commonReply.gettId(), commonReply.gettName(), NewsEnum.操作_评论);
@@ -136,11 +138,32 @@ public class InCommonReplyController {
             @ApiImplicitParam(value = "每页显示条数", name = "pageSize", required = true),
             @ApiImplicitParam(value = "当前页数", name = "currPage", required = true),
             @ApiImplicitParam(value = "目标类型（0文章，1帖子，2活动，3用户）", name = "tType", required = true),
-            @ApiImplicitParam(value = "页面ID", name = "tId", required = true)
+            @ApiImplicitParam(value = "页面ID", name = "tId", required = true),
+            @ApiImplicitParam(value = "用户ID", name = "uId", required = true)
     })
     public R discuss(@RequestParam Map<String, Object> map) {
         if (null == map || !map.containsKey("tId") || !map.containsKey("tType")) {
             return R.error("缺少必要参数");
+        }
+        Long tId = Long.parseLong(String.valueOf(map.get("tId")));
+        int tType = Integer.parseInt(String.valueOf(map.get("tType")));
+        if (NewsEnum.评论_帖子.getCode().equals(tType + "")) {
+            InCardBase base = cardBaseService.getById(tId);
+            Integer hide = base.getcHide();
+            if (NewsEnum.评论_隐藏.getCode().equals(hide + "")) {
+                if (null != map.get("uId") && StringUtil.isNotBlank(map.get("uId"))) {
+                    String uId = String.valueOf(map.get("uId"));
+                    if (uId.equals(base.getuId() + "")) {
+                        PageUtils discuss = commonReplyService.discuss(map);
+                        return R.ok().put("discuss", discuss);
+                    } else {
+                        //返回当前用户的评论数据
+                        PageUtils discussUser = commonReplyService.discussUser(map);
+                        return R.ok().put("discuss", discussUser);
+                    }
+                }
+                return R.error("当前回帖仅作者可见");
+            }
         }
         PageUtils discuss = commonReplyService.discuss(map);
         return R.ok().put("discuss", discuss);

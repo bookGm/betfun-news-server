@@ -41,7 +41,7 @@ public interface InActivityDao extends BaseMapper<InActivity> {
     void addApply(Long actid);
 
     /**
-     * 获取用户所有活动ID
+     * 获取用户所有已发布活动ID
      */
     List<Long> allActId(@Param("uId") Long uId);
 

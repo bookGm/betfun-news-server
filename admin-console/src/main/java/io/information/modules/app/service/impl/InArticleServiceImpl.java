@@ -243,6 +243,7 @@ public class InArticleServiceImpl extends ServiceImpl<InArticleDao, InArticle> i
         rabbitTemplate.convertAndSend(Constants.logExchange, Constants.log_Save_RouteKey, JsonUtil.toJSONString(log));
     }
 
+
     @Override
     @HashCacheable(key = RedisKeys.LIKE, keyField = "#id-#uid-#tId-#type")
     public String giveALike(Long id, Long uid, int type, Long tId) {
@@ -276,6 +277,7 @@ public class InArticleServiceImpl extends ServiceImpl<InArticleDao, InArticle> i
         return redisUtils.hremove(RedisKeys.LIKE, key);
     }
 
+
     @Override
     public Long removeCollect(Long id, Long tid, int type, Long uid) {
         if (NewsEnum.收藏_文章.getCode().equals(String.valueOf(type))) {
@@ -292,6 +294,7 @@ public class InArticleServiceImpl extends ServiceImpl<InArticleDao, InArticle> i
         return redisUtils.hremove(RedisKeys.COLLECT, key);
     }
 
+
     @Override
     @HashCacheable(key = RedisKeys.COLLECT, keyField = "#id-#uid-#tId-#type")
     public String collect(Long id, Long uid, int type, Long tId) {
@@ -307,6 +310,7 @@ public class InArticleServiceImpl extends ServiceImpl<InArticleDao, InArticle> i
         }
         return DateUtils.format(new Date());
     }
+
 
     @Override
     public TagArticleVo tagArticle(Map<String, Object> map) {
