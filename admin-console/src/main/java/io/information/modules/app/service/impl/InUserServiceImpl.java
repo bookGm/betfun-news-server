@@ -253,8 +253,8 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
                     if (null != cardVo) {
                         String simpleTime = DateUtils.getSimpleTime(base.getcCreateTime() == null ? new Date() : base.getcCreateTime());
                         cardVo.setTime(simpleTime);
-                        String dicName = dicHelper.getDicName(base.getcNodeCategory().longValue()) == null
-                                ? "" : dicHelper.getDicName(base.getcNodeCategory().longValue());
+                        String dicName = dicHelper.getDicName(base.getcNodeCategory()) == null
+                                ? "" : dicHelper.getDicName(base.getcNodeCategory());
 //                        InDic dic = dicService.getById(base.getcNodeCategory() == null ? 0 : base.getcNodeCategory());
                         cardVo.setType(dicName);
                         cardVo.setcId(base.getcId());
@@ -354,7 +354,7 @@ public class InUserServiceImpl extends ServiceImpl<InUserDao, InUser> implements
 //            Object oUser = redisTemplate.opsForHash().get(RedisKeys.INUSER, String.valueOf(id));
 //            InUser user = (InUser) oUser;
             if (null != user) {
-                likeVo.setNick(user.getuNick());
+                likeVo.setNick(user.getuNick() == null ? user.getuName() : user.getuNick());
                 likeVo.setPhoto(user.getuPhoto() == null || user.getuPhoto().equals("")
                         ? "http://guansuo.info/news/upload/20191231115456head.png" : user.getuPhoto());
             } else {

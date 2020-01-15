@@ -26,7 +26,7 @@ public class CardVo implements Serializable {
     /**
      * 帖子节点分类（字典）
      */
-    private Integer cNodeCategory;
+    private Long cNodeCategory;
     /**
      * 帖子类型
      * 0单选 1多选
@@ -155,11 +155,11 @@ public class CardVo implements Serializable {
         this.cCategory = cCategory;
     }
 
-    public Integer getcNodeCategory() {
+    public Long getcNodeCategory() {
         return cNodeCategory;
     }
 
-    public void setcNodeCategory(Integer cNodeCategory) {
+    public void setcNodeCategory(Long cNodeCategory) {
         this.cNodeCategory = cNodeCategory;
     }
 

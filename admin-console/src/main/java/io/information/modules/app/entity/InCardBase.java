@@ -69,7 +69,7 @@ public class InCardBase implements Serializable {
      * 帖子节点分类（字典）
      */
     @ApiModelProperty(value = "节点分类", name = "cNodeCategory", required = true)
-    private Integer cNodeCategory;
+    private Long cNodeCategory;
 
     /**
      * 帖子节点分类
@@ -173,11 +173,11 @@ public class InCardBase implements Serializable {
         this.cCategory = cCategory;
     }
 
-    public Integer getcNodeCategory() {
+    public Long getcNodeCategory() {
         return cNodeCategory;
     }
 
-    public void setcNodeCategory(Integer cNodeCategory) {
+    public void setcNodeCategory(Long cNodeCategory) {
         this.cNodeCategory = cNodeCategory;
     }
 

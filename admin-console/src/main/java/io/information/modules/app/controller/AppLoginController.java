@@ -113,7 +113,7 @@ public class AppLoginController {
         if (null == user || !user.getuPwd().equals(new Sha256Hash(form.getUPwd(), user.getuSalt()).toHex())) {
             return R.error("手机号或密码不正确");
         }
-        return resultToken(user.getuId(), user.getuAuthStatus(), user.getuNick());
+        return resultToken(user.getuId(), user.getuAuthStatus(), user.getuNick() == null ? user.getuName() : user.getuNick());
     }
 
 
@@ -162,7 +162,7 @@ public class AppLoginController {
             iInUserService.updateById(user);
             if (redis.get(rkey).equals(form.getCode())) {
                 redis.remove(rkey);
-                return resultToken(user.getuId(), user.getuAuthStatus(), user.getuNick());
+                return resultToken(user.getuId(), user.getuAuthStatus(), user.getuNick() == null ? user.getuName() : user.getuNick());
             } else {
                 return R.error("验证码输入错误");
             }
@@ -184,7 +184,7 @@ public class AppLoginController {
         }
         if (redis.get(rkey).equals(form.getCode())) {
             redis.remove(rkey);
-            return resultToken(user.getuId(), user.getuAuthStatus(), user.getuNick());
+            return resultToken(user.getuId(), user.getuAuthStatus(), user.getuNick() == null ? user.getuName() : user.getuNick());
         } else {
             return R.error("验证码输入错误");
         }

@@ -49,10 +49,10 @@ public class LogListener {
             }
             if (0 == log.getlTargetType()) {
                 InUser tu = iInUserService.getById(log.getlTargetId());
-                log.setlTargetName(tu.getuNick());
+                log.setlTargetName(tu.getuNick() == null ? tu.getuName() : tu.getuNick());
             }
         }
-        log.setlOperateName(u.getuNick());
+        log.setlOperateName(u.getuNick() == null ? u.getuName() : u.getuNick());
         iInLogService.save(log);
         // 手动ack
         Long deliveryTag = (Long) headers.get(AmqpHeaders.DELIVERY_TAG);

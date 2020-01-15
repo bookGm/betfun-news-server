@@ -98,7 +98,8 @@ public class InCardServiceImpl extends ServiceImpl<InCardBaseDao, InCardBase> im
                     base.setcNodeCategoryValue(dicHelper.getDicName(base.getcNodeCategory().longValue()));
                 }
                 if (null != iInUserService.getById(base.getuId())) {
-                    base.setuNick(iInUserService.getById(base.getuId()).getuNick());
+                    InUser user = iInUserService.getById(base.getuId());
+                    base.setuNick(user.getuNick() == null ? user.getuName() : user.getuNick());
                 }
                 base.setcSimpleTime(DateUtils.getSimpleTime(base.getcCreateTime()));
                 card.setBase(base);

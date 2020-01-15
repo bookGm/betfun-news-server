@@ -1,5 +1,6 @@
 package io.information.modules.news.controller;
 
+import io.information.common.utils.IdGenerator;
 import io.information.common.utils.PageUtils;
 import io.information.common.utils.R;
 import io.information.modules.news.entity.NodeEntity;
@@ -53,6 +54,7 @@ public class NodeController {
     @RequestMapping("/save")
     @RequiresPermissions("news:node:save")
     public R save(@RequestBody NodeEntity node) {
+        node.setNoId(IdGenerator.getId());
         node.setNoCreateTime(new Date());
         nodeService.save(node);
 

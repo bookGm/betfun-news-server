@@ -56,11 +56,16 @@ public class FlashEsServiceImpl implements FlashEsService {
             String key = request.getKey();
             Integer pageSize = request.getPageSize();
             Integer currPage = request.getCurrPage();
+            currPage -= 1;
+            if (currPage < 0) {
+                currPage = 0;
+            }
+
             //多字段匹配[标题，摘要，内容]
             NativeSearchQueryBuilder searchQuery = new NativeSearchQueryBuilder();
             //设置查询条件
             searchQuery.withQuery(multiMatchQuery(key, "nTitle", "nBrief", "nContent")
-                    .operator(Operator.OR) /*.minimumShouldMatch("30%")*/)
+                    .operator(Operator.OR).minimumShouldMatch("70%"))
                     //设置索引...
                     .withIndices("flashs")
                     .withPageable(PageRequest.of(currPage, pageSize));

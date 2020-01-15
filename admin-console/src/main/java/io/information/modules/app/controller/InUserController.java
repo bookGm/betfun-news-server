@@ -30,7 +30,10 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.LongSummaryStatistics;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -129,14 +132,12 @@ public class InUserController extends AbstractController {
      * 上传用户封面
      */
     @Login
-    @PutMapping("/cover")
-    @ApiOperation(value = "用户上传封面", httpMethod = "PUT")
+    @PostMapping("/cover")
+    @ApiOperation(value = "用户上传封面", httpMethod = "POST")
     @ApiImplicitParam(value = "封面地址", name = "uCover", required = true)
     public ResultUtil cover(@RequestParam String uCover, @ApiIgnore @LoginUser InUser user) {
-        InUser inUser = new InUser();
-        inUser.setuId(user.getuId());
-        inUser.setuCover(uCover);
-        userService.updateById(inUser);
+        user.setuCover(uCover);
+        userService.updateById(user);
         return ResultUtil.ok();
     }
 
@@ -361,7 +362,7 @@ public class InUserController extends AbstractController {
             if (null != boolVo && StringUtil.isNotBlank(boolVo.getuId())) {
                 InUser u = userService.getById(boolVo.getuId());
                 if (null != u) {
-                    boolVo.setuNick(u.getuNick() == null ? u.getuNick() : u.getuPhone());
+                    boolVo.setuNick(u.getuNick() == null ? u.getuName() : u.getuNick());
                     boolVo.setuPhoto(u.getuPhoto() == null || u.getuPhoto().equals("")
                             ? "http://guansuo.info/news/upload/20191231115456head.png" : u.getuPhoto());
                 } else {

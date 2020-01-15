@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.guansuo.common.DateUtils;
 import com.guansuo.common.StringUtil;
+import com.guansuo.newsenum.NewsEnum;
 import io.information.common.annotation.HashCacheable;
 import io.information.common.utils.*;
 import io.information.modules.app.dao.*;
@@ -99,7 +100,7 @@ public class InNodeServiceImpl extends ServiceImpl<InNodeDao, InNode> implements
         LambdaQueryWrapper<InUser> queryWrapper = new LambdaQueryWrapper<>();
         Integer pageSize = StringUtil.isBlank(map.get("pageSize")) ? 10 : Integer.parseInt(String.valueOf(map.get("pageSize")));
         Integer currPage = StringUtil.isBlank(map.get("currPage")) ? 1 : Integer.parseInt(String.valueOf(map.get("currPage")));
-        queryWrapper.eq(InUser::getuAuthStatus, 2);
+        queryWrapper.eq(InUser::getuAuthStatus, NewsEnum.文章状态_已发布.getCode());
         IPage<InUser> page = userService.page(
                 new Query<InUser>().getPage(map),
                 queryWrapper
@@ -109,7 +110,7 @@ public class InNodeServiceImpl extends ServiceImpl<InNodeDao, InNode> implements
         for (InUser user : page.getRecords()) {
             UserNodeVo vo = BeanHelper.copyProperties(user, UserNodeVo.class);
             if (null != vo) {
-                List<InArticle> list = articleService.list(new LambdaQueryWrapper<InArticle>().eq(InArticle::getuId, user.getuId()));
+                List<InArticle> list = articleService.list(new LambdaQueryWrapper<InArticle>().eq(InArticle::getuId, user.getuId()).eq(InArticle::getaStatus, NewsEnum.文章状态_已发布.getCode()));
                 //累计文章数
                 vo.setArticleNumber(list.size());
                 //累计浏览量
@@ -175,8 +176,8 @@ public class InNodeServiceImpl extends ServiceImpl<InNodeDao, InNode> implements
                         String simpleTime = DateUtils.getSimpleTime(base.getcCreateTime() == null ? new Date() : base.getcCreateTime());
                         cardVo.setTime(simpleTime);
 //                        InDic dic = dicService.getById(base.getcNodeCategory() == null ? 0 : base.getcNodeCategory());
-                        String dicName = dicHelper.getDicName(base.getcNodeCategory().longValue()) == null
-                                ? "" : dicHelper.getDicName(base.getcNodeCategory().longValue());
+                        String dicName = dicHelper.getDicName(base.getcNodeCategory()) == null
+                                ? "" : dicHelper.getDicName(base.getcNodeCategory());
                         cardVo.setType(dicName);
                         cardVo.setcId(base.getcId());
                         cardVo.setcTitle(base.getcTitle());

@@ -73,7 +73,7 @@ public class InCommonReplyController {
         commonReply.setcId(user.getuId());
         commonReplyService.save(commonReply);
         addCritic(commonReply);
-        commonReply.setcName(user.getuNick());
+        commonReply.setcName(user.getuName() == null ? user.getuNick() : user.getuName());
         commonReply.setcPhoto(user.getuPhoto() == null || user.getuPhoto().equals("")
                 ? "http://guansuo.info/news/upload/20191231115456head.png" : user.getuPhoto());
         commonReply.setCrSimpleTime("刚刚");

@@ -62,13 +62,17 @@ public class UserEsServiceImpl implements UserEsService {
             String key = request.getKey();
             Integer pageSize = request.getPageSize();
             Integer currPage = request.getCurrPage();
+            currPage -= 1;
+            if (currPage < 0) {
+                currPage = 0;
+            }
 
             NativeSearchQueryBuilder searchQuery = new NativeSearchQueryBuilder();
             //设置索引...
             withHighlight(searchQuery);
             //设置查询条件
             searchQuery.withQuery(multiMatchQuery(key, "uName", "uIntro", "uNick", "uCompanyName")
-                    .operator(Operator.OR) /*.minimumShouldMatch("30%")*/)
+                    .operator(Operator.OR).minimumShouldMatch("70%"))
                     .withPageable(PageRequest.of(currPage, pageSize));
 
             //自定义查询结果封装

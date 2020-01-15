@@ -106,7 +106,7 @@ public class InCommonReplyServiceImpl extends ServiceImpl<InCommonReplyDao, InCo
             );
             for (InCommonReply r : page.getRecords()) {
                 InUser u = iInUserService.getById(r.getcId());
-                r.setcName(u.getuNick());
+                r.setcName(u.getuName() == null ? u.getuNick() : u.getuName());
                 r.setcPhoto(u.getuPhoto());
                 r.setCrSimpleTime(DateUtils.getSimpleTime(r.getCrTime()));
             }
@@ -130,7 +130,11 @@ public class InCommonReplyServiceImpl extends ServiceImpl<InCommonReplyDao, InCo
             list.addAll(actIds);
             list.addAll(aIds);
             //查询被评论ID为用户ID的评论
-            queryWrapper.eq(InCommonReply::gettId, uId).or().in(InCommonReply::gettId, list);
+            if (!list.isEmpty()) {
+                queryWrapper.eq(InCommonReply::gettId, uId).or().in(InCommonReply::gettId, list);
+            } else {
+                queryWrapper.eq(InCommonReply::gettId, uId);
+            }
             queryWrapper.orderByDesc(InCommonReply::getCrTime);
             IPage<InCommonReply> page = this.page(
                     new Query<InCommonReply>().getPage(params),

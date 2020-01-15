@@ -1,11 +1,14 @@
 package io.information.modules.app.controller;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.guansuo.common.StringUtil;
 import io.information.common.utils.*;
 import io.information.modules.app.annotation.Login;
 import io.information.modules.app.annotation.LoginUser;
+import io.information.modules.app.entity.InCardBase;
 import io.information.modules.app.entity.InNode;
 import io.information.modules.app.entity.InUser;
+import io.information.modules.app.service.IInCardBaseService;
 import io.information.modules.app.service.IInNodeService;
 import io.information.modules.app.vo.*;
 import io.swagger.annotations.*;
@@ -33,6 +36,8 @@ public class InNodeController {
     @Autowired
     private IInNodeService nodeService;
     @Autowired
+    private IInCardBaseService baseService;
+    @Autowired
     RedisUtils redisUtils;
 
     /**
@@ -55,6 +60,12 @@ public class InNodeController {
     @ApiOperation(value = "查询节点信息", httpMethod = "GET", notes = "节点ID", response = InNode.class)
     public R info(@PathVariable("noId") Long noId) {
         InNode node = nodeService.getById(noId);
+        if (null != node) {
+            //获取节点对应的帖子集合求出总数(size)
+            int cardNumber = baseService.count(new LambdaQueryWrapper<InCardBase>().eq(InCardBase::getNoId, node.getNoId()));
+            //将节点和对应帖子的总数放入集合
+            node.setCardNumber(cardNumber);
+        }
         return R.ok().put("node", node);
     }
 
