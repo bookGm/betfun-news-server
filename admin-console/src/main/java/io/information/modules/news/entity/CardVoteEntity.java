@@ -39,6 +39,22 @@ public class CardVoteEntity implements Serializable {
      */
     private String cvInfo;
     /**
+     * 投票是否结束
+     */
+    @TableField(exist = false)
+    private Boolean timeType;
+
+    /**
+     * 多少人投票
+     */
+    @TableField(exist = false)
+    private Integer voteNumber;
+    /**
+     * 投票选项
+     */
+    @TableField(exist = false)
+    private String optIndexs;
+    /**
      * 结束日期
      */
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
@@ -164,6 +180,22 @@ public class CardVoteEntity implements Serializable {
     private Integer cv29;
     @TableField(exist = false)
     private String info29;
+
+    public String getOptIndexs() {
+        return optIndexs;
+    }
+
+    public void setOptIndexs(String optIndexs) {
+        this.optIndexs = optIndexs;
+    }
+
+    public Integer getVoteNumber() {
+        return voteNumber;
+    }
+
+    public void setVoteNumber(Integer voteNumber) {
+        this.voteNumber = voteNumber;
+    }
 
     public Long getcId() {
         return cId;
@@ -778,5 +810,13 @@ public class CardVoteEntity implements Serializable {
 
     public void setBaseCard(CardBaseEntity baseCard) {
         this.baseCard = baseCard;
+    }
+
+    public Boolean getTimeType() {
+        return timeType;
+    }
+
+    public void setTimeType(Boolean timeType) {
+        this.timeType = timeType;
     }
 }

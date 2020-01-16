@@ -30,6 +30,11 @@ public class CardBaseEntity implements Serializable {
      */
     private Long uId;
     /**
+     * 用户名称
+     */
+    @TableField(exist = false)
+    private String uNick;
+    /**
      * 节点id
      */
     private Long noId;
@@ -39,7 +44,7 @@ public class CardBaseEntity implements Serializable {
     @TableField(exist = false)
     private String uName;
     /**
-     * 帖子分类（字典）
+     * 帖子分类（0：普通帖  1：辩论帖  2：投票帖）
      */
     private Integer cCategory;
     /**
@@ -80,6 +85,14 @@ public class CardBaseEntity implements Serializable {
      */
     private Long cReadNumber;
 
+
+    public String getuNick() {
+        return uNick;
+    }
+
+    public void setuNick(String uNick) {
+        this.uNick = uNick;
+    }
 
     public Long getcReadNumber() {
         return cReadNumber;

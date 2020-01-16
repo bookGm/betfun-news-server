@@ -51,7 +51,19 @@ public class CardArgueEntity implements Serializable {
      */
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date caCloseTime;
-
+    /**
+     * 正方辩手数量
+     */
+    private Integer caFsideDebater;
+    /**
+     * 反方辩手数量
+     */
+    private Integer caRsideDebater;
+    /**
+     * 辩论是否结束
+     */
+    @TableField(exist = false)
+    private Boolean timeType;
     /**
      * 裁判
      */
@@ -120,5 +132,30 @@ public class CardArgueEntity implements Serializable {
 
     public void setCaReferee(String caReferee) {
         this.caReferee = caReferee;
+    }
+
+    public Integer getCaFsideDebater() {
+        return caFsideDebater;
+    }
+
+    public void setCaFsideDebater(Integer caFsideDebater) {
+        this.caFsideDebater = caFsideDebater;
+    }
+
+    public Integer getCaRsideDebater() {
+        return caRsideDebater;
+    }
+
+    public void setCaRsideDebater(Integer caRsideDebater) {
+
+        this.caRsideDebater = caRsideDebater;
+    }
+
+    public Boolean getTimeType() {
+        return timeType;
+    }
+
+    public void setTimeType(Boolean timeType) {
+        this.timeType = timeType;
     }
 }

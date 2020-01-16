@@ -3,7 +3,9 @@ package io.information.modules.news.controller;
 import io.information.common.utils.PageUtils;
 import io.information.common.utils.R;
 import io.information.modules.news.entity.CardArgueEntity;
+import io.information.modules.news.entity.CardBaseEntity;
 import io.information.modules.news.service.CardArgueService;
+import io.information.modules.news.service.CardBaseService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -23,7 +25,9 @@ import java.util.Map;
 @RequestMapping("news/cardargue")
 public class CardArgueController {
     @Autowired
-    private CardArgueService cardArgueService;
+    private CardArgueService argueService;
+    @Autowired
+    private CardBaseService baseService;
 
     /**
      * 列表
@@ -31,7 +35,7 @@ public class CardArgueController {
     @GetMapping("/list")
     @RequiresPermissions("news:cardargue:list")
     public R list(@RequestParam Map<String, Object> params) {
-        PageUtils page = cardArgueService.queryPage(params);
+        PageUtils page = argueService.queryPage(params);
 
         return R.ok().put("page", page);
     }
@@ -43,9 +47,10 @@ public class CardArgueController {
     @GetMapping("/info/{cId}")
     @RequiresPermissions("news:cardargue:info")
     public R info(@PathVariable("cId") Long cId) {
-        CardArgueEntity cardArgue = cardArgueService.getById(cId);
-
-        return R.ok().put("cardArgue", cardArgue);
+        CardArgueEntity argue = argueService.getById(cId);
+        CardBaseEntity base = baseService.getById(cId);
+//        argue.setuName(base.getuName());
+        return R.ok().put("cardArgue", argue);
     }
 
     /**
@@ -54,7 +59,7 @@ public class CardArgueController {
     @PostMapping("/save")
     @RequiresPermissions("news:cardargue:save")
     public R save(@RequestBody CardArgueEntity cardArgue) {
-        cardArgueService.save(cardArgue);
+        argueService.save(cardArgue);
 
         return R.ok();
     }
@@ -65,7 +70,7 @@ public class CardArgueController {
     @PostMapping("/update")
     @RequiresPermissions("news:cardargue:update")
     public R update(@RequestBody CardArgueEntity cardArgue) {
-        cardArgueService.updateById(cardArgue);
+        argueService.updateById(cardArgue);
 
         return R.ok();
     }
@@ -77,7 +82,7 @@ public class CardArgueController {
     @PostMapping("/delete")
     @RequiresPermissions("news:cardargue:delete")
     public R delete(@RequestBody Long[] cIds) {
-        cardArgueService.removeByIds(Arrays.asList(cIds));
+        argueService.removeByIds(Arrays.asList(cIds));
 
         return R.ok();
     }

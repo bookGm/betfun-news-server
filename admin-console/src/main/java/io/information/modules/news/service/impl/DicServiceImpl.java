@@ -9,9 +9,12 @@ import io.information.common.utils.RedisKeys;
 import io.information.modules.news.dao.DicDao;
 import io.information.modules.news.entity.DicEntity;
 import io.information.modules.news.service.DicService;
+import io.information.modules.news.service.NodeService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,6 +22,8 @@ import java.util.Map;
 
 @Service
 public class DicServiceImpl extends ServiceImpl<DicDao, DicEntity> implements DicService {
+    @Autowired
+    private NodeService nodeService;
 
     @Override
     public List<DicEntity> queryDidAscList() {
@@ -31,9 +36,24 @@ public class DicServiceImpl extends ServiceImpl<DicDao, DicEntity> implements Di
     @Cacheable(value = RedisKeys.CONSTANT, key = "#key")
     public Map<String, List<DicEntity>> getListAll(String key) {
         HashMap<String, List<DicEntity>> map = new HashMap<>();
-        QueryWrapper<DicEntity> queryWrapper = new QueryWrapper<>();
-        List<DicEntity> dicts = this.list(queryWrapper);
-        map.put("dict", dicts);
+        List<DicEntity> dicts = this.list();
+        ArrayList<DicEntity> sumList = new ArrayList<>(dicts);
+        for (DicEntity dic : dicts) {
+            Long noType = dic.getdId();
+            //noId,noName  根据字典ID找到节点下一级
+            Map<Long, String> search = nodeService.search(noType);
+            if (null != search) {
+                for (Long noId : search.keySet()) {
+                    //创建新的字典对象
+                    DicEntity nodeDic = new DicEntity();
+                    nodeDic.setdId(noId);
+                    nodeDic.setdName(search.get(noId));
+                    nodeDic.setpId(noType);
+                    sumList.add(nodeDic);
+                }
+            }
+        }
+        map.put("dict", sumList);
         return map;
     }
 

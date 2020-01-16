@@ -222,15 +222,27 @@ public class InCardServiceImpl extends ServiceImpl<InCardBaseDao, InCardBase> im
             int category = card.getBase().getcCategory();
             switch (category) {
                 case 1:
-                    InCardArgue argue = BeanHelper.copyProperties(card, InCardArgue.class);
+                    InCardArgue argue = BeanHelper.copyProperties(card.getArgue(), InCardArgue.class);
                     if (null != argue) {
-                        argueService.updateById(argue);
+                        argue.setcId(card.getBase().getcId());
+                        InCardArgue flag = argueService.getById(argue.getcId());
+                        if (null != flag) {
+                            argueService.updateById(argue);
+                        } else {
+                            argueService.save(argue);
+                        }
                     }
                     break;
                 case 2:
-                    InCardVote vote = BeanHelper.copyProperties(card, InCardVote.class);
+                    InCardVote vote = BeanHelper.copyProperties(card.getVote(), InCardVote.class);
                     if (null != vote) {
-                        voteService.updateById(vote);
+                        vote.setcId(card.getBase().getcId());
+                        InCardVote flag = voteService.getById(vote.getcId());
+                        if (null != flag) {
+                            voteService.updateById(vote);
+                        } else {
+                            voteService.save(vote);
+                        }
                     }
                     break;
             }

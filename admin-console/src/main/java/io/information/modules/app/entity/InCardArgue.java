@@ -67,7 +67,7 @@ public class InCardArgue implements Serializable {
     /**
      * 正方辩手数量
      */
-    @ApiModelProperty(value = "正方辩手数量", name = "RsideDebater")
+    @ApiModelProperty(value = "反方辩手数量", name = "RsideDebater")
     private Integer caRsideDebater;
 
     /**
